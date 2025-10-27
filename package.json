@@ -1,0 +1,69 @@
+{
+  "name": "saas-pos",
+  "version": "1.0.0",
+  "description": "Point of Sale application for SaaS Platform",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "electron dist/main.js",
+    "dev": "concurrently \"webpack serve --config webpack.renderer.config.js --no-hot\" \"npm run build:watch\" \"wait-on http://localhost:8080 && set NODE_ENV=development&& electron dist/main.js\"",
+    "build": "webpack --mode production",
+    "build:watch": "webpack --mode development --watch",
+    "package": "electron-builder",
+    "package:win": "electron-builder --win",
+    "package:mac": "electron-builder --mac",
+    "package:linux": "electron-builder --linux"
+  },
+  "dependencies": {
+    "@types/lru-cache": "^7.10.9",
+    "@types/pako": "^2.0.4",
+    "axios": "^1.6.0",
+    "electron-store": "^8.1.1",
+    "lru-cache": "^11.2.2",
+    "pako": "^2.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-window": "^1.8.11",
+    "socket.io-client": "^4.7.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.6.12",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/react-window": "^1.8.8",
+    "@types/uuid": "^9.0.1",
+    "concurrently": "^8.2.0",
+    "css-loader": "^6.8.1",
+    "electron": "^25.0.0",
+    "electron-builder": "^24.6.4",
+    "html-webpack-plugin": "^5.5.3",
+    "style-loader": "^3.3.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.2.2",
+    "wait-on": "^7.0.1",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "build": {
+    "appId": "com.saasplatform.pos",
+    "productName": "SaaS POS",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}

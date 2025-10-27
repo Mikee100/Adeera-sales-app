@@ -1,0 +1,23 @@
+const { contextBridge, ipcRenderer } = require('electron');
+
+interface Credentials {
+  email: string;
+  password: string;
+}
+
+// Expose protected methods that allow the renderer process to use
+// the ipcRenderer without exposing the entire object
+contextBridge.exposeInMainWorld('electronAPI', {
+  authenticate: (credentials: Credentials) => ipcRenderer.invoke('authenticate', credentials),
+  getAuthToken: () => ipcRenderer.invoke('getAuthToken'),
+  getUserData: () => ipcRenderer.invoke('getUserData'),
+  logout: () => ipcRenderer.invoke('logout'),
+  getProducts: () => ipcRenderer.invoke('getProducts'),
+  createSale: (saleData: any) => ipcRenderer.invoke('createSale', saleData),
+  getReceipt: (saleId: string) => ipcRenderer.invoke('getReceipt', saleId),
+  printReceipt: (receiptData: any) => ipcRenderer.invoke('printReceipt', receiptData),
+  getOfflineSales: () => ipcRenderer.invoke('getOfflineSales'),
+  syncOfflineSales: () => ipcRenderer.invoke('syncOfflineSales'),
+  getSyncStatus: () => ipcRenderer.invoke('getSyncStatus'),
+  isOnline: () => navigator.onLine,
+});
