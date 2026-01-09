@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SyncStatus.css';
+import { showToast } from './Toast';
+import { handleError, handleNetworkOperation, AppError } from '../utils/error-handler';
 
 interface SyncStatusData {
   online: boolean;
@@ -37,28 +39,84 @@ const SyncStatus: React.FC = () => {
 
     setIsSyncing(true);
     try {
-      const response = await window.electronAPI.syncOfflineSales();
+      const response = await handleNetworkOperation(
+        () => window.electronAPI.syncOfflineSales(),
+        {
+          operation: 'syncOfflineSales',
+          component: 'SyncStatus',
+        },
+        {
+          maxRetries: 2,
+          showRetryToast: true,
+        }
+      );
+
       if (response.success) {
         console.log(`Synced ${response.syncedCount} sales`);
         if (response.errors && response.errors.length > 0) {
           console.warn('Sync errors:', response.errors);
           // Show detailed error messages to user
-          const errorMessages = response.errors.map((error: string, index: number) =>
+          const errorMessages = response.errors.slice(0, 3).map((error: string, index: number) =>
             `${index + 1}. ${error}`
           ).join('\n');
-          alert(`Sync completed with ${response.errors.length} errors:\n\n${errorMessages}`);
+          const moreErrors = response.errors.length > 3 ? `\n...and ${response.errors.length - 3} more errors` : '';
+          
+          handleError(
+            new AppError(
+              `Sync completed with ${response.errors.length} errors`,
+              'SYNC_PARTIAL',
+              {
+                operation: 'syncOfflineSales',
+                component: 'SyncStatus',
+                metadata: {
+                  syncedCount: response.syncedCount,
+                  errorCount: response.errors.length,
+                  errors: response.errors,
+                },
+              },
+              undefined,
+              'medium'
+            ),
+            {
+              operation: 'syncOfflineSales',
+              component: 'SyncStatus',
+            }
+          );
+          
+          showToast(
+            `Sync completed with ${response.errors.length} errors:\n${errorMessages}${moreErrors}`,
+            'warning',
+            8000
+          );
         } else {
-          alert(`Successfully synced ${response.syncedCount} sales!`);
+          showToast(`Successfully synced ${response.syncedCount} sales!`, 'success');
         }
         // Refresh status
         await updateSyncStatus();
       } else {
-        console.error('Sync failed:', response.error);
-        alert(`Sync failed: ${response.error}`);
+        handleError(
+          new AppError(response.error || 'Sync failed', 'SYNC_FAILED', {
+            operation: 'syncOfflineSales',
+            component: 'SyncStatus',
+          }),
+          {
+            operation: 'syncOfflineSales',
+            component: 'SyncStatus',
+          },
+          {
+            retryable: true,
+            maxRetries: 2,
+          }
+        );
       }
     } catch (error) {
-      console.error('Sync error:', error);
-      alert('An unexpected error occurred during sync. Please try again.');
+      handleError(error, {
+        operation: 'syncOfflineSales',
+        component: 'SyncStatus',
+      }, {
+        retryable: true,
+        maxRetries: 2,
+      });
     } finally {
       setIsSyncing(false);
     }

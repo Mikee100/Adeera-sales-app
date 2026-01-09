@@ -1,0 +1,140 @@
+.error-boundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 20px;
+}
+
+.error-boundary-content {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.error-boundary-content h2 {
+  color: #333;
+  margin-bottom: 12px;
+  font-size: 24px;
+}
+
+.error-boundary-content p {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.error-details {
+  margin: 20px 0;
+  text-align: left;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.error-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 12px;
+}
+
+.error-stack {
+  background: #2d2d2d;
+  color: #e0e0e0;
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.error-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.recover-btn,
+.reload-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.recover-btn {
+  background: #667eea;
+  color: white;
+}
+
+.recover-btn:hover {
+  background: #5568d3;
+  transform: scale(1.05);
+}
+
+.recover-btn:active {
+  transform: scale(0.95);
+}
+
+.reload-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.reload-btn:hover {
+  background: #5a6268;
+  transform: scale(1.05);
+}
+
+.reload-btn:active {
+  transform: scale(0.95);
+}
+
+/* Dark mode */
+[data-theme="dark"] .error-boundary {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .error-boundary-content {
+  background: #2d2d2d;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .error-boundary-content h2 {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .error-boundary-content p {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .error-details {
+  background: #333333;
+}
+
+[data-theme="dark"] .error-details summary {
+  color: #d0d0d0;
+}
+

@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import PrinterSettings from './PrinterSettings';
+import { showToast } from './Toast';
+import { PendingTransaction } from '../hooks/usePendingTransactions';
+import { validateStock, validatePrice } from '../utils/validation';
+import { useBarcodeScanner } from '../hooks/useBarcodeScanner';
+import '../pending-transactions.css';
+import '../barcode-scanner.css';
 
 interface Product {
   id: string;
@@ -32,6 +40,10 @@ interface ProductSelectionProps {
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveFromCart: (productId: string) => void;
   onProceedToCheckout: () => void;
+  onHoldTransaction?: () => void;
+  onResumeTransaction?: (transactionId: string) => void;
+  onDeletePendingTransaction?: (transactionId: string) => void;
+  pendingTransactions?: PendingTransaction[];
   getTotal: () => number;
   getVAT: () => number;
   getGrandTotal: () => number;
@@ -43,21 +55,80 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   onUpdateQuantity,
   onRemoveFromCart,
   onProceedToCheckout,
+  onHoldTransaction,
+  onResumeTransaction,
+  onDeletePendingTransaction,
+  pendingTransactions = [],
   getTotal,
   getVAT,
   getGrandTotal
 }) => {
   const { logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBranch, setSelectedBranch] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(false);
   const [selectedVariation, setSelectedVariation] = useState<{ [productId: string]: string }>({});
+  const [showPrinterSettings, setShowPrinterSettings] = useState(false);
+  const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
+  const [showBarcodeHelp, setShowBarcodeHelp] = useState(false);
+
+  // Barcode scanner hook
+  const { isScanning, lastScannedCode, clearScan } = useBarcodeScanner({
+    onScan: (barcode) => {
+      handleBarcodeScan(barcode);
+    },
+    minLength: 3,
+    maxLength: 50,
+    timeout: 100,
+    enabled: true,
+  });
 
   useEffect(() => {
     loadProducts();
   }, [selectedBranch]);
+
+  // Handle barcode scan
+  const handleBarcodeScan = (barcode: string) => {
+    setScannedBarcode(barcode);
+    // Auto-hide help when scanning
+    setShowBarcodeHelp(false);
+    
+    // Search for product by barcode/SKU
+    const foundProduct = products.find(
+      (product) =>
+        product.sku?.toLowerCase() === barcode.toLowerCase() ||
+        product.id === barcode ||
+        (product as any).barcode === barcode
+    );
+
+    if (foundProduct) {
+      // Check stock before adding
+      const existingCartItem = cart.find(item => item.product.id === foundProduct.id);
+      const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
+      
+      const stockValidation = validateStock(foundProduct, 1, currentCartQuantity);
+      if (stockValidation.isValid) {
+        // Add to cart
+        onAddToCart(foundProduct);
+        showToast(`Scanned: ${foundProduct.name}`, 'success', 2000);
+      } else {
+        showToast(`Cannot add ${foundProduct.name}: ${stockValidation.error}`, 'error');
+      }
+    } else {
+      // Product not found - update search term to help user find it
+      setSearchTerm(barcode);
+      showToast(`Barcode "${barcode}" not found. Showing search results.`, 'warning', 3000);
+    }
+
+    // Clear scanned barcode after a delay
+    setTimeout(() => {
+      setScannedBarcode(null);
+      clearScan();
+    }, 3000);
+  };
 
   const loadProducts = async () => {
     try {
@@ -86,11 +157,22 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   const filteredProducts = products.filter(product => {
     const nameMatch = product.name ? product.name.toLowerCase().includes(searchTerm.toLowerCase()) : false;
     const skuMatch = product.sku ? product.sku.toLowerCase().includes(searchTerm.toLowerCase()) : false;
+    // Also search by barcode if available
+    const barcodeMatch = (product as any).barcode 
+      ? (product as any).barcode.toLowerCase().includes(searchTerm.toLowerCase())
+      : false;
     const categoryMatch = selectedCategory === 'all' || product.category?.name === selectedCategory;
-    return (nameMatch || skuMatch) && categoryMatch;
+    return (nameMatch || skuMatch || barcodeMatch) && categoryMatch;
   });
 
   const handleAddToCart = (product: Product) => {
+    // Validate price before adding
+    const priceValidation = validatePrice(product.price);
+    if (!priceValidation.isValid) {
+      showToast(`Cannot add ${product.name}: ${priceValidation.error}`, 'error');
+      return;
+    }
+
     if (product.hasVariations && product.variations && product.variations.length > 0) {
       // If product has variations, show variation selector
       const selectedVariationId = selectedVariation[product.id];
@@ -105,13 +187,38 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             stock: variation.stock,
             variationAttributes: variation.attributes
           };
+
+          // Validate variation price and stock
+          const variationPriceValidation = validatePrice(variationProduct.price);
+          if (!variationPriceValidation.isValid) {
+            showToast(`Cannot add ${product.name}: ${variationPriceValidation.error}`, 'error');
+            return;
+          }
+
+          const existingCartItem = cart.find(item => item.product.id === variationProduct.id);
+          const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
+          const stockValidation = validateStock(variationProduct, 1, currentCartQuantity);
+          if (!stockValidation.isValid) {
+            showToast(stockValidation.error || 'Insufficient stock', 'error');
+            return;
+          }
+
           onAddToCart(variationProduct);
         }
       } else {
-        // Show variation selector modal or alert
-        alert('Please select a variation first');
+        // Show variation selector modal or toast
+        showToast('Please select a variation first', 'warning');
       }
     } else {
+      // Validate stock before adding
+      const existingCartItem = cart.find(item => item.product.id === product.id);
+      const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
+      const stockValidation = validateStock(product, 1, currentCartQuantity);
+      if (!stockValidation.isValid) {
+        showToast(stockValidation.error || 'Insufficient stock', 'error');
+        return;
+      }
+
       onAddToCart(product);
     }
   };
@@ -120,6 +227,19 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     <div className="pos-container">
       <div className="pos-header">
         <h1>🛍️ SaaS POS - Product Selection</h1>
+        <div className="header-indicators">
+          {isScanning && (
+            <div className="barcode-scanning-indicator">
+              <div className="scanning-pulse"></div>
+              <span>Scanning...</span>
+            </div>
+          )}
+          {scannedBarcode && !isScanning && (
+            <div className="barcode-scanned-indicator">
+              <span>✓ Scanned: {scannedBarcode}</span>
+            </div>
+          )}
+        </div>
         <div className="header-controls">
           <select
             value={selectedBranch}
@@ -130,20 +250,70 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             <option value="branch1">Main Branch</option>
             <option value="branch2">Downtown Branch</option>
           </select>
+          <button 
+            className="theme-toggle-btn" 
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+          <button 
+            className="settings-btn" 
+            onClick={() => setShowPrinterSettings(!showPrinterSettings)}
+            title="Printer Settings"
+          >
+            ⚙️ Settings
+          </button>
           <button className="logout-btn" onClick={logout}>Logout</button>
         </div>
       </div>
 
+      {showPrinterSettings && (
+        <div className="printer-settings-modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Printer Settings</h2>
+              <button className="close-btn" onClick={() => setShowPrinterSettings(false)}>×</button>
+            </div>
+            <PrinterSettings />
+          </div>
+        </div>
+      )}
+
       <div className="pos-content">
         <div className="products-section">
           <div className="search-bar">
-            <input
-              type="text"
-              placeholder="🔍 Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
+            <div className="search-input-wrapper">
+              <input
+                type="text"
+                placeholder="🔍 Search products or scan barcode..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => {
+                  // Clear barcode scan when user starts typing manually
+                  if (scannedBarcode) {
+                    clearScan();
+                    setScannedBarcode(null);
+                  }
+                }}
+                className="search-input"
+                autoFocus={false}
+              />
+              {isScanning && (
+                <div className="barcode-scanner-icon" title="Barcode scanner active">
+                  <div className="scanner-pulse-dot"></div>
+                </div>
+              )}
+              {!isScanning && !showBarcodeHelp && (
+                <button
+                  className="barcode-help-toggle"
+                  onClick={() => setShowBarcodeHelp(true)}
+                  title="Show barcode scanner help"
+                >
+                  📷
+                </button>
+              )}
+            </div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -156,6 +326,43 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               ))}
             </select>
           </div>
+
+          {/* Barcode Scanner Help - Collapsible */}
+          {showBarcodeHelp && (
+            <div className="barcode-scanner-help">
+              <div className="barcode-help-header">
+                <div className="barcode-help-title">
+                  <span className="scanner-icon">📷</span>
+                  <span>Barcode Scanner Ready</span>
+                </div>
+                <button
+                  className="barcode-help-close"
+                  onClick={() => setShowBarcodeHelp(false)}
+                  title="Hide help"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="barcode-help-content">
+                <div className="help-item">
+                  <span className="help-icon">🎯</span>
+                  <span>Point scanner at product barcode</span>
+                </div>
+                <div className="help-item">
+                  <span className="help-icon">✅</span>
+                  <span>Product auto-added to cart</span>
+                </div>
+                <div className="help-item">
+                  <span className="help-icon">🔍</span>
+                  <span>Not found? Search results shown</span>
+                </div>
+                <div className="help-item">
+                  <span className="help-icon">⌨️</span>
+                  <span>Press ESC to cancel scanning</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="products-grid">
             {loading ? (
@@ -182,6 +389,9 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                   <div className="product-info">
                     <h3>{product.name || 'Unnamed Product'}</h3>
                     <p className="sku">SKU: {product.sku || 'N/A'}</p>
+                    {(product as any).barcode && (
+                      <p className="barcode">Barcode: {(product as any).barcode}</p>
+                    )}
                     <p className="price">${product.price?.toFixed(2) || '0.00'}</p>
                     <p className="stock">Stock: {product.stock || 0}</p>
                     {product.hasVariations && product.variations && product.variations.length > 0 && (
@@ -223,6 +433,17 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             ) : (
               cart.map(item => (
                 <div key={item.product.id} className="cart-item">
+                  {item.product.images && item.product.images.length > 0 && (
+                    <div className="cart-item-image">
+                      <img
+                        src={item.product.images[0]}
+                        alt={item.product.name || 'Product'}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className="item-info">
                     <h4>{item.product.name || 'Unnamed Product'}</h4>
                     <p className="sku">SKU: {item.product.sku || 'N/A'}</p>
@@ -231,25 +452,60 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                         Variation: {Object.entries((item.product as any).variationAttributes).map(([key, value]) => `${key}: ${value}`).join(', ')}
                       </p>
                     )}
-                    <p>${item.product.price?.toFixed(2) || '0.00'} each</p>
+                    <p className="item-price">${item.product.price?.toFixed(2) || '0.00'} each</p>
                   </div>
                   <div className="item-controls">
-                    <button
-                      onClick={() => onUpdateQuantity(item.product.id, item.quantity - 1)}
-                      className="quantity-btn"
-                    >
-                      -
-                    </button>
-                    <span className="quantity">{item.quantity}</span>
-                    <button
-                      onClick={() => onUpdateQuantity(item.product.id, item.quantity + 1)}
-                      className="quantity-btn"
-                    >
-                      +
-                    </button>
+                    <div className="quick-quantity-buttons">
+                      <button
+                        onClick={() => onUpdateQuantity(item.product.id, 1)}
+                        className="quick-qty-btn"
+                        title="Set quantity to 1"
+                      >
+                        1
+                      </button>
+                      <button
+                        onClick={() => onUpdateQuantity(item.product.id, 2)}
+                        className="quick-qty-btn"
+                        title="Set quantity to 2"
+                      >
+                        2
+                      </button>
+                      <button
+                        onClick={() => onUpdateQuantity(item.product.id, 5)}
+                        className="quick-qty-btn"
+                        title="Set quantity to 5"
+                      >
+                        5
+                      </button>
+                      <button
+                        onClick={() => onUpdateQuantity(item.product.id, 10)}
+                        className="quick-qty-btn"
+                        title="Set quantity to 10"
+                      >
+                        10
+                      </button>
+                    </div>
+                    <div className="quantity-controls">
+                      <button
+                        onClick={() => onUpdateQuantity(item.product.id, item.quantity - 1)}
+                        className="quantity-btn"
+                        title="Decrease quantity"
+                      >
+                        -
+                      </button>
+                      <span className="quantity">{item.quantity}</span>
+                      <button
+                        onClick={() => onUpdateQuantity(item.product.id, item.quantity + 1)}
+                        className="quantity-btn"
+                        title="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
                     <button
                       onClick={() => onRemoveFromCart(item.product.id)}
                       className="remove-btn"
+                      title="Remove from cart"
                     >
                       ×
                     </button>
@@ -278,6 +534,15 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
           </div>
 
           <div className="checkout-section">
+            {cart.length > 0 && onHoldTransaction && (
+              <button
+                onClick={onHoldTransaction}
+                className="checkout-btn hold"
+                title="Hold this transaction and start a new one"
+              >
+                ⏸️ Hold Transaction
+              </button>
+            )}
             <button
               onClick={onProceedToCheckout}
               className="checkout-btn proceed"
@@ -286,6 +551,66 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               Proceed to Checkout
             </button>
           </div>
+
+          {/* Pending Transactions Panel */}
+          {pendingTransactions && pendingTransactions.length > 0 && (
+            <div className="pending-transactions-panel">
+              <h3 className="pending-header">
+                ⏸️ Pending Transactions ({pendingTransactions.length})
+              </h3>
+              <div className="pending-transactions-list">
+                {pendingTransactions.map(transaction => {
+                  const transactionTotal = transaction.cart.reduce(
+                    (sum, item) => sum + (item.product.price * item.quantity), 0
+                  );
+                  const transactionDate = new Date(transaction.timestamp);
+                  
+                  return (
+                    <div key={transaction.id} className="pending-transaction-item">
+                      <div className="pending-transaction-info">
+                        <div className="pending-transaction-header">
+                          <span className="pending-time">
+                            {transactionDate.toLocaleTimeString()}
+                          </span>
+                          <span className="pending-items">
+                            {transaction.cart.length} item{transaction.cart.length !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                        {transaction.customerName && (
+                          <div className="pending-customer">
+                            👤 {transaction.customerName}
+                          </div>
+                        )}
+                        <div className="pending-total">
+                          Total: ${transactionTotal.toFixed(2)}
+                        </div>
+                      </div>
+                      <div className="pending-transaction-actions">
+                        {onResumeTransaction && (
+                          <button
+                            onClick={() => onResumeTransaction(transaction.id)}
+                            className="resume-btn"
+                            title="Resume this transaction"
+                          >
+                            ▶️ Resume
+                          </button>
+                        )}
+                        {onDeletePendingTransaction && (
+                          <button
+                            onClick={() => onDeletePendingTransaction(transaction.id)}
+                            className="delete-pending-btn"
+                            title="Delete this pending transaction"
+                          >
+                            🗑️
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

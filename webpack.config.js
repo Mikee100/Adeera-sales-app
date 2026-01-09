@@ -104,7 +104,8 @@ module.exports = (env, argv) => {
         }),
       ],
       devServer: {
-        port: 8080,
+        host: '127.0.0.1',
+        port: 3000,
         hot: false,
         liveReload: false,
         client: false,

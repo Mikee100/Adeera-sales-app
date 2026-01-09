@@ -1,5 +1,6 @@
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import * as pako from 'pako';
+import { logger } from './logger';
 
 interface CacheEntry {
   data: any;
@@ -16,8 +17,23 @@ interface CacheOptions {
   enableCompression: boolean;
 }
 
+interface CacheMetrics {
+  totalRequests: number;
+  hits: number;
+  misses: number;
+  sets: number;
+  deletes: number;
+  compressed: number;
+  decompressed: number;
+  averageAccessTime: number;
+  memoryUsage: number;
+  diskUsage: number;
+  hitRate: number;
+  compressionRatio: number;
+}
+
 class EnhancedCacheService {
-  private memoryCache: LRU<string, CacheEntry>;
+  private memoryCache: LRUCache<string, CacheEntry>;
   private diskCache: Map<string, CacheEntry> = new Map();
   private options: CacheOptions;
   private stats = {
@@ -27,6 +43,9 @@ class EnhancedCacheService {
     deletes: 0,
     compressed: 0,
     decompressed: 0,
+    totalRequests: 0,
+    accessTimes: [] as number[],
+    lastCleanup: Date.now(),
   };
 
   constructor(options: Partial<CacheOptions> = {}) {
@@ -38,11 +57,11 @@ class EnhancedCacheService {
       ...options,
     };
 
-    this.memoryCache = new LRU({
+    this.memoryCache = new LRUCache<string, CacheEntry>({
       max: this.options.maxSize,
       ttl: this.options.ttl,
-      sizeCalculation: (value: CacheEntry) => value.size,
-      dispose: (key: string, value: CacheEntry) => {
+      sizeCalculation: (value: CacheEntry, key: string) => value.size,
+      dispose: (value: CacheEntry, key: string) => {
         // Move to disk cache if still valid
         if (this.shouldKeepInDisk(value)) {
           this.diskCache.set(key, value);
@@ -62,9 +81,9 @@ class EnhancedCacheService {
     try {
       // In a real implementation, this would load from persistent storage
       // For now, we'll start with an empty disk cache
-      console.log('🗄️ Disk cache initialized');
+      logger.info('Disk cache initialized', { component: 'cache' });
     } catch (error) {
-      console.warn('Failed to load disk cache:', error);
+      logger.error('Failed to load disk cache', { component: 'cache', error: error as Error });
     }
   }
 
@@ -184,18 +203,17 @@ class EnhancedCacheService {
 
   // Usage-based cache warming
   async warmCache(keys: string[]): Promise<void> {
-    console.log(`🔥 Warming cache for ${keys.length} keys`);
+    logger.info(`Warming cache for ${keys.length} keys`, { component: 'cache', keysCount: keys.length });
     for (const key of keys) {
       // Prefetch data in background
-      this.get(key).catch(() => {
-        // Ignore errors during warming
+      this.get(key).catch((error) => {
+        logger.debug(`Failed to warm cache for key: ${key}`, { component: 'cache', key, error });
       });
     }
   }
 
   // Get cache statistics
   getStats() {
-    const memoryStats = this.memoryCache.stats();
     return {
       ...this.stats,
       memory: {
@@ -218,6 +236,116 @@ class EnhancedCacheService {
       deletes: 0,
       compressed: 0,
       decompressed: 0,
+      totalRequests: 0,
+      accessTimes: [],
+      lastCleanup: Date.now(),
+    };
+  }
+
+  // Enhanced metrics and monitoring
+  getMetrics(): CacheMetrics {
+    const totalRequests = this.stats.hits + this.stats.misses;
+    const hitRate = totalRequests > 0 ? this.stats.hits / totalRequests : 0;
+    const averageAccessTime = this.stats.accessTimes.length > 0
+      ? this.stats.accessTimes.reduce((a, b) => a + b, 0) / this.stats.accessTimes.length
+      : 0;
+
+    // Calculate compression ratio (original size / compressed size)
+    const compressionRatio = this.stats.compressed > 0
+      ? (this.stats.compressed / Math.max(this.stats.decompressed, 1))
+      : 1;
+
+    return {
+      totalRequests,
+      hits: this.stats.hits,
+      misses: this.stats.misses,
+      sets: this.stats.sets,
+      deletes: this.stats.deletes,
+      compressed: this.stats.compressed,
+      decompressed: this.stats.decompressed,
+      averageAccessTime,
+      memoryUsage: this.memoryCache.size,
+      diskUsage: this.diskCache.size,
+      hitRate,
+      compressionRatio,
+    };
+  }
+
+  // Performance monitoring
+  async getWithTiming(key: string): Promise<{ data: any | null; timing: number }> {
+    const startTime = performance.now();
+    const data = await this.get(key);
+    const timing = performance.now() - startTime;
+
+    // Track access time for metrics
+    this.stats.accessTimes.push(timing);
+    if (this.stats.accessTimes.length > 1000) {
+      this.stats.accessTimes = this.stats.accessTimes.slice(-500); // Keep last 500
+    }
+
+    return { data, timing };
+  }
+
+  // Cache health check
+  async healthCheck(): Promise<{
+    healthy: boolean;
+    issues: string[];
+    recommendations: string[];
+  }> {
+    const issues: string[] = [];
+    const recommendations: string[] = [];
+    const metrics = this.getMetrics();
+
+    // Check hit rate
+    if (metrics.hitRate < 0.5) {
+      issues.push(`Low cache hit rate: ${(metrics.hitRate * 100).toFixed(1)}%`);
+      recommendations.push('Consider increasing cache TTL or pre-warming frequently accessed data');
+    }
+
+    // Check memory usage
+    const memoryUsagePercent = (metrics.memoryUsage / this.options.maxSize) * 100;
+    if (memoryUsagePercent > 90) {
+      issues.push(`High memory usage: ${memoryUsagePercent.toFixed(1)}%`);
+      recommendations.push('Consider increasing maxSize or implementing more aggressive cleanup');
+    }
+
+    // Check for old data
+    const now = Date.now();
+    if (now - this.stats.lastCleanup > 24 * 60 * 60 * 1000) { // 24 hours
+      issues.push('Cache cleanup overdue');
+      recommendations.push('Run cleanup to remove expired entries');
+    }
+
+    // Log health check results
+    logger.info('Cache health check completed', {
+      component: 'cache',
+      healthy: issues.length === 0,
+      hitRate: metrics.hitRate,
+      memoryUsagePercent,
+      issuesCount: issues.length
+    });
+
+    return {
+      healthy: issues.length === 0,
+      issues,
+      recommendations,
+    };
+  }
+
+  // Export metrics for external monitoring
+  exportMetrics(): Record<string, any> {
+    const metrics = this.getMetrics();
+    return {
+      cache: {
+        hits: metrics.hits,
+        misses: metrics.misses,
+        hitRate: metrics.hitRate,
+        memoryUsage: metrics.memoryUsage,
+        diskUsage: metrics.diskUsage,
+        compressionRatio: metrics.compressionRatio,
+        averageAccessTime: metrics.averageAccessTime,
+      },
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -234,9 +362,13 @@ class EnhancedCacheService {
     }
 
     expiredKeys.forEach(key => this.diskCache.delete(key));
+    this.stats.lastCleanup = now;
 
     if (expiredKeys.length > 0) {
-      console.log(`🧹 Cleaned up ${expiredKeys.length} expired cache entries`);
+      logger.info(`Cleaned up ${expiredKeys.length} expired cache entries`, {
+        component: 'cache',
+        expiredCount: expiredKeys.length
+      });
     }
   }
 }

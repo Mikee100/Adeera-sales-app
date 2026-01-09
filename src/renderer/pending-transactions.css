@@ -1,0 +1,203 @@
+/* Pending Transactions Styles */
+.pending-transactions-panel {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e1e5e9;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.pending-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pending-transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pending-transaction-item {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.pending-transaction-item:hover {
+  border-color: #667eea;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
+}
+
+.pending-transaction-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pending-transaction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.pending-time {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.pending-items {
+  font-size: 12px;
+  color: #666;
+  background: #e9ecef;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.pending-customer {
+  font-size: 13px;
+  color: #495057;
+  margin-bottom: 4px;
+}
+
+.pending-total {
+  font-size: 14px;
+  font-weight: 600;
+  color: #28a745;
+  margin-top: 4px;
+}
+
+.pending-transaction-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.resume-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-height: 36px;
+  touch-action: manipulation;
+}
+
+.resume-btn:hover {
+  background: #5568d3;
+  transform: scale(1.05);
+}
+
+.resume-btn:active {
+  transform: scale(0.95);
+}
+
+.delete-pending-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+.delete-pending-btn:hover {
+  background: #c82333;
+  transform: scale(1.05);
+}
+
+.delete-pending-btn:active {
+  transform: scale(0.95);
+}
+
+.checkout-btn.hold {
+  background: #ffc107;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.checkout-btn.hold:hover:not(:disabled) {
+  background: #e0a800;
+}
+
+.checkout-btn.hold:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Dark mode support */
+[data-theme="dark"] .pending-transactions-panel {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+[data-theme="dark"] .pending-header {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .pending-transaction-item {
+  background: #333333;
+  border-color: #404040;
+}
+
+[data-theme="dark"] .pending-transaction-item:hover {
+  border-color: #667eea;
+  background: #3a3a3a;
+}
+
+[data-theme="dark"] .pending-time,
+[data-theme="dark"] .pending-items {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .pending-items {
+  background: #404040;
+}
+
+[data-theme="dark"] .pending-customer {
+  color: #d0d0d0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pending-transaction-item {
+    flex-direction: column;
+  }
+
+  .pending-transaction-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .resume-btn,
+  .delete-pending-btn {
+    flex: 1;
+  }
+}
+

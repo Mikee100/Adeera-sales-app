@@ -1,0 +1,243 @@
+/* Dark Mode Styles */
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="dark"] body {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .pos-container {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .pos-header {
+  background: #2d2d2d;
+  border-bottom-color: #404040;
+}
+
+[data-theme="dark"] .pos-header h1 {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .products-section,
+[data-theme="dark"] .cart-section {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+[data-theme="dark"] .product-card {
+  background: #333333;
+  border-color: #404040;
+}
+
+[data-theme="dark"] .product-card:hover {
+  background: #3a3a3a;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .product-info h3 {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .product-info .sku,
+[data-theme="dark"] .product-info .stock {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .search-input,
+[data-theme="dark"] .category-select,
+[data-theme="dark"] .branch-select {
+  background: #333333;
+  border-color: #404040;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .search-input:focus,
+[data-theme="dark"] .category-select:focus,
+[data-theme="dark"] .branch-select:focus {
+  border-color: #667eea;
+  background: #3a3a3a;
+}
+
+[data-theme="dark"] .cart-item {
+  border-bottom-color: #404040;
+}
+
+[data-theme="dark"] .item-info h4 {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .item-info p {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .quantity-btn {
+  background: #404040;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .quantity-btn:hover {
+  background: #4a4a4a;
+}
+
+[data-theme="dark"] .quick-qty-btn {
+  background: #333333;
+  border-color: #404040;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .quick-qty-btn:hover {
+  background: #404040;
+  border-color: #667eea;
+}
+
+[data-theme="dark"] .cart-summary {
+  border-top-color: #404040;
+}
+
+[data-theme="dark"] .summary-row {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .checkout-btn {
+  background: #667eea;
+}
+
+[data-theme="dark"] .checkout-btn:hover:not(:disabled) {
+  background: #5568d3;
+}
+
+[data-theme="dark"] .logout-btn {
+  background: #c82333;
+}
+
+[data-theme="dark"] .logout-btn:hover {
+  background: #a01e2a;
+}
+
+[data-theme="dark"] .settings-btn,
+[data-theme="dark"] .theme-toggle-btn {
+  background: #404040;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .settings-btn:hover,
+[data-theme="dark"] .theme-toggle-btn:hover {
+  background: #4a4a4a;
+}
+
+/* Responsive Layout Improvements */
+@media (max-width: 1024px) {
+  .pos-content {
+    flex-direction: column;
+  }
+
+  .products-section,
+  .cart-section {
+    margin: 12px;
+    flex: none;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pos-header {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .pos-header h1 {
+    font-size: 20px;
+  }
+
+  .header-controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+  }
+
+  .product-card {
+    padding: 12px;
+  }
+
+  .cart-item {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .item-controls {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-right: 0;
+  }
+
+  .quick-quantity-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .quantity-controls {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .pos-header h1 {
+    font-size: 18px;
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-item-image {
+    width: 50px;
+    height: 50px;
+  }
+
+  .quick-qty-btn {
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .quantity-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .add-to-cart-btn,
+  .checkout-btn,
+  .quantity-btn,
+  .quick-qty-btn,
+  .remove-btn {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .product-card {
+    padding: 20px;
+  }
+
+  .cart-item {
+    padding: 20px 0;
+  }
+}
+

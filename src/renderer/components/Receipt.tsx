@@ -95,6 +95,19 @@ const Receipt: React.FC<ReceiptProps> = ({
           <button onClick={onNewSale} className="new-sale-btn">
             <span>🛒</span> New Sale
           </button>
+          <button 
+            onClick={async () => {
+              try {
+                await (window as any).electronAPI.openCashDrawer();
+              } catch (error) {
+                console.error('Failed to open cash drawer:', error);
+              }
+            }} 
+            className="cash-drawer-btn"
+            title="Open Cash Drawer"
+          >
+            <span>💰</span> Open Drawer
+          </button>
           <button onClick={onPrint} disabled={printing} className="print-btn">
             {printing ? (
               <>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../checkout.css';
+import { validatePaymentAmount, validatePhoneNumber, validateCustomerName } from '../utils/validation';
+import { auditLogger, AuditEventType } from '../utils/audit-logger';
 
 interface Product {
   id: string;
@@ -46,6 +48,16 @@ const Checkout: React.FC<CheckoutProps> = ({
   onBackToProducts,
   loading
 }) => {
+  // Get user info for audit logging (if available)
+  const getUserInfo = async () => {
+    try {
+      const userData = await (window as any).electronAPI?.getUserData?.();
+      return userData || null;
+    } catch {
+      return null;
+    }
+  };
+
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'mpesa'>('cash');
   const [amountReceived, setAmountReceived] = useState<string>('');
   const [customerName, setCustomerName] = useState('');
@@ -67,15 +79,50 @@ const Checkout: React.FC<CheckoutProps> = ({
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
+    // Validate payment amount
     if (paymentMethod === 'cash') {
       const received = parseFloat(amountReceived);
-      if (!amountReceived || isNaN(received) || received < total) {
-        newErrors.amountReceived = `Amount must be at least $${total.toFixed(2)}`;
+      if (!amountReceived || isNaN(received)) {
+        newErrors.amountReceived = 'Please enter a valid amount';
+      } else {
+        const paymentValidation = validatePaymentAmount(received, total, paymentMethod);
+        if (!paymentValidation.isValid) {
+          newErrors.amountReceived = paymentValidation.error || `Amount must be at least $${total.toFixed(2)}`;
+        }
       }
     }
 
-    if (customerPhone && !/^\+?[\d\s\-\(\)]+$/.test(customerPhone)) {
-      newErrors.customerPhone = 'Please enter a valid phone number';
+    // Validate phone number
+    if (customerPhone) {
+      const phoneValidation = validatePhoneNumber(customerPhone);
+      if (!phoneValidation.isValid) {
+        newErrors.customerPhone = phoneValidation.error || 'Please enter a valid phone number';
+      }
+    }
+
+    // Validate customer name
+    if (customerName) {
+      const nameValidation = validateCustomerName(customerName);
+      if (!nameValidation.isValid) {
+        newErrors.customerName = nameValidation.error || 'Please enter a valid customer name';
+      }
+    }
+
+    // Log validation failures for audit (async)
+    if (Object.keys(newErrors).length > 0) {
+      getUserInfo().then(userInfo => {
+        auditLogger.log(
+          AuditEventType.DATA_VALIDATION_FAILED,
+          {
+            errors: newErrors,
+            paymentMethod,
+            totalAmount: total,
+          },
+          'medium',
+          userInfo?.id,
+          userInfo?.name
+        );
+      });
     }
 
     setErrors(newErrors);

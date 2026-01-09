@@ -2,6 +2,9 @@ import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 import * as path from 'path';
 import ElectronStore from 'electron-store';
 import axios from 'axios';
+import { logger } from '../shared/logger';
+import { cacheService } from '../shared/cache-service';
+import { printerService } from './printer-service';
 
 interface Credentials {
   email: string;
@@ -46,7 +49,7 @@ const createWindow = (): void => {
   // Load the index.html of the app.
   // For development, load from webpack dev server if available
   if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:8080');
+    mainWindow.loadURL('http://localhost:3000');
   } else {
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
   }
@@ -101,46 +104,46 @@ const isOnline = (): boolean => {
 ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Credentials) => {
   const store = new ElectronStore();
 
-  console.log('🔐 Authentication attempt:', { email: credentials.email });
+  logger.info('Authentication attempt', { component: 'auth', email: credentials.email });
 
   // Check online status
   let online = false;
   try {
-    console.log('🌐 Checking backend health...');
+    logger.debug('Checking backend health', { component: 'auth' });
     // Use the root endpoint to check if backend is online (it's public)
     await axios.get('http://127.0.0.1:9000/', { timeout: 5000 });
     online = true;
-    console.log('✅ Backend is online');
+    logger.info('Backend is online', { component: 'auth' });
   } catch (error: any) {
     online = false;
-    console.log('❌ Backend is offline:', error.message);
+    logger.warn('Backend is offline', { component: 'auth', error: error.message });
   }
 
   if (online) {
     // Online mode: authenticate against backend API
     try {
-      console.log('📡 Sending login request to backend...');
+      logger.debug('Sending login request to backend', { component: 'auth' });
       const response = await axios.post('http://127.0.0.1:9000/auth/login', credentials);
-      console.log('📨 Backend response:', response.status, response.data);
+      logger.debug('Backend response received', { component: 'auth', status: response.status });
 
       if (response.data.access_token && response.data.user) {
-        console.log('✅ Login successful, caching data...');
+        logger.info('Login successful, caching data', { component: 'auth' });
         // Cache token and user data locally
         store.set('authToken', response.data.access_token);
         store.set('user', response.data.user);
-        console.log('💾 Data cached successfully');
+        logger.debug('Data cached successfully', { component: 'auth' });
         return { success: true, token: response.data.access_token, user: response.data.user };
       } else {
-        console.log('❌ Login failed: Invalid response format');
+        logger.warn('Login failed: Invalid response format', { component: 'auth' });
         return { success: false, error: 'Authentication failed' };
       }
     } catch (error: any) {
-      console.log('❌ Login error:', error.response?.status, error.response?.data || error.message);
+      logger.error('Login error', { component: 'auth', status: error.response?.status, error: error.response?.data || error.message });
       const errorMessage = error.response?.data?.message || error.message || 'Authentication error';
       return { success: false, error: errorMessage };
     }
   } else {
-    console.log('🔄 Backend offline, checking cached credentials...');
+    logger.info('Backend offline, checking cached credentials', { component: 'auth' });
     // Offline mode: check cached user data
     const cachedUser = store.get('user') as User | undefined;
     const cachedToken = store.get('authToken') as string | undefined;
@@ -148,15 +151,15 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
     if (cachedUser && cachedToken) {
       // Optionally, verify credentials match cached user email
       if (credentials.email === cachedUser.email) {
-        console.log('✅ Offline login successful');
+        logger.info('Offline login successful', { component: 'auth' });
         // Allow offline login without password verification
         return { success: true, token: cachedToken, user: cachedUser };
       } else {
-        console.log('❌ Offline login failed: email mismatch');
+        logger.warn('Offline login failed: email mismatch', { component: 'auth' });
         return { success: false, error: 'Offline login failed: user not found' };
       }
     } else {
-      console.log('❌ Offline login failed: no cached session');
+      logger.warn('Offline login failed: no cached session', { component: 'auth' });
       return { success: false, error: 'Offline login failed: no cached session' };
     }
   }
@@ -177,7 +180,7 @@ ipcMain.handle('logout', () => {
   store.delete('authToken');
   store.delete('user');
   store.delete('cachedProducts'); // Clear cached products on logout
-  console.log('🚪 User logged out, cleared all cached data');
+  logger.info('User logged out, cleared all cached data', { component: 'auth' });
   return { success: true };
 });
 
@@ -188,17 +191,20 @@ ipcMain.handle('getProducts', async () => {
     // Get stored JWT token
     const token = store.get('authToken') as string;
     if (!token) {
-      console.log('❌ No authentication token found');
+      logger.warn('No authentication token found', { component: 'products' });
       // Return cached products if available
       const cachedProducts = store.get('cachedProducts') as any[];
-      if (cachedProducts) {
-        console.log(`📦 Returning ${cachedProducts.length} cached products (no token)`);
+      if (cachedProducts && Array.isArray(cachedProducts)) {
+        logger.info(`Returning ${cachedProducts.length} cached products (no token)`, { component: 'products' });
         return { success: true, products: cachedProducts };
+      } else if (cachedProducts) {
+        logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
+        store.delete('cachedProducts');
       }
       return { success: false, error: 'No authentication token found' };
     }
 
-    console.log('📦 Fetching products from backend...');
+    logger.info('Fetching products from backend', { component: 'products' });
 
     // Check online status first
     let online = false;
@@ -212,7 +218,8 @@ ipcMain.handle('getProducts', async () => {
     if (online) {
       // Online mode: fetch from backend and cache
       try {
-        const response = await axios.get('http://127.0.0.1:9000/products', {
+        // Fetch products with pagination - use a high limit to get all products
+        const response = await axios.get('http://127.0.0.1:9000/products?page=1&limit=1000', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -220,10 +227,30 @@ ipcMain.handle('getProducts', async () => {
           timeout: 10000, // 10 second timeout
         });
 
-        console.log(`📦 Received ${response.data.length} products from backend`);
+        // Backend now returns { products: [...], pagination: {...} }
+        const responseData = response.data;
+        
+        // Handle both old format (array) and new format (object with products property)
+        let productsArray: any[] = [];
+        if (Array.isArray(responseData)) {
+          productsArray = responseData;
+        } else if (responseData && typeof responseData === 'object' && responseData.products) {
+          productsArray = Array.isArray(responseData.products) ? responseData.products : [];
+        } else {
+          logger.warn('Unexpected response format from backend', { component: 'products', responseData: typeof responseData });
+          productsArray = [];
+        }
+
+        logger.info(`Received ${productsArray.length} products from backend`, { component: 'products' });
+
+        // Ensure productsArray is actually an array before mapping
+        if (!Array.isArray(productsArray)) {
+          logger.error('productsArray is not an array', { component: 'products', type: typeof productsArray, value: productsArray });
+          productsArray = [];
+        }
 
         // Transform product data to match frontend expectations
-        const products = response.data.map((product: any) => ({
+        const products = productsArray.map((product: any) => ({
           id: product.id,
           name: product.name,
           sku: product.sku,
@@ -239,39 +266,48 @@ ipcMain.handle('getProducts', async () => {
 
         // Cache the products locally
         store.set('cachedProducts', products);
-        console.log('💾 Products cached successfully');
+        logger.debug('Products cached successfully', { component: 'products' });
 
         return { success: true, products };
       } catch (error: any) {
-        console.error('❌ Error fetching products from backend:', error.response?.status, error.response?.data || error.message);
+        logger.error('Error fetching products from backend', { component: 'products', status: error.response?.status, error: error.response?.data || error.message });
         // Fall back to cached products
         const cachedProducts = store.get('cachedProducts') as any[];
-        if (cachedProducts) {
-          console.log(`📦 Returning ${cachedProducts.length} cached products (backend error)`);
+        if (cachedProducts && Array.isArray(cachedProducts)) {
+          logger.info(`Returning ${cachedProducts.length} cached products (backend error)`, { component: 'products' });
           return { success: true, products: cachedProducts };
+        } else if (cachedProducts) {
+          logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
+          store.delete('cachedProducts');
         }
         throw error; // Re-throw if no cache available
       }
     } else {
       // Offline mode: return cached products
-      console.log('🔄 Backend offline, using cached products');
+      logger.info('Backend offline, using cached products', { component: 'products' });
       const cachedProducts = store.get('cachedProducts') as any[];
-      if (cachedProducts) {
-        console.log(`📦 Returning ${cachedProducts.length} cached products (offline mode)`);
+      if (cachedProducts && Array.isArray(cachedProducts)) {
+        logger.info(`Returning ${cachedProducts.length} cached products (offline mode)`, { component: 'products' });
         return { success: true, products: cachedProducts };
+      } else if (cachedProducts) {
+        logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
+        store.delete('cachedProducts');
       } else {
-        console.log('❌ No cached products available in offline mode');
+        logger.warn('No cached products available in offline mode', { component: 'products' });
         return { success: false, error: 'No cached products available. Please connect to the internet and try again.' };
       }
     }
   } catch (error: any) {
-    console.error('❌ Error in getProducts:', error.message);
+    logger.error('Error in getProducts', { component: 'products', error: error.message });
 
     // Final fallback: try to return cached products
     const cachedProducts = store.get('cachedProducts') as any[];
-    if (cachedProducts) {
-      console.log(`📦 Returning ${cachedProducts.length} cached products (final fallback)`);
+    if (cachedProducts && Array.isArray(cachedProducts)) {
+      logger.info(`Returning ${cachedProducts.length} cached products (final fallback)`, { component: 'products' });
       return { success: true, products: cachedProducts };
+    } else if (cachedProducts) {
+      logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
+      store.delete('cachedProducts');
     }
 
     const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch products';
@@ -286,11 +322,11 @@ ipcMain.handle('createSale', async (event, saleData) => {
     // Get stored JWT token
     const token = store.get('authToken') as string;
     if (!token) {
-      console.log('❌ No authentication token found for sale creation');
+      logger.warn('No authentication token found for sale creation', { component: 'sales' });
       return { success: false, error: 'No authentication token found' };
     }
 
-    console.log('💰 Creating sale:', { items: saleData.items.length, paymentMethod: saleData.paymentMethod });
+    logger.info('Creating sale', { component: 'sales', items: saleData.items.length, paymentMethod: saleData.paymentMethod });
 
     // Check online status
     let online = false;
@@ -312,7 +348,7 @@ ipcMain.handle('createSale', async (event, saleData) => {
           timeout: 15000, // 15 second timeout for sale creation
         });
 
-        console.log('✅ Sale created successfully:', response.data.data.saleId);
+        logger.info('Sale created successfully', { component: 'sales', saleId: response.data.data.saleId });
 
         // Update cached products after sale (reduce stock)
         const cachedProducts = store.get('cachedProducts') as any[];
@@ -325,7 +361,18 @@ ipcMain.handle('createSale', async (event, saleData) => {
             return product;
           });
           store.set('cachedProducts', updatedProducts);
-          console.log('💾 Product stock updated in cache');
+          logger.debug('Product stock updated in cache', { component: 'sales' });
+        }
+
+        // Auto-open cash drawer if payment method is cash and auto-open is enabled
+        if (saleData.paymentMethod === 'cash') {
+          const printerConfig = printerService.getConfig();
+          if (printerConfig?.autoOpenCashDrawer) {
+            // Open cash drawer asynchronously (don't wait for it)
+            printerService.openCashDrawer().catch((error: any) => {
+              logger.warn('Failed to auto-open cash drawer', { component: 'sales', error: error.message });
+            });
+          }
         }
 
         return {
@@ -334,13 +381,13 @@ ipcMain.handle('createSale', async (event, saleData) => {
           receipt: response.data.data // The backend returns receipt data in the response
         };
       } catch (error: any) {
-        console.error('❌ Error creating online sale:', error.response?.status, error.response?.data || error.message);
+        logger.error('Error creating online sale', { component: 'sales', status: error.response?.status, error: error.response?.data || error.message });
         const errorMessage = error.response?.data?.message || error.message || 'Failed to create sale';
         return { success: false, error: errorMessage };
       }
     } else {
       // Offline mode: queue sale for later sync
-      console.log('🔄 Backend offline, queuing sale for later sync');
+      logger.info('Backend offline, queuing sale for later sync', { component: 'sales' });
 
       const offlineSales = store.get('offlineSales', []) as any[];
       const offlineSale = {
@@ -364,10 +411,21 @@ ipcMain.handle('createSale', async (event, saleData) => {
           return product;
         });
         store.set('cachedProducts', updatedProducts);
-        console.log('💾 Product stock updated in cache for offline sale');
+        logger.debug('Product stock updated in cache for offline sale', { component: 'sales' });
       }
 
-      console.log('✅ Sale queued for offline sync');
+      logger.info('Sale queued for offline sync', { component: 'sales' });
+
+      // Auto-open cash drawer if payment method is cash and auto-open is enabled
+      if (saleData.paymentMethod === 'cash') {
+        const printerConfig = printerService.getConfig();
+        if (printerConfig?.autoOpenCashDrawer) {
+          // Open cash drawer asynchronously (don't wait for it)
+          printerService.openCashDrawer().catch((error: any) => {
+            logger.warn('Failed to auto-open cash drawer', { component: 'sales', error: error.message });
+          });
+        }
+      }
 
       // Return success with offline receipt
       const offlineReceipt = {
@@ -399,7 +457,7 @@ ipcMain.handle('createSale', async (event, saleData) => {
     }
 
   } catch (error: any) {
-    console.error('❌ Error in createSale:', error.message);
+    logger.error('Error in createSale', { component: 'sales', error: error.message });
     return { success: false, error: error.message || 'Failed to create sale' };
   }
 });
@@ -411,11 +469,11 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
     // Get stored JWT token
     const token = store.get('authToken') as string;
     if (!token) {
-      console.log('❌ No authentication token found for receipt');
+      logger.warn('No authentication token found for receipt', { component: 'receipts' });
       return { success: false, error: 'No authentication token found' };
     }
 
-    console.log('🧾 Fetching receipt for sale:', saleId);
+    logger.info('Fetching receipt for sale', { component: 'receipts', saleId });
 
     // Check online status
     let online = false;
@@ -427,7 +485,7 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
     }
 
     if (!online) {
-      console.log('❌ Backend offline, cannot fetch receipt');
+      logger.warn('Backend offline, cannot fetch receipt', { component: 'receipts' });
       return { success: false, error: 'Cannot fetch receipt while offline. Please check your internet connection.' };
     }
 
@@ -440,7 +498,7 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
       timeout: 10000,
     });
 
-    console.log('✅ Receipt fetched successfully');
+    logger.info('Receipt fetched successfully', { component: 'receipts', saleId });
 
     return {
       success: true,
@@ -448,7 +506,7 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
     };
 
   } catch (error: any) {
-    console.error('❌ Error fetching receipt:', error.response?.status, error.response?.data || error.message);
+    logger.error('Error fetching receipt', { component: 'receipts', saleId, status: error.response?.status, error: error.response?.data || error.message });
     const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch receipt';
     return { success: false, error: errorMessage };
   }
@@ -456,22 +514,71 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
 
 ipcMain.handle('printReceipt', async (event, receiptData) => {
   try {
-    console.log('🖨️ Printing receipt for sale:', receiptData.saleId);
+    logger.info('Printing receipt for sale', { component: 'receipts', saleId: receiptData.saleId });
 
-    // For now, we'll just log the receipt data
-    // In a real implementation, you would integrate with a receipt printer
-    console.log('Receipt Data:', JSON.stringify(receiptData, null, 2));
+    const result = await printerService.printReceipt(receiptData);
+    
+    if (result.success) {
+      logger.info('Receipt printed successfully', { component: 'receipts', saleId: receiptData.saleId });
+    } else {
+      logger.error('Receipt print failed', { component: 'receipts', saleId: receiptData.saleId, error: result.error });
+    }
 
-    // Simulate printing delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    console.log('✅ Receipt printed successfully');
-
-    return { success: true };
+    return result;
 
   } catch (error: any) {
-    console.error('❌ Error printing receipt:', error.message);
+    logger.error('Error printing receipt', { component: 'receipts', saleId: receiptData.saleId, error: error.message });
     return { success: false, error: error.message || 'Failed to print receipt' };
+  }
+});
+
+// Cash drawer handlers
+ipcMain.handle('openCashDrawer', async () => {
+  try {
+    logger.info('Opening cash drawer', { component: 'cashdrawer' });
+    const result = await printerService.openCashDrawer();
+    
+    if (result.success) {
+      logger.info('Cash drawer opened successfully', { component: 'cashdrawer' });
+    } else {
+      logger.error('Cash drawer open failed', { component: 'cashdrawer', error: result.error });
+    }
+
+    return result;
+  } catch (error: any) {
+    logger.error('Error opening cash drawer', { component: 'cashdrawer', error: error.message });
+    return { success: false, error: error.message || 'Failed to open cash drawer' };
+  }
+});
+
+// Printer configuration handlers
+ipcMain.handle('getPrinterConfig', () => {
+  try {
+    const config = printerService.getConfig();
+    return { success: true, config };
+  } catch (error: any) {
+    logger.error('Error getting printer config', { component: 'printer', error: error.message });
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('setPrinterConfig', async (event, config) => {
+  try {
+    const result = await printerService.setConfig(config);
+    return result;
+  } catch (error: any) {
+    logger.error('Error setting printer config', { component: 'printer', error: error.message });
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('listPrinters', async () => {
+  try {
+    const printers = await printerService.listAvailablePrinters();
+    return { success: true, printers };
+  } catch (error: any) {
+    logger.error('Error listing printers', { component: 'printer', error: error.message });
+    return { success: false, error: error.message, printers: [] };
   }
 });
 
@@ -479,7 +586,7 @@ ipcMain.handle('printReceipt', async (event, receiptData) => {
 ipcMain.handle('getOfflineSales', () => {
   const store = new ElectronStore();
   const offlineSales = store.get('offlineSales', []) as any[];
-  console.log(`📋 Returning ${offlineSales.length} offline sales`);
+  logger.info(`Returning ${offlineSales.length} offline sales`, { component: 'offline' });
   return { success: true, sales: offlineSales };
 });
 
@@ -489,11 +596,11 @@ ipcMain.handle('syncOfflineSales', async () => {
   try {
     const offlineSales = store.get('offlineSales', []) as any[];
     if (offlineSales.length === 0) {
-      console.log('📋 No offline sales to sync');
+      logger.info('No offline sales to sync', { component: 'offline' });
       return { success: true, syncedCount: 0, errors: [] };
     }
 
-    console.log(`🔄 Starting batched sync of ${offlineSales.length} offline sales`);
+    logger.info(`Starting batched sync of ${offlineSales.length} offline sales`, { component: 'offline' });
 
     const token = store.get('authToken') as string;
     if (!token) {
@@ -508,7 +615,7 @@ ipcMain.handle('syncOfflineSales', async () => {
 
     for (let i = 0; i < offlineSales.length; i += batchSize) {
       const batch = offlineSales.slice(i, i + batchSize);
-      console.log(`📦 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(offlineSales.length / batchSize)} (${batch.length} sales)`);
+      logger.info(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(offlineSales.length / batchSize)} (${batch.length} sales)`, { component: 'offline' });
 
       // Process batch with parallel requests but controlled concurrency
       const batchPromises = batch.map(async (offlineSale) => {
@@ -519,14 +626,14 @@ ipcMain.handle('syncOfflineSales', async () => {
 
         // Fix branchId for existing offline sales that may have undefined branchId
         if (!offlineSale.saleData.branchId || typeof offlineSale.saleData.branchId !== 'string') {
-          console.log(`🔧 Fixing branchId for offline sale ${offlineSale.id}`);
+          logger.info(`Fixing branchId for offline sale ${offlineSale.id}`, { component: 'offline' });
           // Get user data to determine the correct branchId
           const userData = store.get('user') as User | undefined;
           if (userData?.branchId) {
             offlineSale.saleData.branchId = userData.branchId;
-            console.log(`🔧 Set branchId to user's branch: ${userData.branchId}`);
+            logger.info(`Set branchId to user's branch: ${userData.branchId}`, { component: 'offline' });
           } else {
-            console.warn(`⚠️ No branchId found for user, using fallback`);
+            logger.warn(`No branchId found for user, using fallback`, { component: 'offline' });
             offlineSale.saleData.branchId = 'c4011fff-2c65-4088-901a-b9a070b8aadc'; // Fallback to known valid branch
           }
         }
@@ -534,7 +641,7 @@ ipcMain.handle('syncOfflineSales', async () => {
         // Validate sale data before sync
         const validationError = validateSaleData(offlineSale.saleData);
         if (validationError) {
-          console.warn(`⚠️ Validation failed for sale ${offlineSale.id}: ${validationError}`);
+          logger.warn(`Validation failed for sale ${offlineSale.id}: ${validationError}`, { component: 'offline' });
           offlineSale.status = 'failed';
           offlineSale.error = validationError;
           offlineSale.finalFailureAt = new Date().toISOString();
@@ -565,7 +672,7 @@ ipcMain.handle('syncOfflineSales', async () => {
               timeout,
             });
 
-            console.log(`✅ Synced offline sale ${offlineSale.id} -> ${response.data.data.saleId} (attempt ${retryCount + 1})`);
+            logger.info(`Synced offline sale ${offlineSale.id} -> ${response.data.data.saleId} (attempt ${retryCount + 1})`, { component: 'offline' });
 
             // Mark as synced and store receipt
             offlineSale.status = 'synced';
@@ -578,19 +685,19 @@ ipcMain.handle('syncOfflineSales', async () => {
             lastError = error;
             retryCount++;
 
-            console.warn(`⚠️ Sync attempt ${retryCount} failed for sale ${offlineSale.id}:`, error.message);
+            logger.warn(`Sync attempt ${retryCount} failed for sale ${offlineSale.id}: ${error.message}`, { component: 'offline' });
 
             if (retryCount < maxRetries) {
               // Wait before retry with exponential backoff (1s, 2s, 4s)
               const waitTime = 1000 * Math.pow(2, retryCount - 1);
-              console.log(`⏳ Waiting ${waitTime}ms before retry...`);
+              logger.debug(`Waiting ${waitTime}ms before retry`, { component: 'offline', saleId: offlineSale.id, retryCount });
               await new Promise(resolve => setTimeout(resolve, waitTime));
             }
           }
         }
 
         // If all retries failed, mark as failed
-        console.error(`❌ Failed to sync offline sale ${offlineSale.id} after ${maxRetries} attempts:`, lastError.message);
+        logger.error(`Failed to sync offline sale ${offlineSale.id} after ${maxRetries} attempts`, { component: 'offline', saleId: offlineSale.id, error: lastError.message });
         offlineSale.status = 'failed';
         offlineSale.error = lastError.message;
         offlineSale.finalFailureAt = new Date().toISOString();
@@ -625,7 +732,7 @@ ipcMain.handle('syncOfflineSales', async () => {
     // Clean up old cached data (older than 30 days)
     await cleanupOldData(store);
 
-    console.log(`🔄 Batched sync completed: ${totalSyncedCount} synced, ${allErrors.length} failed`);
+    logger.info(`Batched sync completed: ${totalSyncedCount} synced, ${allErrors.length} failed`, { component: 'offline' });
 
     return {
       success: true,
@@ -635,7 +742,7 @@ ipcMain.handle('syncOfflineSales', async () => {
     };
 
   } catch (error: any) {
-    console.error('❌ Error in syncOfflineSales:', error.message);
+    logger.error('Error in syncOfflineSales', { component: 'offline', error: error.message });
     return { success: false, error: error.message || 'Failed to sync offline sales' };
   }
 });
@@ -689,7 +796,7 @@ async function cleanupOldData(store: ElectronStore): Promise<void> {
     if (recentSales.length !== offlineSales.length) {
       const removedCount = offlineSales.length - recentSales.length;
       store.set('offlineSales', recentSales);
-      console.log(`🧹 Cleaned up ${removedCount} old offline sales`);
+      logger.info(`Cleaned up ${removedCount} old offline sales`, { component: 'offline' });
     }
 
     // Clean up old cached products if they're too old (optional - products might be needed longer)
@@ -700,13 +807,13 @@ async function cleanupOldData(store: ElectronStore): Promise<void> {
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
       if (lastUpdate < sevenDaysAgo) {
-        console.log('🧹 Cached products are older than 7 days, will refresh on next fetch');
+        logger.info('Cached products are older than 7 days, will refresh on next fetch', { component: 'offline' });
         // Don't delete cached products immediately, let them refresh naturally
       }
     }
 
   } catch (error: any) {
-    console.warn('⚠️ Error during data cleanup:', error.message);
+    logger.warn('Error during data cleanup', { component: 'offline', error: error.message });
   }
 }
 

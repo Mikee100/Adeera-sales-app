@@ -7,6 +7,10 @@ interface ElectronAPI {
   createSale: (saleData: any) => Promise<{ success: boolean; sale?: any; receipt?: any; error?: string }>;
   getReceipt: (saleId: string) => Promise<{ success: boolean; receipt?: any; error?: string }>;
   printReceipt: (receiptData: any) => Promise<{ success: boolean; error?: string }>;
+  openCashDrawer: () => Promise<{ success: boolean; error?: string }>;
+  getPrinterConfig: () => Promise<{ success: boolean; config?: any; error?: string }>;
+  setPrinterConfig: (config: any) => Promise<{ success: boolean; error?: string }>;
+  listPrinters: () => Promise<{ success: boolean; printers?: any[]; error?: string }>;
   getOfflineSales: () => Promise<{ success: boolean; sales?: any[] }>;
   syncOfflineSales: () => Promise<{ success: boolean; syncedCount?: number; errors?: string[]; totalAttempted?: number; error?: string }>;
   getSyncStatus: () => Promise<{ online: boolean; pendingSyncs: number; lastSync?: string }>;

@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "electron dist/main.js",
-    "dev": "concurrently \"webpack serve --config webpack.renderer.config.js --no-hot\" \"npm run build:watch\" \"wait-on http://localhost:8080 && set NODE_ENV=development&& electron dist/main.js\"",
+    "dev": "concurrently \"webpack serve --config webpack.renderer.config.js --no-hot\" \"npm run build:watch\" \"wait-on http://localhost:3000 && set NODE_ENV=development&& electron dist/main.js\"",
     "build": "webpack --mode production",
     "build:watch": "webpack --mode development --watch",
     "package": "electron-builder",
@@ -17,6 +17,7 @@
     "@types/lru-cache": "^7.10.9",
     "@types/pako": "^2.0.4",
     "axios": "^1.6.0",
+    "electron-log": "^5.4.3",
     "electron-store": "^8.1.1",
     "lru-cache": "^11.2.2",
     "pako": "^2.1.0",
@@ -24,7 +25,8 @@
     "react-dom": "^18.2.0",
     "react-window": "^1.8.11",
     "socket.io-client": "^4.7.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "winston": "^3.18.3"
   },
   "devDependencies": {
     "@types/electron": "^1.6.12",
