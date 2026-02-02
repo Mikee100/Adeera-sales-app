@@ -33,10 +33,13 @@ interface CheckoutProps {
 }
 
 interface PaymentData {
-  paymentMethod: 'cash' | 'mpesa';
+  paymentMethod: 'cash' | 'mpesa' | 'credit';
   amountReceived?: number;
   customerName?: string;
   customerPhone?: string;
+  creditAmount?: number;
+  creditDueDate?: string;
+  creditNotes?: string;
 }
 
 const Checkout: React.FC<CheckoutProps> = ({
@@ -58,10 +61,12 @@ const Checkout: React.FC<CheckoutProps> = ({
     }
   };
 
-  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'mpesa'>('cash');
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'mpesa' | 'credit'>('cash');
   const [amountReceived, setAmountReceived] = useState<string>('');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [creditDueDate, setCreditDueDate] = useState('');
+  const [creditNotes, setCreditNotes] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [success, setSuccess] = useState(false);
 
@@ -89,6 +94,13 @@ const Checkout: React.FC<CheckoutProps> = ({
         if (!paymentValidation.isValid) {
           newErrors.amountReceived = paymentValidation.error || `Amount must be at least $${total.toFixed(2)}`;
         }
+      }
+    }
+
+    // Validate credit payment - customer name is required
+    if (paymentMethod === 'credit') {
+      if (!customerName || customerName.trim().length === 0) {
+        newErrors.customerName = 'Customer name is required for credit sales';
       }
     }
 
@@ -144,6 +156,16 @@ const Checkout: React.FC<CheckoutProps> = ({
 
     if (paymentMethod === 'cash') {
       paymentData.amountReceived = parseFloat(amountReceived);
+    }
+
+    if (paymentMethod === 'credit') {
+      paymentData.creditAmount = total;
+      if (creditDueDate) {
+        paymentData.creditDueDate = creditDueDate;
+      }
+      if (creditNotes) {
+        paymentData.creditNotes = creditNotes.trim();
+      }
     }
 
     onCompleteSale(paymentData);
@@ -253,6 +275,25 @@ const Checkout: React.FC<CheckoutProps> = ({
                   </div>
                 </div>
               </label>
+
+              <label className={`payment-option ${paymentMethod === 'credit' ? 'selected' : ''}`}>
+                <input
+                  type="radio"
+                  value="credit"
+                  checked={paymentMethod === 'credit'}
+                  onChange={(e) => setPaymentMethod(e.target.value as 'credit')}
+                />
+                <div className="payment-content">
+                  <div className="payment-icon credit-icon">💳</div>
+                  <div className="payment-info">
+                    <span className="payment-name">Credit</span>
+                    <span className="payment-desc">Pay later / On account</span>
+                  </div>
+                  <div className="payment-check">
+                    {paymentMethod === 'credit' && <span className="check-icon">✓</span>}
+                  </div>
+                </div>
+              </label>
             </div>
 
             {/* Cash Payment Details */}
@@ -264,7 +305,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                     Amount Received
                   </label>
                   <div className="input-wrapper">
-                    <span className="currency-symbol">$</span>
+                    <span className="currency-symbol">Ksh</span>
                     <input
                       type="number"
                       step="0.01"
@@ -288,10 +329,52 @@ const Checkout: React.FC<CheckoutProps> = ({
                     <div className="change-icon">🔄</div>
                     <div className="change-info">
                       <span className="change-label">Change to return:</span>
-                      <span className="change-amount">${change.toFixed(2)}</span>
+                      <span className="change-amount">Ksh {change.toFixed(2)}</span>
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Credit Payment Details */}
+            {paymentMethod === 'credit' && (
+              <div className="credit-payment-section">
+                <div className="credit-info-banner">
+                  <div className="info-icon">ℹ️</div>
+                  <div className="info-text">
+                    <strong>Credit Sale</strong>
+                    <p>Total amount: Ksh {total.toFixed(2)} will be added to customer's account</p>
+                  </div>
+                </div>
+
+                <div className="input-group">
+                  <label className="input-label">
+                    <span className="label-icon">📅</span>
+                    Due Date (Optional)
+                  </label>
+                  <input
+                    type="date"
+                    value={creditDueDate}
+                    onChange={(e) => setCreditDueDate(e.target.value)}
+                    className="text-input"
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                  <span className="input-hint">When payment is expected</span>
+                </div>
+
+                <div className="input-group">
+                  <label className="input-label">
+                    <span className="label-icon">📝</span>
+                    Notes (Optional)
+                  </label>
+                  <textarea
+                    value={creditNotes}
+                    onChange={(e) => setCreditNotes(e.target.value)}
+                    placeholder="Add any notes about this credit sale..."
+                    className="text-input"
+                    rows={3}
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -300,7 +383,9 @@ const Checkout: React.FC<CheckoutProps> = ({
           <div className="checkout-card customer-card">
             <div className="card-header">
               <h2>👤 Customer Details</h2>
-              <span className="optional-badge">Optional</span>
+              <span className={`optional-badge ${paymentMethod === 'credit' ? 'required-badge' : ''}`}>
+                {paymentMethod === 'credit' ? 'Required' : 'Optional'}
+              </span>
             </div>
 
             <div className="customer-form">
@@ -308,14 +393,20 @@ const Checkout: React.FC<CheckoutProps> = ({
                 <label className="input-label">
                   <span className="label-icon">👤</span>
                   Customer Name
+                  {paymentMethod === 'credit' && <span className="required-indicator">*</span>}
                 </label>
                 <input
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Enter customer name"
-                  className="text-input"
+                  className={`text-input ${errors.customerName ? 'error' : ''}`}
+                  required={paymentMethod === 'credit'}
+                  aria-describedby="name-error"
                 />
+                {errors.customerName && (
+                  <span id="name-error" className="error-message">{errors.customerName}</span>
+                )}
               </div>
 
               <div className="input-group">

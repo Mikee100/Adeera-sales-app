@@ -47,9 +47,11 @@ const createWindow = (): void => {
   });
 
   // Load the index.html of the app.
-  // For development, load from webpack dev server if available
+  // In development: load the POS renderer from this app's webpack dev server (port 3001).
+  // Port 3000 is the Next.js SaaS website – we must use a different port for the POS UI.
   if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:3000');
+    const devServerUrl = process.env.ELECTRON_RENDERER_URL || 'http://localhost:3001';
+    mainWindow.loadURL(devServerUrl);
   } else {
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
   }
@@ -382,6 +384,15 @@ ipcMain.handle('createSale', async (event, saleData) => {
         };
       } catch (error: any) {
         logger.error('Error creating online sale', { component: 'sales', status: error.response?.status, error: error.response?.data || error.message });
+        
+        // Handle 401 Unauthorized - token expired
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          logger.warn('Authentication failed, clearing token', { component: 'sales' });
+          // Clear invalid token
+          store.delete('authToken');
+          return { success: false, error: 'Unauthorized - Please log in again' };
+        }
+        
         const errorMessage = error.response?.data?.message || error.message || 'Failed to create sale';
         return { success: false, error: errorMessage };
       }
@@ -391,7 +402,7 @@ ipcMain.handle('createSale', async (event, saleData) => {
 
       const offlineSales = store.get('offlineSales', []) as any[];
       const offlineSale = {
-        id: `offline_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `offline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         saleData,
         timestamp: new Date().toISOString(),
         status: 'pending'
@@ -428,7 +439,7 @@ ipcMain.handle('createSale', async (event, saleData) => {
       }
 
       // Return success with offline receipt
-      const offlineReceipt = {
+      const offlineReceipt: any = {
         saleId: offlineSale.id,
         date: offlineSale.timestamp,
         customerName: saleData.customerName,
@@ -448,6 +459,12 @@ ipcMain.handle('createSale', async (event, saleData) => {
         businessInfo: { name: 'Business Name' }, // Placeholder
         branch: saleData.branchId ? { id: saleData.branchId, name: `Branch ${saleData.branchId}` } : undefined
       };
+
+      // Add credit information if payment method is credit
+      if (saleData.paymentMethod === 'credit') {
+        offlineReceipt.creditDueDate = saleData.creditDueDate;
+        offlineReceipt.creditNotes = saleData.creditNotes;
+      }
 
       return {
         success: true,

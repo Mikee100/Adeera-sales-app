@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './SyncStatus.css';
 import { showToast } from './Toast';
 import { handleError, handleNetworkOperation, AppError } from '../utils/error-handler';
@@ -12,30 +12,17 @@ interface SyncStatusData {
 const SyncStatus: React.FC = () => {
   const [syncStatus, setSyncStatus] = useState<SyncStatusData>({ online: true, pendingSyncs: 0 });
   const [isSyncing, setIsSyncing] = useState(false);
+  const wasOfflineRef = useRef(false);
+  const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasAutoSyncedRef = useRef(false);
+  const lastPendingCountRef = useRef(0);
 
-  useEffect(() => {
-    // Initial status check
-    updateSyncStatus();
-
-    // Update status every 30 seconds
-    const interval = setInterval(updateSyncStatus, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const updateSyncStatus = async () => {
-    try {
-      const response = await window.electronAPI.getSyncStatus();
-      if (response) {
-        setSyncStatus(response);
-      }
-    } catch (error) {
-      console.error('Failed to get sync status:', error);
+  const handleSyncNow = useCallback(async (isAutoSync: boolean = false) => {
+    // Get current status to check conditions
+    const currentStatus = await window.electronAPI.getSyncStatus();
+    if (isSyncing || currentStatus.pendingSyncs === 0 || !currentStatus.online) {
+      return;
     }
-  };
-
-  const handleSyncNow = async () => {
-    if (isSyncing || syncStatus.pendingSyncs === 0) return;
 
     setIsSyncing(true);
     try {
@@ -47,80 +34,218 @@ const SyncStatus: React.FC = () => {
         },
         {
           maxRetries: 2,
-          showRetryToast: true,
+          showRetryToast: !isAutoSync, // Don't show retry toast for auto-sync
         }
       );
 
       if (response.success) {
-        console.log(`Synced ${response.syncedCount} sales`);
+        console.log(`Synced ${response.syncedCount} sales${isAutoSync ? ' (auto-sync)' : ''}`);
         if (response.errors && response.errors.length > 0) {
           console.warn('Sync errors:', response.errors);
-          // Show detailed error messages to user
-          const errorMessages = response.errors.slice(0, 3).map((error: string, index: number) =>
-            `${index + 1}. ${error}`
-          ).join('\n');
-          const moreErrors = response.errors.length > 3 ? `\n...and ${response.errors.length - 3} more errors` : '';
-          
-          handleError(
-            new AppError(
-              `Sync completed with ${response.errors.length} errors`,
-              'SYNC_PARTIAL',
+          // Only show detailed errors for manual syncs or if there are many errors
+          if (!isAutoSync || response.errors.length > 3) {
+            const errorMessages = response.errors.slice(0, 3).map((error: string, index: number) =>
+              `${index + 1}. ${error}`
+            ).join('\n');
+            const moreErrors = response.errors.length > 3 ? `\n...and ${response.errors.length - 3} more errors` : '';
+            
+            handleError(
+              new AppError(
+                `Sync completed with ${response.errors.length} errors`,
+                'SYNC_PARTIAL',
+                {
+                  operation: 'syncOfflineSales',
+                  component: 'SyncStatus',
+                  metadata: {
+                    syncedCount: response.syncedCount,
+                    errorCount: response.errors.length,
+                    errors: response.errors,
+                  },
+                },
+                undefined,
+                'medium'
+              ),
               {
                 operation: 'syncOfflineSales',
                 component: 'SyncStatus',
-                metadata: {
-                  syncedCount: response.syncedCount,
-                  errorCount: response.errors.length,
-                  errors: response.errors,
-                },
-              },
-              undefined,
-              'medium'
-            ),
+              }
+            );
+            
+            showToast(
+              `Sync completed with ${response.errors.length} errors:\n${errorMessages}${moreErrors}`,
+              'warning',
+              8000
+            );
+          } else {
+            // For auto-sync with few errors, just show a brief message
+            showToast(`Auto-sync: ${response.syncedCount} synced, ${response.errors.length} failed`, 'warning', 3000);
+          }
+        } else {
+          // Show success message (shorter for auto-sync)
+          if (isAutoSync) {
+            showToast(`Auto-synced ${response.syncedCount} sales`, 'success', 2000);
+          } else {
+            showToast(`Successfully synced ${response.syncedCount} sales!`, 'success');
+          }
+        }
+        // Refresh status after sync
+        const updatedStatus = await window.electronAPI.getSyncStatus();
+        setSyncStatus(updatedStatus);
+        lastPendingCountRef.current = updatedStatus.pendingSyncs;
+        // Reset auto-sync flag after successful sync
+        if (updatedStatus.pendingSyncs === 0) {
+          hasAutoSyncedRef.current = false;
+        }
+      } else {
+        if (!isAutoSync) {
+          handleError(
+            new AppError(response.error || 'Sync failed', 'SYNC_FAILED', {
+              operation: 'syncOfflineSales',
+              component: 'SyncStatus',
+            }),
             {
               operation: 'syncOfflineSales',
               component: 'SyncStatus',
+            },
+            {
+              retryable: true,
+              maxRetries: 2,
             }
           );
-          
-          showToast(
-            `Sync completed with ${response.errors.length} errors:\n${errorMessages}${moreErrors}`,
-            'warning',
-            8000
-          );
         } else {
-          showToast(`Successfully synced ${response.syncedCount} sales!`, 'success');
+          console.warn('Auto-sync failed:', response.error);
         }
-        // Refresh status
-        await updateSyncStatus();
-      } else {
-        handleError(
-          new AppError(response.error || 'Sync failed', 'SYNC_FAILED', {
-            operation: 'syncOfflineSales',
-            component: 'SyncStatus',
-          }),
-          {
-            operation: 'syncOfflineSales',
-            component: 'SyncStatus',
-          },
-          {
-            retryable: true,
-            maxRetries: 2,
-          }
-        );
       }
     } catch (error) {
-      handleError(error, {
-        operation: 'syncOfflineSales',
-        component: 'SyncStatus',
-      }, {
-        retryable: true,
-        maxRetries: 2,
-      });
+      if (!isAutoSync) {
+        handleError(error, {
+          operation: 'syncOfflineSales',
+          component: 'SyncStatus',
+        }, {
+          retryable: true,
+          maxRetries: 2,
+        });
+      } else {
+        console.error('Auto-sync error:', error);
+      }
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, [isSyncing]);
+
+  const updateSyncStatus = useCallback(async () => {
+    try {
+      const response = await window.electronAPI.getSyncStatus();
+      if (response) {
+        setSyncStatus((prevStatus) => {
+          const justCameOnline = !prevStatus.online && response.online;
+          const hasPendingSales = response.pendingSyncs > 0;
+          const pendingCountIncreased = response.pendingSyncs > lastPendingCountRef.current;
+          
+          // Track offline state
+          if (!response.online) {
+            wasOfflineRef.current = true;
+            hasAutoSyncedRef.current = false; // Reset when going offline
+          }
+          
+          // Auto-sync conditions:
+          // 1. Just came back online with pending sales, OR
+          // 2. Online with pending sales that we haven't auto-synced yet, OR
+          // 3. Pending count increased (new offline sale created)
+          const shouldAutoSync = response.online && hasPendingSales && !isSyncing && (
+            justCameOnline || 
+            (!hasAutoSyncedRef.current && prevStatus.online) ||
+            pendingCountIncreased
+          );
+          
+          if (shouldAutoSync) {
+            // Clear any existing timeout
+            if (autoSyncTimeoutRef.current) {
+              clearTimeout(autoSyncTimeoutRef.current);
+            }
+            // Trigger auto-sync after a short delay to ensure backend is ready
+            autoSyncTimeoutRef.current = setTimeout(() => {
+              if (!isSyncing) {
+                console.log('Auto-syncing pending sales...', {
+                  justCameOnline,
+                  hasAutoSynced: hasAutoSyncedRef.current,
+                  pendingCount: response.pendingSyncs
+                });
+                hasAutoSyncedRef.current = true;
+                handleSyncNow(true);
+              }
+            }, 1500);
+          }
+          
+          // Update last pending count
+          lastPendingCountRef.current = response.pendingSyncs;
+          
+          // Reset auto-sync flag after being online for a while
+          if (response.online && wasOfflineRef.current) {
+            setTimeout(() => {
+              wasOfflineRef.current = false;
+              hasAutoSyncedRef.current = false; // Allow auto-sync again if new sales come in
+            }, 10000);
+          }
+          
+          return response;
+        });
+      }
+    } catch (error) {
+      console.error('Failed to get sync status:', error);
+    }
+  }, [isSyncing, handleSyncNow]);
+
+  useEffect(() => {
+    let mounted = true;
+    
+    // Initial status check - with immediate auto-sync if needed
+    const initialCheck = async () => {
+      try {
+        const status = await window.electronAPI.getSyncStatus();
+        if (status && mounted) {
+          setSyncStatus(status);
+          lastPendingCountRef.current = status.pendingSyncs;
+          
+          // If online with pending sales on initial load, auto-sync immediately
+          if (status.online && status.pendingSyncs > 0) {
+            console.log('Initial load: Auto-syncing pending sales...', status);
+            hasAutoSyncedRef.current = true;
+            // Use a timeout to ensure component is fully mounted
+            autoSyncTimeoutRef.current = setTimeout(async () => {
+              if (mounted && !isSyncing) {
+                // Double-check status before syncing
+                const currentStatus = await window.electronAPI.getSyncStatus();
+                if (currentStatus.online && currentStatus.pendingSyncs > 0) {
+                  console.log('Triggering auto-sync from initial load');
+                  handleSyncNow(true);
+                }
+              }
+            }, 2000); // Slightly longer delay on initial load
+          }
+        }
+      } catch (error) {
+        console.error('Failed initial sync status check:', error);
+      }
+    };
+    
+    initialCheck();
+
+    // Update status every 10 seconds (more frequent for better auto-sync detection)
+    const interval = setInterval(() => {
+      if (mounted) {
+        updateSyncStatus();
+      }
+    }, 10000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+      if (autoSyncTimeoutRef.current) {
+        clearTimeout(autoSyncTimeoutRef.current);
+      }
+    };
+  }, [handleSyncNow, updateSyncStatus, isSyncing]); // Include dependencies
 
   const formatLastSync = (lastSync?: string) => {
     if (!lastSync) return 'Never';
@@ -151,13 +276,18 @@ const SyncStatus: React.FC = () => {
       {syncStatus.pendingSyncs > 0 && (
         <div className="pending-syncs">
           <span className="pending-count">{syncStatus.pendingSyncs} pending</span>
-          <button
-            className="sync-button"
-            onClick={handleSyncNow}
-            disabled={isSyncing || !syncStatus.online}
-          >
-            {isSyncing ? 'Syncing...' : 'Sync Now'}
-          </button>
+          {isSyncing && (
+            <span className="auto-sync-indicator">Syncing...</span>
+          )}
+          {!isSyncing && syncStatus.online && (
+            <button
+              className="sync-button"
+              onClick={() => handleSyncNow(false)}
+              title="Manually sync now"
+            >
+              Sync
+            </button>
+          )}
         </div>
       )}
 

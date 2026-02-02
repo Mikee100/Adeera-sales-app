@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import PrinterSettings from './PrinterSettings';
+import SyncStatus from './SyncStatus';
 import { showToast } from './Toast';
 import { PendingTransaction } from '../hooks/usePendingTransactions';
 import { validateStock, validatePrice } from '../utils/validation';
@@ -226,21 +227,26 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   return (
     <div className="pos-container">
       <div className="pos-header">
-        <h1>🛍️ SaaS POS - Product Selection</h1>
-        <div className="header-indicators">
-          {isScanning && (
-            <div className="barcode-scanning-indicator">
-              <div className="scanning-pulse"></div>
-              <span>Scanning...</span>
-            </div>
-          )}
-          {scannedBarcode && !isScanning && (
-            <div className="barcode-scanned-indicator">
-              <span>✓ Scanned: {scannedBarcode}</span>
-            </div>
-          )}
+        <div className="header-left">
+          <h1>POS</h1>
+          <SyncStatus />
         </div>
-        <div className="header-controls">
+        <div className="header-center">
+          <div className="header-indicators">
+            {isScanning && (
+              <div className="barcode-scanning-indicator">
+                <div className="scanning-pulse"></div>
+                <span>Scanning...</span>
+              </div>
+            )}
+            {scannedBarcode && !isScanning && (
+              <div className="barcode-scanned-indicator">
+                <span>✓ {scannedBarcode}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="header-right">
           <select
             value={selectedBranch}
             onChange={(e) => setSelectedBranch(e.target.value)}
@@ -251,20 +257,20 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             <option value="branch2">Downtown Branch</option>
           </select>
           <button 
-            className="theme-toggle-btn" 
+            className="icon-btn theme-toggle-btn" 
             onClick={toggleTheme}
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
           <button 
-            className="settings-btn" 
+            className="icon-btn settings-btn" 
             onClick={() => setShowPrinterSettings(!showPrinterSettings)}
             title="Printer Settings"
           >
-            ⚙️ Settings
+            ⚙️
           </button>
-          <button className="logout-btn" onClick={logout}>Logout</button>
+          <button className="icon-btn logout-btn" onClick={logout} title="Logout">🚪</button>
         </div>
       </div>
 
@@ -425,7 +431,18 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
         </div>
 
         <div className="cart-section">
-          <h2>🛒 Current Sale</h2>
+          <div className="cart-header">
+            <h2>🛒 Current Sale</h2>
+            {cart.length > 0 && onHoldTransaction && (
+              <button
+                onClick={onHoldTransaction}
+                className="hold-transaction-btn-header"
+                title="Hold this transaction and start a new one"
+              >
+                ⏸️ Hold
+              </button>
+            )}
+          </div>
 
           <div className="cart-items">
             {cart.length === 0 ? (
@@ -444,74 +461,87 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                       />
                     </div>
                   )}
-                  <div className="item-info">
-                    <h4>{item.product.name || 'Unnamed Product'}</h4>
-                    <p className="sku">SKU: {item.product.sku || 'N/A'}</p>
-                    {(item.product as any).variationAttributes && (
-                      <p className="variation-info">
-                        Variation: {Object.entries((item.product as any).variationAttributes).map(([key, value]) => `${key}: ${value}`).join(', ')}
-                      </p>
-                    )}
-                    <p className="item-price">${item.product.price?.toFixed(2) || '0.00'} each</p>
-                  </div>
-                  <div className="item-controls">
-                    <div className="quick-quantity-buttons">
+                  <div className="cart-item-content">
+                    <div className="cart-item-header">
+                      <div className="item-info">
+                        <h4>{item.product.name || 'Unnamed Product'}</h4>
+                        <p className="sku">{item.product.sku || 'N/A'}</p>
+                        {(item.product as any).variationAttributes && (
+                          <p className="variation-info">
+                            {Object.entries((item.product as any).variationAttributes).map(([key, value]) => `${key}: ${value}`).join(', ')}
+                          </p>
+                        )}
+                      </div>
                       <button
-                        onClick={() => onUpdateQuantity(item.product.id, 1)}
-                        className="quick-qty-btn"
-                        title="Set quantity to 1"
+                        onClick={() => onRemoveFromCart(item.product.id)}
+                        className="remove-btn"
+                        title="Remove from cart"
                       >
-                        1
-                      </button>
-                      <button
-                        onClick={() => onUpdateQuantity(item.product.id, 2)}
-                        className="quick-qty-btn"
-                        title="Set quantity to 2"
-                      >
-                        2
-                      </button>
-                      <button
-                        onClick={() => onUpdateQuantity(item.product.id, 5)}
-                        className="quick-qty-btn"
-                        title="Set quantity to 5"
-                      >
-                        5
-                      </button>
-                      <button
-                        onClick={() => onUpdateQuantity(item.product.id, 10)}
-                        className="quick-qty-btn"
-                        title="Set quantity to 10"
-                      >
-                        10
+                        ×
                       </button>
                     </div>
-                    <div className="quantity-controls">
-                      <button
-                        onClick={() => onUpdateQuantity(item.product.id, item.quantity - 1)}
-                        className="quantity-btn"
-                        title="Decrease quantity"
-                      >
-                        -
-                      </button>
-                      <span className="quantity">{item.quantity}</span>
-                      <button
-                        onClick={() => onUpdateQuantity(item.product.id, item.quantity + 1)}
-                        className="quantity-btn"
-                        title="Increase quantity"
-                      >
-                        +
-                      </button>
+                    
+                    <div className="cart-item-footer">
+                      <div className="price-info">
+                        <span className="unit-price">${item.product.price?.toFixed(2) || '0.00'}</span>
+                        <span className="unit-label">each</span>
+                      </div>
+                      
+                      <div className="quantity-section">
+                        <div className="quantity-controls">
+                          <button
+                            onClick={() => onUpdateQuantity(item.product.id, item.quantity - 1)}
+                            className="quantity-btn decrease"
+                            title="Decrease quantity"
+                          >
+                            −
+                          </button>
+                          <span className="quantity">{item.quantity}</span>
+                          <button
+                            onClick={() => onUpdateQuantity(item.product.id, item.quantity + 1)}
+                            className="quantity-btn increase"
+                            title="Increase quantity"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <div className="quick-quantity-buttons">
+                          <button
+                            onClick={() => onUpdateQuantity(item.product.id, 1)}
+                            className="quick-qty-btn"
+                            title="Set to 1"
+                          >
+                            1
+                          </button>
+                          <button
+                            onClick={() => onUpdateQuantity(item.product.id, 2)}
+                            className="quick-qty-btn"
+                            title="Set to 2"
+                          >
+                            2
+                          </button>
+                          <button
+                            onClick={() => onUpdateQuantity(item.product.id, 5)}
+                            className="quick-qty-btn"
+                            title="Set to 5"
+                          >
+                            5
+                          </button>
+                          <button
+                            onClick={() => onUpdateQuantity(item.product.id, 10)}
+                            className="quick-qty-btn"
+                            title="Set to 10"
+                          >
+                            10
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="item-total">
+                        <span className="total-label">Total</span>
+                        <span className="total-amount">${((item.product.price || 0) * item.quantity).toFixed(2)}</span>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => onRemoveFromCart(item.product.id)}
-                      className="remove-btn"
-                      title="Remove from cart"
-                    >
-                      ×
-                    </button>
-                  </div>
-                  <div className="item-total">
-                    ${((item.product.price || 0) * item.quantity).toFixed(2)}
                   </div>
                 </div>
               ))
@@ -534,15 +564,6 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
           </div>
 
           <div className="checkout-section">
-            {cart.length > 0 && onHoldTransaction && (
-              <button
-                onClick={onHoldTransaction}
-                className="checkout-btn hold"
-                title="Hold this transaction and start a new one"
-              >
-                ⏸️ Hold Transaction
-              </button>
-            )}
             <button
               onClick={onProceedToCheckout}
               className="checkout-btn proceed"

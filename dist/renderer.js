@@ -23,36 +23,33 @@ var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBP
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, `/* Barcode Scanner Styles */
 .header-indicators {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .barcode-scanning-indicator {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
+  gap: 6px;
+  padding: 4px 10px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  animation: slideDown 0.3s ease-out;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
   white-space: nowrap;
 }
 
 .scanning-pulse {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   background: white;
   border-radius: 50%;
   animation: pulse 1s ease-in-out infinite;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+  flex-shrink: 0;
 }
 
 @keyframes pulse {
@@ -80,16 +77,14 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Barcode Scanner Styles */
 .barcode-scanned-indicator {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
+  gap: 4px;
+  padding: 4px 10px;
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  animation: slideDown 0.3s ease-out;
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
-  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
   white-space: nowrap;
 }
 
@@ -166,11 +161,11 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Barcode Scanner Styles */
 .barcode-scanner-help {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border: 1px solid #dee2e6;
-  border-radius: 12px;
-  margin-bottom: 16px;
+  border-radius: 6px;
+  margin-bottom: 10px;
   overflow: hidden;
   animation: slideIn 0.3s ease-out;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 @keyframes slideIn {
@@ -190,7 +185,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Barcode Scanner Styles */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 8px 12px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -199,8 +194,8 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Barcode Scanner Styles */
 .barcode-help-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -245,19 +240,19 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Barcode Scanner Styles */
 }
 
 .barcode-help-content {
-  padding: 12px 16px;
+  padding: 8px 12px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 6px;
 }
 
 .help-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13px;
+  gap: 6px;
+  font-size: 11px;
   color: #495057;
-  padding: 6px 0;
+  padding: 4px 0;
 }
 
 .help-icon {
@@ -320,7 +315,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Barcode Scanner Styles */
   }
 }
 
-`, "",{"version":3,"sources":["webpack://./src/renderer/barcode-scanner.css"],"names":[],"mappings":"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","sourcesContent":["/* Barcode Scanner Styles */\r\n.header-indicators {\r\n  position: absolute;\r\n  top: 80px;\r\n  left: 50%;\r\n  transform: translateX(-50%);\r\n  z-index: 100;\r\n}\r\n\r\n.barcode-scanning-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 6px 14px;\r\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n  color: white;\r\n  border-radius: 20px;\r\n  font-size: 12px;\r\n  font-weight: 500;\r\n  animation: slideDown 0.3s ease-out;\r\n  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);\r\n  backdrop-filter: blur(10px);\r\n  white-space: nowrap;\r\n}\r\n\r\n.scanning-pulse {\r\n  width: 10px;\r\n  height: 10px;\r\n  background: white;\r\n  border-radius: 50%;\r\n  animation: pulse 1s ease-in-out infinite;\r\n  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);\r\n}\r\n\r\n@keyframes pulse {\r\n  0%, 100% {\r\n    opacity: 1;\r\n    transform: scale(1);\r\n  }\r\n  50% {\r\n    opacity: 0.6;\r\n    transform: scale(1.3);\r\n  }\r\n}\r\n\r\n@keyframes slideDown {\r\n  from {\r\n    opacity: 0;\r\n    transform: translateX(-50%) translateY(-10px);\r\n  }\r\n  to {\r\n    opacity: 1;\r\n    transform: translateX(-50%) translateY(0);\r\n  }\r\n}\r\n\r\n.barcode-scanned-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 6px 14px;\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  border-radius: 20px;\r\n  font-size: 12px;\r\n  font-weight: 500;\r\n  animation: slideDown 0.3s ease-out;\r\n  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);\r\n  backdrop-filter: blur(10px);\r\n  white-space: nowrap;\r\n}\r\n\r\n.search-input-wrapper {\r\n  position: relative;\r\n  width: 100%;\r\n  flex: 1;\r\n}\r\n\r\n.barcode-scanner-icon {\r\n  position: absolute;\r\n  right: 12px;\r\n  top: 50%;\r\n  transform: translateY(-50%);\r\n  pointer-events: none;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  width: 24px;\r\n  height: 24px;\r\n}\r\n\r\n.scanner-pulse-dot {\r\n  width: 8px;\r\n  height: 8px;\r\n  background: #667eea;\r\n  border-radius: 50%;\r\n  animation: scannerPulse 1.5s ease-in-out infinite;\r\n  box-shadow: 0 0 12px rgba(102, 126, 234, 0.8);\r\n}\r\n\r\n@keyframes scannerPulse {\r\n  0%, 100% {\r\n    opacity: 1;\r\n    transform: scale(1);\r\n  }\r\n  50% {\r\n    opacity: 0.5;\r\n    transform: scale(1.5);\r\n  }\r\n}\r\n\r\n.barcode-help-toggle {\r\n  position: absolute;\r\n  right: 12px;\r\n  top: 50%;\r\n  transform: translateY(-50%);\r\n  background: transparent;\r\n  border: none;\r\n  font-size: 18px;\r\n  cursor: pointer;\r\n  padding: 4px;\r\n  opacity: 0.6;\r\n  transition: all 0.2s ease;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  width: 28px;\r\n  height: 28px;\r\n  border-radius: 4px;\r\n}\r\n\r\n.barcode-help-toggle:hover {\r\n  opacity: 1;\r\n  background: rgba(102, 126, 234, 0.1);\r\n  transform: translateY(-50%) scale(1.1);\r\n}\r\n\r\n.barcode-help-toggle:active {\r\n  transform: translateY(-50%) scale(0.95);\r\n}\r\n\r\n/* Barcode scanner help - Improved design */\r\n.barcode-scanner-help {\r\n  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);\r\n  border: 1px solid #dee2e6;\r\n  border-radius: 12px;\r\n  margin-bottom: 16px;\r\n  overflow: hidden;\r\n  animation: slideIn 0.3s ease-out;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);\r\n}\r\n\r\n@keyframes slideIn {\r\n  from {\r\n    opacity: 0;\r\n    transform: translateY(-10px);\r\n    max-height: 0;\r\n  }\r\n  to {\r\n    opacity: 1;\r\n    transform: translateY(0);\r\n    max-height: 200px;\r\n  }\r\n}\r\n\r\n.barcode-help-header {\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: space-between;\r\n  padding: 12px 16px;\r\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n  color: white;\r\n  border-bottom: 1px solid rgba(255, 255, 255, 0.2);\r\n}\r\n\r\n.barcode-help-title {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n}\r\n\r\n.scanner-icon {\r\n  font-size: 18px;\r\n  animation: iconFloat 2s ease-in-out infinite;\r\n}\r\n\r\n@keyframes iconFloat {\r\n  0%, 100% {\r\n    transform: translateY(0);\r\n  }\r\n  50% {\r\n    transform: translateY(-3px);\r\n  }\r\n}\r\n\r\n.barcode-help-close {\r\n  background: rgba(255, 255, 255, 0.2);\r\n  border: none;\r\n  color: white;\r\n  font-size: 20px;\r\n  width: 24px;\r\n  height: 24px;\r\n  border-radius: 4px;\r\n  cursor: pointer;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  transition: all 0.2s ease;\r\n  line-height: 1;\r\n  padding: 0;\r\n}\r\n\r\n.barcode-help-close:hover {\r\n  background: rgba(255, 255, 255, 0.3);\r\n  transform: scale(1.1);\r\n}\r\n\r\n.barcode-help-close:active {\r\n  transform: scale(0.95);\r\n}\r\n\r\n.barcode-help-content {\r\n  padding: 12px 16px;\r\n  display: grid;\r\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\r\n  gap: 10px;\r\n}\r\n\r\n.help-item {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 10px;\r\n  font-size: 13px;\r\n  color: #495057;\r\n  padding: 6px 0;\r\n}\r\n\r\n.help-icon {\r\n  font-size: 16px;\r\n  flex-shrink: 0;\r\n  width: 24px;\r\n  text-align: center;\r\n}\r\n\r\n/* Dark mode */\r\n[data-theme=\"dark\"] .barcode-scanner-help {\r\n  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);\r\n  border-color: #404040;\r\n}\r\n\r\n[data-theme=\"dark\"] .barcode-help-content {\r\n  background: transparent;\r\n}\r\n\r\n[data-theme=\"dark\"] .help-item {\r\n  color: #b0b0b0;\r\n}\r\n\r\n[data-theme=\"dark\"] .barcode-help-toggle {\r\n  opacity: 0.7;\r\n}\r\n\r\n[data-theme=\"dark\"] .barcode-help-toggle:hover {\r\n  background: rgba(102, 126, 234, 0.2);\r\n  opacity: 1;\r\n}\r\n\r\n/* Responsive */\r\n@media (max-width: 768px) {\r\n  .header-indicators {\r\n    top: 70px;\r\n  }\r\n  \r\n  .barcode-scanning-indicator,\r\n  .barcode-scanned-indicator {\r\n    font-size: 11px;\r\n    padding: 5px 12px;\r\n  }\r\n  \r\n  .barcode-help-content {\r\n    grid-template-columns: 1fr;\r\n    gap: 8px;\r\n  }\r\n  \r\n  .help-item {\r\n    font-size: 12px;\r\n  }\r\n  \r\n  .barcode-help-header {\r\n    padding: 10px 12px;\r\n  }\r\n  \r\n  .barcode-help-content {\r\n    padding: 10px 12px;\r\n  }\r\n}\r\n\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/barcode-scanner.css"],"names":[],"mappings":"AAAA,2BAA2B;AAC3B;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,iBAAiB;EACjB,6DAA6D;EAC7D,YAAY;EACZ,mBAAmB;EACnB,eAAe;EACf,gBAAgB;EAChB,8CAA8C;EAC9C,mBAAmB;AACrB;;AAEA;EACE,UAAU;EACV,WAAW;EACX,iBAAiB;EACjB,kBAAkB;EAClB,wCAAwC;EACxC,4CAA4C;EAC5C,cAAc;AAChB;;AAEA;EACE;IACE,UAAU;IACV,mBAAmB;EACrB;EACA;IACE,YAAY;IACZ,qBAAqB;EACvB;AACF;;AAEA;EACE;IACE,UAAU;IACV,6CAA6C;EAC/C;EACA;IACE,UAAU;IACV,yCAAyC;EAC3C;AACF;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,iBAAiB;EACjB,6DAA6D;EAC7D,YAAY;EACZ,mBAAmB;EACnB,eAAe;EACf,gBAAgB;EAChB,4CAA4C;EAC5C,mBAAmB;AACrB;;AAEA;EACE,kBAAkB;EAClB,WAAW;EACX,OAAO;AACT;;AAEA;EACE,kBAAkB;EAClB,WAAW;EACX,QAAQ;EACR,2BAA2B;EAC3B,oBAAoB;EACpB,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,WAAW;EACX,YAAY;AACd;;AAEA;EACE,UAAU;EACV,WAAW;EACX,mBAAmB;EACnB,kBAAkB;EAClB,iDAAiD;EACjD,6CAA6C;AAC/C;;AAEA;EACE;IACE,UAAU;IACV,mBAAmB;EACrB;EACA;IACE,YAAY;IACZ,qBAAqB;EACvB;AACF;;AAEA;EACE,kBAAkB;EAClB,WAAW;EACX,QAAQ;EACR,2BAA2B;EAC3B,uBAAuB;EACvB,YAAY;EACZ,eAAe;EACf,eAAe;EACf,YAAY;EACZ,YAAY;EACZ,yBAAyB;EACzB,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,WAAW;EACX,YAAY;EACZ,kBAAkB;AACpB;;AAEA;EACE,UAAU;EACV,oCAAoC;EACpC,sCAAsC;AACxC;;AAEA;EACE,uCAAuC;AACzC;;AAEA,2CAA2C;AAC3C;EACE,6DAA6D;EAC7D,yBAAyB;EACzB,kBAAkB;EAClB,mBAAmB;EACnB,gBAAgB;EAChB,gCAAgC;EAChC,yCAAyC;AAC3C;;AAEA;EACE;IACE,UAAU;IACV,4BAA4B;IAC5B,aAAa;EACf;EACA;IACE,UAAU;IACV,wBAAwB;IACxB,iBAAiB;EACnB;AACF;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,8BAA8B;EAC9B,iBAAiB;EACjB,6DAA6D;EAC7D,YAAY;EACZ,iDAAiD;AACnD;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,eAAe;EACf,4CAA4C;AAC9C;;AAEA;EACE;IACE,wBAAwB;EAC1B;EACA;IACE,2BAA2B;EAC7B;AACF;;AAEA;EACE,oCAAoC;EACpC,YAAY;EACZ,YAAY;EACZ,eAAe;EACf,WAAW;EACX,YAAY;EACZ,kBAAkB;EAClB,eAAe;EACf,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,yBAAyB;EACzB,cAAc;EACd,UAAU;AACZ;;AAEA;EACE,oCAAoC;EACpC,qBAAqB;AACvB;;AAEA;EACE,sBAAsB;AACxB;;AAEA;EACE,iBAAiB;EACjB,aAAa;EACb,2DAA2D;EAC3D,QAAQ;AACV;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,eAAe;EACf,cAAc;EACd,cAAc;AAChB;;AAEA;EACE,eAAe;EACf,cAAc;EACd,WAAW;EACX,kBAAkB;AACpB;;AAEA,cAAc;AACd;EACE,6DAA6D;EAC7D,qBAAqB;AACvB;;AAEA;EACE,uBAAuB;AACzB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,YAAY;AACd;;AAEA;EACE,oCAAoC;EACpC,UAAU;AACZ;;AAEA,eAAe;AACf;EACE;IACE,SAAS;EACX;;EAEA;;IAEE,eAAe;IACf,iBAAiB;EACnB;;EAEA;IACE,0BAA0B;IAC1B,QAAQ;EACV;;EAEA;IACE,eAAe;EACjB;;EAEA;IACE,kBAAkB;EACpB;;EAEA;IACE,kBAAkB;EACpB;AACF","sourcesContent":["/* Barcode Scanner Styles */\r\n.header-indicators {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n}\r\n\r\n.barcode-scanning-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  padding: 4px 10px;\r\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n  color: white;\r\n  border-radius: 12px;\r\n  font-size: 10px;\r\n  font-weight: 600;\r\n  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);\r\n  white-space: nowrap;\r\n}\r\n\r\n.scanning-pulse {\r\n  width: 6px;\r\n  height: 6px;\r\n  background: white;\r\n  border-radius: 50%;\r\n  animation: pulse 1s ease-in-out infinite;\r\n  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);\r\n  flex-shrink: 0;\r\n}\r\n\r\n@keyframes pulse {\r\n  0%, 100% {\r\n    opacity: 1;\r\n    transform: scale(1);\r\n  }\r\n  50% {\r\n    opacity: 0.6;\r\n    transform: scale(1.3);\r\n  }\r\n}\r\n\r\n@keyframes slideDown {\r\n  from {\r\n    opacity: 0;\r\n    transform: translateX(-50%) translateY(-10px);\r\n  }\r\n  to {\r\n    opacity: 1;\r\n    transform: translateX(-50%) translateY(0);\r\n  }\r\n}\r\n\r\n.barcode-scanned-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 4px;\r\n  padding: 4px 10px;\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  border-radius: 12px;\r\n  font-size: 10px;\r\n  font-weight: 600;\r\n  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);\r\n  white-space: nowrap;\r\n}\r\n\r\n.search-input-wrapper {\r\n  position: relative;\r\n  width: 100%;\r\n  flex: 1;\r\n}\r\n\r\n.barcode-scanner-icon {\r\n  position: absolute;\r\n  right: 12px;\r\n  top: 50%;\r\n  transform: translateY(-50%);\r\n  pointer-events: none;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  width: 24px;\r\n  height: 24px;\r\n}\r\n\r\n.scanner-pulse-dot {\r\n  width: 8px;\r\n  height: 8px;\r\n  background: #667eea;\r\n  border-radius: 50%;\r\n  animation: scannerPulse 1.5s ease-in-out infinite;\r\n  box-shadow: 0 0 12px rgba(102, 126, 234, 0.8);\r\n}\r\n\r\n@keyframes scannerPulse {\r\n  0%, 100% {\r\n    opacity: 1;\r\n    transform: scale(1);\r\n  }\r\n  50% {\r\n    opacity: 0.5;\r\n    transform: scale(1.5);\r\n  }\r\n}\r\n\r\n.barcode-help-toggle {\r\n  position: absolute;\r\n  right: 12px;\r\n  top: 50%;\r\n  transform: translateY(-50%);\r\n  background: transparent;\r\n  border: none;\r\n  font-size: 18px;\r\n  cursor: pointer;\r\n  padding: 4px;\r\n  opacity: 0.6;\r\n  transition: all 0.2s ease;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  width: 28px;\r\n  height: 28px;\r\n  border-radius: 4px;\r\n}\r\n\r\n.barcode-help-toggle:hover {\r\n  opacity: 1;\r\n  background: rgba(102, 126, 234, 0.1);\r\n  transform: translateY(-50%) scale(1.1);\r\n}\r\n\r\n.barcode-help-toggle:active {\r\n  transform: translateY(-50%) scale(0.95);\r\n}\r\n\r\n/* Barcode scanner help - Improved design */\r\n.barcode-scanner-help {\r\n  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);\r\n  border: 1px solid #dee2e6;\r\n  border-radius: 6px;\r\n  margin-bottom: 10px;\r\n  overflow: hidden;\r\n  animation: slideIn 0.3s ease-out;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\r\n}\r\n\r\n@keyframes slideIn {\r\n  from {\r\n    opacity: 0;\r\n    transform: translateY(-10px);\r\n    max-height: 0;\r\n  }\r\n  to {\r\n    opacity: 1;\r\n    transform: translateY(0);\r\n    max-height: 200px;\r\n  }\r\n}\r\n\r\n.barcode-help-header {\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: space-between;\r\n  padding: 8px 12px;\r\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n  color: white;\r\n  border-bottom: 1px solid rgba(255, 255, 255, 0.2);\r\n}\r\n\r\n.barcode-help-title {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n}\r\n\r\n.scanner-icon {\r\n  font-size: 18px;\r\n  animation: iconFloat 2s ease-in-out infinite;\r\n}\r\n\r\n@keyframes iconFloat {\r\n  0%, 100% {\r\n    transform: translateY(0);\r\n  }\r\n  50% {\r\n    transform: translateY(-3px);\r\n  }\r\n}\r\n\r\n.barcode-help-close {\r\n  background: rgba(255, 255, 255, 0.2);\r\n  border: none;\r\n  color: white;\r\n  font-size: 20px;\r\n  width: 24px;\r\n  height: 24px;\r\n  border-radius: 4px;\r\n  cursor: pointer;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  transition: all 0.2s ease;\r\n  line-height: 1;\r\n  padding: 0;\r\n}\r\n\r\n.barcode-help-close:hover {\r\n  background: rgba(255, 255, 255, 0.3);\r\n  transform: scale(1.1);\r\n}\r\n\r\n.barcode-help-close:active {\r\n  transform: scale(0.95);\r\n}\r\n\r\n.barcode-help-content {\r\n  padding: 8px 12px;\r\n  display: grid;\r\n  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));\r\n  gap: 6px;\r\n}\r\n\r\n.help-item {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  font-size: 11px;\r\n  color: #495057;\r\n  padding: 4px 0;\r\n}\r\n\r\n.help-icon {\r\n  font-size: 16px;\r\n  flex-shrink: 0;\r\n  width: 24px;\r\n  text-align: center;\r\n}\r\n\r\n/* Dark mode */\r\n[data-theme=\"dark\"] .barcode-scanner-help {\r\n  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);\r\n  border-color: #404040;\r\n}\r\n\r\n[data-theme=\"dark\"] .barcode-help-content {\r\n  background: transparent;\r\n}\r\n\r\n[data-theme=\"dark\"] .help-item {\r\n  color: #b0b0b0;\r\n}\r\n\r\n[data-theme=\"dark\"] .barcode-help-toggle {\r\n  opacity: 0.7;\r\n}\r\n\r\n[data-theme=\"dark\"] .barcode-help-toggle:hover {\r\n  background: rgba(102, 126, 234, 0.2);\r\n  opacity: 1;\r\n}\r\n\r\n/* Responsive */\r\n@media (max-width: 768px) {\r\n  .header-indicators {\r\n    top: 70px;\r\n  }\r\n  \r\n  .barcode-scanning-indicator,\r\n  .barcode-scanned-indicator {\r\n    font-size: 11px;\r\n    padding: 5px 12px;\r\n  }\r\n  \r\n  .barcode-help-content {\r\n    grid-template-columns: 1fr;\r\n    gap: 8px;\r\n  }\r\n  \r\n  .help-item {\r\n    font-size: 12px;\r\n  }\r\n  \r\n  .barcode-help-header {\r\n    padding: 10px 12px;\r\n  }\r\n  \r\n  .barcode-help-content {\r\n    padding: 10px 12px;\r\n  }\r\n}\r\n\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -349,8 +344,8 @@ var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBP
 ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .checkout-page {
   min-height: 100vh;
-  background: #ffffff;
-  padding: 16px;
+  background: #f5f7fa;
+  padding: 12px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -410,19 +405,20 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .success-message {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 6px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
   animation: slideIn 0.3s ease-out;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .success-icon {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 @keyframes slideIn {
@@ -498,7 +494,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .checkout-main {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 12px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -506,19 +502,19 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .checkout-left {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .checkout-right {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .checkout-card {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 
@@ -526,7 +522,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 12px 14px;
   background: #f8f9fa;
   border-bottom: 1px solid #e9ecef;
 }
@@ -534,22 +530,22 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .card-header h2 {
   margin: 0;
   color: #333;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .item-count {
   background: #007bff;
   color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
+  padding: 3px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
 }
 
 .order-items {
-  padding: 20px;
-  max-height: 300px;
+  padding: 12px 14px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
@@ -557,7 +553,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #f1f3f4;
 }
 
@@ -566,15 +562,15 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 }
 
 .item-details h4 {
-  margin: 0 0 4px 0;
+  margin: 0 0 3px 0;
   color: #333;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .item-sku {
   color: #6c757d;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .item-meta {
@@ -584,18 +580,18 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .item-quantity {
   display: block;
   color: #6c757d;
-  font-size: 12px;
-  margin-bottom: 4px;
+  font-size: 11px;
+  margin-bottom: 3px;
 }
 
 .item-price {
   color: #333;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .order-totals {
-  padding: 20px;
+  padding: 12px 14px;
   background: #f8f9fa;
   border-top: 1px solid #e9ecef;
 }
@@ -604,35 +600,36 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  font-size: 14px;
+  padding: 5px 0;
+  font-size: 12px;
 }
 
 .total-row.grand-total {
   border-top: 2px solid #dee2e6;
-  padding-top: 12px;
-  margin-top: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  padding-top: 8px;
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 700;
   color: #333;
 }
 
 .total-amount {
   color: #28a745;
   font-weight: 700;
+  font-size: 15px;
 }
 
 .payment-options {
-  padding: 20px;
+  padding: 12px 14px;
 }
 
 .payment-option {
   display: block;
   background: white;
   border: 2px solid #e9ecef;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
@@ -658,13 +655,14 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .payment-content {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .payment-icon {
-  font-size: 24px;
-  width: 40px;
+  font-size: 18px;
+  width: 32px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .cash-icon {
@@ -673,6 +671,10 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 
 .mpesa-icon {
   color: #007bff;
+}
+
+.credit-icon {
+  color: #ff9800;
 }
 
 .payment-info {
@@ -684,40 +686,82 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   font-weight: 600;
   color: #333;
   margin-bottom: 2px;
+  font-size: 13px;
 }
 
 .payment-desc {
   color: #6c757d;
-  font-size: 14px;
+  font-size: 11px;
 }
 
 .payment-check {
   color: #007bff;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 .cash-payment-section {
-  padding: 20px;
+  padding: 12px 14px;
   border-top: 1px solid #e9ecef;
 }
 
+.credit-payment-section {
+  padding: 12px 14px;
+  border-top: 1px solid #e9ecef;
+}
+
+.credit-info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+}
+
+.info-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.info-text {
+  flex: 1;
+}
+
+.info-text strong {
+  display: block;
+  color: #856404;
+  font-size: 12px;
+  margin-bottom: 3px;
+  font-weight: 600;
+}
+
+.info-text p {
+  margin: 0;
+  color: #856404;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
 .input-group {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .input-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 8px;
-  font-size: 14px;
+  margin-bottom: 6px;
+  font-size: 12px;
 }
 
 .label-icon {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .input-wrapper {
@@ -736,10 +780,10 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 
 .currency-input {
   width: 100%;
-  padding: 12px 12px 12px 32px;
+  padding: 8px 10px 8px 28px;
   border: 2px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: 600;
   color: #333;
   background: white;
@@ -760,8 +804,8 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .input-hint {
   display: block;
   color: #6c757d;
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 10px;
+  margin-top: 3px;
 }
 
 .change-display {
@@ -771,13 +815,14 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   background: #d4edda;
   border: 1px solid #c3e6cb;
   border-radius: 6px;
-  padding: 12px;
-  margin-top: 12px;
+  padding: 8px 10px;
+  margin-top: 8px;
 }
 
 .change-icon {
-  font-size: 20px;
+  font-size: 16px;
   color: #155724;
+  flex-shrink: 0;
 }
 
 .change-info {
@@ -788,13 +833,13 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   display: block;
   color: #155724;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 11px;
 }
 
 .change-amount {
   color: #155724;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .customer-card .card-header {
@@ -811,16 +856,25 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   text-transform: uppercase;
 }
 
+.required-badge {
+  background: #dc3545;
+}
+
+.required-indicator {
+  color: #dc3545;
+  margin-left: 4px;
+}
+
 .customer-form {
-  padding: 20px;
+  padding: 12px 14px;
 }
 
 .text-input {
   width: 100%;
-  padding: 12px;
+  padding: 8px 10px;
   border: 2px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 13px;
   color: #333;
   background: white;
   transition: border-color 0.2s ease;
@@ -851,26 +905,26 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 
 .checkout-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: flex-end;
-  padding: 20px;
+  padding: 12px 14px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .secondary-btn {
   background: #6c757d;
   color: white;
   border: none;
-  padding: 14px 24px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: background-color 0.2s ease;
 }
 
@@ -887,16 +941,16 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
   border: none;
-  padding: 14px 24px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
 }
 
 .primary-btn:hover:not(:disabled) {
@@ -912,7 +966,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 }
 
 .btn-icon {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .loading-spinner {
@@ -975,7 +1029,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
     justify-content: center;
   }
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/checkout.css"],"names":[],"mappings":"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","sourcesContent":["/* Enhanced Checkout Page Styles */\r\n.checkout-page {\r\n  min-height: 100vh;\r\n  background: #ffffff;\r\n  padding: 16px;\r\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\r\n}\r\n\r\n/* Progress Indicator */\r\n.progress-indicator {\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  gap: 40px;\r\n  margin-bottom: 20px;\r\n  padding: 16px;\r\n  background: #f8f9fa;\r\n  border-radius: 8px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.progress-step {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  gap: 8px;\r\n  opacity: 0.5;\r\n  transition: opacity 0.3s ease;\r\n}\r\n\r\n.progress-step.active {\r\n  opacity: 1;\r\n}\r\n\r\n.step-number {\r\n  width: 32px;\r\n  height: 32px;\r\n  border-radius: 50%;\r\n  background: #6c757d;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  color: white;\r\n  border: 2px solid #6c757d;\r\n  font-size: 14px;\r\n}\r\n\r\n.progress-step.active .step-number {\r\n  background: #007bff;\r\n  border-color: #007bff;\r\n}\r\n\r\n.step-label {\r\n  font-size: 12px;\r\n  color: #495057;\r\n  font-weight: 500;\r\n  text-align: center;\r\n}\r\n\r\n/* Success Message */\r\n.success-message {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  padding: 8px 16px;\r\n  border-radius: 6px;\r\n  margin-bottom: 16px;\r\n  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);\r\n  animation: slideIn 0.3s ease-out;\r\n  font-size: 14px;\r\n}\r\n\r\n.success-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n@keyframes slideIn {\r\n  from {\r\n    transform: translateY(-20px);\r\n    opacity: 0;\r\n  }\r\n  to {\r\n    transform: translateY(0);\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.checkout-header {\r\n  background: white;\r\n  border-radius: 12px;\r\n  padding: 20px;\r\n  margin-bottom: 20px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.header-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\r\n}\r\n\r\n.back-button {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #dee2e6;\r\n  border-radius: 8px;\r\n  padding: 12px 16px;\r\n  color: #495057;\r\n  text-decoration: none;\r\n  font-weight: 500;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.back-button:hover:not(:disabled) {\r\n  background: #e9ecef;\r\n  border-color: #adb5bd;\r\n}\r\n\r\n.back-button:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.back-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.checkout-title {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n}\r\n\r\n.title-icon {\r\n  font-size: 24px;\r\n}\r\n\r\n.checkout-title h1 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 24px;\r\n  font-weight: 600;\r\n}\r\n\r\n.checkout-main {\r\n  display: grid;\r\n  grid-template-columns: 1fr 1fr;\r\n  gap: 20px;\r\n  max-width: 1200px;\r\n  margin: 0 auto;\r\n}\r\n\r\n.checkout-left {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 20px;\r\n}\r\n\r\n.checkout-right {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 20px;\r\n}\r\n\r\n.checkout-card {\r\n  background: white;\r\n  border-radius: 12px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n  overflow: hidden;\r\n}\r\n\r\n.card-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 20px;\r\n  background: #f8f9fa;\r\n  border-bottom: 1px solid #e9ecef;\r\n}\r\n\r\n.card-header h2 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 18px;\r\n  font-weight: 600;\r\n}\r\n\r\n.item-count {\r\n  background: #007bff;\r\n  color: white;\r\n  padding: 4px 8px;\r\n  border-radius: 12px;\r\n  font-size: 12px;\r\n  font-weight: 500;\r\n}\r\n\r\n.order-items {\r\n  padding: 20px;\r\n  max-height: 300px;\r\n  overflow-y: auto;\r\n}\r\n\r\n.order-item {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 12px 0;\r\n  border-bottom: 1px solid #f1f3f4;\r\n}\r\n\r\n.order-item:last-child {\r\n  border-bottom: none;\r\n}\r\n\r\n.item-details h4 {\r\n  margin: 0 0 4px 0;\r\n  color: #333;\r\n  font-size: 14px;\r\n  font-weight: 500;\r\n}\r\n\r\n.item-sku {\r\n  color: #6c757d;\r\n  font-size: 12px;\r\n}\r\n\r\n.item-meta {\r\n  text-align: right;\r\n}\r\n\r\n.item-quantity {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 12px;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.item-price {\r\n  color: #333;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n}\r\n\r\n.order-totals {\r\n  padding: 20px;\r\n  background: #f8f9fa;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.total-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 8px 0;\r\n  font-size: 14px;\r\n}\r\n\r\n.total-row.grand-total {\r\n  border-top: 2px solid #dee2e6;\r\n  padding-top: 12px;\r\n  margin-top: 8px;\r\n  font-size: 16px;\r\n  font-weight: 600;\r\n  color: #333;\r\n}\r\n\r\n.total-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n}\r\n\r\n.payment-options {\r\n  padding: 20px;\r\n}\r\n\r\n.payment-option {\r\n  display: block;\r\n  background: white;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 8px;\r\n  padding: 16px;\r\n  margin-bottom: 12px;\r\n  cursor: pointer;\r\n  transition: all 0.2s ease;\r\n  position: relative;\r\n}\r\n\r\n.payment-option:hover {\r\n  border-color: #007bff;\r\n  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.payment-option.selected {\r\n  border-color: #007bff;\r\n  background: #f8f9ff;\r\n}\r\n\r\n.payment-option input[type=\"radio\"] {\r\n  position: absolute;\r\n  opacity: 0;\r\n  width: 0;\r\n  height: 0;\r\n}\r\n\r\n.payment-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n}\r\n\r\n.payment-icon {\r\n  font-size: 24px;\r\n  width: 40px;\r\n  text-align: center;\r\n}\r\n\r\n.cash-icon {\r\n  color: #28a745;\r\n}\r\n\r\n.mpesa-icon {\r\n  color: #007bff;\r\n}\r\n\r\n.payment-info {\r\n  flex: 1;\r\n}\r\n\r\n.payment-name {\r\n  display: block;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 2px;\r\n}\r\n\r\n.payment-desc {\r\n  color: #6c757d;\r\n  font-size: 14px;\r\n}\r\n\r\n.payment-check {\r\n  color: #007bff;\r\n  font-size: 18px;\r\n  font-weight: bold;\r\n}\r\n\r\n.cash-payment-section {\r\n  padding: 20px;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.input-group {\r\n  margin-bottom: 16px;\r\n}\r\n\r\n.input-label {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 8px;\r\n  font-size: 14px;\r\n}\r\n\r\n.label-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.input-wrapper {\r\n  position: relative;\r\n}\r\n\r\n.currency-symbol {\r\n  position: absolute;\r\n  left: 12px;\r\n  top: 50%;\r\n  transform: translateY(-50%);\r\n  color: #6c757d;\r\n  font-weight: 600;\r\n  z-index: 1;\r\n}\r\n\r\n.currency-input {\r\n  width: 100%;\r\n  padding: 12px 12px 12px 32px;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 8px;\r\n  font-size: 16px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.currency-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.currency-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.input-hint {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 12px;\r\n  margin-top: 4px;\r\n}\r\n\r\n.change-display {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: #d4edda;\r\n  border: 1px solid #c3e6cb;\r\n  border-radius: 6px;\r\n  padding: 12px;\r\n  margin-top: 12px;\r\n}\r\n\r\n.change-icon {\r\n  font-size: 20px;\r\n  color: #155724;\r\n}\r\n\r\n.change-info {\r\n  flex: 1;\r\n}\r\n\r\n.change-label {\r\n  display: block;\r\n  color: #155724;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n}\r\n\r\n.change-amount {\r\n  color: #155724;\r\n  font-weight: 700;\r\n  font-size: 16px;\r\n}\r\n\r\n.customer-card .card-header {\r\n  position: relative;\r\n}\r\n\r\n.optional-badge {\r\n  background: #17a2b8;\r\n  color: white;\r\n  padding: 2px 8px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 500;\r\n  text-transform: uppercase;\r\n}\r\n\r\n.customer-form {\r\n  padding: 20px;\r\n}\r\n\r\n.text-input {\r\n  width: 100%;\r\n  padding: 12px;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 8px;\r\n  font-size: 14px;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.text-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.text-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.text-input::placeholder {\r\n  color: #adb5bd;\r\n}\r\n\r\n/* Error Message Styles */\r\n.error-message {\r\n  color: #dc3545;\r\n  font-size: 12px;\r\n  margin-top: 4px;\r\n  display: block;\r\n}\r\n\r\n.checkout-actions {\r\n  display: flex;\r\n  gap: 12px;\r\n  justify-content: flex-end;\r\n  padding: 20px;\r\n  background: white;\r\n  border-radius: 12px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.secondary-btn {\r\n  background: #6c757d;\r\n  color: white;\r\n  border: none;\r\n  padding: 14px 24px;\r\n  border-radius: 8px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  transition: background-color 0.2s ease;\r\n}\r\n\r\n.secondary-btn:hover:not(:disabled) {\r\n  background: #5a6268;\r\n}\r\n\r\n.secondary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.primary-btn {\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  border: none;\r\n  padding: 14px 24px;\r\n  border-radius: 8px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  transition: all 0.2s ease;\r\n  box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);\r\n}\r\n\r\n.primary-btn:hover:not(:disabled) {\r\n  background: linear-gradient(135deg, #218838 0%, #1aa085 100%);\r\n  transform: translateY(-1px);\r\n  box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);\r\n}\r\n\r\n.primary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n  transform: none;\r\n}\r\n\r\n.btn-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 16px;\r\n  height: 16px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 1s linear infinite;\r\n}\r\n\r\n@keyframes spin {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n/* Responsive Design */\r\n@media (max-width: 768px) {\r\n  .checkout-main {\r\n    grid-template-columns: 1fr;\r\n  }\r\n\r\n  .checkout-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .header-content {\r\n    flex-direction: column;\r\n    gap: 16px;\r\n    text-align: center;\r\n  }\r\n\r\n  .checkout-title h1 {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .checkout-card {\r\n    margin-bottom: 16px;\r\n  }\r\n\r\n  .card-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .order-items,\r\n  .payment-options,\r\n  .cash-payment-section,\r\n  .customer-form,\r\n  .checkout-actions {\r\n    padding: 16px;\r\n  }\r\n\r\n  .checkout-actions {\r\n    flex-direction: column;\r\n  }\r\n\r\n  .secondary-btn,\r\n  .primary-btn {\r\n    width: 100%;\r\n    justify-content: center;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/checkout.css"],"names":[],"mappings":"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","sourcesContent":["/* Enhanced Checkout Page Styles */\r\n.checkout-page {\r\n  min-height: 100vh;\r\n  background: #f5f7fa;\r\n  padding: 12px;\r\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\r\n}\r\n\r\n/* Progress Indicator */\r\n.progress-indicator {\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  gap: 40px;\r\n  margin-bottom: 20px;\r\n  padding: 16px;\r\n  background: #f8f9fa;\r\n  border-radius: 8px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.progress-step {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  gap: 8px;\r\n  opacity: 0.5;\r\n  transition: opacity 0.3s ease;\r\n}\r\n\r\n.progress-step.active {\r\n  opacity: 1;\r\n}\r\n\r\n.step-number {\r\n  width: 32px;\r\n  height: 32px;\r\n  border-radius: 50%;\r\n  background: #6c757d;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  color: white;\r\n  border: 2px solid #6c757d;\r\n  font-size: 14px;\r\n}\r\n\r\n.progress-step.active .step-number {\r\n  background: #007bff;\r\n  border-color: #007bff;\r\n}\r\n\r\n.step-label {\r\n  font-size: 12px;\r\n  color: #495057;\r\n  font-weight: 500;\r\n  text-align: center;\r\n}\r\n\r\n/* Success Message */\r\n.success-message {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  padding: 6px 12px;\r\n  border-radius: 6px;\r\n  margin-bottom: 12px;\r\n  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);\r\n  animation: slideIn 0.3s ease-out;\r\n  font-size: 12px;\r\n  font-weight: 500;\r\n}\r\n\r\n.success-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n@keyframes slideIn {\r\n  from {\r\n    transform: translateY(-20px);\r\n    opacity: 0;\r\n  }\r\n  to {\r\n    transform: translateY(0);\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.checkout-header {\r\n  background: white;\r\n  border-radius: 12px;\r\n  padding: 20px;\r\n  margin-bottom: 20px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.header-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\r\n}\r\n\r\n.back-button {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #dee2e6;\r\n  border-radius: 8px;\r\n  padding: 12px 16px;\r\n  color: #495057;\r\n  text-decoration: none;\r\n  font-weight: 500;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.back-button:hover:not(:disabled) {\r\n  background: #e9ecef;\r\n  border-color: #adb5bd;\r\n}\r\n\r\n.back-button:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.back-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.checkout-title {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n}\r\n\r\n.title-icon {\r\n  font-size: 24px;\r\n}\r\n\r\n.checkout-title h1 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 24px;\r\n  font-weight: 600;\r\n}\r\n\r\n.checkout-main {\r\n  display: grid;\r\n  grid-template-columns: 1fr 1fr;\r\n  gap: 12px;\r\n  max-width: 1200px;\r\n  margin: 0 auto;\r\n}\r\n\r\n.checkout-left {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 12px;\r\n}\r\n\r\n.checkout-right {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 12px;\r\n}\r\n\r\n.checkout-card {\r\n  background: white;\r\n  border-radius: 8px;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);\r\n  overflow: hidden;\r\n}\r\n\r\n.card-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 12px 14px;\r\n  background: #f8f9fa;\r\n  border-bottom: 1px solid #e9ecef;\r\n}\r\n\r\n.card-header h2 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n}\r\n\r\n.item-count {\r\n  background: #007bff;\r\n  color: white;\r\n  padding: 3px 6px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 600;\r\n}\r\n\r\n.order-items {\r\n  padding: 12px 14px;\r\n  max-height: 200px;\r\n  overflow-y: auto;\r\n}\r\n\r\n.order-item {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 8px 0;\r\n  border-bottom: 1px solid #f1f3f4;\r\n}\r\n\r\n.order-item:last-child {\r\n  border-bottom: none;\r\n}\r\n\r\n.item-details h4 {\r\n  margin: 0 0 3px 0;\r\n  color: #333;\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n}\r\n\r\n.item-sku {\r\n  color: #6c757d;\r\n  font-size: 11px;\r\n}\r\n\r\n.item-meta {\r\n  text-align: right;\r\n}\r\n\r\n.item-quantity {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 11px;\r\n  margin-bottom: 3px;\r\n}\r\n\r\n.item-price {\r\n  color: #333;\r\n  font-weight: 600;\r\n  font-size: 13px;\r\n}\r\n\r\n.order-totals {\r\n  padding: 12px 14px;\r\n  background: #f8f9fa;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.total-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 5px 0;\r\n  font-size: 12px;\r\n}\r\n\r\n.total-row.grand-total {\r\n  border-top: 2px solid #dee2e6;\r\n  padding-top: 8px;\r\n  margin-top: 6px;\r\n  font-size: 14px;\r\n  font-weight: 700;\r\n  color: #333;\r\n}\r\n\r\n.total-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n  font-size: 15px;\r\n}\r\n\r\n.payment-options {\r\n  padding: 12px 14px;\r\n}\r\n\r\n.payment-option {\r\n  display: block;\r\n  background: white;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 6px;\r\n  padding: 10px 12px;\r\n  margin-bottom: 8px;\r\n  cursor: pointer;\r\n  transition: all 0.2s ease;\r\n  position: relative;\r\n}\r\n\r\n.payment-option:hover {\r\n  border-color: #007bff;\r\n  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.payment-option.selected {\r\n  border-color: #007bff;\r\n  background: #f8f9ff;\r\n}\r\n\r\n.payment-option input[type=\"radio\"] {\r\n  position: absolute;\r\n  opacity: 0;\r\n  width: 0;\r\n  height: 0;\r\n}\r\n\r\n.payment-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 10px;\r\n}\r\n\r\n.payment-icon {\r\n  font-size: 18px;\r\n  width: 32px;\r\n  text-align: center;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.cash-icon {\r\n  color: #28a745;\r\n}\r\n\r\n.mpesa-icon {\r\n  color: #007bff;\r\n}\r\n\r\n.credit-icon {\r\n  color: #ff9800;\r\n}\r\n\r\n.payment-info {\r\n  flex: 1;\r\n}\r\n\r\n.payment-name {\r\n  display: block;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 2px;\r\n  font-size: 13px;\r\n}\r\n\r\n.payment-desc {\r\n  color: #6c757d;\r\n  font-size: 11px;\r\n}\r\n\r\n.payment-check {\r\n  color: #007bff;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.cash-payment-section {\r\n  padding: 12px 14px;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.credit-payment-section {\r\n  padding: 12px 14px;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.credit-info-banner {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 8px;\r\n  background: #fff3cd;\r\n  border: 1px solid #ffc107;\r\n  border-radius: 6px;\r\n  padding: 8px 10px;\r\n  margin-bottom: 12px;\r\n}\r\n\r\n.info-icon {\r\n  font-size: 16px;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.info-text {\r\n  flex: 1;\r\n}\r\n\r\n.info-text strong {\r\n  display: block;\r\n  color: #856404;\r\n  font-size: 12px;\r\n  margin-bottom: 3px;\r\n  font-weight: 600;\r\n}\r\n\r\n.info-text p {\r\n  margin: 0;\r\n  color: #856404;\r\n  font-size: 11px;\r\n  line-height: 1.3;\r\n}\r\n\r\n.input-group {\r\n  margin-bottom: 12px;\r\n}\r\n\r\n.input-label {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 6px;\r\n  font-size: 12px;\r\n}\r\n\r\n.label-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n.input-wrapper {\r\n  position: relative;\r\n}\r\n\r\n.currency-symbol {\r\n  position: absolute;\r\n  left: 12px;\r\n  top: 50%;\r\n  transform: translateY(-50%);\r\n  color: #6c757d;\r\n  font-weight: 600;\r\n  z-index: 1;\r\n}\r\n\r\n.currency-input {\r\n  width: 100%;\r\n  padding: 8px 10px 8px 28px;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 6px;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.currency-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.currency-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.input-hint {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n  margin-top: 3px;\r\n}\r\n\r\n.change-display {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: #d4edda;\r\n  border: 1px solid #c3e6cb;\r\n  border-radius: 6px;\r\n  padding: 8px 10px;\r\n  margin-top: 8px;\r\n}\r\n\r\n.change-icon {\r\n  font-size: 16px;\r\n  color: #155724;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.change-info {\r\n  flex: 1;\r\n}\r\n\r\n.change-label {\r\n  display: block;\r\n  color: #155724;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n}\r\n\r\n.change-amount {\r\n  color: #155724;\r\n  font-weight: 700;\r\n  font-size: 13px;\r\n}\r\n\r\n.customer-card .card-header {\r\n  position: relative;\r\n}\r\n\r\n.optional-badge {\r\n  background: #17a2b8;\r\n  color: white;\r\n  padding: 2px 8px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 500;\r\n  text-transform: uppercase;\r\n}\r\n\r\n.required-badge {\r\n  background: #dc3545;\r\n}\r\n\r\n.required-indicator {\r\n  color: #dc3545;\r\n  margin-left: 4px;\r\n}\r\n\r\n.customer-form {\r\n  padding: 12px 14px;\r\n}\r\n\r\n.text-input {\r\n  width: 100%;\r\n  padding: 8px 10px;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 6px;\r\n  font-size: 13px;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.text-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.text-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.text-input::placeholder {\r\n  color: #adb5bd;\r\n}\r\n\r\n/* Error Message Styles */\r\n.error-message {\r\n  color: #dc3545;\r\n  font-size: 12px;\r\n  margin-top: 4px;\r\n  display: block;\r\n}\r\n\r\n.checkout-actions {\r\n  display: flex;\r\n  gap: 10px;\r\n  justify-content: flex-end;\r\n  padding: 12px 14px;\r\n  background: white;\r\n  border-radius: 8px;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);\r\n}\r\n\r\n.secondary-btn {\r\n  background: #6c757d;\r\n  color: white;\r\n  border: none;\r\n  padding: 10px 18px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  transition: background-color 0.2s ease;\r\n}\r\n\r\n.secondary-btn:hover:not(:disabled) {\r\n  background: #5a6268;\r\n}\r\n\r\n.secondary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.primary-btn {\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  border: none;\r\n  padding: 10px 18px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  transition: all 0.2s ease;\r\n  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);\r\n}\r\n\r\n.primary-btn:hover:not(:disabled) {\r\n  background: linear-gradient(135deg, #218838 0%, #1aa085 100%);\r\n  transform: translateY(-1px);\r\n  box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);\r\n}\r\n\r\n.primary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n  transform: none;\r\n}\r\n\r\n.btn-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 16px;\r\n  height: 16px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 1s linear infinite;\r\n}\r\n\r\n@keyframes spin {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n/* Responsive Design */\r\n@media (max-width: 768px) {\r\n  .checkout-main {\r\n    grid-template-columns: 1fr;\r\n  }\r\n\r\n  .checkout-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .header-content {\r\n    flex-direction: column;\r\n    gap: 16px;\r\n    text-align: center;\r\n  }\r\n\r\n  .checkout-title h1 {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .checkout-card {\r\n    margin-bottom: 16px;\r\n  }\r\n\r\n  .card-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .order-items,\r\n  .payment-options,\r\n  .cash-payment-section,\r\n  .customer-form,\r\n  .checkout-actions {\r\n    padding: 16px;\r\n  }\r\n\r\n  .checkout-actions {\r\n    flex-direction: column;\r\n  }\r\n\r\n  .secondary-btn,\r\n  .primary-btn {\r\n    width: 100%;\r\n    justify-content: center;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1004,25 +1058,26 @@ var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBP
 ___CSS_LOADER_EXPORT___.push([module.id, `.sync-status {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
+  gap: 8px;
+  padding: 4px 8px;
   background: #f8f9fa;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 4px;
+  font-size: 10px;
   border: 1px solid #e9ecef;
 }
 
 .sync-status-indicator {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .status-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   animation: pulse 2s infinite;
+  flex-shrink: 0;
 }
 
 .status-dot.online {
@@ -1046,34 +1101,38 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.sync-status {
 }
 
 .status-text {
-  font-weight: 500;
+  font-weight: 600;
   color: #495057;
+  font-size: 10px;
+  white-space: nowrap;
 }
 
 .pending-syncs {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .pending-count {
   color: #856404;
   background: #fff3cd;
-  padding: 2px 6px;
+  padding: 2px 4px;
   border-radius: 3px;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 9px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .sync-button {
   background: #007bff;
   color: white;
   border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 9px;
   cursor: pointer;
   transition: background-color 0.2s;
+  white-space: nowrap;
 }
 
 .sync-button:hover:not(:disabled) {
@@ -1085,10 +1144,18 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.sync-status {
   cursor: not-allowed;
 }
 
+.auto-sync-indicator {
+  color: #667eea;
+  font-size: 9px;
+  font-weight: 600;
+  font-style: italic;
+  white-space: nowrap;
+}
+
 .last-sync {
   color: #6c757d;
-  font-size: 12px;
-  margin-left: auto;
+  font-size: 9px;
+  white-space: nowrap;
 }
 
 /* Responsive adjustments */
@@ -1103,7 +1170,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.sync-status {
     margin-left: 0;
   }
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/components/SyncStatus.css"],"names":[],"mappings":"AAAA;EACE,aAAa;EACb,mBAAmB;EACnB,SAAS;EACT,iBAAiB;EACjB,mBAAmB;EACnB,kBAAkB;EAClB,eAAe;EACf,yBAAyB;AAC3B;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,UAAU;EACV,WAAW;EACX,kBAAkB;EAClB,4BAA4B;AAC9B;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE;IACE,UAAU;EACZ;EACA;IACE,YAAY;EACd;EACA;IACE,UAAU;EACZ;AACF;;AAEA;EACE,gBAAgB;EAChB,cAAc;AAChB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,cAAc;EACd,mBAAmB;EACnB,gBAAgB;EAChB,kBAAkB;EAClB,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,gBAAgB;EAChB,kBAAkB;EAClB,eAAe;EACf,eAAe;EACf,iCAAiC;AACnC;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,mBAAmB;AACrB;;AAEA;EACE,cAAc;EACd,eAAe;EACf,iBAAiB;AACnB;;AAEA,2BAA2B;AAC3B;EACE;IACE,sBAAsB;IACtB,uBAAuB;IACvB,QAAQ;EACV;;EAEA;IACE,cAAc;EAChB;AACF","sourcesContent":[".sync-status {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n  padding: 8px 12px;\r\n  background: #f8f9fa;\r\n  border-radius: 6px;\r\n  font-size: 14px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.sync-status-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n}\r\n\r\n.status-dot {\r\n  width: 8px;\r\n  height: 8px;\r\n  border-radius: 50%;\r\n  animation: pulse 2s infinite;\r\n}\r\n\r\n.status-dot.online {\r\n  background-color: #28a745;\r\n}\r\n\r\n.status-dot.offline {\r\n  background-color: #dc3545;\r\n}\r\n\r\n@keyframes pulse {\r\n  0% {\r\n    opacity: 1;\r\n  }\r\n  50% {\r\n    opacity: 0.5;\r\n  }\r\n  100% {\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.status-text {\r\n  font-weight: 500;\r\n  color: #495057;\r\n}\r\n\r\n.pending-syncs {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.pending-count {\r\n  color: #856404;\r\n  background: #fff3cd;\r\n  padding: 2px 6px;\r\n  border-radius: 3px;\r\n  font-size: 12px;\r\n  font-weight: 500;\r\n}\r\n\r\n.sync-button {\r\n  background: #007bff;\r\n  color: white;\r\n  border: none;\r\n  padding: 4px 8px;\r\n  border-radius: 4px;\r\n  font-size: 12px;\r\n  cursor: pointer;\r\n  transition: background-color 0.2s;\r\n}\r\n\r\n.sync-button:hover:not(:disabled) {\r\n  background: #0056b3;\r\n}\r\n\r\n.sync-button:disabled {\r\n  background: #6c757d;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.last-sync {\r\n  color: #6c757d;\r\n  font-size: 12px;\r\n  margin-left: auto;\r\n}\r\n\r\n/* Responsive adjustments */\r\n@media (max-width: 768px) {\r\n  .sync-status {\r\n    flex-direction: column;\r\n    align-items: flex-start;\r\n    gap: 6px;\r\n  }\r\n\r\n  .last-sync {\r\n    margin-left: 0;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/components/SyncStatus.css"],"names":[],"mappings":"AAAA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,gBAAgB;EAChB,mBAAmB;EACnB,kBAAkB;EAClB,eAAe;EACf,yBAAyB;AAC3B;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,UAAU;EACV,WAAW;EACX,kBAAkB;EAClB,4BAA4B;EAC5B,cAAc;AAChB;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE;IACE,UAAU;EACZ;EACA;IACE,YAAY;EACd;EACA;IACE,UAAU;EACZ;AACF;;AAEA;EACE,gBAAgB;EAChB,cAAc;EACd,eAAe;EACf,mBAAmB;AACrB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,cAAc;EACd,mBAAmB;EACnB,gBAAgB;EAChB,kBAAkB;EAClB,cAAc;EACd,gBAAgB;EAChB,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,gBAAgB;EAChB,kBAAkB;EAClB,cAAc;EACd,eAAe;EACf,iCAAiC;EACjC,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,mBAAmB;AACrB;;AAEA;EACE,cAAc;EACd,cAAc;EACd,gBAAgB;EAChB,kBAAkB;EAClB,mBAAmB;AACrB;;AAEA;EACE,cAAc;EACd,cAAc;EACd,mBAAmB;AACrB;;AAEA,2BAA2B;AAC3B;EACE;IACE,sBAAsB;IACtB,uBAAuB;IACvB,QAAQ;EACV;;EAEA;IACE,cAAc;EAChB;AACF","sourcesContent":[".sync-status {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 4px 8px;\r\n  background: #f8f9fa;\r\n  border-radius: 4px;\r\n  font-size: 10px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.sync-status-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 4px;\r\n}\r\n\r\n.status-dot {\r\n  width: 6px;\r\n  height: 6px;\r\n  border-radius: 50%;\r\n  animation: pulse 2s infinite;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.status-dot.online {\r\n  background-color: #28a745;\r\n}\r\n\r\n.status-dot.offline {\r\n  background-color: #dc3545;\r\n}\r\n\r\n@keyframes pulse {\r\n  0% {\r\n    opacity: 1;\r\n  }\r\n  50% {\r\n    opacity: 0.5;\r\n  }\r\n  100% {\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.status-text {\r\n  font-weight: 600;\r\n  color: #495057;\r\n  font-size: 10px;\r\n  white-space: nowrap;\r\n}\r\n\r\n.pending-syncs {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 4px;\r\n}\r\n\r\n.pending-count {\r\n  color: #856404;\r\n  background: #fff3cd;\r\n  padding: 2px 4px;\r\n  border-radius: 3px;\r\n  font-size: 9px;\r\n  font-weight: 600;\r\n  white-space: nowrap;\r\n}\r\n\r\n.sync-button {\r\n  background: #007bff;\r\n  color: white;\r\n  border: none;\r\n  padding: 3px 6px;\r\n  border-radius: 3px;\r\n  font-size: 9px;\r\n  cursor: pointer;\r\n  transition: background-color 0.2s;\r\n  white-space: nowrap;\r\n}\r\n\r\n.sync-button:hover:not(:disabled) {\r\n  background: #0056b3;\r\n}\r\n\r\n.sync-button:disabled {\r\n  background: #6c757d;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.auto-sync-indicator {\r\n  color: #667eea;\r\n  font-size: 9px;\r\n  font-weight: 600;\r\n  font-style: italic;\r\n  white-space: nowrap;\r\n}\r\n\r\n.last-sync {\r\n  color: #6c757d;\r\n  font-size: 9px;\r\n  white-space: nowrap;\r\n}\r\n\r\n/* Responsive adjustments */\r\n@media (max-width: 768px) {\r\n  .sync-status {\r\n    flex-direction: column;\r\n    align-items: flex-start;\r\n    gap: 6px;\r\n  }\r\n\r\n  .last-sync {\r\n    margin-left: 0;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1566,23 +1633,23 @@ var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBP
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, `/* Pending Transactions Styles */
 .pending-transactions-panel {
-  margin-top: 20px;
-  padding: 16px;
+  margin-top: 12px;
+  padding: 10px;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid #e1e5e9;
-  max-height: 300px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
 .pending-header {
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .pending-transactions-list {
@@ -1594,18 +1661,18 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Pending Transactions Styles */
 .pending-transaction-item {
   background: white;
   border: 1px solid #dee2e6;
-  border-radius: 6px;
-  padding: 12px;
+  border-radius: 4px;
+  padding: 8px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 8px;
   transition: all 0.2s ease;
 }
 
 .pending-transaction-item:hover {
   border-color: #667eea;
-  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 1px 3px rgba(102, 126, 234, 0.1);
 }
 
 .pending-transaction-info {
@@ -1617,34 +1684,34 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Pending Transactions Styles */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .pending-time {
-  font-size: 12px;
+  font-size: 10px;
   color: #666;
   font-weight: 500;
 }
 
 .pending-items {
-  font-size: 12px;
+  font-size: 10px;
   color: #666;
   background: #e9ecef;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 2px 6px;
+  border-radius: 8px;
 }
 
 .pending-customer {
-  font-size: 13px;
+  font-size: 11px;
   color: #495057;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .pending-total {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 600;
   color: #28a745;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .pending-transaction-actions {
@@ -1657,37 +1724,31 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Pending Transactions Styles */
   background: #667eea;
   color: white;
   border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 500;
   transition: all 0.2s ease;
   white-space: nowrap;
-  min-height: 36px;
   touch-action: manipulation;
 }
 
 .resume-btn:hover {
   background: #5568d3;
-  transform: scale(1.05);
-}
-
-.resume-btn:active {
-  transform: scale(0.95);
 }
 
 .delete-pending-btn {
   background: #dc3545;
   color: white;
   border: none;
-  padding: 8px 10px;
-  border-radius: 6px;
+  padding: 6px 8px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   transition: all 0.2s ease;
-  min-width: 36px;
-  min-height: 36px;
+  min-width: 28px;
+  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1696,11 +1757,6 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Pending Transactions Styles */
 
 .delete-pending-btn:hover {
   background: #c82333;
-  transform: scale(1.05);
-}
-
-.delete-pending-btn:active {
-  transform: scale(0.95);
 }
 
 .checkout-btn.hold {
@@ -1767,7 +1823,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Pending Transactions Styles */
   }
 }
 
-`, "",{"version":3,"sources":["webpack://./src/renderer/pending-transactions.css"],"names":[],"mappings":"AAAA,gCAAgC;AAChC;EACE,gBAAgB;EAChB,aAAa;EACb,mBAAmB;EACnB,kBAAkB;EAClB,yBAAyB;EACzB,iBAAiB;EACjB,gBAAgB;AAClB;;AAEA;EACE,eAAe;EACf,gBAAgB;EAChB,WAAW;EACX,mBAAmB;EACnB,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,SAAS;AACX;;AAEA;EACE,iBAAiB;EACjB,yBAAyB;EACzB,kBAAkB;EAClB,aAAa;EACb,aAAa;EACb,8BAA8B;EAC9B,uBAAuB;EACvB,SAAS;EACT,yBAAyB;AAC3B;;AAEA;EACE,qBAAqB;EACrB,8CAA8C;AAChD;;AAEA;EACE,OAAO;EACP,YAAY;AACd;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,mBAAmB;EACnB,kBAAkB;AACpB;;AAEA;EACE,eAAe;EACf,WAAW;EACX,gBAAgB;AAClB;;AAEA;EACE,eAAe;EACf,WAAW;EACX,mBAAmB;EACnB,gBAAgB;EAChB,mBAAmB;AACrB;;AAEA;EACE,eAAe;EACf,cAAc;EACd,kBAAkB;AACpB;;AAEA;EACE,eAAe;EACf,gBAAgB;EAChB,cAAc;EACd,eAAe;AACjB;;AAEA;EACE,aAAa;EACb,QAAQ;EACR,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,iBAAiB;EACjB,kBAAkB;EAClB,eAAe;EACf,eAAe;EACf,gBAAgB;EAChB,yBAAyB;EACzB,mBAAmB;EACnB,gBAAgB;EAChB,0BAA0B;AAC5B;;AAEA;EACE,mBAAmB;EACnB,sBAAsB;AACxB;;AAEA;EACE,sBAAsB;AACxB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,iBAAiB;EACjB,kBAAkB;EAClB,eAAe;EACf,eAAe;EACf,yBAAyB;EACzB,eAAe;EACf,gBAAgB;EAChB,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,0BAA0B;AAC5B;;AAEA;EACE,mBAAmB;EACnB,sBAAsB;AACxB;;AAEA;EACE,sBAAsB;AACxB;;AAEA;EACE,mBAAmB;EACnB,WAAW;EACX,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,sBAAsB;AACxB;;AAEA,sBAAsB;AACtB;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,qBAAqB;EACrB,mBAAmB;AACrB;;AAEA;;EAEE,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,cAAc;AAChB;;AAEA,eAAe;AACf;EACE;IACE,sBAAsB;EACxB;;EAEA;IACE,WAAW;IACX,yBAAyB;EAC3B;;EAEA;;IAEE,OAAO;EACT;AACF","sourcesContent":["/* Pending Transactions Styles */\r\n.pending-transactions-panel {\r\n  margin-top: 20px;\r\n  padding: 16px;\r\n  background: #f8f9fa;\r\n  border-radius: 8px;\r\n  border: 1px solid #e1e5e9;\r\n  max-height: 300px;\r\n  overflow-y: auto;\r\n}\r\n\r\n.pending-header {\r\n  font-size: 16px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 12px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.pending-transactions-list {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 10px;\r\n}\r\n\r\n.pending-transaction-item {\r\n  background: white;\r\n  border: 1px solid #dee2e6;\r\n  border-radius: 6px;\r\n  padding: 12px;\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: flex-start;\r\n  gap: 12px;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.pending-transaction-item:hover {\r\n  border-color: #667eea;\r\n  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);\r\n}\r\n\r\n.pending-transaction-info {\r\n  flex: 1;\r\n  min-width: 0;\r\n}\r\n\r\n.pending-transaction-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-bottom: 6px;\r\n}\r\n\r\n.pending-time {\r\n  font-size: 12px;\r\n  color: #666;\r\n  font-weight: 500;\r\n}\r\n\r\n.pending-items {\r\n  font-size: 12px;\r\n  color: #666;\r\n  background: #e9ecef;\r\n  padding: 2px 8px;\r\n  border-radius: 12px;\r\n}\r\n\r\n.pending-customer {\r\n  font-size: 13px;\r\n  color: #495057;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.pending-total {\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  color: #28a745;\r\n  margin-top: 4px;\r\n}\r\n\r\n.pending-transaction-actions {\r\n  display: flex;\r\n  gap: 6px;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.resume-btn {\r\n  background: #667eea;\r\n  color: white;\r\n  border: none;\r\n  padding: 8px 12px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-size: 13px;\r\n  font-weight: 500;\r\n  transition: all 0.2s ease;\r\n  white-space: nowrap;\r\n  min-height: 36px;\r\n  touch-action: manipulation;\r\n}\r\n\r\n.resume-btn:hover {\r\n  background: #5568d3;\r\n  transform: scale(1.05);\r\n}\r\n\r\n.resume-btn:active {\r\n  transform: scale(0.95);\r\n}\r\n\r\n.delete-pending-btn {\r\n  background: #dc3545;\r\n  color: white;\r\n  border: none;\r\n  padding: 8px 10px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-size: 14px;\r\n  transition: all 0.2s ease;\r\n  min-width: 36px;\r\n  min-height: 36px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  touch-action: manipulation;\r\n}\r\n\r\n.delete-pending-btn:hover {\r\n  background: #c82333;\r\n  transform: scale(1.05);\r\n}\r\n\r\n.delete-pending-btn:active {\r\n  transform: scale(0.95);\r\n}\r\n\r\n.checkout-btn.hold {\r\n  background: #ffc107;\r\n  color: #333;\r\n  margin-bottom: 10px;\r\n}\r\n\r\n.checkout-btn.hold:hover:not(:disabled) {\r\n  background: #e0a800;\r\n}\r\n\r\n.checkout-btn.hold:active:not(:disabled) {\r\n  transform: scale(0.98);\r\n}\r\n\r\n/* Dark mode support */\r\n[data-theme=\"dark\"] .pending-transactions-panel {\r\n  background: #2d2d2d;\r\n  border-color: #404040;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-header {\r\n  color: #e0e0e0;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-transaction-item {\r\n  background: #333333;\r\n  border-color: #404040;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-transaction-item:hover {\r\n  border-color: #667eea;\r\n  background: #3a3a3a;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-time,\r\n[data-theme=\"dark\"] .pending-items {\r\n  color: #b0b0b0;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-items {\r\n  background: #404040;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-customer {\r\n  color: #d0d0d0;\r\n}\r\n\r\n/* Responsive */\r\n@media (max-width: 768px) {\r\n  .pending-transaction-item {\r\n    flex-direction: column;\r\n  }\r\n\r\n  .pending-transaction-actions {\r\n    width: 100%;\r\n    justify-content: flex-end;\r\n  }\r\n\r\n  .resume-btn,\r\n  .delete-pending-btn {\r\n    flex: 1;\r\n  }\r\n}\r\n\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/pending-transactions.css"],"names":[],"mappings":"AAAA,gCAAgC;AAChC;EACE,gBAAgB;EAChB,aAAa;EACb,mBAAmB;EACnB,kBAAkB;EAClB,yBAAyB;EACzB,iBAAiB;EACjB,gBAAgB;AAClB;;AAEA;EACE,eAAe;EACf,gBAAgB;EAChB,WAAW;EACX,kBAAkB;EAClB,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,SAAS;AACX;;AAEA;EACE,iBAAiB;EACjB,yBAAyB;EACzB,kBAAkB;EAClB,YAAY;EACZ,aAAa;EACb,8BAA8B;EAC9B,uBAAuB;EACvB,QAAQ;EACR,yBAAyB;AAC3B;;AAEA;EACE,qBAAqB;EACrB,8CAA8C;AAChD;;AAEA;EACE,OAAO;EACP,YAAY;AACd;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,mBAAmB;EACnB,kBAAkB;AACpB;;AAEA;EACE,eAAe;EACf,WAAW;EACX,gBAAgB;AAClB;;AAEA;EACE,eAAe;EACf,WAAW;EACX,mBAAmB;EACnB,gBAAgB;EAChB,kBAAkB;AACpB;;AAEA;EACE,eAAe;EACf,cAAc;EACd,kBAAkB;AACpB;;AAEA;EACE,eAAe;EACf,gBAAgB;EAChB,cAAc;EACd,eAAe;AACjB;;AAEA;EACE,aAAa;EACb,QAAQ;EACR,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,iBAAiB;EACjB,kBAAkB;EAClB,eAAe;EACf,eAAe;EACf,gBAAgB;EAChB,yBAAyB;EACzB,mBAAmB;EACnB,0BAA0B;AAC5B;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,gBAAgB;EAChB,kBAAkB;EAClB,eAAe;EACf,eAAe;EACf,yBAAyB;EACzB,eAAe;EACf,gBAAgB;EAChB,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,0BAA0B;AAC5B;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,WAAW;EACX,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,sBAAsB;AACxB;;AAEA,sBAAsB;AACtB;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,qBAAqB;EACrB,mBAAmB;AACrB;;AAEA;;EAEE,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,cAAc;AAChB;;AAEA,eAAe;AACf;EACE;IACE,sBAAsB;EACxB;;EAEA;IACE,WAAW;IACX,yBAAyB;EAC3B;;EAEA;;IAEE,OAAO;EACT;AACF","sourcesContent":["/* Pending Transactions Styles */\r\n.pending-transactions-panel {\r\n  margin-top: 12px;\r\n  padding: 10px;\r\n  background: #f8f9fa;\r\n  border-radius: 4px;\r\n  border: 1px solid #e1e5e9;\r\n  max-height: 200px;\r\n  overflow-y: auto;\r\n}\r\n\r\n.pending-header {\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 8px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n}\r\n\r\n.pending-transactions-list {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 10px;\r\n}\r\n\r\n.pending-transaction-item {\r\n  background: white;\r\n  border: 1px solid #dee2e6;\r\n  border-radius: 4px;\r\n  padding: 8px;\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: flex-start;\r\n  gap: 8px;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.pending-transaction-item:hover {\r\n  border-color: #667eea;\r\n  box-shadow: 0 1px 3px rgba(102, 126, 234, 0.1);\r\n}\r\n\r\n.pending-transaction-info {\r\n  flex: 1;\r\n  min-width: 0;\r\n}\r\n\r\n.pending-transaction-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.pending-time {\r\n  font-size: 10px;\r\n  color: #666;\r\n  font-weight: 500;\r\n}\r\n\r\n.pending-items {\r\n  font-size: 10px;\r\n  color: #666;\r\n  background: #e9ecef;\r\n  padding: 2px 6px;\r\n  border-radius: 8px;\r\n}\r\n\r\n.pending-customer {\r\n  font-size: 11px;\r\n  color: #495057;\r\n  margin-bottom: 2px;\r\n}\r\n\r\n.pending-total {\r\n  font-size: 11px;\r\n  font-weight: 600;\r\n  color: #28a745;\r\n  margin-top: 2px;\r\n}\r\n\r\n.pending-transaction-actions {\r\n  display: flex;\r\n  gap: 6px;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.resume-btn {\r\n  background: #667eea;\r\n  color: white;\r\n  border: none;\r\n  padding: 6px 10px;\r\n  border-radius: 4px;\r\n  cursor: pointer;\r\n  font-size: 11px;\r\n  font-weight: 500;\r\n  transition: all 0.2s ease;\r\n  white-space: nowrap;\r\n  touch-action: manipulation;\r\n}\r\n\r\n.resume-btn:hover {\r\n  background: #5568d3;\r\n}\r\n\r\n.delete-pending-btn {\r\n  background: #dc3545;\r\n  color: white;\r\n  border: none;\r\n  padding: 6px 8px;\r\n  border-radius: 4px;\r\n  cursor: pointer;\r\n  font-size: 12px;\r\n  transition: all 0.2s ease;\r\n  min-width: 28px;\r\n  min-height: 28px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  touch-action: manipulation;\r\n}\r\n\r\n.delete-pending-btn:hover {\r\n  background: #c82333;\r\n}\r\n\r\n.checkout-btn.hold {\r\n  background: #ffc107;\r\n  color: #333;\r\n  margin-bottom: 10px;\r\n}\r\n\r\n.checkout-btn.hold:hover:not(:disabled) {\r\n  background: #e0a800;\r\n}\r\n\r\n.checkout-btn.hold:active:not(:disabled) {\r\n  transform: scale(0.98);\r\n}\r\n\r\n/* Dark mode support */\r\n[data-theme=\"dark\"] .pending-transactions-panel {\r\n  background: #2d2d2d;\r\n  border-color: #404040;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-header {\r\n  color: #e0e0e0;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-transaction-item {\r\n  background: #333333;\r\n  border-color: #404040;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-transaction-item:hover {\r\n  border-color: #667eea;\r\n  background: #3a3a3a;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-time,\r\n[data-theme=\"dark\"] .pending-items {\r\n  color: #b0b0b0;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-items {\r\n  background: #404040;\r\n}\r\n\r\n[data-theme=\"dark\"] .pending-customer {\r\n  color: #d0d0d0;\r\n}\r\n\r\n/* Responsive */\r\n@media (max-width: 768px) {\r\n  .pending-transaction-item {\r\n    flex-direction: column;\r\n  }\r\n\r\n  .pending-transaction-actions {\r\n    width: 100%;\r\n    justify-content: flex-end;\r\n  }\r\n\r\n  .resume-btn,\r\n  .delete-pending-btn {\r\n    flex: 1;\r\n  }\r\n}\r\n\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -2077,213 +2133,125 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `/* Receipt Page Styles */
+___CSS_LOADER_EXPORT___.push([module.id, `/* Receipt Page - Full Width Layout */
 .receipt-page {
-  min-height: 100vh;
-  background: #ffffff;
-  padding: 16px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* Top Bar */
+.receipt-top-bar {
+  background: white;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+.success-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.success-icon-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.receipt-container {
-  max-width: 400px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Success Header */
-.receipt-success {
-  text-align: center;
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  background: #28a745;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .success-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
+  font-size: 20px;
+  color: white;
+  font-weight: bold;
 }
 
-.receipt-success h2 {
-  margin: 0 0 8px 0;
-  color: #28a745;
-  font-size: 24px;
-  font-weight: 600;
-}
-
-/* Receipt Card */
-.receipt-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.receipt-header {
-  background: #f8f9fa;
-  padding: 20px;
-  text-align: center;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.receipt-header h3 {
-  margin: 0 0 8px 0;
+.success-text h2 {
+  margin: 0;
   color: #333;
   font-size: 18px;
   font-weight: 600;
 }
 
-.receipt-header p {
-  margin: 4px 0;
-  color: #6c757d;
-  font-size: 14px;
-}
-
-.receipt-branch {
-  margin-top: 10px;
-  padding: 8px;
-  background: #f8f9fa;
-  border-radius: 4px;
-  border: 1px solid #e9ecef;
-}
-
-.receipt-branch p {
-  margin: 2px 0;
-  font-size: 11px;
-  color: #495057;
-}
-
-/* Items */
-.receipt-items {
-  padding: 20px;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.receipt-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #f1f3f4;
-}
-
-.receipt-item:last-child {
-  border-bottom: none;
-}
-
-.item-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.item-name {
-  font-weight: 500;
-  color: #333;
-  font-size: 14px;
-}
-
-.item-qty {
+.success-subtitle {
+  margin: 2px 0 0 0;
   color: #6c757d;
   font-size: 12px;
+  font-weight: 500;
 }
 
-.item-price {
-  font-weight: 600;
-  color: #333;
-  font-size: 14px;
-}
-
-/* Totals */
-.receipt-totals {
-  padding: 20px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.total-row {
+.receipt-actions-top {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 0;
-  font-size: 14px;
+  gap: 8px;
 }
 
-.total-row.grand-total {
-  border-top: 2px solid #dee2e6;
-  padding-top: 12px;
-  margin-top: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-}
-
-.total-amount {
-  color: #28a745;
-  font-weight: 700;
-}
-
-.change-amount {
-  color: #28a745;
-  font-weight: 600;
-}
-
-/* Footer */
-.receipt-footer {
-  padding: 20px;
-  text-align: center;
-  background: #f8f9fa;
-}
-
-.receipt-footer p {
-  margin: 0;
-  color: #6c757d;
-  font-style: italic;
-  font-size: 14px;
-}
-
-/* Actions */
-.receipt-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-.new-sale-btn, .print-btn {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 14px 24px;
-  border-radius: 8px;
+.action-btn-top {
+  background: white;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  padding: 8px 16px;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: background-color 0.2s ease;
-  flex: 1;
-  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
 }
 
-.new-sale-btn:hover:not(:disabled), .print-btn:hover:not(:disabled) {
+.action-btn-top:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+  transform: translateY(-1px);
+}
+
+.action-btn-top.primary-btn {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.action-btn-top.primary-btn:hover:not(:disabled) {
   background: #0056b3;
+  border-color: #0056b3;
 }
 
-.new-sale-btn:disabled, .print-btn:disabled {
-  background: #6c757d;
+.action-btn-top.print-btn {
+  background: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+.action-btn-top.print-btn:hover:not(:disabled) {
+  background: #218838;
+  border-color: #218838;
+}
+
+.action-btn-top:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
+.btn-icon {
+  font-size: 16px;
+}
+
 .loading-spinner {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top: 2px solid white;
   border-radius: 50%;
@@ -2295,25 +2263,424 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Receipt Page Styles */
   100% { transform: rotate(360deg); }
 }
 
+/* Main Content - Two Column Layout */
+.receipt-main-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 16px;
+  padding: 16px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Left Column */
+.receipt-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Right Column */
+.receipt-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Cards */
+.receipt-header-card,
+.receipt-info-grid,
+.receipt-items-section,
+.totals-card,
+.payment-card,
+.receipt-footer-card {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Business Header */
+.receipt-header-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
+}
+
+.business-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.business-address {
+  font-size: 12px;
+  opacity: 0.95;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.business-contact {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* Info Grid */
+.receipt-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.info-card {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.info-label {
+  font-size: 11px;
+  color: #6c757d;
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 13px;
+  color: #333;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+/* Items Section */
+.receipt-items-section {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.items-table {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.items-header {
+  display: grid;
+  grid-template-columns: 2fr 60px 100px 100px;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.items-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: 2fr 60px 100px 100px;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f3f4;
+  align-items: center;
+}
+
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.col-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.col-qty,
+.col-price,
+.col-total {
+  font-size: 13px;
+  text-align: right;
+}
+
+.col-qty {
+  color: #6c757d;
+}
+
+.col-price {
+  color: #495057;
+}
+
+.col-total {
+  font-weight: 700;
+  color: #333;
+}
+
+/* Totals Card */
+.totals-card {
+  flex-shrink: 0;
+}
+
+.totals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.total-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.total-label {
+  color: #495057;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.total-value {
+  color: #333;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.total-item.grand-total {
+  border-top: 2px solid #dee2e6;
+  padding-top: 16px;
+  margin-top: 4px;
+}
+
+.grand-total .total-label {
+  font-weight: 700;
+  font-size: 15px;
+  color: #333;
+}
+
+.total-amount {
+  color: #28a745;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* Payment Card */
+.payment-card {
+  flex-shrink: 0;
+}
+
+.payment-method-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-method-badge[data-method="cash"] {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.payment-method-badge[data-method="mpesa"] {
+  background: #cfe2ff;
+  color: #084298;
+  border: 1px solid #b6d4fe;
+}
+
+.payment-method-badge[data-method="credit"] {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffc107;
+}
+
+.payment-icon {
+  font-size: 16px;
+}
+
+.payment-text {
+  font-size: 11px;
+}
+
+/* Credit Details */
+.credit-details {
+  margin-top: 16px;
+  padding: 12px;
+  background: #fffbf0;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+}
+
+.credit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #ffc107;
+  color: #856404;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+
+.credit-icon {
+  font-size: 12px;
+}
+
+.credit-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 12px;
+}
+
+.credit-label {
+  color: #856404;
+  font-weight: 500;
+}
+
+.credit-value {
+  color: #856404;
+  font-weight: 600;
+}
+
+.credit-notes-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ffc107;
+}
+
+.credit-notes-section .credit-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.credit-notes-text {
+  margin: 0;
+  color: #856404;
+  font-size: 11px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Payment Details */
+.payment-details {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e9ecef;
+}
+
+.payment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+  color: #495057;
+}
+
+.payment-row span:first-child {
+  font-weight: 500;
+}
+
+.payment-row span:last-child {
+  font-weight: 600;
+  color: #333;
+}
+
+.change-row {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f3f4;
+}
+
+.change-amount {
+  color: #28a745;
+  font-weight: 700;
+}
+
+/* Footer Card */
+.receipt-footer-card {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.thank-you {
+  margin: 0 0 6px 0;
+  color: #495057;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.footer-note {
+  margin: 0;
+  color: #6c757d;
+  font-size: 11px;
+  font-style: italic;
+}
+
 /* Responsive */
-@media (max-width: 480px) {
-  .receipt-page {
-    padding: 16px;
-  }
-
-  .receipt-container {
-    max-width: 100%;
-  }
-
-  .receipt-actions {
-    flex-direction: column;
-  }
-
-  .new-sale-btn, .print-btn {
-    width: 100%;
+@media (max-width: 1200px) {
+  .receipt-main-content {
+    grid-template-columns: 1fr 350px;
   }
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/receipt.css"],"names":[],"mappings":"AAAA,wBAAwB;AACxB;EACE,iBAAiB;EACjB,mBAAmB;EACnB,aAAa;EACb,4DAA4D;EAC5D,aAAa;EACb,mBAAmB;EACnB,uBAAuB;AACzB;;AAEA;EACE,gBAAgB;EAChB,WAAW;EACX,aAAa;EACb,sBAAsB;EACtB,SAAS;AACX;;AAEA,mBAAmB;AACnB;EACE,kBAAkB;EAClB,iBAAiB;EACjB,mBAAmB;EACnB,aAAa;EACb,wCAAwC;AAC1C;;AAEA;EACE,eAAe;EACf,mBAAmB;AACrB;;AAEA;EACE,iBAAiB;EACjB,cAAc;EACd,eAAe;EACf,gBAAgB;AAClB;;AAEA,iBAAiB;AACjB;EACE,iBAAiB;EACjB,mBAAmB;EACnB,wCAAwC;EACxC,gBAAgB;AAClB;;AAEA;EACE,mBAAmB;EACnB,aAAa;EACb,kBAAkB;EAClB,gCAAgC;AAClC;;AAEA;EACE,iBAAiB;EACjB,WAAW;EACX,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,aAAa;EACb,cAAc;EACd,eAAe;AACjB;;AAEA;EACE,gBAAgB;EAChB,YAAY;EACZ,mBAAmB;EACnB,kBAAkB;EAClB,yBAAyB;AAC3B;;AAEA;EACE,aAAa;EACb,eAAe;EACf,cAAc;AAChB;;AAEA,UAAU;AACV;EACE,aAAa;EACb,gCAAgC;AAClC;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,mBAAmB;EACnB,cAAc;EACd,gCAAgC;AAClC;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,QAAQ;AACV;;AAEA;EACE,gBAAgB;EAChB,WAAW;EACX,eAAe;AACjB;;AAEA;EACE,cAAc;EACd,eAAe;AACjB;;AAEA;EACE,gBAAgB;EAChB,WAAW;EACX,eAAe;AACjB;;AAEA,WAAW;AACX;EACE,aAAa;EACb,mBAAmB;EACnB,gCAAgC;AAClC;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,mBAAmB;EACnB,cAAc;EACd,eAAe;AACjB;;AAEA;EACE,6BAA6B;EAC7B,iBAAiB;EACjB,eAAe;EACf,eAAe;EACf,gBAAgB;EAChB,WAAW;AACb;;AAEA;EACE,cAAc;EACd,gBAAgB;AAClB;;AAEA;EACE,cAAc;EACd,gBAAgB;AAClB;;AAEA,WAAW;AACX;EACE,aAAa;EACb,kBAAkB;EAClB,mBAAmB;AACrB;;AAEA;EACE,SAAS;EACT,cAAc;EACd,kBAAkB;EAClB,eAAe;AACjB;;AAEA,YAAY;AACZ;EACE,aAAa;EACb,SAAS;EACT,uBAAuB;AACzB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,kBAAkB;EAClB,kBAAkB;EAClB,eAAe;EACf,gBAAgB;EAChB,eAAe;EACf,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,sCAAsC;EACtC,OAAO;EACP,uBAAuB;AACzB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,mBAAmB;AACrB;;AAEA;EACE,WAAW;EACX,YAAY;EACZ,0CAA0C;EAC1C,2BAA2B;EAC3B,kBAAkB;EAClB,kCAAkC;AACpC;;AAEA;EACE,KAAK,uBAAuB,EAAE;EAC9B,OAAO,yBAAyB,EAAE;AACpC;;AAEA,eAAe;AACf;EACE;IACE,aAAa;EACf;;EAEA;IACE,eAAe;EACjB;;EAEA;IACE,sBAAsB;EACxB;;EAEA;IACE,WAAW;EACb;AACF","sourcesContent":["/* Receipt Page Styles */\r\n.receipt-page {\r\n  min-height: 100vh;\r\n  background: #ffffff;\r\n  padding: 16px;\r\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n}\r\n\r\n.receipt-container {\r\n  max-width: 400px;\r\n  width: 100%;\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 20px;\r\n}\r\n\r\n/* Success Header */\r\n.receipt-success {\r\n  text-align: center;\r\n  background: white;\r\n  border-radius: 12px;\r\n  padding: 24px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.success-icon {\r\n  font-size: 48px;\r\n  margin-bottom: 12px;\r\n}\r\n\r\n.receipt-success h2 {\r\n  margin: 0 0 8px 0;\r\n  color: #28a745;\r\n  font-size: 24px;\r\n  font-weight: 600;\r\n}\r\n\r\n/* Receipt Card */\r\n.receipt-card {\r\n  background: white;\r\n  border-radius: 12px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n  overflow: hidden;\r\n}\r\n\r\n.receipt-header {\r\n  background: #f8f9fa;\r\n  padding: 20px;\r\n  text-align: center;\r\n  border-bottom: 1px solid #e9ecef;\r\n}\r\n\r\n.receipt-header h3 {\r\n  margin: 0 0 8px 0;\r\n  color: #333;\r\n  font-size: 18px;\r\n  font-weight: 600;\r\n}\r\n\r\n.receipt-header p {\r\n  margin: 4px 0;\r\n  color: #6c757d;\r\n  font-size: 14px;\r\n}\r\n\r\n.receipt-branch {\r\n  margin-top: 10px;\r\n  padding: 8px;\r\n  background: #f8f9fa;\r\n  border-radius: 4px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.receipt-branch p {\r\n  margin: 2px 0;\r\n  font-size: 11px;\r\n  color: #495057;\r\n}\r\n\r\n/* Items */\r\n.receipt-items {\r\n  padding: 20px;\r\n  border-bottom: 1px solid #e9ecef;\r\n}\r\n\r\n.receipt-item {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 8px 0;\r\n  border-bottom: 1px solid #f1f3f4;\r\n}\r\n\r\n.receipt-item:last-child {\r\n  border-bottom: none;\r\n}\r\n\r\n.item-info {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 2px;\r\n}\r\n\r\n.item-name {\r\n  font-weight: 500;\r\n  color: #333;\r\n  font-size: 14px;\r\n}\r\n\r\n.item-qty {\r\n  color: #6c757d;\r\n  font-size: 12px;\r\n}\r\n\r\n.item-price {\r\n  font-weight: 600;\r\n  color: #333;\r\n  font-size: 14px;\r\n}\r\n\r\n/* Totals */\r\n.receipt-totals {\r\n  padding: 20px;\r\n  background: #f8f9fa;\r\n  border-bottom: 1px solid #e9ecef;\r\n}\r\n\r\n.total-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 6px 0;\r\n  font-size: 14px;\r\n}\r\n\r\n.total-row.grand-total {\r\n  border-top: 2px solid #dee2e6;\r\n  padding-top: 12px;\r\n  margin-top: 8px;\r\n  font-size: 16px;\r\n  font-weight: 600;\r\n  color: #333;\r\n}\r\n\r\n.total-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n}\r\n\r\n.change-amount {\r\n  color: #28a745;\r\n  font-weight: 600;\r\n}\r\n\r\n/* Footer */\r\n.receipt-footer {\r\n  padding: 20px;\r\n  text-align: center;\r\n  background: #f8f9fa;\r\n}\r\n\r\n.receipt-footer p {\r\n  margin: 0;\r\n  color: #6c757d;\r\n  font-style: italic;\r\n  font-size: 14px;\r\n}\r\n\r\n/* Actions */\r\n.receipt-actions {\r\n  display: flex;\r\n  gap: 12px;\r\n  justify-content: center;\r\n}\r\n\r\n.new-sale-btn, .print-btn {\r\n  background: #007bff;\r\n  color: white;\r\n  border: none;\r\n  padding: 14px 24px;\r\n  border-radius: 8px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  transition: background-color 0.2s ease;\r\n  flex: 1;\r\n  justify-content: center;\r\n}\r\n\r\n.new-sale-btn:hover:not(:disabled), .print-btn:hover:not(:disabled) {\r\n  background: #0056b3;\r\n}\r\n\r\n.new-sale-btn:disabled, .print-btn:disabled {\r\n  background: #6c757d;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 16px;\r\n  height: 16px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 1s linear infinite;\r\n}\r\n\r\n@keyframes spin {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n/* Responsive */\r\n@media (max-width: 480px) {\r\n  .receipt-page {\r\n    padding: 16px;\r\n  }\r\n\r\n  .receipt-container {\r\n    max-width: 100%;\r\n  }\r\n\r\n  .receipt-actions {\r\n    flex-direction: column;\r\n  }\r\n\r\n  .new-sale-btn, .print-btn {\r\n    width: 100%;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
+
+@media (max-width: 900px) {
+  .receipt-main-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .receipt-right-column {
+    max-height: 400px;
+  }
+}
+`, "",{"version":3,"sources":["webpack://./src/renderer/receipt.css"],"names":[],"mappings":"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","sourcesContent":["/* Receipt Page - Full Width Layout */\r\n.receipt-page {\r\n  height: 100vh;\r\n  overflow: hidden;\r\n  background: #f5f7fa;\r\n  display: flex;\r\n  flex-direction: column;\r\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;\r\n}\r\n\r\n/* Top Bar */\r\n.receipt-top-bar {\r\n  background: white;\r\n  padding: 12px 20px;\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  border-bottom: 1px solid #e9ecef;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);\r\n  flex-shrink: 0;\r\n}\r\n\r\n.success-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n}\r\n\r\n.success-icon-wrapper {\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  width: 36px;\r\n  height: 36px;\r\n  background: #28a745;\r\n  border-radius: 50%;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.success-icon {\r\n  font-size: 20px;\r\n  color: white;\r\n  font-weight: bold;\r\n}\r\n\r\n.success-text h2 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 18px;\r\n  font-weight: 600;\r\n}\r\n\r\n.success-subtitle {\r\n  margin: 2px 0 0 0;\r\n  color: #6c757d;\r\n  font-size: 12px;\r\n  font-weight: 500;\r\n}\r\n\r\n.receipt-actions-top {\r\n  display: flex;\r\n  gap: 8px;\r\n}\r\n\r\n.action-btn-top {\r\n  background: white;\r\n  color: #495057;\r\n  border: 1px solid #dee2e6;\r\n  padding: 8px 16px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 13px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.action-btn-top:hover:not(:disabled) {\r\n  background: #f8f9fa;\r\n  border-color: #adb5bd;\r\n  transform: translateY(-1px);\r\n}\r\n\r\n.action-btn-top.primary-btn {\r\n  background: #007bff;\r\n  color: white;\r\n  border-color: #007bff;\r\n}\r\n\r\n.action-btn-top.primary-btn:hover:not(:disabled) {\r\n  background: #0056b3;\r\n  border-color: #0056b3;\r\n}\r\n\r\n.action-btn-top.print-btn {\r\n  background: #28a745;\r\n  color: white;\r\n  border-color: #28a745;\r\n}\r\n\r\n.action-btn-top.print-btn:hover:not(:disabled) {\r\n  background: #218838;\r\n  border-color: #218838;\r\n}\r\n\r\n.action-btn-top:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.btn-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 14px;\r\n  height: 14px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 1s linear infinite;\r\n}\r\n\r\n@keyframes spin {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n/* Main Content - Two Column Layout */\r\n.receipt-main-content {\r\n  flex: 1;\r\n  display: grid;\r\n  grid-template-columns: 1fr 400px;\r\n  gap: 16px;\r\n  padding: 16px;\r\n  overflow: hidden;\r\n  min-height: 0;\r\n}\r\n\r\n/* Left Column */\r\n.receipt-left-column {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 16px;\r\n  overflow-y: auto;\r\n  overflow-x: hidden;\r\n}\r\n\r\n/* Right Column */\r\n.receipt-right-column {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 16px;\r\n  overflow-y: auto;\r\n  overflow-x: hidden;\r\n}\r\n\r\n/* Cards */\r\n.receipt-header-card,\r\n.receipt-info-grid,\r\n.receipt-items-section,\r\n.totals-card,\r\n.payment-card,\r\n.receipt-footer-card {\r\n  background: white;\r\n  border-radius: 8px;\r\n  padding: 16px;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n/* Business Header */\r\n.receipt-header-card {\r\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n  color: white;\r\n  text-align: center;\r\n}\r\n\r\n.business-name {\r\n  font-size: 20px;\r\n  font-weight: 700;\r\n  margin-bottom: 6px;\r\n}\r\n\r\n.business-address {\r\n  font-size: 12px;\r\n  opacity: 0.95;\r\n  margin-bottom: 4px;\r\n  line-height: 1.4;\r\n}\r\n\r\n.business-contact {\r\n  font-size: 11px;\r\n  opacity: 0.9;\r\n}\r\n\r\n/* Info Grid */\r\n.receipt-info-grid {\r\n  display: grid;\r\n  grid-template-columns: repeat(2, 1fr);\r\n  gap: 12px;\r\n}\r\n\r\n.info-card {\r\n  padding: 12px;\r\n  background: #f8f9fa;\r\n  border-radius: 6px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.info-label {\r\n  font-size: 11px;\r\n  color: #6c757d;\r\n  font-weight: 500;\r\n  margin-bottom: 4px;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n}\r\n\r\n.info-value {\r\n  font-size: 13px;\r\n  color: #333;\r\n  font-weight: 600;\r\n  word-break: break-all;\r\n}\r\n\r\n/* Items Section */\r\n.receipt-items-section {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.section-title {\r\n  font-size: 14px;\r\n  font-weight: 700;\r\n  color: #333;\r\n  margin-bottom: 12px;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n  padding-bottom: 8px;\r\n  border-bottom: 2px solid #e9ecef;\r\n}\r\n\r\n.items-table {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.items-header {\r\n  display: grid;\r\n  grid-template-columns: 2fr 60px 100px 100px;\r\n  gap: 12px;\r\n  padding: 8px 0;\r\n  font-size: 10px;\r\n  font-weight: 600;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n  color: #6c757d;\r\n  border-bottom: 2px solid #e9ecef;\r\n}\r\n\r\n.items-body {\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n}\r\n\r\n.item-row {\r\n  display: grid;\r\n  grid-template-columns: 2fr 60px 100px 100px;\r\n  gap: 12px;\r\n  padding: 10px 0;\r\n  border-bottom: 1px solid #f1f3f4;\r\n  align-items: center;\r\n}\r\n\r\n.item-row:last-child {\r\n  border-bottom: none;\r\n}\r\n\r\n.col-item {\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.item-name {\r\n  font-weight: 600;\r\n  color: #333;\r\n  font-size: 13px;\r\n  line-height: 1.3;\r\n}\r\n\r\n.col-qty,\r\n.col-price,\r\n.col-total {\r\n  font-size: 13px;\r\n  text-align: right;\r\n}\r\n\r\n.col-qty {\r\n  color: #6c757d;\r\n}\r\n\r\n.col-price {\r\n  color: #495057;\r\n}\r\n\r\n.col-total {\r\n  font-weight: 700;\r\n  color: #333;\r\n}\r\n\r\n/* Totals Card */\r\n.totals-card {\r\n  flex-shrink: 0;\r\n}\r\n\r\n.totals-list {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 12px;\r\n}\r\n\r\n.total-item {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 10px 0;\r\n}\r\n\r\n.total-label {\r\n  color: #495057;\r\n  font-weight: 500;\r\n  font-size: 13px;\r\n}\r\n\r\n.total-value {\r\n  color: #333;\r\n  font-weight: 600;\r\n  font-size: 13px;\r\n}\r\n\r\n.total-item.grand-total {\r\n  border-top: 2px solid #dee2e6;\r\n  padding-top: 16px;\r\n  margin-top: 4px;\r\n}\r\n\r\n.grand-total .total-label {\r\n  font-weight: 700;\r\n  font-size: 15px;\r\n  color: #333;\r\n}\r\n\r\n.total-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n  font-size: 18px;\r\n}\r\n\r\n/* Payment Card */\r\n.payment-card {\r\n  flex-shrink: 0;\r\n}\r\n\r\n.payment-method-badge {\r\n  display: inline-flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 10px 16px;\r\n  border-radius: 6px;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n  margin-bottom: 16px;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n}\r\n\r\n.payment-method-badge[data-method=\"cash\"] {\r\n  background: #d4edda;\r\n  color: #155724;\r\n  border: 1px solid #c3e6cb;\r\n}\r\n\r\n.payment-method-badge[data-method=\"mpesa\"] {\r\n  background: #cfe2ff;\r\n  color: #084298;\r\n  border: 1px solid #b6d4fe;\r\n}\r\n\r\n.payment-method-badge[data-method=\"credit\"] {\r\n  background: #fff3cd;\r\n  color: #856404;\r\n  border: 1px solid #ffc107;\r\n}\r\n\r\n.payment-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.payment-text {\r\n  font-size: 11px;\r\n}\r\n\r\n/* Credit Details */\r\n.credit-details {\r\n  margin-top: 16px;\r\n  padding: 12px;\r\n  background: #fffbf0;\r\n  border: 1px solid #ffc107;\r\n  border-radius: 6px;\r\n}\r\n\r\n.credit-badge {\r\n  display: inline-flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  padding: 6px 12px;\r\n  background: #ffc107;\r\n  color: #856404;\r\n  border-radius: 4px;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n  margin-bottom: 10px;\r\n}\r\n\r\n.credit-icon {\r\n  font-size: 12px;\r\n}\r\n\r\n.credit-info-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 6px 0;\r\n  font-size: 12px;\r\n}\r\n\r\n.credit-label {\r\n  color: #856404;\r\n  font-weight: 500;\r\n}\r\n\r\n.credit-value {\r\n  color: #856404;\r\n  font-weight: 600;\r\n}\r\n\r\n.credit-notes-section {\r\n  margin-top: 10px;\r\n  padding-top: 10px;\r\n  border-top: 1px solid #ffc107;\r\n}\r\n\r\n.credit-notes-section .credit-label {\r\n  display: block;\r\n  margin-bottom: 6px;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n}\r\n\r\n.credit-notes-text {\r\n  margin: 0;\r\n  color: #856404;\r\n  font-size: 11px;\r\n  line-height: 1.5;\r\n  font-style: italic;\r\n}\r\n\r\n/* Payment Details */\r\n.payment-details {\r\n  margin-top: 16px;\r\n  padding-top: 16px;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.payment-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 6px 0;\r\n  font-size: 13px;\r\n  color: #495057;\r\n}\r\n\r\n.payment-row span:first-child {\r\n  font-weight: 500;\r\n}\r\n\r\n.payment-row span:last-child {\r\n  font-weight: 600;\r\n  color: #333;\r\n}\r\n\r\n.change-row {\r\n  margin-top: 8px;\r\n  padding-top: 8px;\r\n  border-top: 1px solid #f1f3f4;\r\n}\r\n\r\n.change-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n}\r\n\r\n/* Footer Card */\r\n.receipt-footer-card {\r\n  text-align: center;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.thank-you {\r\n  margin: 0 0 6px 0;\r\n  color: #495057;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n}\r\n\r\n.footer-note {\r\n  margin: 0;\r\n  color: #6c757d;\r\n  font-size: 11px;\r\n  font-style: italic;\r\n}\r\n\r\n/* Responsive */\r\n@media (max-width: 1200px) {\r\n  .receipt-main-content {\r\n    grid-template-columns: 1fr 350px;\r\n  }\r\n}\r\n\r\n@media (max-width: 900px) {\r\n  .receipt-main-content {\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: auto auto;\r\n  }\r\n\r\n  .receipt-right-column {\r\n    max-height: 400px;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -2385,99 +2752,348 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 32px 16px;
+  background: radial-gradient(circle at top left, #9f7aea 0, transparent 55%),
+    radial-gradient(circle at bottom right, #4299e1 0, transparent 55%),
+    linear-gradient(135deg, #0f172a 0%, #020617 100%);
+  color: #e5e7eb;
+}
+
+.login-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 1px;
+  width: 100%;
+  max-width: 960px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.6), rgba(56, 189, 248, 0.6));
+  box-shadow:
+    0 22px 45px rgba(15, 23, 42, 0.6),
+    0 0 0 1px rgba(148, 163, 184, 0.35);
+  overflow: hidden;
+}
+
+.login-brand-panel {
+  position: relative;
+  padding: 32px 32px 28px;
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.22), transparent 55%),
+    linear-gradient(145deg, #020617 0%, #020617 40%, #020617 100%);
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.login-brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.login-logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 11px;
+  background: radial-gradient(circle at 0 0, #22c55e 0, #16a34a 40%, #065f46 100%);
+  color: #ecfdf5;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.login-logo-text {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.login-brand-tagline {
+  font-size: 14px;
+  color: #9ca3af;
+  max-width: 320px;
+}
+
+.login-brand-highlights {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-highlight {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.login-highlight-dot {
+  margin-top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22c55e, #a3e635);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
+  flex-shrink: 0;
+}
+
+.login-highlight-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.login-highlight-subtitle {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.login-environment-pill {
+  align-self: flex-start;
+  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  font-size: 12px;
+  color: #e5e7eb;
+}
+
+.login-env-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 0, #22c55e 0, #16a34a 60%, #14532d 100%);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
 }
 
 .login-card {
-  background: white;
-  border-radius: 12px;
-  padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
+  background: #f9fafb;
+  padding: 32px 32px 28px;
+  border-radius: 18px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .login-header {
-  text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .login-header h1 {
-  color: #333;
-  margin-bottom: 8px;
-  font-size: 28px;
+  color: #020617;
+  margin-bottom: 6px;
+  font-size: 24px;
+  font-weight: 600;
 }
 
 .login-header p {
-  color: #666;
-  font-size: 16px;
+  color: #6b7280;
+  font-size: 14px;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
+  gap: 6px;
 }
 
 .form-group label {
-  margin-bottom: 8px;
+  font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: #111827;
+}
+
+.form-input-wrapper {
+  position: relative;
 }
 
 .form-group input {
-  padding: 12px 16px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  background: #ffffff;
+  color: #111827;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.form-group input::placeholder {
+  color: #9ca3af;
 }
 
 .form-group input:focus {
-  outline: none;
-  border-color: #667eea;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.65), 0 10px 18px rgba(15, 23, 42, 0.12);
+}
+
+.form-group.has-error input {
+  border-color: #f97316;
+  background-color: #fffbeb;
+}
+
+.form-group.has-error input:focus {
+  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.85), 0 10px 18px rgba(124, 45, 18, 0.25);
+}
+
+.login-form-meta {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.checkbox-label input[type='checkbox'] {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+}
+
+.link-button {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  color: #4f46e5;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.link-button:hover {
+  text-decoration: underline;
 }
 
 .login-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  margin-top: 6px;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #22c55e 120%);
   color: white;
   border: none;
-  padding: 14px;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow:
+    0 12px 22px rgba(15, 23, 42, 0.35),
+    0 0 0 1px rgba(15, 23, 42, 0.75);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    filter 0.12s ease;
 }
 
 .login-button:hover:not(:disabled) {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 28px rgba(15, 23, 42, 0.45),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+  filter: brightness(1.03);
+}
+
+.login-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow:
+    0 8px 16px rgba(15, 23, 42, 0.4),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
 }
 
 .login-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  filter: grayscale(0.1);
 }
 
 .error-message {
-  background: #fee;
-  color: #c33;
-  padding: 12px;
-  border-radius: 6px;
-  border-left: 4px solid #c33;
+  margin-bottom: 8px;
+  background: #fffbeb;
+  color: #92400e;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #fed7aa;
+  border-left-width: 4px;
+  border-left-color: #f97316;
+  font-size: 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.error-message::before {
+  content: '⚠';
   font-size: 14px;
+  line-height: 1.2;
+}
+
+.field-error {
+  font-size: 12px;
+  color: #c2410c;
+}
+
+.field-hint {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.field-hint.warning {
+  color: #b45309;
 }
 
 .login-footer {
-  text-align: center;
-  margin-top: 20px;
-  color: #666;
-  font-size: 14px;
+  margin-top: 18px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.login-footer p {
+  margin: 0;
+}
+
+@media (max-width: 800px) {
+  .login-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .login-brand-panel {
+    display: none;
+  }
+
+  .login-card {
+    border-radius: 18px;
+  }
 }
 
 /* POS Styles */
@@ -2485,273 +3101,401 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f5f5f5;
+  background: #f5f7fa;
+  overflow: hidden;
 }
 
 .pos-header {
   background: white;
-  padding: 16px 24px;
+  padding: 6px 12px;
   border-bottom: 1px solid #e1e5e9;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   position: relative;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .pos-header h1 {
   color: #333;
-  font-size: 24px;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.3px;
 }
 
-.header-controls {
+.header-center {
+  flex: 1;
   display: flex;
-  gap: 16px;
+  justify-content: center;
   align-items: center;
+  min-width: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.header-indicators {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
 }
 
 .branch-select {
-  padding: 8px 12px;
+  padding: 5px 8px;
   border: 1px solid #e1e5e9;
-  border-radius: 6px;
+  border-radius: 4px;
   background: white;
+  font-size: 11px;
+  cursor: pointer;
+  min-width: 100px;
 }
 
-.logout-btn {
+.icon-btn {
+  background: transparent;
+  border: 1px solid #e1e5e9;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.icon-btn:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.icon-btn.logout-btn {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.icon-btn.logout-btn:hover {
   background: #dc3545;
   color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 14px;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  min-height: 44px;
-  touch-action: manipulation;
 }
 
-.logout-btn:hover {
-  background: #c82333;
-  transform: scale(1.05);
+.icon-btn.settings-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
 }
 
-.logout-btn:active {
-  transform: scale(0.95);
-}
-
-.settings-btn,
-.theme-toggle-btn {
-  background: #6c757d;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 14px;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  min-height: 44px;
-  min-width: 44px;
-  touch-action: manipulation;
-}
-
-.theme-toggle-btn {
-  font-size: 18px;
-  padding: 10px 14px;
-}
-
-.settings-btn:hover,
-.theme-toggle-btn:hover {
-  background: #5a6268;
-  transform: scale(1.05);
-}
-
-.settings-btn:active,
-.theme-toggle-btn:active {
-  transform: scale(0.95);
+.icon-btn.theme-toggle-btn:hover {
+  border-color: #ffc107;
 }
 
 .pos-content {
   display: flex;
   flex: 1;
   overflow: hidden;
+  gap: 12px;
+  padding: 12px;
 }
 
 .products-section {
   flex: 2;
-  padding: 24px;
+  padding: 12px;
   background: white;
-  margin: 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .search-bar {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.search-input-wrapper {
+  flex: 1;
+  position: relative;
 }
 
 .search-input {
   width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 8px 12px;
+  border: 1px solid #e1e5e9;
+  border-radius: 4px;
+  font-size: 13px;
 }
 
 .search-input:focus {
   outline: none;
   border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.category-select {
+  padding: 8px 10px;
+  border: 1px solid #e1e5e9;
+  border-radius: 4px;
+  background: white;
+  font-size: 12px;
+  cursor: pointer;
+  min-width: 140px;
 }
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, 140px);
+  gap: 10px;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
+  justify-content: start;
 }
 
 .product-card {
   background: #f8f9fa;
   border: 1px solid #e1e5e9;
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: 6px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
   position: relative;
+  width: 140px;
+  height: 180px;
+  box-sizing: border-box;
 }
 
 .product-category {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 6px;
+  right: 6px;
   background: #667eea;
   color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 10px;
-  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 600;
   text-transform: uppercase;
+  z-index: 1;
 }
 
 .product-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+  width: 100%;
+  height: 60px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #e9ecef;
+  flex-shrink: 0;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-info {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .product-info h3 {
-  margin-bottom: 8px;
+  margin: 0 0 3px 0;
   color: #333;
-  font-size: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .product-info .sku {
   color: #666;
-  font-size: 12px;
-  margin-bottom: 4px;
+  font-size: 9px;
+  margin-bottom: 2px;
+  flex-shrink: 0;
 }
 
 .product-info .barcode {
   color: #667eea;
-  font-size: 11px;
-  margin-bottom: 4px;
+  font-size: 8px;
+  margin-bottom: 2px;
   font-weight: 500;
+  flex-shrink: 0;
 }
 
 .product-info .price {
-  font-weight: bold;
+  font-weight: 700;
   color: #28a745;
-  font-size: 18px;
-  margin-bottom: 4px;
+  font-size: 13px;
+  margin: 3px 0 2px 0;
+  flex-shrink: 0;
 }
 
 .product-info .stock {
   color: #666;
-  font-size: 12px;
+  font-size: 9px;
+  flex-shrink: 0;
+}
+
+.variations-selector {
+  margin: 4px 0;
+  flex-shrink: 0;
+}
+
+.variation-select {
+  width: 100%;
+  padding: 3px 5px;
+  border: 1px solid #e1e5e9;
+  border-radius: 3px;
+  font-size: 9px;
+  background: white;
 }
 
 .add-to-cart-btn {
   background: #28a745;
   color: white;
   border: none;
-  padding: 14px 20px;
-  border-radius: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
-  font-size: 16px;
-  margin-top: 12px;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  min-height: 48px; /* Touch-friendly minimum size */
+  font-weight: 600;
+  font-size: 10px;
+  margin-top: 6px;
+  transition: background-color 0.2s ease;
   touch-action: manipulation;
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .add-to-cart-btn:hover:not(:disabled) {
   background: #218838;
-  transform: scale(1.02);
-}
-
-.add-to-cart-btn:active:not(:disabled) {
-  transform: scale(0.98);
 }
 
 .add-to-cart-btn:disabled {
-  background: #6c757d;
+  background: #adb5bd;
   cursor: not-allowed;
 }
 
 .cart-section {
   flex: 1;
   background: white;
-  margin: 16px 16px 16px 0;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: 12px;
+  min-width: 320px;
+  max-width: 400px;
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .cart-section h2 {
-  margin-bottom: 20px;
+  margin: 0;
   color: #333;
-  font-size: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.hold-transaction-btn-header {
+  background: #ffc107;
+  color: #333;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 11px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hold-transaction-btn-header:hover {
+  background: #ffb300;
+  transform: translateY(-1px);
 }
 
 .cart-items {
   flex: 1;
   overflow-y: auto;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  min-height: 0;
 }
 
 .empty-cart {
   text-align: center;
   color: #666;
   font-style: italic;
-  padding: 40px 0;
+  padding: 20px 0;
+  font-size: 12px;
 }
 
 .cart-item {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 16px 0;
+  gap: 10px;
+  padding: 10px;
   border-bottom: 1px solid #e1e5e9;
+  background: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.cart-item:hover {
+  background: #f0f0f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .cart-item-image {
   flex-shrink: 0;
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
   overflow: hidden;
-  background: #f8f9fa;
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid #e1e5e9;
 }
 
 .cart-item-image img {
@@ -2760,212 +3504,287 @@ body {
   object-fit: cover;
 }
 
-.cart-item:last-child {
-  border-bottom: none;
+.cart-item-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cart-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .item-info {
   flex: 1;
+  min-width: 0;
 }
 
 .item-info h4 {
-  margin-bottom: 4px;
+  margin: 0 0 3px 0;
   color: #333;
-  font-size: 14px;
-}
-
-.item-info p {
-  color: #666;
-  font-size: 12px;
-}
-
-.item-info .item-price {
-  color: #28a745;
+  font-size: 13px;
   font-weight: 600;
-  font-size: 14px;
-  margin-top: 4px;
+  line-height: 1.3;
 }
 
-.item-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  margin-right: 16px;
+.item-info .sku {
+  color: #6c757d;
+  font-size: 10px;
+  margin: 0;
 }
 
-.quick-quantity-buttons {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.quick-qty-btn {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  color: #495057;
-  min-width: 36px;
-  min-height: 36px;
-  transition: all 0.2s ease;
-  touch-action: manipulation;
-}
-
-.quick-qty-btn:hover {
-  background: #e9ecef;
-  border-color: #667eea;
+.item-info .variation-info {
   color: #667eea;
-  transform: scale(1.05);
-}
-
-.quick-qty-btn:active {
-  transform: scale(0.95);
-}
-
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.quantity-btn {
-  background: #e9ecef;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
-  transition: all 0.2s ease;
-  touch-action: manipulation;
-  min-width: 40px;
-  min-height: 40px;
-}
-
-.quantity-btn:hover {
-  background: #dee2e6;
-  transform: scale(1.1);
-}
-
-.quantity-btn:active {
-  transform: scale(0.95);
-}
-
-.quantity {
-  min-width: 40px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 16px;
-  padding: 0 8px;
+  font-size: 9px;
+  margin: 2px 0 0 0;
+  font-style: italic;
 }
 
 .remove-btn {
   background: #dc3545;
   color: white;
   border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  font-size: 20px;
-  transition: all 0.2s ease;
-  touch-action: manipulation;
-  min-width: 36px;
-  min-height: 36px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+  transition: all 0.2s ease;
   cursor: pointer;
-  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  font-weight: bold;
 }
 
 .remove-btn:hover {
   background: #c82333;
+  transform: scale(1.1);
+}
+
+.cart-item-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.price-info {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.unit-price {
+  color: #28a745;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.unit-label {
+  color: #6c757d;
+  font-size: 9px;
+  text-transform: lowercase;
+}
+
+.quantity-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.quantity-btn {
+  background: transparent;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #495057;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+}
+
+.quantity-btn:hover {
+  background: #e9ecef;
+}
+
+.quantity-btn.decrease {
+  color: #dc3545;
+}
+
+.quantity-btn.increase {
+  color: #28a745;
+}
+
+.quantity {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: #333;
+  padding: 0 4px;
+}
+
+.quick-quantity-buttons {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.quick-qty-btn {
+  background: white;
+  border: 1px solid #dee2e6;
+  padding: 3px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: 600;
+  color: #495057;
+  min-width: 24px;
+  min-height: 20px;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+}
+
+.quick-qty-btn:hover {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
 }
 
 .item-total {
-  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.total-label {
+  font-size: 9px;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.total-amount {
+  font-weight: 700;
   color: #28a745;
-  min-width: 60px;
-  text-align: right;
+  font-size: 14px;
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .cart-summary {
   border-top: 2px solid #e1e5e9;
-  padding-top: 16px;
-  margin-bottom: 24px;
+  padding-top: 10px;
+  margin-bottom: 12px;
 }
 
 .summary-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 14px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #495057;
 }
 
 .summary-row.total {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 700;
   color: #333;
   border-top: 1px solid #e1e5e9;
-  padding-top: 12px;
-  margin-top: 8px;
+  padding-top: 8px;
+  margin-top: 6px;
 }
 
 .checkout-section {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .checkout-btn {
-  flex: 1;
-  padding: 14px;
+  width: 100%;
+  padding: 12px;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 4px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .checkout-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .checkout-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
-.checkout-btn.cash {
-  background: #28a745;
+.checkout-btn.proceed {
+  background: #007bff;
   color: white;
 }
 
-.checkout-btn.mpesa {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+.checkout-btn.proceed:hover:not(:disabled) {
+  background: #0056b3;
 }
 
 .loading {
   text-align: center;
-  padding: 40px;
+  padding: 20px;
   color: #666;
   font-style: italic;
+  font-size: 12px;
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, 130px);
+  }
+  
+  .product-card {
+    width: 130px;
+    height: 170px;
   }
 }
 
@@ -2976,7 +3795,6 @@ body {
 
   .products-section,
   .cart-section {
-    margin: 8px;
     flex: none;
     height: 50vh;
   }
@@ -2984,8 +3802,18 @@ body {
   .checkout-section {
     flex-direction: column;
   }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, 120px);
+    gap: 8px;
+  }
+  
+  .product-card {
+    width: 120px;
+    height: 160px;
+  }
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/styles.css"],"names":[],"mappings":"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","sourcesContent":["/* Global Styles */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;\n  background-color: #f5f5f5;\n  color: #333;\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* Loading Screen */\n.loading-screen {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100vh;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n}\n\n.loading-spinner {\n  width: 50px;\n  height: 50px;\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top: 4px solid white;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n  margin-bottom: 20px;\n}\n\n@keyframes spin {\n  0% { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n/* Login Styles */\n.login-container {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n}\n\n.login-card {\n  background: white;\n  border-radius: 12px;\n  padding: 40px;\n  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);\n  width: 100%;\n  max-width: 400px;\n}\n\n.login-header {\n  text-align: center;\n  margin-bottom: 30px;\n}\n\n.login-header h1 {\n  color: #333;\n  margin-bottom: 8px;\n  font-size: 28px;\n}\n\n.login-header p {\n  color: #666;\n  font-size: 16px;\n}\n\n.login-form {\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n\n.form-group {\n  display: flex;\n  flex-direction: column;\n}\n\n.form-group label {\n  margin-bottom: 8px;\n  font-weight: 500;\n  color: #333;\n}\n\n.form-group input {\n  padding: 12px 16px;\n  border: 2px solid #e1e5e9;\n  border-radius: 8px;\n  font-size: 16px;\n  transition: border-color 0.3s ease;\n}\n\n.form-group input:focus {\n  outline: none;\n  border-color: #667eea;\n}\n\n.login-button {\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n  border: none;\n  padding: 14px;\n  border-radius: 8px;\n  font-size: 16px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: transform 0.2s ease;\n}\n\n.login-button:hover:not(:disabled) {\n  transform: translateY(-2px);\n}\n\n.login-button:disabled {\n  opacity: 0.7;\n  cursor: not-allowed;\n}\n\n.error-message {\n  background: #fee;\n  color: #c33;\n  padding: 12px;\n  border-radius: 6px;\n  border-left: 4px solid #c33;\n  font-size: 14px;\n}\n\n.login-footer {\n  text-align: center;\n  margin-top: 20px;\n  color: #666;\n  font-size: 14px;\n}\n\n/* POS Styles */\n.pos-container {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n  background-color: #f5f5f5;\n}\n\n.pos-header {\n  background: white;\n  padding: 16px 24px;\n  border-bottom: 1px solid #e1e5e9;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n  position: relative;\n}\n\n.pos-header h1 {\n  color: #333;\n  font-size: 24px;\n}\n\n.header-controls {\n  display: flex;\n  gap: 16px;\n  align-items: center;\n}\n\n.branch-select {\n  padding: 8px 12px;\n  border: 1px solid #e1e5e9;\n  border-radius: 6px;\n  background: white;\n}\n\n.logout-btn {\n  background: #dc3545;\n  color: white;\n  border: none;\n  padding: 10px 18px;\n  border-radius: 8px;\n  cursor: pointer;\n  font-weight: 500;\n  font-size: 14px;\n  transition: background-color 0.2s ease, transform 0.1s ease;\n  min-height: 44px;\n  touch-action: manipulation;\n}\n\n.logout-btn:hover {\n  background: #c82333;\n  transform: scale(1.05);\n}\n\n.logout-btn:active {\n  transform: scale(0.95);\n}\n\n.settings-btn,\n.theme-toggle-btn {\n  background: #6c757d;\n  color: white;\n  border: none;\n  padding: 10px 18px;\n  border-radius: 8px;\n  cursor: pointer;\n  font-weight: 500;\n  font-size: 14px;\n  transition: background-color 0.2s ease, transform 0.1s ease;\n  min-height: 44px;\n  min-width: 44px;\n  touch-action: manipulation;\n}\n\n.theme-toggle-btn {\n  font-size: 18px;\n  padding: 10px 14px;\n}\n\n.settings-btn:hover,\n.theme-toggle-btn:hover {\n  background: #5a6268;\n  transform: scale(1.05);\n}\n\n.settings-btn:active,\n.theme-toggle-btn:active {\n  transform: scale(0.95);\n}\n\n.pos-content {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n}\n\n.products-section {\n  flex: 2;\n  padding: 24px;\n  background: white;\n  margin: 16px;\n  border-radius: 12px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);\n  display: flex;\n  flex-direction: column;\n}\n\n.search-bar {\n  margin-bottom: 20px;\n}\n\n.search-input {\n  width: 100%;\n  padding: 12px 16px;\n  border: 2px solid #e1e5e9;\n  border-radius: 8px;\n  font-size: 16px;\n}\n\n.search-input:focus {\n  outline: none;\n  border-color: #667eea;\n}\n\n.products-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n  gap: 16px;\n  overflow-y: auto;\n  flex: 1;\n}\n\n.product-card {\n  background: #f8f9fa;\n  border: 1px solid #e1e5e9;\n  border-radius: 8px;\n  padding: 16px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n  position: relative;\n}\n\n.product-category {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n  background: #667eea;\n  color: white;\n  padding: 4px 8px;\n  border-radius: 12px;\n  font-size: 10px;\n  font-weight: 500;\n  text-transform: uppercase;\n}\n\n.product-card:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n}\n\n.product-info h3 {\n  margin-bottom: 8px;\n  color: #333;\n  font-size: 16px;\n}\n\n.product-info .sku {\n  color: #666;\n  font-size: 12px;\n  margin-bottom: 4px;\n}\n\n.product-info .barcode {\n  color: #667eea;\n  font-size: 11px;\n  margin-bottom: 4px;\n  font-weight: 500;\n}\n\n.product-info .price {\n  font-weight: bold;\n  color: #28a745;\n  font-size: 18px;\n  margin-bottom: 4px;\n}\n\n.product-info .stock {\n  color: #666;\n  font-size: 12px;\n}\n\n.add-to-cart-btn {\n  background: #28a745;\n  color: white;\n  border: none;\n  padding: 14px 20px;\n  border-radius: 8px;\n  cursor: pointer;\n  font-weight: 500;\n  font-size: 16px;\n  margin-top: 12px;\n  transition: background-color 0.2s ease, transform 0.1s ease;\n  min-height: 48px; /* Touch-friendly minimum size */\n  touch-action: manipulation;\n}\n\n.add-to-cart-btn:hover:not(:disabled) {\n  background: #218838;\n  transform: scale(1.02);\n}\n\n.add-to-cart-btn:active:not(:disabled) {\n  transform: scale(0.98);\n}\n\n.add-to-cart-btn:disabled {\n  background: #6c757d;\n  cursor: not-allowed;\n}\n\n.cart-section {\n  flex: 1;\n  background: white;\n  margin: 16px 16px 16px 0;\n  border-radius: 12px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);\n  display: flex;\n  flex-direction: column;\n  padding: 24px;\n}\n\n.cart-section h2 {\n  margin-bottom: 20px;\n  color: #333;\n  font-size: 20px;\n}\n\n.cart-items {\n  flex: 1;\n  overflow-y: auto;\n  margin-bottom: 20px;\n}\n\n.empty-cart {\n  text-align: center;\n  color: #666;\n  font-style: italic;\n  padding: 40px 0;\n}\n\n.cart-item {\n  display: flex;\n  align-items: flex-start;\n  gap: 12px;\n  padding: 16px 0;\n  border-bottom: 1px solid #e1e5e9;\n}\n\n.cart-item-image {\n  flex-shrink: 0;\n  width: 60px;\n  height: 60px;\n  border-radius: 8px;\n  overflow: hidden;\n  background: #f8f9fa;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.cart-item-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.cart-item:last-child {\n  border-bottom: none;\n}\n\n.item-info {\n  flex: 1;\n}\n\n.item-info h4 {\n  margin-bottom: 4px;\n  color: #333;\n  font-size: 14px;\n}\n\n.item-info p {\n  color: #666;\n  font-size: 12px;\n}\n\n.item-info .item-price {\n  color: #28a745;\n  font-weight: 600;\n  font-size: 14px;\n  margin-top: 4px;\n}\n\n.item-controls {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 8px;\n  margin-right: 16px;\n}\n\n.quick-quantity-buttons {\n  display: flex;\n  gap: 6px;\n  flex-wrap: wrap;\n}\n\n.quick-qty-btn {\n  background: #f8f9fa;\n  border: 1px solid #dee2e6;\n  padding: 6px 10px;\n  border-radius: 6px;\n  cursor: pointer;\n  font-size: 12px;\n  font-weight: 600;\n  color: #495057;\n  min-width: 36px;\n  min-height: 36px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quick-qty-btn:hover {\n  background: #e9ecef;\n  border-color: #667eea;\n  color: #667eea;\n  transform: scale(1.05);\n}\n\n.quick-qty-btn:active {\n  transform: scale(0.95);\n}\n\n.quantity-controls {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n\n.quantity-btn {\n  background: #e9ecef;\n  border: none;\n  width: 40px;\n  height: 40px;\n  border-radius: 8px;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: bold;\n  font-size: 18px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n  min-width: 40px;\n  min-height: 40px;\n}\n\n.quantity-btn:hover {\n  background: #dee2e6;\n  transform: scale(1.1);\n}\n\n.quantity-btn:active {\n  transform: scale(0.95);\n}\n\n.quantity {\n  min-width: 40px;\n  text-align: center;\n  font-weight: 600;\n  font-size: 16px;\n  padding: 0 8px;\n}\n\n.remove-btn {\n  background: #dc3545;\n  color: white;\n  border: none;\n  width: 36px;\n  height: 36px;\n  border-radius: 8px;\n  font-size: 20px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n  min-width: 36px;\n  min-height: 36px;\n  border-radius: 50%;\n  cursor: pointer;\n  font-size: 12px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.remove-btn:hover {\n  background: #c82333;\n}\n\n.item-total {\n  font-weight: bold;\n  color: #28a745;\n  min-width: 60px;\n  text-align: right;\n}\n\n.cart-summary {\n  border-top: 2px solid #e1e5e9;\n  padding-top: 16px;\n  margin-bottom: 24px;\n}\n\n.summary-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 8px;\n  font-size: 14px;\n}\n\n.summary-row.total {\n  font-size: 18px;\n  font-weight: bold;\n  color: #333;\n  border-top: 1px solid #e1e5e9;\n  padding-top: 12px;\n  margin-top: 8px;\n}\n\n.checkout-section {\n  display: flex;\n  gap: 12px;\n}\n\n.checkout-btn {\n  flex: 1;\n  padding: 14px;\n  border: none;\n  border-radius: 8px;\n  font-size: 16px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: transform 0.2s ease;\n}\n\n.checkout-btn:hover:not(:disabled) {\n  transform: translateY(-2px);\n}\n\n.checkout-btn:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n}\n\n.checkout-btn.cash {\n  background: #28a745;\n  color: white;\n}\n\n.checkout-btn.mpesa {\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n}\n\n.loading {\n  text-align: center;\n  padding: 40px;\n  color: #666;\n  font-style: italic;\n}\n\n/* Responsive Design */\n@media (max-width: 1200px) {\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    margin: 8px;\n    flex: none;\n    height: 50vh;\n  }\n\n  .checkout-section {\n    flex-direction: column;\n  }\n}\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/styles.css"],"names":[],"mappings":"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","sourcesContent":["/* Global Styles */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;\n  background-color: #f5f5f5;\n  color: #333;\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* Loading Screen */\n.loading-screen {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100vh;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n}\n\n.loading-spinner {\n  width: 50px;\n  height: 50px;\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top: 4px solid white;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n  margin-bottom: 20px;\n}\n\n@keyframes spin {\n  0% { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n/* Login Styles */\n.login-container {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n  padding: 32px 16px;\n  background: radial-gradient(circle at top left, #9f7aea 0, transparent 55%),\n    radial-gradient(circle at bottom right, #4299e1 0, transparent 55%),\n    linear-gradient(135deg, #0f172a 0%, #020617 100%);\n  color: #e5e7eb;\n}\n\n.login-shell {\n  display: grid;\n  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);\n  gap: 1px;\n  width: 100%;\n  max-width: 960px;\n  border-radius: 18px;\n  background: linear-gradient(135deg, rgba(148, 163, 184, 0.6), rgba(56, 189, 248, 0.6));\n  box-shadow:\n    0 22px 45px rgba(15, 23, 42, 0.6),\n    0 0 0 1px rgba(148, 163, 184, 0.35);\n  overflow: hidden;\n}\n\n.login-brand-panel {\n  position: relative;\n  padding: 32px 32px 28px;\n  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), transparent 55%),\n    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.22), transparent 55%),\n    linear-gradient(145deg, #020617 0%, #020617 40%, #020617 100%);\n  color: #e5e7eb;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n.login-brand-logo {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 18px;\n}\n\n.login-logo-mark {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 32px;\n  height: 32px;\n  border-radius: 11px;\n  background: radial-gradient(circle at 0 0, #22c55e 0, #16a34a 40%, #065f46 100%);\n  color: #ecfdf5;\n  font-weight: 700;\n  font-size: 18px;\n}\n\n.login-logo-text {\n  font-size: 20px;\n  font-weight: 600;\n  letter-spacing: 0.02em;\n}\n\n.login-brand-tagline {\n  font-size: 14px;\n  color: #9ca3af;\n  max-width: 320px;\n}\n\n.login-brand-highlights {\n  margin-top: 28px;\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n\n.login-highlight {\n  display: flex;\n  gap: 10px;\n  align-items: flex-start;\n}\n\n.login-highlight-dot {\n  margin-top: 4px;\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: linear-gradient(135deg, #22c55e, #a3e635);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);\n  flex-shrink: 0;\n}\n\n.login-highlight-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: #e5e7eb;\n}\n\n.login-highlight-subtitle {\n  font-size: 13px;\n  color: #9ca3af;\n}\n\n.login-environment-pill {\n  align-self: flex-start;\n  margin-top: 24px;\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 12px;\n  border-radius: 999px;\n  background: rgba(15, 23, 42, 0.9);\n  border: 1px solid rgba(148, 163, 184, 0.7);\n  font-size: 12px;\n  color: #e5e7eb;\n}\n\n.login-env-dot {\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: radial-gradient(circle at 30% 0, #22c55e 0, #16a34a 60%, #14532d 100%);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);\n}\n\n.login-card {\n  background: #f9fafb;\n  padding: 32px 32px 28px;\n  border-radius: 18px;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n}\n\n.login-header {\n  margin-bottom: 24px;\n}\n\n.login-header h1 {\n  color: #020617;\n  margin-bottom: 6px;\n  font-size: 24px;\n  font-weight: 600;\n}\n\n.login-header p {\n  color: #6b7280;\n  font-size: 14px;\n}\n\n.login-form {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n}\n\n.form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.form-group label {\n  font-size: 14px;\n  font-weight: 500;\n  color: #111827;\n}\n\n.form-input-wrapper {\n  position: relative;\n}\n\n.form-group input {\n  width: 100%;\n  padding: 11px 12px;\n  border-radius: 10px;\n  border: 1px solid #e5e7eb;\n  font-size: 14px;\n  background: #ffffff;\n  color: #111827;\n  outline: none;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background-color 0.15s ease;\n}\n\n.form-group input::placeholder {\n  color: #9ca3af;\n}\n\n.form-group input:focus {\n  border-color: #4f46e5;\n  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.65), 0 10px 18px rgba(15, 23, 42, 0.12);\n}\n\n.form-group.has-error input {\n  border-color: #f97316;\n  background-color: #fffbeb;\n}\n\n.form-group.has-error input:focus {\n  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.85), 0 10px 18px rgba(124, 45, 18, 0.25);\n}\n\n.login-form-meta {\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.checkbox-label {\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 13px;\n  color: #4b5563;\n}\n\n.checkbox-label input[type='checkbox'] {\n  width: 14px;\n  height: 14px;\n  border-radius: 4px;\n  border: 1px solid #d1d5db;\n  cursor: pointer;\n}\n\n.link-button {\n  border: none;\n  background: none;\n  padding: 0;\n  font-size: 13px;\n  color: #4f46e5;\n  cursor: pointer;\n  text-decoration: none;\n}\n\n.link-button:hover {\n  text-decoration: underline;\n}\n\n.login-button {\n  margin-top: 6px;\n  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #22c55e 120%);\n  color: white;\n  border: none;\n  padding: 12px 16px;\n  border-radius: 12px;\n  font-size: 15px;\n  font-weight: 600;\n  cursor: pointer;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  box-shadow:\n    0 12px 22px rgba(15, 23, 42, 0.35),\n    0 0 0 1px rgba(15, 23, 42, 0.75);\n  transition:\n    transform 0.12s ease,\n    box-shadow 0.12s ease,\n    filter 0.12s ease;\n}\n\n.login-button:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow:\n    0 16px 28px rgba(15, 23, 42, 0.45),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n  filter: brightness(1.03);\n}\n\n.login-button:active:not(:disabled) {\n  transform: translateY(0);\n  box-shadow:\n    0 8px 16px rgba(15, 23, 42, 0.4),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n}\n\n.login-button:disabled {\n  opacity: 0.7;\n  cursor: not-allowed;\n  filter: grayscale(0.1);\n}\n\n.error-message {\n  margin-bottom: 8px;\n  background: #fffbeb;\n  color: #92400e;\n  padding: 10px 12px;\n  border-radius: 10px;\n  border: 1px solid #fed7aa;\n  border-left-width: 4px;\n  border-left-color: #f97316;\n  font-size: 13px;\n  display: flex;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.error-message::before {\n  content: '⚠';\n  font-size: 14px;\n  line-height: 1.2;\n}\n\n.field-error {\n  font-size: 12px;\n  color: #c2410c;\n}\n\n.field-hint {\n  margin-top: 4px;\n  font-size: 12px;\n}\n\n.field-hint.warning {\n  color: #b45309;\n}\n\n.login-footer {\n  margin-top: 18px;\n  color: #6b7280;\n  font-size: 12px;\n}\n\n.login-footer p {\n  margin: 0;\n}\n\n@media (max-width: 800px) {\n  .login-shell {\n    grid-template-columns: minmax(0, 1fr);\n  }\n\n  .login-brand-panel {\n    display: none;\n  }\n\n  .login-card {\n    border-radius: 18px;\n  }\n}\n\n/* POS Styles */\n.pos-container {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n  background: #f5f7fa;\n  overflow: hidden;\n}\n\n.pos-header {\n  background: white;\n  padding: 6px 12px;\n  border-bottom: 1px solid #e1e5e9;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);\n  position: relative;\n  flex-shrink: 0;\n  gap: 12px;\n}\n\n.header-left {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  flex-shrink: 0;\n}\n\n.pos-header h1 {\n  color: #333;\n  font-size: 14px;\n  font-weight: 700;\n  margin: 0;\n  letter-spacing: -0.3px;\n}\n\n.header-center {\n  flex: 1;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 0;\n}\n\n.header-right {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  flex-shrink: 0;\n}\n\n.header-indicators {\n  display: flex;\n  gap: 6px;\n  align-items: center;\n  justify-content: center;\n}\n\n.branch-select {\n  padding: 5px 8px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 11px;\n  cursor: pointer;\n  min-width: 100px;\n}\n\n.icon-btn {\n  background: transparent;\n  border: 1px solid #e1e5e9;\n  padding: 5px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 14px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n}\n\n.icon-btn:hover {\n  background: #f8f9fa;\n  border-color: #adb5bd;\n}\n\n.icon-btn.logout-btn {\n  border-color: #dc3545;\n  color: #dc3545;\n}\n\n.icon-btn.logout-btn:hover {\n  background: #dc3545;\n  color: white;\n}\n\n.icon-btn.settings-btn:hover {\n  border-color: #667eea;\n  color: #667eea;\n}\n\n.icon-btn.theme-toggle-btn:hover {\n  border-color: #ffc107;\n}\n\n.pos-content {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n  gap: 12px;\n  padding: 12px;\n}\n\n.products-section {\n  flex: 2;\n  padding: 12px;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n}\n\n.search-bar {\n  margin-bottom: 12px;\n  display: flex;\n  gap: 8px;\n}\n\n.search-input-wrapper {\n  flex: 1;\n  position: relative;\n}\n\n.search-input {\n  width: 100%;\n  padding: 8px 12px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  font-size: 13px;\n}\n\n.search-input:focus {\n  outline: none;\n  border-color: #667eea;\n  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);\n}\n\n.category-select {\n  padding: 8px 10px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 12px;\n  cursor: pointer;\n  min-width: 140px;\n}\n\n.products-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, 140px);\n  gap: 10px;\n  overflow-y: auto;\n  flex: 1;\n  min-height: 0;\n  justify-content: start;\n}\n\n.product-card {\n  background: #f8f9fa;\n  border: 1px solid #e1e5e9;\n  border-radius: 6px;\n  padding: 8px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  transition: all 0.2s ease;\n  position: relative;\n  width: 140px;\n  height: 180px;\n  box-sizing: border-box;\n}\n\n.product-category {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  background: #667eea;\n  color: white;\n  padding: 2px 6px;\n  border-radius: 8px;\n  font-size: 9px;\n  font-weight: 600;\n  text-transform: uppercase;\n  z-index: 1;\n}\n\n.product-card:hover {\n  border-color: #667eea;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.product-image {\n  width: 100%;\n  height: 60px;\n  margin-bottom: 6px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: #e9ecef;\n  flex-shrink: 0;\n}\n\n.product-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.product-info {\n  flex: 1;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n\n.product-info h3 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 11px;\n  font-weight: 600;\n  line-height: 1.2;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  flex-shrink: 0;\n}\n\n.product-info .sku {\n  color: #666;\n  font-size: 9px;\n  margin-bottom: 2px;\n  flex-shrink: 0;\n}\n\n.product-info .barcode {\n  color: #667eea;\n  font-size: 8px;\n  margin-bottom: 2px;\n  font-weight: 500;\n  flex-shrink: 0;\n}\n\n.product-info .price {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 13px;\n  margin: 3px 0 2px 0;\n  flex-shrink: 0;\n}\n\n.product-info .stock {\n  color: #666;\n  font-size: 9px;\n  flex-shrink: 0;\n}\n\n.variations-selector {\n  margin: 4px 0;\n  flex-shrink: 0;\n}\n\n.variation-select {\n  width: 100%;\n  padding: 3px 5px;\n  border: 1px solid #e1e5e9;\n  border-radius: 3px;\n  font-size: 9px;\n  background: white;\n}\n\n.add-to-cart-btn {\n  background: #28a745;\n  color: white;\n  border: none;\n  padding: 6px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 10px;\n  margin-top: 6px;\n  transition: background-color 0.2s ease;\n  touch-action: manipulation;\n  width: 100%;\n  flex-shrink: 0;\n}\n\n.add-to-cart-btn:hover:not(:disabled) {\n  background: #218838;\n}\n\n.add-to-cart-btn:disabled {\n  background: #adb5bd;\n  cursor: not-allowed;\n}\n\n.cart-section {\n  flex: 1;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  padding: 12px;\n  min-width: 320px;\n  max-width: 400px;\n}\n\n.cart-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 12px;\n}\n\n.cart-section h2 {\n  margin: 0;\n  color: #333;\n  font-size: 14px;\n  font-weight: 600;\n}\n\n.hold-transaction-btn-header {\n  background: #ffc107;\n  color: #333;\n  border: none;\n  padding: 6px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 500;\n  font-size: 11px;\n  transition: all 0.2s ease;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n\n.hold-transaction-btn-header:hover {\n  background: #ffb300;\n  transform: translateY(-1px);\n}\n\n.cart-items {\n  flex: 1;\n  overflow-y: auto;\n  margin-bottom: 12px;\n  min-height: 0;\n}\n\n.empty-cart {\n  text-align: center;\n  color: #666;\n  font-style: italic;\n  padding: 20px 0;\n  font-size: 12px;\n}\n\n.cart-item {\n  display: flex;\n  gap: 10px;\n  padding: 10px;\n  border-bottom: 1px solid #e1e5e9;\n  background: #f8f9fa;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: all 0.2s ease;\n}\n\n.cart-item:hover {\n  background: #f0f0f0;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\n}\n\n.cart-item-image {\n  flex-shrink: 0;\n  width: 50px;\n  height: 50px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #e1e5e9;\n}\n\n.cart-item-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.cart-item-content {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n  min-width: 0;\n}\n\n.cart-item-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.item-info {\n  flex: 1;\n  min-width: 0;\n}\n\n.item-info h4 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 13px;\n  font-weight: 600;\n  line-height: 1.3;\n}\n\n.item-info .sku {\n  color: #6c757d;\n  font-size: 10px;\n  margin: 0;\n}\n\n.item-info .variation-info {\n  color: #667eea;\n  font-size: 9px;\n  margin: 2px 0 0 0;\n  font-style: italic;\n}\n\n.remove-btn {\n  background: #dc3545;\n  color: white;\n  border: none;\n  width: 22px;\n  height: 22px;\n  border-radius: 50%;\n  font-size: 16px;\n  line-height: 1;\n  transition: all 0.2s ease;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  padding: 0;\n  font-weight: bold;\n}\n\n.remove-btn:hover {\n  background: #c82333;\n  transform: scale(1.1);\n}\n\n.cart-item-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.price-info {\n  display: flex;\n  align-items: baseline;\n  gap: 4px;\n}\n\n.unit-price {\n  color: #28a745;\n  font-weight: 700;\n  font-size: 13px;\n}\n\n.unit-label {\n  color: #6c757d;\n  font-size: 9px;\n  text-transform: lowercase;\n}\n\n.quantity-section {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  align-items: center;\n}\n\n.quantity-controls {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: white;\n  border: 1px solid #dee2e6;\n  border-radius: 4px;\n  padding: 2px;\n}\n\n.quantity-btn {\n  background: transparent;\n  border: none;\n  width: 26px;\n  height: 26px;\n  border-radius: 3px;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: bold;\n  font-size: 16px;\n  color: #495057;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quantity-btn:hover {\n  background: #e9ecef;\n}\n\n.quantity-btn.decrease {\n  color: #dc3545;\n}\n\n.quantity-btn.increase {\n  color: #28a745;\n}\n\n.quantity {\n  min-width: 30px;\n  text-align: center;\n  font-weight: 700;\n  font-size: 13px;\n  color: #333;\n  padding: 0 4px;\n}\n\n.quick-quantity-buttons {\n  display: flex;\n  gap: 3px;\n  flex-wrap: wrap;\n  justify-content: center;\n}\n\n.quick-qty-btn {\n  background: white;\n  border: 1px solid #dee2e6;\n  padding: 3px 6px;\n  border-radius: 3px;\n  cursor: pointer;\n  font-size: 9px;\n  font-weight: 600;\n  color: #495057;\n  min-width: 24px;\n  min-height: 20px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quick-qty-btn:hover {\n  background: #667eea;\n  border-color: #667eea;\n  color: white;\n}\n\n.item-total {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 2px;\n  flex-shrink: 0;\n}\n\n.total-label {\n  font-size: 9px;\n  color: #6c757d;\n  text-transform: uppercase;\n  letter-spacing: 0.5px;\n}\n\n.total-amount {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 14px;\n}\n\n.cart-item:last-child {\n  border-bottom: none;\n  margin-bottom: 0;\n}\n\n.cart-summary {\n  border-top: 2px solid #e1e5e9;\n  padding-top: 10px;\n  margin-bottom: 12px;\n}\n\n.summary-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 6px;\n  font-size: 12px;\n  color: #495057;\n}\n\n.summary-row.total {\n  font-size: 14px;\n  font-weight: 700;\n  color: #333;\n  border-top: 1px solid #e1e5e9;\n  padding-top: 8px;\n  margin-top: 6px;\n}\n\n.checkout-section {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.checkout-btn {\n  width: 100%;\n  padding: 12px;\n  border: none;\n  border-radius: 4px;\n  font-size: 13px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.2s ease;\n}\n\n.checkout-btn:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.checkout-btn:active:not(:disabled) {\n  transform: translateY(0);\n}\n\n.checkout-btn:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n  transform: none;\n}\n\n.checkout-btn.proceed {\n  background: #007bff;\n  color: white;\n}\n\n.checkout-btn.proceed:hover:not(:disabled) {\n  background: #0056b3;\n}\n\n.loading {\n  text-align: center;\n  padding: 20px;\n  color: #666;\n  font-style: italic;\n  font-size: 12px;\n}\n\n/* Responsive Design */\n@media (max-width: 1200px) {\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 130px);\n  }\n  \n  .product-card {\n    width: 130px;\n    height: 170px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    flex: none;\n    height: 50vh;\n  }\n\n  .checkout-section {\n    flex-direction: column;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 120px);\n    gap: 8px;\n  }\n  \n  .product-card {\n    width: 120px;\n    height: 160px;\n  }\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -38556,6 +39384,8 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
     const [amountReceived, setAmountReceived] = (0, react_1.useState)('');
     const [customerName, setCustomerName] = (0, react_1.useState)('');
     const [customerPhone, setCustomerPhone] = (0, react_1.useState)('');
+    const [creditDueDate, setCreditDueDate] = (0, react_1.useState)('');
+    const [creditNotes, setCreditNotes] = (0, react_1.useState)('');
     const [errors, setErrors] = (0, react_1.useState)({});
     const [success, setSuccess] = (0, react_1.useState)(false);
     // Progress steps
@@ -38580,6 +39410,12 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
                 if (!paymentValidation.isValid) {
                     newErrors.amountReceived = paymentValidation.error || `Amount must be at least $${total.toFixed(2)}`;
                 }
+            }
+        }
+        // Validate credit payment - customer name is required
+        if (paymentMethod === 'credit') {
+            if (!customerName || customerName.trim().length === 0) {
+                newErrors.customerName = 'Customer name is required for credit sales';
             }
         }
         // Validate phone number
@@ -38622,13 +39458,22 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
         if (paymentMethod === 'cash') {
             paymentData.amountReceived = parseFloat(amountReceived);
         }
+        if (paymentMethod === 'credit') {
+            paymentData.creditAmount = total;
+            if (creditDueDate) {
+                paymentData.creditDueDate = creditDueDate;
+            }
+            if (creditNotes) {
+                paymentData.creditNotes = creditNotes.trim();
+            }
+        }
         onCompleteSale(paymentData);
         setSuccess(true);
     };
     const change = paymentMethod === 'cash' && amountReceived
         ? parseFloat(amountReceived) - total
         : 0;
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "checkout-page", children: [success && ((0, jsx_runtime_1.jsxs)("div", { className: "success-message", children: [(0, jsx_runtime_1.jsx)("span", { className: "success-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Sale completed!" })] })), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-main", children: [(0, jsx_runtime_1.jsx)("div", { className: "checkout-left", children: (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card order-summary-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDED2 Order Summary" }), (0, jsx_runtime_1.jsxs)("span", { className: "item-count", children: [cart.length, " item", cart.length !== 1 ? 's' : ''] })] }), (0, jsx_runtime_1.jsx)("div", { className: "order-items", children: cart.map(item => ((0, jsx_runtime_1.jsxs)("div", { className: "order-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "item-details", children: [(0, jsx_runtime_1.jsx)("h4", { className: "item-name", children: item.product.name }), (0, jsx_runtime_1.jsxs)("span", { className: "item-sku", children: ["SKU: ", item.product.sku] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "item-meta", children: [(0, jsx_runtime_1.jsxs)("span", { className: "item-quantity", children: ["Qty: ", item.quantity] }), (0, jsx_runtime_1.jsxs)("span", { className: "item-price", children: ["$", (item.product.price * item.quantity).toFixed(2)] })] })] }, item.product.id))) }), (0, jsx_runtime_1.jsxs)("div", { className: "order-totals", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Subtotal" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", subtotal.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "VAT (16%)" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", vat.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row grand-total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total Amount" }), (0, jsx_runtime_1.jsxs)("span", { className: "total-amount", children: ["$", total.toFixed(2)] })] })] })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-right", children: [(0, jsx_runtime_1.jsxs)("div", { className: "checkout-card payment-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "card-header", children: (0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDCB0 Payment Method" }) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-options", children: [(0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'cash' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "cash", checked: paymentMethod === 'cash', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon cash-icon", children: "\uD83D\uDCB5" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Cash Payment" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay with physical cash" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'cash' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "mpesa", checked: paymentMethod === 'mpesa', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon mpesa-icon", children: "\uD83D\uDCF1" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "M-Pesa" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Mobile money payment" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'mpesa' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] })] }), paymentMethod === 'cash' && ((0, jsx_runtime_1.jsxs)("div", { className: "cash-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCB0" }), "Amount Received"] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "$" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: total.toFixed(2), value: amountReceived, onChange: (e) => setAmountReceived(e.target.value), placeholder: total.toFixed(2), required: true, className: `currency-input ${errors.amountReceived ? 'error' : ''}`, "aria-describedby": "amount-error" })] }), (0, jsx_runtime_1.jsxs)("span", { className: "input-hint", children: ["Minimum: $", total.toFixed(2)] }), errors.amountReceived && ((0, jsx_runtime_1.jsx)("span", { id: "amount-error", className: "error-message", children: errors.amountReceived }))] }), amountReceived && parseFloat(amountReceived) >= total && ((0, jsx_runtime_1.jsxs)("div", { className: "change-display", children: [(0, jsx_runtime_1.jsx)("div", { className: "change-icon", children: "\uD83D\uDD04" }), (0, jsx_runtime_1.jsxs)("div", { className: "change-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "change-label", children: "Change to return:" }), (0, jsx_runtime_1.jsxs)("span", { className: "change-amount", children: ["$", change.toFixed(2)] })] })] }))] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card customer-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDC64 Customer Details" }), (0, jsx_runtime_1.jsx)("span", { className: "optional-badge", children: "Optional" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "customer-form", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDC64" }), "Customer Name"] }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: customerName, onChange: (e) => setCustomerName(e.target.value), placeholder: "Enter customer name", className: "text-input" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDE" }), "Phone Number"] }), (0, jsx_runtime_1.jsx)("input", { type: "tel", value: customerPhone, onChange: (e) => setCustomerPhone(e.target.value), placeholder: "Enter phone number", className: `text-input ${errors.customerPhone ? 'error' : ''}`, "aria-describedby": "phone-error" }), errors.customerPhone && ((0, jsx_runtime_1.jsx)("span", { id: "phone-error", className: "error-message", children: errors.customerPhone }))] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-actions", children: [(0, jsx_runtime_1.jsxs)("button", { type: "button", onClick: onBackToProducts, className: "secondary-btn", disabled: loading, children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u274C" }), "Cancel"] }), (0, jsx_runtime_1.jsx)("button", { onClick: handleSubmit, disabled: loading, className: "primary-btn complete-sale-btn", children: loading ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Processing Payment..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u2705" }), (0, jsx_runtime_1.jsxs)("span", { children: ["Complete Sale - $", total.toFixed(2)] })] })) })] })] })] })] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "checkout-page", children: [success && ((0, jsx_runtime_1.jsxs)("div", { className: "success-message", children: [(0, jsx_runtime_1.jsx)("span", { className: "success-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Sale completed!" })] })), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-main", children: [(0, jsx_runtime_1.jsx)("div", { className: "checkout-left", children: (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card order-summary-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDED2 Order Summary" }), (0, jsx_runtime_1.jsxs)("span", { className: "item-count", children: [cart.length, " item", cart.length !== 1 ? 's' : ''] })] }), (0, jsx_runtime_1.jsx)("div", { className: "order-items", children: cart.map(item => ((0, jsx_runtime_1.jsxs)("div", { className: "order-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "item-details", children: [(0, jsx_runtime_1.jsx)("h4", { className: "item-name", children: item.product.name }), (0, jsx_runtime_1.jsxs)("span", { className: "item-sku", children: ["SKU: ", item.product.sku] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "item-meta", children: [(0, jsx_runtime_1.jsxs)("span", { className: "item-quantity", children: ["Qty: ", item.quantity] }), (0, jsx_runtime_1.jsxs)("span", { className: "item-price", children: ["$", (item.product.price * item.quantity).toFixed(2)] })] })] }, item.product.id))) }), (0, jsx_runtime_1.jsxs)("div", { className: "order-totals", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Subtotal" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", subtotal.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "VAT (16%)" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", vat.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row grand-total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total Amount" }), (0, jsx_runtime_1.jsxs)("span", { className: "total-amount", children: ["$", total.toFixed(2)] })] })] })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-right", children: [(0, jsx_runtime_1.jsxs)("div", { className: "checkout-card payment-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "card-header", children: (0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDCB0 Payment Method" }) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-options", children: [(0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'cash' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "cash", checked: paymentMethod === 'cash', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon cash-icon", children: "\uD83D\uDCB5" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Cash Payment" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay with physical cash" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'cash' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "mpesa", checked: paymentMethod === 'mpesa', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon mpesa-icon", children: "\uD83D\uDCF1" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "M-Pesa" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Mobile money payment" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'mpesa' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'credit' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "credit", checked: paymentMethod === 'credit', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon credit-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Credit" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay later / On account" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'credit' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] })] }), paymentMethod === 'cash' && ((0, jsx_runtime_1.jsxs)("div", { className: "cash-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCB0" }), "Amount Received"] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "Ksh" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: total.toFixed(2), value: amountReceived, onChange: (e) => setAmountReceived(e.target.value), placeholder: total.toFixed(2), required: true, className: `currency-input ${errors.amountReceived ? 'error' : ''}`, "aria-describedby": "amount-error" })] }), (0, jsx_runtime_1.jsxs)("span", { className: "input-hint", children: ["Minimum: $", total.toFixed(2)] }), errors.amountReceived && ((0, jsx_runtime_1.jsx)("span", { id: "amount-error", className: "error-message", children: errors.amountReceived }))] }), amountReceived && parseFloat(amountReceived) >= total && ((0, jsx_runtime_1.jsxs)("div", { className: "change-display", children: [(0, jsx_runtime_1.jsx)("div", { className: "change-icon", children: "\uD83D\uDD04" }), (0, jsx_runtime_1.jsxs)("div", { className: "change-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "change-label", children: "Change to return:" }), (0, jsx_runtime_1.jsxs)("span", { className: "change-amount", children: ["Ksh ", change.toFixed(2)] })] })] }))] })), paymentMethod === 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "credit-info-banner", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-icon", children: "\u2139\uFE0F" }), (0, jsx_runtime_1.jsxs)("div", { className: "info-text", children: [(0, jsx_runtime_1.jsx)("strong", { children: "Credit Sale" }), (0, jsx_runtime_1.jsxs)("p", { children: ["Total amount: Ksh ", total.toFixed(2), " will be added to customer's account"] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCC5" }), "Due Date (Optional)"] }), (0, jsx_runtime_1.jsx)("input", { type: "date", value: creditDueDate, onChange: (e) => setCreditDueDate(e.target.value), className: "text-input", min: new Date().toISOString().split('T')[0] }), (0, jsx_runtime_1.jsx)("span", { className: "input-hint", children: "When payment is expected" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDD" }), "Notes (Optional)"] }), (0, jsx_runtime_1.jsx)("textarea", { value: creditNotes, onChange: (e) => setCreditNotes(e.target.value), placeholder: "Add any notes about this credit sale...", className: "text-input", rows: 3 })] })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card customer-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDC64 Customer Details" }), (0, jsx_runtime_1.jsx)("span", { className: `optional-badge ${paymentMethod === 'credit' ? 'required-badge' : ''}`, children: paymentMethod === 'credit' ? 'Required' : 'Optional' })] }), (0, jsx_runtime_1.jsxs)("div", { className: "customer-form", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDC64" }), "Customer Name", paymentMethod === 'credit' && (0, jsx_runtime_1.jsx)("span", { className: "required-indicator", children: "*" })] }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: customerName, onChange: (e) => setCustomerName(e.target.value), placeholder: "Enter customer name", className: `text-input ${errors.customerName ? 'error' : ''}`, required: paymentMethod === 'credit', "aria-describedby": "name-error" }), errors.customerName && ((0, jsx_runtime_1.jsx)("span", { id: "name-error", className: "error-message", children: errors.customerName }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDE" }), "Phone Number"] }), (0, jsx_runtime_1.jsx)("input", { type: "tel", value: customerPhone, onChange: (e) => setCustomerPhone(e.target.value), placeholder: "Enter phone number", className: `text-input ${errors.customerPhone ? 'error' : ''}`, "aria-describedby": "phone-error" }), errors.customerPhone && ((0, jsx_runtime_1.jsx)("span", { id: "phone-error", className: "error-message", children: errors.customerPhone }))] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-actions", children: [(0, jsx_runtime_1.jsxs)("button", { type: "button", onClick: onBackToProducts, className: "secondary-btn", disabled: loading, children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u274C" }), "Cancel"] }), (0, jsx_runtime_1.jsx)("button", { onClick: handleSubmit, disabled: loading, className: "primary-btn complete-sale-btn", children: loading ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Processing Payment..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u2705" }), (0, jsx_runtime_1.jsxs)("span", { children: ["Complete Sale - $", total.toFixed(2)] })] })) })] })] })] })] }));
 };
 exports["default"] = Checkout;
 
@@ -38784,18 +39629,54 @@ const Login = () => {
     const { login, loading } = (0, AuthContext_1.useAuth)();
     const [email, setEmail] = (0, react_1.useState)('');
     const [password, setPassword] = (0, react_1.useState)('');
-    const [error, setError] = (0, react_1.useState)('');
+    const [rememberMe, setRememberMe] = (0, react_1.useState)(false);
+    const [formError, setFormError] = (0, react_1.useState)('');
+    const [emailError, setEmailError] = (0, react_1.useState)('');
+    const [passwordError, setPasswordError] = (0, react_1.useState)('');
+    const [capsLockOn, setCapsLockOn] = (0, react_1.useState)(false);
+    const validateEmail = (value) => {
+        if (!value.trim()) {
+            return 'Email is required';
+        }
+        // Simple email pattern suitable for client-side validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(value)) {
+            return 'Enter a valid business email';
+        }
+        return '';
+    };
+    const validatePassword = (value) => {
+        if (!value.trim()) {
+            return 'Password is required';
+        }
+        return '';
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        setFormError('');
+        const emailValidationError = validateEmail(email);
+        const passwordValidationError = validatePassword(password);
+        setEmailError(emailValidationError);
+        setPasswordError(passwordValidationError);
+        if (emailValidationError || passwordValidationError) {
+            return;
+        }
         try {
             await login({ email, password });
-            (0, Toast_1.showToast)('Login successful!', 'success', 2000);
+            (0, Toast_1.showToast)('Welcome back 👋', 'success', 2000);
+            if (rememberMe) {
+                // Basic "remember me" UX – you can later hook this into a real refresh token flow
+                localStorage.setItem('rememberedEmail', email);
+            }
+            else {
+                localStorage.removeItem('rememberedEmail');
+            }
         }
         catch (err) {
-            const errorMessage = err.message || 'Login failed';
-            setError(errorMessage);
-            // Use error handler for better error messages
+            const errorMessage = err?.response?.data?.message ||
+                err?.message ||
+                'We could not sign you in. Please check your details and try again.';
+            setFormError(errorMessage);
             (0, error_handler_1.handleError)(new error_handler_1.AppError(errorMessage, 'UNAUTHORIZED', {
                 operation: 'login',
                 component: 'Login',
@@ -38806,7 +39687,31 @@ const Login = () => {
             });
         }
     };
-    return ((0, jsx_runtime_1.jsx)("div", { className: "login-container", children: (0, jsx_runtime_1.jsxs)("div", { className: "login-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "login-header", children: [(0, jsx_runtime_1.jsx)("h1", { children: "SaaS POS" }), (0, jsx_runtime_1.jsx)("p", { children: "Point of Sale System" })] }), (0, jsx_runtime_1.jsxs)("form", { onSubmit: handleSubmit, className: "login-form", children: [(0, jsx_runtime_1.jsxs)("div", { className: "form-group", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "email", children: "Email" }), (0, jsx_runtime_1.jsx)("input", { type: "email", id: "email", value: email, onChange: (e) => setEmail(e.target.value), required: true, placeholder: "Enter your email", disabled: loading })] }), (0, jsx_runtime_1.jsxs)("div", { className: "form-group", children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "password", children: "Password" }), (0, jsx_runtime_1.jsx)("input", { type: "password", id: "password", value: password, onChange: (e) => setPassword(e.target.value), required: true, placeholder: "Enter your password", disabled: loading })] }), error && (0, jsx_runtime_1.jsx)("div", { className: "error-message", children: error }), (0, jsx_runtime_1.jsx)("button", { type: "submit", className: "login-button", disabled: loading, children: loading ? 'Signing In...' : 'Sign In' })] }), (0, jsx_runtime_1.jsx)("div", { className: "login-footer", children: (0, jsx_runtime_1.jsx)("p", { children: "Connect to your SaaS account" }) })] }) }));
+    (0, react_1.useEffect)(() => {
+        const storedEmail = localStorage.getItem('rememberedEmail');
+        if (storedEmail) {
+            setEmail(storedEmail);
+            setRememberMe(true);
+        }
+    }, []);
+    const handlePasswordKeyDown = (event) => {
+        if ('getModifierState' in event) {
+            const caps = event.getModifierState('CapsLock');
+            setCapsLockOn(caps);
+        }
+    };
+    const isSubmitting = loading;
+    return ((0, jsx_runtime_1.jsx)("div", { className: "login-container", children: (0, jsx_runtime_1.jsxs)("div", { className: "login-shell", children: [(0, jsx_runtime_1.jsxs)("div", { className: "login-brand-panel", children: [(0, jsx_runtime_1.jsxs)("div", { className: "login-brand-logo", children: [(0, jsx_runtime_1.jsx)("span", { className: "login-logo-mark", children: "S" }), (0, jsx_runtime_1.jsx)("span", { className: "login-logo-text", children: "SaaS POS" })] }), (0, jsx_runtime_1.jsx)("p", { className: "login-brand-tagline", children: "Modern point-of-sale for growing teams. Secure, fast, and built for multi-branch operations." }), (0, jsx_runtime_1.jsxs)("div", { className: "login-brand-highlights", children: [(0, jsx_runtime_1.jsxs)("div", { className: "login-highlight", children: [(0, jsx_runtime_1.jsx)("span", { className: "login-highlight-dot" }), (0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsx)("div", { className: "login-highlight-title", children: "Role-based access" }), (0, jsx_runtime_1.jsx)("div", { className: "login-highlight-subtitle", children: "Fine-grained control for admins and staff." })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "login-highlight", children: [(0, jsx_runtime_1.jsx)("span", { className: "login-highlight-dot" }), (0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsx)("div", { className: "login-highlight-title", children: "Real-time insights" }), (0, jsx_runtime_1.jsx)("div", { className: "login-highlight-subtitle", children: "Track sales and inventory live across locations." })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "login-environment-pill", children: [(0, jsx_runtime_1.jsx)("span", { className: "login-env-dot" }), (0, jsx_runtime_1.jsx)("span", { children: "Secure access" })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "login-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "login-header", children: [(0, jsx_runtime_1.jsx)("h1", { children: "Sign in to your account" }), (0, jsx_runtime_1.jsx)("p", { children: "Use your work email and password to access the POS console." })] }), formError && ((0, jsx_runtime_1.jsx)("div", { className: "error-message", role: "alert", children: formError })), (0, jsx_runtime_1.jsxs)("form", { onSubmit: handleSubmit, className: "login-form", noValidate: true, children: [(0, jsx_runtime_1.jsxs)("div", { className: `form-group ${emailError ? 'has-error' : ''}`, children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "email", children: "Work email" }), (0, jsx_runtime_1.jsx)("div", { className: "form-input-wrapper", children: (0, jsx_runtime_1.jsx)("input", { type: "email", id: "email", value: email, onChange: (e) => {
+                                                    setEmail(e.target.value);
+                                                    if (emailError) {
+                                                        setEmailError(validateEmail(e.target.value));
+                                                    }
+                                                }, placeholder: "you@company.com", disabled: isSubmitting, autoComplete: "email", "aria-invalid": !!emailError, "aria-describedby": emailError ? 'email-error' : undefined }) }), emailError && ((0, jsx_runtime_1.jsx)("div", { id: "email-error", className: "field-error", children: emailError }))] }), (0, jsx_runtime_1.jsxs)("div", { className: `form-group ${passwordError ? 'has-error' : ''}`, children: [(0, jsx_runtime_1.jsx)("label", { htmlFor: "password", children: "Password" }), (0, jsx_runtime_1.jsx)("div", { className: "form-input-wrapper", children: (0, jsx_runtime_1.jsx)("input", { type: "password", id: "password", value: password, onChange: (e) => {
+                                                    setPassword(e.target.value);
+                                                    if (passwordError) {
+                                                        setPasswordError(validatePassword(e.target.value));
+                                                    }
+                                                }, placeholder: "Enter your password", disabled: isSubmitting, autoComplete: "current-password", "aria-invalid": !!passwordError, "aria-describedby": passwordError ? 'password-error' : undefined, onKeyDown: handlePasswordKeyDown }) }), passwordError && ((0, jsx_runtime_1.jsx)("div", { id: "password-error", className: "field-error", children: passwordError })), capsLockOn && !passwordError && ((0, jsx_runtime_1.jsx)("div", { className: "field-hint warning", children: "Caps Lock is on \u2013 passwords are case sensitive." }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "login-form-meta", children: [(0, jsx_runtime_1.jsxs)("label", { className: "checkbox-label", children: [(0, jsx_runtime_1.jsx)("input", { type: "checkbox", checked: rememberMe, onChange: (e) => setRememberMe(e.target.checked), disabled: isSubmitting }), (0, jsx_runtime_1.jsx)("span", { children: "Remember this device" })] }), (0, jsx_runtime_1.jsx)("button", { type: "button", className: "link-button", onClick: () => (0, Toast_1.showToast)('Password reset is managed by your administrator.', 'info', 2500), children: "Forgot password?" })] }), (0, jsx_runtime_1.jsx)("button", { type: "submit", className: "login-button", disabled: isSubmitting, children: isSubmitting ? 'Signing you in…' : 'Sign in' })] }), (0, jsx_runtime_1.jsx)("div", { className: "login-footer", children: (0, jsx_runtime_1.jsx)("p", { children: "Having trouble? Contact your account administrator for access." }) })] })] }) }));
 };
 exports["default"] = Login;
 
@@ -38862,7 +39767,6 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const ProductSelection_1 = __importDefault(__webpack_require__(/*! ./ProductSelection */ "./src/renderer/components/ProductSelection.tsx"));
 const Checkout_1 = __importDefault(__webpack_require__(/*! ./Checkout */ "./src/renderer/components/Checkout.tsx"));
 const Receipt_1 = __importDefault(__webpack_require__(/*! ./Receipt */ "./src/renderer/components/Receipt.tsx"));
-const SyncStatus_1 = __importDefault(__webpack_require__(/*! ./SyncStatus */ "./src/renderer/components/SyncStatus.tsx"));
 const AuthContext_1 = __webpack_require__(/*! ../contexts/AuthContext */ "./src/renderer/contexts/AuthContext.tsx");
 const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
 const usePendingTransactions_1 = __webpack_require__(/*! ../hooks/usePendingTransactions */ "./src/renderer/hooks/usePendingTransactions.ts");
@@ -39159,6 +40063,11 @@ const POS = () => {
                 customerPhone: paymentData.customerPhone,
                 branchId: branchId,
                 idempotencyKey: `sale_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                ...(paymentData.paymentMethod === 'credit' && {
+                    creditAmount: paymentData.creditAmount || getGrandTotal(),
+                    creditDueDate: paymentData.creditDueDate,
+                    creditNotes: paymentData.creditNotes,
+                }),
             };
             // Validate sale data integrity
             const saleValidation = (0, validation_1.validateSaleData)(saleData);
@@ -39247,8 +40156,12 @@ const POS = () => {
             else {
                 console.error('Sale failed:', response.error);
                 // Handle sale failure with recovery options
-                if (response.error === 'Unauthorized' || response.error?.includes('token') || response.error?.includes('auth')) {
-                    (0, error_handler_1.handleError)(new error_handler_1.AppError('Session expired during sale', 'UNAUTHORIZED', {
+                if (response.error === 'Unauthorized' ||
+                    response.error?.includes('Unauthorized') ||
+                    response.error?.includes('token') ||
+                    response.error?.includes('auth') ||
+                    response.error?.includes('log in')) {
+                    (0, error_handler_1.handleError)(new error_handler_1.AppError('Session expired. Please log in again to complete the sale.', 'UNAUTHORIZED', {
                         operation: 'createSale',
                         component: 'POS',
                         userId: user?.id,
@@ -39419,7 +40332,7 @@ const POS = () => {
         deleteTransaction(transactionId);
         (0, Toast_1.showToast)('Pending transaction deleted.', 'info');
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-app", children: [(0, jsx_runtime_1.jsx)(SyncStatus_1.default, {}), currentStep === 'products' && ((0, jsx_runtime_1.jsx)(ProductSelection_1.default, { cart: cart, onAddToCart: addToCart, onUpdateQuantity: updateQuantity, onRemoveFromCart: removeFromCart, onProceedToCheckout: handleProceedToCheckout, onHoldTransaction: handleHoldTransaction, onResumeTransaction: handleResumeTransaction, onDeletePendingTransaction: handleDeletePendingTransaction, pendingTransactions: pendingTransactions, getTotal: getTotal, getVAT: getVAT, getGrandTotal: getGrandTotal })), currentStep === 'checkout' && ((0, jsx_runtime_1.jsx)(Checkout_1.default, { cart: cart, subtotal: getTotal(), vat: getVAT(), total: getGrandTotal(), onCompleteSale: handleCompleteSale, onBackToProducts: handleBackToProducts, loading: processingSale })), currentStep === 'receipt' && ((0, jsx_runtime_1.jsx)(Receipt_1.default, { receipt: currentReceipt, onPrint: handlePrintReceipt, onNewSale: handleNewSale, printing: printing }))] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-app", children: [currentStep === 'products' && ((0, jsx_runtime_1.jsx)(ProductSelection_1.default, { cart: cart, onAddToCart: addToCart, onUpdateQuantity: updateQuantity, onRemoveFromCart: removeFromCart, onProceedToCheckout: handleProceedToCheckout, onHoldTransaction: handleHoldTransaction, onResumeTransaction: handleResumeTransaction, onDeletePendingTransaction: handleDeletePendingTransaction, pendingTransactions: pendingTransactions, getTotal: getTotal, getVAT: getVAT, getGrandTotal: getGrandTotal })), currentStep === 'checkout' && ((0, jsx_runtime_1.jsx)(Checkout_1.default, { cart: cart, subtotal: getTotal(), vat: getVAT(), total: getGrandTotal(), onCompleteSale: handleCompleteSale, onBackToProducts: handleBackToProducts, loading: processingSale })), currentStep === 'receipt' && ((0, jsx_runtime_1.jsx)(Receipt_1.default, { receipt: currentReceipt, onPrint: handlePrintReceipt, onNewSale: handleNewSale, printing: printing }))] }));
 };
 exports["default"] = POS;
 
@@ -39631,6 +40544,7 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const AuthContext_1 = __webpack_require__(/*! ../contexts/AuthContext */ "./src/renderer/contexts/AuthContext.tsx");
 const ThemeContext_1 = __webpack_require__(/*! ../contexts/ThemeContext */ "./src/renderer/contexts/ThemeContext.tsx");
 const PrinterSettings_1 = __importDefault(__webpack_require__(/*! ./PrinterSettings */ "./src/renderer/components/PrinterSettings.tsx"));
+const SyncStatus_1 = __importDefault(__webpack_require__(/*! ./SyncStatus */ "./src/renderer/components/SyncStatus.tsx"));
 const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
 const validation_1 = __webpack_require__(/*! ../utils/validation */ "./src/renderer/utils/validation.ts");
 const useBarcodeScanner_1 = __webpack_require__(/*! ../hooks/useBarcodeScanner */ "./src/renderer/hooks/useBarcodeScanner.ts");
@@ -39782,15 +40696,15 @@ const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCar
             onAddToCart(product);
         }
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pos-header", children: [(0, jsx_runtime_1.jsx)("h1", { children: "\uD83D\uDECD\uFE0F SaaS POS - Product Selection" }), (0, jsx_runtime_1.jsxs)("div", { className: "header-indicators", children: [isScanning && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanning-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "scanning-pulse" }), (0, jsx_runtime_1.jsx)("span", { children: "Scanning..." })] })), scannedBarcode && !isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanned-indicator", children: (0, jsx_runtime_1.jsxs)("span", { children: ["\u2713 Scanned: ", scannedBarcode] }) }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "header-controls", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedBranch, onChange: (e) => setSelectedBranch(e.target.value), className: "branch-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "All Branches" }), (0, jsx_runtime_1.jsx)("option", { value: "branch1", children: "Main Branch" }), (0, jsx_runtime_1.jsx)("option", { value: "branch2", children: "Downtown Branch" })] }), (0, jsx_runtime_1.jsx)("button", { className: "theme-toggle-btn", onClick: toggleTheme, title: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode', children: theme === 'dark' ? '☀️' : '🌙' }), (0, jsx_runtime_1.jsx)("button", { className: "settings-btn", onClick: () => setShowPrinterSettings(!showPrinterSettings), title: "Printer Settings", children: "\u2699\uFE0F Settings" }), (0, jsx_runtime_1.jsx)("button", { className: "logout-btn", onClick: logout, children: "Logout" })] })] }), showPrinterSettings && ((0, jsx_runtime_1.jsx)("div", { className: "printer-settings-modal", children: (0, jsx_runtime_1.jsxs)("div", { className: "modal-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Printer Settings" }), (0, jsx_runtime_1.jsx)("button", { className: "close-btn", onClick: () => setShowPrinterSettings(false), children: "\u00D7" })] }), (0, jsx_runtime_1.jsx)(PrinterSettings_1.default, {})] }) })), (0, jsx_runtime_1.jsxs)("div", { className: "pos-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "products-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "search-bar", children: [(0, jsx_runtime_1.jsxs)("div", { className: "search-input-wrapper", children: [(0, jsx_runtime_1.jsx)("input", { type: "text", placeholder: "\uD83D\uDD0D Search products or scan barcode...", value: searchTerm, onChange: (e) => setSearchTerm(e.target.value), onFocus: () => {
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pos-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "header-left", children: [(0, jsx_runtime_1.jsx)("h1", { children: "POS" }), (0, jsx_runtime_1.jsx)(SyncStatus_1.default, {})] }), (0, jsx_runtime_1.jsx)("div", { className: "header-center", children: (0, jsx_runtime_1.jsxs)("div", { className: "header-indicators", children: [isScanning && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanning-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "scanning-pulse" }), (0, jsx_runtime_1.jsx)("span", { children: "Scanning..." })] })), scannedBarcode && !isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanned-indicator", children: (0, jsx_runtime_1.jsxs)("span", { children: ["\u2713 ", scannedBarcode] }) }))] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "header-right", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedBranch, onChange: (e) => setSelectedBranch(e.target.value), className: "branch-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "All Branches" }), (0, jsx_runtime_1.jsx)("option", { value: "branch1", children: "Main Branch" }), (0, jsx_runtime_1.jsx)("option", { value: "branch2", children: "Downtown Branch" })] }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn theme-toggle-btn", onClick: toggleTheme, title: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode', children: theme === 'dark' ? '☀️' : '🌙' }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn settings-btn", onClick: () => setShowPrinterSettings(!showPrinterSettings), title: "Printer Settings", children: "\u2699\uFE0F" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn logout-btn", onClick: logout, title: "Logout", children: "\uD83D\uDEAA" })] })] }), showPrinterSettings && ((0, jsx_runtime_1.jsx)("div", { className: "printer-settings-modal", children: (0, jsx_runtime_1.jsxs)("div", { className: "modal-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Printer Settings" }), (0, jsx_runtime_1.jsx)("button", { className: "close-btn", onClick: () => setShowPrinterSettings(false), children: "\u00D7" })] }), (0, jsx_runtime_1.jsx)(PrinterSettings_1.default, {})] }) })), (0, jsx_runtime_1.jsxs)("div", { className: "pos-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "products-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "search-bar", children: [(0, jsx_runtime_1.jsxs)("div", { className: "search-input-wrapper", children: [(0, jsx_runtime_1.jsx)("input", { type: "text", placeholder: "\uD83D\uDD0D Search products or scan barcode...", value: searchTerm, onChange: (e) => setSearchTerm(e.target.value), onFocus: () => {
                                                     // Clear barcode scan when user starts typing manually
                                                     if (scannedBarcode) {
                                                         clearScan();
                                                         setScannedBarcode(null);
                                                     }
-                                                }, className: "search-input", autoFocus: false }), isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanner-icon", title: "Barcode scanner active", children: (0, jsx_runtime_1.jsx)("div", { className: "scanner-pulse-dot" }) })), !isScanning && !showBarcodeHelp && ((0, jsx_runtime_1.jsx)("button", { className: "barcode-help-toggle", onClick: () => setShowBarcodeHelp(true), title: "Show barcode scanner help", children: "\uD83D\uDCF7" }))] }), (0, jsx_runtime_1.jsx)("select", { value: selectedCategory, onChange: (e) => setSelectedCategory(e.target.value), className: "category-select", children: categories.map(category => ((0, jsx_runtime_1.jsx)("option", { value: category, children: category === 'all' ? 'All Categories' : category }, category))) })] }), showBarcodeHelp && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanner-help", children: [(0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-title", children: [(0, jsx_runtime_1.jsx)("span", { className: "scanner-icon", children: "\uD83D\uDCF7" }), (0, jsx_runtime_1.jsx)("span", { children: "Barcode Scanner Ready" })] }), (0, jsx_runtime_1.jsx)("button", { className: "barcode-help-close", onClick: () => setShowBarcodeHelp(false), title: "Hide help", children: "\u00D7" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\uD83C\uDFAF" }), (0, jsx_runtime_1.jsx)("span", { children: "Point scanner at product barcode" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Product auto-added to cart" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\uD83D\uDD0D" }), (0, jsx_runtime_1.jsx)("span", { children: "Not found? Search results shown" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\u2328\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Press ESC to cancel scanning" })] })] })] })), (0, jsx_runtime_1.jsx)("div", { className: "products-grid", children: loading ? ((0, jsx_runtime_1.jsx)("div", { className: "loading", children: "Loading products..." })) : filteredProducts.length === 0 ? ((0, jsx_runtime_1.jsx)("div", { className: "loading", children: "No products found" })) : (filteredProducts.map(product => ((0, jsx_runtime_1.jsxs)("div", { className: "product-card", children: [product.category && ((0, jsx_runtime_1.jsx)("div", { className: "product-category", children: product.category.name })), product.images && product.images.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "product-image", children: (0, jsx_runtime_1.jsx)("img", { src: product.images[0], alt: product.name || 'Product', style: { width: '100%', height: '120px', objectFit: 'cover', borderRadius: '4px' } }) })), (0, jsx_runtime_1.jsxs)("div", { className: "product-info", children: [(0, jsx_runtime_1.jsx)("h3", { children: product.name || 'Unnamed Product' }), (0, jsx_runtime_1.jsxs)("p", { className: "sku", children: ["SKU: ", product.sku || 'N/A'] }), product.barcode && ((0, jsx_runtime_1.jsxs)("p", { className: "barcode", children: ["Barcode: ", product.barcode] })), (0, jsx_runtime_1.jsxs)("p", { className: "price", children: ["$", product.price?.toFixed(2) || '0.00'] }), (0, jsx_runtime_1.jsxs)("p", { className: "stock", children: ["Stock: ", product.stock || 0] }), product.hasVariations && product.variations && product.variations.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "variations-selector", children: (0, jsx_runtime_1.jsxs)("select", { value: selectedVariation[product.id] || '', onChange: (e) => setSelectedVariation(prev => ({ ...prev, [product.id]: e.target.value })), className: "variation-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "Select Variation" }), product.variations.map(variation => ((0, jsx_runtime_1.jsxs)("option", { value: variation.id, children: [variation.sku, " - $", variation.price?.toFixed(2) || product.price.toFixed(2), " (Stock: ", variation.stock, ")"] }, variation.id)))] }) }))] }), (0, jsx_runtime_1.jsx)("button", { onClick: () => handleAddToCart(product), className: "add-to-cart-btn", disabled: (product.stock || 0) <= 0, children: "Add to Cart" })] }, product.id)))) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "cart-section", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDED2 Current Sale" }), (0, jsx_runtime_1.jsx)("div", { className: "cart-items", children: cart.length === 0 ? ((0, jsx_runtime_1.jsx)("p", { className: "empty-cart", children: "No items in cart" })) : (cart.map(item => ((0, jsx_runtime_1.jsxs)("div", { className: "cart-item", children: [item.product.images && item.product.images.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "cart-item-image", children: (0, jsx_runtime_1.jsx)("img", { src: item.product.images[0], alt: item.product.name || 'Product', onError: (e) => {
+                                                }, className: "search-input", autoFocus: false }), isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanner-icon", title: "Barcode scanner active", children: (0, jsx_runtime_1.jsx)("div", { className: "scanner-pulse-dot" }) })), !isScanning && !showBarcodeHelp && ((0, jsx_runtime_1.jsx)("button", { className: "barcode-help-toggle", onClick: () => setShowBarcodeHelp(true), title: "Show barcode scanner help", children: "\uD83D\uDCF7" }))] }), (0, jsx_runtime_1.jsx)("select", { value: selectedCategory, onChange: (e) => setSelectedCategory(e.target.value), className: "category-select", children: categories.map(category => ((0, jsx_runtime_1.jsx)("option", { value: category, children: category === 'all' ? 'All Categories' : category }, category))) })] }), showBarcodeHelp && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanner-help", children: [(0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-title", children: [(0, jsx_runtime_1.jsx)("span", { className: "scanner-icon", children: "\uD83D\uDCF7" }), (0, jsx_runtime_1.jsx)("span", { children: "Barcode Scanner Ready" })] }), (0, jsx_runtime_1.jsx)("button", { className: "barcode-help-close", onClick: () => setShowBarcodeHelp(false), title: "Hide help", children: "\u00D7" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\uD83C\uDFAF" }), (0, jsx_runtime_1.jsx)("span", { children: "Point scanner at product barcode" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Product auto-added to cart" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\uD83D\uDD0D" }), (0, jsx_runtime_1.jsx)("span", { children: "Not found? Search results shown" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\u2328\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Press ESC to cancel scanning" })] })] })] })), (0, jsx_runtime_1.jsx)("div", { className: "products-grid", children: loading ? ((0, jsx_runtime_1.jsx)("div", { className: "loading", children: "Loading products..." })) : filteredProducts.length === 0 ? ((0, jsx_runtime_1.jsx)("div", { className: "loading", children: "No products found" })) : (filteredProducts.map(product => ((0, jsx_runtime_1.jsxs)("div", { className: "product-card", children: [product.category && ((0, jsx_runtime_1.jsx)("div", { className: "product-category", children: product.category.name })), product.images && product.images.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "product-image", children: (0, jsx_runtime_1.jsx)("img", { src: product.images[0], alt: product.name || 'Product', style: { width: '100%', height: '120px', objectFit: 'cover', borderRadius: '4px' } }) })), (0, jsx_runtime_1.jsxs)("div", { className: "product-info", children: [(0, jsx_runtime_1.jsx)("h3", { children: product.name || 'Unnamed Product' }), (0, jsx_runtime_1.jsxs)("p", { className: "sku", children: ["SKU: ", product.sku || 'N/A'] }), product.barcode && ((0, jsx_runtime_1.jsxs)("p", { className: "barcode", children: ["Barcode: ", product.barcode] })), (0, jsx_runtime_1.jsxs)("p", { className: "price", children: ["$", product.price?.toFixed(2) || '0.00'] }), (0, jsx_runtime_1.jsxs)("p", { className: "stock", children: ["Stock: ", product.stock || 0] }), product.hasVariations && product.variations && product.variations.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "variations-selector", children: (0, jsx_runtime_1.jsxs)("select", { value: selectedVariation[product.id] || '', onChange: (e) => setSelectedVariation(prev => ({ ...prev, [product.id]: e.target.value })), className: "variation-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "Select Variation" }), product.variations.map(variation => ((0, jsx_runtime_1.jsxs)("option", { value: variation.id, children: [variation.sku, " - $", variation.price?.toFixed(2) || product.price.toFixed(2), " (Stock: ", variation.stock, ")"] }, variation.id)))] }) }))] }), (0, jsx_runtime_1.jsx)("button", { onClick: () => handleAddToCart(product), className: "add-to-cart-btn", disabled: (product.stock || 0) <= 0, children: "Add to Cart" })] }, product.id)))) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "cart-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "cart-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDED2 Current Sale" }), cart.length > 0 && onHoldTransaction && ((0, jsx_runtime_1.jsx)("button", { onClick: onHoldTransaction, className: "hold-transaction-btn-header", title: "Hold this transaction and start a new one", children: "\u23F8\uFE0F Hold" }))] }), (0, jsx_runtime_1.jsx)("div", { className: "cart-items", children: cart.length === 0 ? ((0, jsx_runtime_1.jsx)("p", { className: "empty-cart", children: "No items in cart" })) : (cart.map(item => ((0, jsx_runtime_1.jsxs)("div", { className: "cart-item", children: [item.product.images && item.product.images.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "cart-item-image", children: (0, jsx_runtime_1.jsx)("img", { src: item.product.images[0], alt: item.product.name || 'Product', onError: (e) => {
                                                     e.target.style.display = 'none';
-                                                } }) })), (0, jsx_runtime_1.jsxs)("div", { className: "item-info", children: [(0, jsx_runtime_1.jsx)("h4", { children: item.product.name || 'Unnamed Product' }), (0, jsx_runtime_1.jsxs)("p", { className: "sku", children: ["SKU: ", item.product.sku || 'N/A'] }), item.product.variationAttributes && ((0, jsx_runtime_1.jsxs)("p", { className: "variation-info", children: ["Variation: ", Object.entries(item.product.variationAttributes).map(([key, value]) => `${key}: ${value}`).join(', ')] })), (0, jsx_runtime_1.jsxs)("p", { className: "item-price", children: ["$", item.product.price?.toFixed(2) || '0.00', " each"] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "item-controls", children: [(0, jsx_runtime_1.jsxs)("div", { className: "quick-quantity-buttons", children: [(0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 1), className: "quick-qty-btn", title: "Set quantity to 1", children: "1" }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 2), className: "quick-qty-btn", title: "Set quantity to 2", children: "2" }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 5), className: "quick-qty-btn", title: "Set quantity to 5", children: "5" }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 10), className: "quick-qty-btn", title: "Set quantity to 10", children: "10" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "quantity-controls", children: [(0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, item.quantity - 1), className: "quantity-btn", title: "Decrease quantity", children: "-" }), (0, jsx_runtime_1.jsx)("span", { className: "quantity", children: item.quantity }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, item.quantity + 1), className: "quantity-btn", title: "Increase quantity", children: "+" })] }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onRemoveFromCart(item.product.id), className: "remove-btn", title: "Remove from cart", children: "\u00D7" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "item-total", children: ["$", ((item.product.price || 0) * item.quantity).toFixed(2)] })] }, item.product.id)))) }), (0, jsx_runtime_1.jsxs)("div", { className: "cart-summary", children: [(0, jsx_runtime_1.jsxs)("div", { className: "summary-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Subtotal:" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", getTotal().toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "summary-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "VAT (16%):" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", getVAT().toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "summary-row total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total:" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", getGrandTotal().toFixed(2)] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-section", children: [cart.length > 0 && onHoldTransaction && ((0, jsx_runtime_1.jsx)("button", { onClick: onHoldTransaction, className: "checkout-btn hold", title: "Hold this transaction and start a new one", children: "\u23F8\uFE0F Hold Transaction" })), (0, jsx_runtime_1.jsx)("button", { onClick: onProceedToCheckout, className: "checkout-btn proceed", disabled: cart.length === 0, children: "Proceed to Checkout" })] }), pendingTransactions && pendingTransactions.length > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "pending-transactions-panel", children: [(0, jsx_runtime_1.jsxs)("h3", { className: "pending-header", children: ["\u23F8\uFE0F Pending Transactions (", pendingTransactions.length, ")"] }), (0, jsx_runtime_1.jsx)("div", { className: "pending-transactions-list", children: pendingTransactions.map(transaction => {
+                                                } }) })), (0, jsx_runtime_1.jsxs)("div", { className: "cart-item-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "cart-item-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "item-info", children: [(0, jsx_runtime_1.jsx)("h4", { children: item.product.name || 'Unnamed Product' }), (0, jsx_runtime_1.jsx)("p", { className: "sku", children: item.product.sku || 'N/A' }), item.product.variationAttributes && ((0, jsx_runtime_1.jsx)("p", { className: "variation-info", children: Object.entries(item.product.variationAttributes).map(([key, value]) => `${key}: ${value}`).join(', ') }))] }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onRemoveFromCart(item.product.id), className: "remove-btn", title: "Remove from cart", children: "\u00D7" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "cart-item-footer", children: [(0, jsx_runtime_1.jsxs)("div", { className: "price-info", children: [(0, jsx_runtime_1.jsxs)("span", { className: "unit-price", children: ["$", item.product.price?.toFixed(2) || '0.00'] }), (0, jsx_runtime_1.jsx)("span", { className: "unit-label", children: "each" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "quantity-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "quantity-controls", children: [(0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, item.quantity - 1), className: "quantity-btn decrease", title: "Decrease quantity", children: "\u2212" }), (0, jsx_runtime_1.jsx)("span", { className: "quantity", children: item.quantity }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, item.quantity + 1), className: "quantity-btn increase", title: "Increase quantity", children: "+" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "quick-quantity-buttons", children: [(0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 1), className: "quick-qty-btn", title: "Set to 1", children: "1" }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 2), className: "quick-qty-btn", title: "Set to 2", children: "2" }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 5), className: "quick-qty-btn", title: "Set to 5", children: "5" }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 10), className: "quick-qty-btn", title: "Set to 10", children: "10" })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "item-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Total" }), (0, jsx_runtime_1.jsxs)("span", { className: "total-amount", children: ["$", ((item.product.price || 0) * item.quantity).toFixed(2)] })] })] })] })] }, item.product.id)))) }), (0, jsx_runtime_1.jsxs)("div", { className: "cart-summary", children: [(0, jsx_runtime_1.jsxs)("div", { className: "summary-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Subtotal:" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", getTotal().toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "summary-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "VAT (16%):" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", getVAT().toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "summary-row total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total:" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", getGrandTotal().toFixed(2)] })] })] }), (0, jsx_runtime_1.jsx)("div", { className: "checkout-section", children: (0, jsx_runtime_1.jsx)("button", { onClick: onProceedToCheckout, className: "checkout-btn proceed", disabled: cart.length === 0, children: "Proceed to Checkout" }) }), pendingTransactions && pendingTransactions.length > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "pending-transactions-panel", children: [(0, jsx_runtime_1.jsxs)("h3", { className: "pending-header", children: ["\u23F8\uFE0F Pending Transactions (", pendingTransactions.length, ")"] }), (0, jsx_runtime_1.jsx)("div", { className: "pending-transactions-list", children: pendingTransactions.map(transaction => {
                                             const transactionTotal = transaction.cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
                                             const transactionDate = new Date(transaction.timestamp);
                                             return ((0, jsx_runtime_1.jsxs)("div", { className: "pending-transaction-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pending-transaction-info", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pending-transaction-header", children: [(0, jsx_runtime_1.jsx)("span", { className: "pending-time", children: transactionDate.toLocaleTimeString() }), (0, jsx_runtime_1.jsxs)("span", { className: "pending-items", children: [transaction.cart.length, " item", transaction.cart.length !== 1 ? 's' : ''] })] }), transaction.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "pending-customer", children: ["\uD83D\uDC64 ", transaction.customerName] })), (0, jsx_runtime_1.jsxs)("div", { className: "pending-total", children: ["Total: $", transactionTotal.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "pending-transaction-actions", children: [onResumeTransaction && ((0, jsx_runtime_1.jsx)("button", { onClick: () => onResumeTransaction(transaction.id), className: "resume-btn", title: "Resume this transaction", children: "\u25B6\uFE0F Resume" })), onDeletePendingTransaction && ((0, jsx_runtime_1.jsx)("button", { onClick: () => onDeletePendingTransaction(transaction.id), className: "delete-pending-btn", title: "Delete this pending transaction", children: "\uD83D\uDDD1\uFE0F" }))] })] }, transaction.id));
@@ -39818,14 +40732,33 @@ __webpack_require__(/*! ../receipt.css */ "./src/renderer/receipt.css");
 const Receipt = ({ receipt, onPrint, onNewSale, printing }) => {
     if (!receipt)
         return null;
-    return ((0, jsx_runtime_1.jsx)("div", { className: "receipt-page", children: (0, jsx_runtime_1.jsxs)("div", { className: "receipt-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-success", children: [(0, jsx_runtime_1.jsx)("div", { className: "success-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("h2", { children: "Sale Completed!" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-header", children: [(0, jsx_runtime_1.jsxs)("h3", { children: ["\uD83C\uDFEA ", receipt.businessInfo?.name || 'Business Name'] }), (0, jsx_runtime_1.jsxs)("p", { children: ["\uD83C\uDD94 Sale #", receipt.saleId] }), (0, jsx_runtime_1.jsxs)("p", { children: ["\uD83D\uDCC5 ", new Date(receipt.date).toLocaleString()] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "receipt-branch", children: [(0, jsx_runtime_1.jsxs)("p", { children: ["\uD83C\uDFE2 Branch: ", receipt.branch.name] }), receipt.branch.address && (0, jsx_runtime_1.jsxs)("p", { children: ["\uD83D\uDCCD ", receipt.branch.address] })] }))] }), (0, jsx_runtime_1.jsx)("div", { className: "receipt-items", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "receipt-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "item-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "item-name", children: item.name }), (0, jsx_runtime_1.jsxs)("span", { className: "item-qty", children: ["x", item.quantity] })] }), (0, jsx_runtime_1.jsxs)("span", { className: "item-price", children: ["$", ((item.price || 0) * (item.quantity || 0)).toFixed(2)] })] }, index))) }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-totals", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Subtotal:" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", receipt.subtotal?.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "VAT (16%):" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", receipt.vatAmount?.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row grand-total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total:" }), (0, jsx_runtime_1.jsxs)("span", { className: "total-amount", children: ["$", receipt.total?.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Payment:" }), (0, jsx_runtime_1.jsx)("span", { children: receipt.paymentMethod?.toUpperCase() })] }), receipt.amountReceived && ((0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Received:" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", receipt.amountReceived.toFixed(2)] })] })), receipt.change !== undefined && receipt.change > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Change:" }), (0, jsx_runtime_1.jsxs)("span", { className: "change-amount", children: ["$", receipt.change.toFixed(2)] })] }))] }), (0, jsx_runtime_1.jsx)("div", { className: "receipt-footer", children: (0, jsx_runtime_1.jsx)("p", { children: "Thank you for your business!" }) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-actions", children: [(0, jsx_runtime_1.jsxs)("button", { onClick: onNewSale, className: "new-sale-btn", children: [(0, jsx_runtime_1.jsx)("span", { children: "\uD83D\uDED2" }), " New Sale"] }), (0, jsx_runtime_1.jsxs)("button", { onClick: async () => {
-                                try {
-                                    await window.electronAPI.openCashDrawer();
-                                }
-                                catch (error) {
-                                    console.error('Failed to open cash drawer:', error);
-                                }
-                            }, className: "cash-drawer-btn", title: "Open Cash Drawer", children: [(0, jsx_runtime_1.jsx)("span", { children: "\uD83D\uDCB0" }), " Open Drawer"] }), (0, jsx_runtime_1.jsx)("button", { onClick: onPrint, disabled: printing, className: "print-btn", children: printing ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), "Printing..."] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { children: "\uD83D\uDDA8\uFE0F" }), " Print"] })) })] })] }) }));
+    const formatCurrency = (amount) => {
+        return `Ksh ${amount?.toFixed(2) || '0.00'}`;
+    };
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+    const isCreditSale = receipt.paymentMethod === 'credit';
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "receipt-page", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-top-bar", children: [(0, jsx_runtime_1.jsxs)("div", { className: "success-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "success-icon-wrapper", children: (0, jsx_runtime_1.jsx)("div", { className: "success-icon", children: "\u2713" }) }), (0, jsx_runtime_1.jsxs)("div", { className: "success-text", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Sale Completed" }), (0, jsx_runtime_1.jsxs)("p", { className: "success-subtitle", children: ["Receipt #", receipt.saleId?.substring(0, 8).toUpperCase()] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-actions-top", children: [(0, jsx_runtime_1.jsxs)("button", { onClick: onNewSale, className: "action-btn-top primary-btn", children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDED2" }), (0, jsx_runtime_1.jsx)("span", { children: "New Sale" })] }), (0, jsx_runtime_1.jsxs)("button", { onClick: async () => {
+                                    try {
+                                        await window.electronAPI.openCashDrawer();
+                                    }
+                                    catch (error) {
+                                        console.error('Failed to open cash drawer:', error);
+                                    }
+                                }, className: "action-btn-top secondary-btn", title: "Open Cash Drawer", children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDCB0" }), (0, jsx_runtime_1.jsx)("span", { children: "Open Drawer" })] }), (0, jsx_runtime_1.jsx)("button", { onClick: onPrint, disabled: printing, className: "action-btn-top print-btn", children: printing ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Printing..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDDA8\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Print" })] })) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-main-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-left-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-header-card", children: [receipt.businessInfo?.receiptLogo && ((0, jsx_runtime_1.jsx)("img", { src: receipt.businessInfo.receiptLogo.startsWith('http') ? receipt.businessInfo.receiptLogo : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`, alt: "Business Logo", className: "receipt-logo", style: { maxHeight: '48px', width: 'auto', marginBottom: '8px', display: 'block' } })), (0, jsx_runtime_1.jsx)("div", { className: "business-name", children: receipt.businessInfo?.name || 'Business Name' }), receipt.businessInfo?.address && ((0, jsx_runtime_1.jsx)("div", { className: "business-address", children: receipt.businessInfo.address })), receipt.businessInfo?.phone && ((0, jsx_runtime_1.jsxs)("div", { className: "business-contact", children: ["Tel: ", receipt.businessInfo.phone] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-info-grid", children: [(0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Sale ID" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.saleId })] }), (0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Date & Time" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: formatDate(receipt.date) })] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Branch" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.branch.name })] })), receipt.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Customer" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.customerName })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-items-section", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Items Purchased" }), (0, jsx_runtime_1.jsxs)("div", { className: "items-table", children: [(0, jsx_runtime_1.jsxs)("div", { className: "items-header", children: [(0, jsx_runtime_1.jsx)("div", { className: "header-col-item", children: "Item" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-qty", children: "Qty" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-price", children: "Price" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-total", children: "Total" })] }), (0, jsx_runtime_1.jsx)("div", { className: "items-body", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "item-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "col-item", children: (0, jsx_runtime_1.jsx)("span", { className: "item-name", children: item.name }) }), (0, jsx_runtime_1.jsx)("div", { className: "col-qty", children: item.quantity }), (0, jsx_runtime_1.jsx)("div", { className: "col-price", children: formatCurrency(item.price || 0) }), (0, jsx_runtime_1.jsx)("div", { className: "col-total", children: formatCurrency((item.price || 0) * (item.quantity || 0)) })] }, index))) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-right-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "totals-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Summary" }), (0, jsx_runtime_1.jsxs)("div", { className: "totals-list", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Subtotal" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.subtotal || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "VAT (16%)" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.vatAmount || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item grand-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Total Amount" }), (0, jsx_runtime_1.jsx)("span", { className: "total-amount", children: formatCurrency(receipt.total || 0) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Payment Information" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-method-badge", "data-method": receipt.paymentMethod?.toLowerCase(), children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-icon", children: receipt.paymentMethod === 'cash' ? '💵' :
+                                                    receipt.paymentMethod === 'mpesa' ? '📱' :
+                                                        receipt.paymentMethod === 'credit' ? '💳' : '💰' }), (0, jsx_runtime_1.jsx)("span", { className: "payment-text", children: receipt.paymentMethod?.toUpperCase() || 'PAYMENT' })] }), isCreditSale && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-details", children: [(0, jsx_runtime_1.jsxs)("div", { className: "credit-badge", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsx)("span", { children: "Credit Sale" })] }), receipt.creditDueDate && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-label", children: "Due Date:" }), (0, jsx_runtime_1.jsx)("span", { className: "credit-value", children: new Date(receipt.creditDueDate).toLocaleDateString('en-US', {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        }) })] })), receipt.creditNotes && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-notes-section", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-label", children: "Notes:" }), (0, jsx_runtime_1.jsx)("p", { className: "credit-notes-text", children: receipt.creditNotes })] }))] })), receipt.amountReceived && receipt.paymentMethod !== 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "payment-details", children: [(0, jsx_runtime_1.jsxs)("div", { className: "payment-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Amount Received:" }), (0, jsx_runtime_1.jsx)("span", { children: formatCurrency(receipt.amountReceived) })] }), receipt.change !== undefined && receipt.change > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "payment-row change-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Change:" }), (0, jsx_runtime_1.jsx)("span", { className: "change-amount", children: formatCurrency(receipt.change) })] }))] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-footer-card", children: [(0, jsx_runtime_1.jsx)("p", { className: "thank-you", children: "Thank you for your business!" }), (0, jsx_runtime_1.jsx)("p", { className: "footer-note", children: "Please keep this receipt for your records" })] })] })] })] }));
 };
 exports["default"] = Receipt;
 
@@ -39935,27 +40868,16 @@ const error_handler_1 = __webpack_require__(/*! ../utils/error-handler */ "./src
 const SyncStatus = () => {
     const [syncStatus, setSyncStatus] = (0, react_1.useState)({ online: true, pendingSyncs: 0 });
     const [isSyncing, setIsSyncing] = (0, react_1.useState)(false);
-    (0, react_1.useEffect)(() => {
-        // Initial status check
-        updateSyncStatus();
-        // Update status every 30 seconds
-        const interval = setInterval(updateSyncStatus, 30000);
-        return () => clearInterval(interval);
-    }, []);
-    const updateSyncStatus = async () => {
-        try {
-            const response = await window.electronAPI.getSyncStatus();
-            if (response) {
-                setSyncStatus(response);
-            }
-        }
-        catch (error) {
-            console.error('Failed to get sync status:', error);
-        }
-    };
-    const handleSyncNow = async () => {
-        if (isSyncing || syncStatus.pendingSyncs === 0)
+    const wasOfflineRef = (0, react_1.useRef)(false);
+    const autoSyncTimeoutRef = (0, react_1.useRef)(null);
+    const hasAutoSyncedRef = (0, react_1.useRef)(false);
+    const lastPendingCountRef = (0, react_1.useRef)(0);
+    const handleSyncNow = (0, react_1.useCallback)(async (isAutoSync = false) => {
+        // Get current status to check conditions
+        const currentStatus = await window.electronAPI.getSyncStatus();
+        if (isSyncing || currentStatus.pendingSyncs === 0 || !currentStatus.online) {
             return;
+        }
         setIsSyncing(true);
         try {
             const response = await (0, error_handler_1.handleNetworkOperation)(() => window.electronAPI.syncOfflineSales(), {
@@ -39963,40 +40885,74 @@ const SyncStatus = () => {
                 component: 'SyncStatus',
             }, {
                 maxRetries: 2,
-                showRetryToast: true,
+                showRetryToast: !isAutoSync, // Don't show retry toast for auto-sync
             });
             if (response.success) {
-                console.log(`Synced ${response.syncedCount} sales`);
+                console.log(`Synced ${response.syncedCount} sales${isAutoSync ? ' (auto-sync)' : ''}`);
                 if (response.errors && response.errors.length > 0) {
                     console.warn('Sync errors:', response.errors);
-                    // Show detailed error messages to user
-                    const errorMessages = response.errors.slice(0, 3).map((error, index) => `${index + 1}. ${error}`).join('\n');
-                    const moreErrors = response.errors.length > 3 ? `\n...and ${response.errors.length - 3} more errors` : '';
-                    (0, error_handler_1.handleError)(new error_handler_1.AppError(`Sync completed with ${response.errors.length} errors`, 'SYNC_PARTIAL', {
-                        operation: 'syncOfflineSales',
-                        component: 'SyncStatus',
-                        metadata: {
-                            syncedCount: response.syncedCount,
-                            errorCount: response.errors.length,
-                            errors: response.errors,
-                        },
-                    }, undefined, 'medium'), {
-                        operation: 'syncOfflineSales',
-                        component: 'SyncStatus',
-                    });
-                    (0, Toast_1.showToast)(`Sync completed with ${response.errors.length} errors:\n${errorMessages}${moreErrors}`, 'warning', 8000);
+                    // Only show detailed errors for manual syncs or if there are many errors
+                    if (!isAutoSync || response.errors.length > 3) {
+                        const errorMessages = response.errors.slice(0, 3).map((error, index) => `${index + 1}. ${error}`).join('\n');
+                        const moreErrors = response.errors.length > 3 ? `\n...and ${response.errors.length - 3} more errors` : '';
+                        (0, error_handler_1.handleError)(new error_handler_1.AppError(`Sync completed with ${response.errors.length} errors`, 'SYNC_PARTIAL', {
+                            operation: 'syncOfflineSales',
+                            component: 'SyncStatus',
+                            metadata: {
+                                syncedCount: response.syncedCount,
+                                errorCount: response.errors.length,
+                                errors: response.errors,
+                            },
+                        }, undefined, 'medium'), {
+                            operation: 'syncOfflineSales',
+                            component: 'SyncStatus',
+                        });
+                        (0, Toast_1.showToast)(`Sync completed with ${response.errors.length} errors:\n${errorMessages}${moreErrors}`, 'warning', 8000);
+                    }
+                    else {
+                        // For auto-sync with few errors, just show a brief message
+                        (0, Toast_1.showToast)(`Auto-sync: ${response.syncedCount} synced, ${response.errors.length} failed`, 'warning', 3000);
+                    }
                 }
                 else {
-                    (0, Toast_1.showToast)(`Successfully synced ${response.syncedCount} sales!`, 'success');
+                    // Show success message (shorter for auto-sync)
+                    if (isAutoSync) {
+                        (0, Toast_1.showToast)(`Auto-synced ${response.syncedCount} sales`, 'success', 2000);
+                    }
+                    else {
+                        (0, Toast_1.showToast)(`Successfully synced ${response.syncedCount} sales!`, 'success');
+                    }
                 }
-                // Refresh status
-                await updateSyncStatus();
+                // Refresh status after sync
+                const updatedStatus = await window.electronAPI.getSyncStatus();
+                setSyncStatus(updatedStatus);
+                lastPendingCountRef.current = updatedStatus.pendingSyncs;
+                // Reset auto-sync flag after successful sync
+                if (updatedStatus.pendingSyncs === 0) {
+                    hasAutoSyncedRef.current = false;
+                }
             }
             else {
-                (0, error_handler_1.handleError)(new error_handler_1.AppError(response.error || 'Sync failed', 'SYNC_FAILED', {
-                    operation: 'syncOfflineSales',
-                    component: 'SyncStatus',
-                }), {
+                if (!isAutoSync) {
+                    (0, error_handler_1.handleError)(new error_handler_1.AppError(response.error || 'Sync failed', 'SYNC_FAILED', {
+                        operation: 'syncOfflineSales',
+                        component: 'SyncStatus',
+                    }), {
+                        operation: 'syncOfflineSales',
+                        component: 'SyncStatus',
+                    }, {
+                        retryable: true,
+                        maxRetries: 2,
+                    });
+                }
+                else {
+                    console.warn('Auto-sync failed:', response.error);
+                }
+            }
+        }
+        catch (error) {
+            if (!isAutoSync) {
+                (0, error_handler_1.handleError)(error, {
                     operation: 'syncOfflineSales',
                     component: 'SyncStatus',
                 }, {
@@ -40004,20 +40960,115 @@ const SyncStatus = () => {
                     maxRetries: 2,
                 });
             }
-        }
-        catch (error) {
-            (0, error_handler_1.handleError)(error, {
-                operation: 'syncOfflineSales',
-                component: 'SyncStatus',
-            }, {
-                retryable: true,
-                maxRetries: 2,
-            });
+            else {
+                console.error('Auto-sync error:', error);
+            }
         }
         finally {
             setIsSyncing(false);
         }
-    };
+    }, [isSyncing]);
+    const updateSyncStatus = (0, react_1.useCallback)(async () => {
+        try {
+            const response = await window.electronAPI.getSyncStatus();
+            if (response) {
+                setSyncStatus((prevStatus) => {
+                    const justCameOnline = !prevStatus.online && response.online;
+                    const hasPendingSales = response.pendingSyncs > 0;
+                    const pendingCountIncreased = response.pendingSyncs > lastPendingCountRef.current;
+                    // Track offline state
+                    if (!response.online) {
+                        wasOfflineRef.current = true;
+                        hasAutoSyncedRef.current = false; // Reset when going offline
+                    }
+                    // Auto-sync conditions:
+                    // 1. Just came back online with pending sales, OR
+                    // 2. Online with pending sales that we haven't auto-synced yet, OR
+                    // 3. Pending count increased (new offline sale created)
+                    const shouldAutoSync = response.online && hasPendingSales && !isSyncing && (justCameOnline ||
+                        (!hasAutoSyncedRef.current && prevStatus.online) ||
+                        pendingCountIncreased);
+                    if (shouldAutoSync) {
+                        // Clear any existing timeout
+                        if (autoSyncTimeoutRef.current) {
+                            clearTimeout(autoSyncTimeoutRef.current);
+                        }
+                        // Trigger auto-sync after a short delay to ensure backend is ready
+                        autoSyncTimeoutRef.current = setTimeout(() => {
+                            if (!isSyncing) {
+                                console.log('Auto-syncing pending sales...', {
+                                    justCameOnline,
+                                    hasAutoSynced: hasAutoSyncedRef.current,
+                                    pendingCount: response.pendingSyncs
+                                });
+                                hasAutoSyncedRef.current = true;
+                                handleSyncNow(true);
+                            }
+                        }, 1500);
+                    }
+                    // Update last pending count
+                    lastPendingCountRef.current = response.pendingSyncs;
+                    // Reset auto-sync flag after being online for a while
+                    if (response.online && wasOfflineRef.current) {
+                        setTimeout(() => {
+                            wasOfflineRef.current = false;
+                            hasAutoSyncedRef.current = false; // Allow auto-sync again if new sales come in
+                        }, 10000);
+                    }
+                    return response;
+                });
+            }
+        }
+        catch (error) {
+            console.error('Failed to get sync status:', error);
+        }
+    }, [isSyncing, handleSyncNow]);
+    (0, react_1.useEffect)(() => {
+        let mounted = true;
+        // Initial status check - with immediate auto-sync if needed
+        const initialCheck = async () => {
+            try {
+                const status = await window.electronAPI.getSyncStatus();
+                if (status && mounted) {
+                    setSyncStatus(status);
+                    lastPendingCountRef.current = status.pendingSyncs;
+                    // If online with pending sales on initial load, auto-sync immediately
+                    if (status.online && status.pendingSyncs > 0) {
+                        console.log('Initial load: Auto-syncing pending sales...', status);
+                        hasAutoSyncedRef.current = true;
+                        // Use a timeout to ensure component is fully mounted
+                        autoSyncTimeoutRef.current = setTimeout(async () => {
+                            if (mounted && !isSyncing) {
+                                // Double-check status before syncing
+                                const currentStatus = await window.electronAPI.getSyncStatus();
+                                if (currentStatus.online && currentStatus.pendingSyncs > 0) {
+                                    console.log('Triggering auto-sync from initial load');
+                                    handleSyncNow(true);
+                                }
+                            }
+                        }, 2000); // Slightly longer delay on initial load
+                    }
+                }
+            }
+            catch (error) {
+                console.error('Failed initial sync status check:', error);
+            }
+        };
+        initialCheck();
+        // Update status every 10 seconds (more frequent for better auto-sync detection)
+        const interval = setInterval(() => {
+            if (mounted) {
+                updateSyncStatus();
+            }
+        }, 10000);
+        return () => {
+            mounted = false;
+            clearInterval(interval);
+            if (autoSyncTimeoutRef.current) {
+                clearTimeout(autoSyncTimeoutRef.current);
+            }
+        };
+    }, [handleSyncNow, updateSyncStatus, isSyncing]); // Include dependencies
     const formatLastSync = (lastSync) => {
         if (!lastSync)
             return 'Never';
@@ -40034,7 +41085,7 @@ const SyncStatus = () => {
             return `${diffHours}h ago`;
         return date.toLocaleDateString();
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "sync-status", children: [(0, jsx_runtime_1.jsxs)("div", { className: "sync-status-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: `status-dot ${syncStatus.online ? 'online' : 'offline'}` }), (0, jsx_runtime_1.jsx)("span", { className: "status-text", children: syncStatus.online ? 'Online' : 'Offline' })] }), syncStatus.pendingSyncs > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "pending-syncs", children: [(0, jsx_runtime_1.jsxs)("span", { className: "pending-count", children: [syncStatus.pendingSyncs, " pending"] }), (0, jsx_runtime_1.jsx)("button", { className: "sync-button", onClick: handleSyncNow, disabled: isSyncing || !syncStatus.online, children: isSyncing ? 'Syncing...' : 'Sync Now' })] })), (0, jsx_runtime_1.jsxs)("div", { className: "last-sync", children: ["Last sync: ", formatLastSync(syncStatus.lastSync)] })] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "sync-status", children: [(0, jsx_runtime_1.jsxs)("div", { className: "sync-status-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: `status-dot ${syncStatus.online ? 'online' : 'offline'}` }), (0, jsx_runtime_1.jsx)("span", { className: "status-text", children: syncStatus.online ? 'Online' : 'Offline' })] }), syncStatus.pendingSyncs > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "pending-syncs", children: [(0, jsx_runtime_1.jsxs)("span", { className: "pending-count", children: [syncStatus.pendingSyncs, " pending"] }), isSyncing && ((0, jsx_runtime_1.jsx)("span", { className: "auto-sync-indicator", children: "Syncing..." })), !isSyncing && syncStatus.online && ((0, jsx_runtime_1.jsx)("button", { className: "sync-button", onClick: () => handleSyncNow(false), title: "Manually sync now", children: "Sync" }))] })), (0, jsx_runtime_1.jsxs)("div", { className: "last-sync", children: ["Last sync: ", formatLastSync(syncStatus.lastSync)] })] }));
 };
 exports["default"] = SyncStatus;
 
@@ -41599,7 +42650,7 @@ const validateSaleData = (saleData) => {
     if (!saleData.paymentMethod || typeof saleData.paymentMethod !== 'string') {
         return { isValid: false, error: 'Payment method is required' };
     }
-    const validPaymentMethods = ['cash', 'mpesa', 'card', 'bank'];
+    const validPaymentMethods = ['cash', 'mpesa', 'card', 'bank', 'credit'];
     if (!validPaymentMethods.includes(saleData.paymentMethod.toLowerCase())) {
         return { isValid: false, error: 'Invalid payment method' };
     }

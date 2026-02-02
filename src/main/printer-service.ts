@@ -207,13 +207,13 @@ class PrinterService {
     receiptData.items.forEach(item => {
       const name = this.truncateText(item.name, 20);
       const qty = item.quantity.toString().padStart(3);
-      const price = `$${item.price.toFixed(2)}`.padStart(8);
+      const price = `Ksh ${item.price.toFixed(2)}`.padStart(12);
       this.addText(commands, `${name} ${qty} ${price}`);
       commands.push(0x0A);
 
       // Subtotal for this item
       const itemTotal = item.price * item.quantity;
-      const itemTotalStr = `$${itemTotal.toFixed(2)}`.padStart(32);
+      const itemTotalStr = `Ksh ${itemTotal.toFixed(2)}`.padStart(36);
       this.addText(commands, itemTotalStr);
       commands.push(0x0A);
     });
@@ -225,12 +225,12 @@ class PrinterService {
     // Totals
     this.addText(commands, `Subtotal:${' '.repeat(22)}$${receiptData.subtotal.toFixed(2)}`);
     commands.push(0x0A);
-    this.addText(commands, `VAT (16%):${' '.repeat(21)}$${receiptData.vatAmount.toFixed(2)}`);
+    this.addText(commands, `VAT (16%):${' '.repeat(21)}Ksh ${receiptData.vatAmount.toFixed(2)}`);
     commands.push(0x0A);
     this.addText(commands, '--------------------------------');
     commands.push(0x0A);
     commands.push(0x1D, 0x21, 0x11); // Double size
-    this.addText(commands, `TOTAL:${' '.repeat(18)}$${receiptData.total.toFixed(2)}`);
+    this.addText(commands, `TOTAL:${' '.repeat(18)}Ksh ${receiptData.total.toFixed(2)}`);
     commands.push(0x1D, 0x21, 0x00); // Reset size
     commands.push(0x0A, 0x0A);
 
@@ -242,7 +242,7 @@ class PrinterService {
       commands.push(0x0A);
     }
     if (receiptData.change !== undefined && receiptData.change > 0) {
-      this.addText(commands, `Change: $${receiptData.change.toFixed(2)}`);
+      this.addText(commands, `Change: Ksh ${receiptData.change.toFixed(2)}`);
       commands.push(0x0A);
     }
 

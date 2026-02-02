@@ -74,7 +74,7 @@ export const validatePrice = (price: number): ValidationResult => {
 export const validatePaymentAmount = (
   amountReceived: number,
   totalAmount: number,
-  paymentMethod: 'cash' | 'mpesa' | string
+  paymentMethod: 'cash' | 'mpesa' | 'credit' | string
 ): ValidationResult => {
   if (paymentMethod === 'cash') {
     if (typeof amountReceived !== 'number' || isNaN(amountReceived)) {
@@ -141,6 +141,9 @@ export const validateSaleData = (saleData: {
   amountReceived?: number;
   branchId?: string;
   idempotencyKey?: string;
+  creditAmount?: number;
+  creditDueDate?: string;
+  creditNotes?: string;
 }): ValidationResult => {
   // Validate items array
   if (!saleData.items || !Array.isArray(saleData.items)) {
@@ -178,7 +181,7 @@ export const validateSaleData = (saleData: {
     return { isValid: false, error: 'Payment method is required' };
   }
 
-  const validPaymentMethods = ['cash', 'mpesa', 'card', 'bank'];
+  const validPaymentMethods = ['cash', 'mpesa', 'card', 'bank', 'credit'];
   if (!validPaymentMethods.includes(saleData.paymentMethod.toLowerCase())) {
     return { isValid: false, error: 'Invalid payment method' };
   }

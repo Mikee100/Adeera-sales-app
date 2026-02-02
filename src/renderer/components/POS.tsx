@@ -30,10 +30,13 @@ interface CartItem {
 }
 
 interface PaymentData {
-  paymentMethod: 'cash' | 'mpesa';
+  paymentMethod: 'cash' | 'mpesa' | 'credit';
   amountReceived?: number;
   customerName?: string;
   customerPhone?: string;
+  creditAmount?: number;
+  creditDueDate?: string;
+  creditNotes?: string;
 }
 
 interface ProductsResponse {
@@ -405,6 +408,11 @@ const POS: React.FC = () => {
         customerPhone: paymentData.customerPhone,
         branchId: branchId,
         idempotencyKey: `sale_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        ...(paymentData.paymentMethod === 'credit' && {
+          creditAmount: paymentData.creditAmount || getGrandTotal(),
+          creditDueDate: paymentData.creditDueDate,
+          creditNotes: paymentData.creditNotes,
+        }),
       };
 
       // Validate sale data integrity
@@ -535,9 +543,13 @@ const POS: React.FC = () => {
         console.error('Sale failed:', response.error);
 
         // Handle sale failure with recovery options
-        if (response.error === 'Unauthorized' || response.error?.includes('token') || response.error?.includes('auth')) {
+        if (response.error === 'Unauthorized' || 
+            response.error?.includes('Unauthorized') || 
+            response.error?.includes('token') || 
+            response.error?.includes('auth') ||
+            response.error?.includes('log in')) {
           handleError(
-            new AppError('Session expired during sale', 'UNAUTHORIZED', {
+            new AppError('Session expired. Please log in again to complete the sale.', 'UNAUTHORIZED', {
               operation: 'createSale',
               component: 'POS',
               userId: user?.id,
@@ -773,7 +785,6 @@ const POS: React.FC = () => {
 
   return (
     <div className="pos-app">
-      <SyncStatus />
 
       {currentStep === 'products' && (
         <ProductSelection

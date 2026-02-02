@@ -32,12 +32,15 @@ interface CreateSaleData {
     quantity: number;
     price: number;
   }>;
-  paymentMethod: 'cash' | 'mpesa';
+  paymentMethod: 'cash' | 'mpesa' | 'credit';
   amountReceived?: number;
   customerName?: string;
   customerPhone?: string;
   branchId?: string;
   idempotencyKey: string;
+  creditAmount?: number;
+  creditDueDate?: string;
+  creditNotes?: string;
 }
 
 interface SaleReceipt {

@@ -46116,9 +46116,11 @@ const createWindow = () => {
         show: false, // Don't show until ready
     });
     // Load the index.html of the app.
-    // For development, load from webpack dev server if available
+    // In development: load the POS renderer from this app's webpack dev server (port 3001).
+    // Port 3000 is the Next.js SaaS website – we must use a different port for the POS UI.
     if (true) {
-        mainWindow.loadURL('http://localhost:3000');
+        const devServerUrl = process.env.ELECTRON_RENDERER_URL || 'http://localhost:3001';
+        mainWindow.loadURL(devServerUrl);
     }
     else // removed by dead control flow
 {}
@@ -46431,6 +46433,13 @@ electron_1.ipcMain.handle('createSale', async (event, saleData) => {
             }
             catch (error) {
                 logger_1.logger.error('Error creating online sale', { component: 'sales', status: error.response?.status, error: error.response?.data || error.message });
+                // Handle 401 Unauthorized - token expired
+                if (error.response?.status === 401 || error.response?.status === 403) {
+                    logger_1.logger.warn('Authentication failed, clearing token', { component: 'sales' });
+                    // Clear invalid token
+                    store.delete('authToken');
+                    return { success: false, error: 'Unauthorized - Please log in again' };
+                }
                 const errorMessage = error.response?.data?.message || error.message || 'Failed to create sale';
                 return { success: false, error: errorMessage };
             }
@@ -46440,7 +46449,7 @@ electron_1.ipcMain.handle('createSale', async (event, saleData) => {
             logger_1.logger.info('Backend offline, queuing sale for later sync', { component: 'sales' });
             const offlineSales = store.get('offlineSales', []);
             const offlineSale = {
-                id: `offline_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                id: `offline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                 saleData,
                 timestamp: new Date().toISOString(),
                 status: 'pending'
@@ -46492,6 +46501,11 @@ electron_1.ipcMain.handle('createSale', async (event, saleData) => {
                 businessInfo: { name: 'Business Name' }, // Placeholder
                 branch: saleData.branchId ? { id: saleData.branchId, name: `Branch ${saleData.branchId}` } : undefined
             };
+            // Add credit information if payment method is credit
+            if (saleData.paymentMethod === 'credit') {
+                offlineReceipt.creditDueDate = saleData.creditDueDate;
+                offlineReceipt.creditNotes = saleData.creditNotes;
+            }
             return {
                 success: true,
                 sale: { id: offlineSale.id, status: 'offline' },
@@ -47018,12 +47032,12 @@ class PrinterService {
         receiptData.items.forEach(item => {
             const name = this.truncateText(item.name, 20);
             const qty = item.quantity.toString().padStart(3);
-            const price = `$${item.price.toFixed(2)}`.padStart(8);
+            const price = `Ksh ${item.price.toFixed(2)}`.padStart(12);
             this.addText(commands, `${name} ${qty} ${price}`);
             commands.push(0x0A);
             // Subtotal for this item
             const itemTotal = item.price * item.quantity;
-            const itemTotalStr = `$${itemTotal.toFixed(2)}`.padStart(32);
+            const itemTotalStr = `Ksh ${itemTotal.toFixed(2)}`.padStart(36);
             this.addText(commands, itemTotalStr);
             commands.push(0x0A);
         });
@@ -47033,12 +47047,12 @@ class PrinterService {
         // Totals
         this.addText(commands, `Subtotal:${' '.repeat(22)}$${receiptData.subtotal.toFixed(2)}`);
         commands.push(0x0A);
-        this.addText(commands, `VAT (16%):${' '.repeat(21)}$${receiptData.vatAmount.toFixed(2)}`);
+        this.addText(commands, `VAT (16%):${' '.repeat(21)}Ksh ${receiptData.vatAmount.toFixed(2)}`);
         commands.push(0x0A);
         this.addText(commands, '--------------------------------');
         commands.push(0x0A);
         commands.push(0x1D, 0x21, 0x11); // Double size
-        this.addText(commands, `TOTAL:${' '.repeat(18)}$${receiptData.total.toFixed(2)}`);
+        this.addText(commands, `TOTAL:${' '.repeat(18)}Ksh ${receiptData.total.toFixed(2)}`);
         commands.push(0x1D, 0x21, 0x00); // Reset size
         commands.push(0x0A, 0x0A);
         // Payment info
@@ -47049,7 +47063,7 @@ class PrinterService {
             commands.push(0x0A);
         }
         if (receiptData.change !== undefined && receiptData.change > 0) {
-            this.addText(commands, `Change: $${receiptData.change.toFixed(2)}`);
+            this.addText(commands, `Change: Ksh ${receiptData.change.toFixed(2)}`);
             commands.push(0x0A);
         }
         commands.push(0x0A);

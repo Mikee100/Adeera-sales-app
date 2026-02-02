@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "electron dist/main.js",
-    "dev": "concurrently \"webpack serve --config webpack.renderer.config.js --no-hot\" \"npm run build:watch\" \"wait-on http://localhost:3000 && set NODE_ENV=development&& electron dist/main.js\"",
+    "dev": "concurrently \"webpack serve --config webpack.renderer.config.js --no-hot\" \"npm run build:watch\" \"wait-on http://localhost:3001 && set NODE_ENV=development&& electron dist/main.js\"",
     "build": "webpack --mode production",
     "build:watch": "webpack --mode development --watch",
     "package": "electron-builder",
