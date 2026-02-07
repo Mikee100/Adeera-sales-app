@@ -40,6 +40,8 @@ interface PaymentData {
   creditAmount?: number;
   creditDueDate?: string;
   creditNotes?: string;
+  /** Fixed discount amount applied to subtotal (before VAT). */
+  discountAmount?: number;
 }
 
 const Checkout: React.FC<CheckoutProps> = ({
@@ -67,8 +69,14 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [customerPhone, setCustomerPhone] = useState('');
   const [creditDueDate, setCreditDueDate] = useState('');
   const [creditNotes, setCreditNotes] = useState('');
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [success, setSuccess] = useState(false);
+
+  // Computed totals after discount (discount applied to subtotal, then VAT on remainder)
+  const subtotalAfterDiscount = Math.max(0, subtotal - discountAmount);
+  const vatAfterDiscount = Math.round(subtotalAfterDiscount * 0.16 * 100) / 100;
+  const totalAfterDiscount = subtotalAfterDiscount + vatAfterDiscount;
 
   // Progress steps
   const steps = ['Cart Review', 'Payment', 'Confirmation'];
@@ -84,15 +92,20 @@ const Checkout: React.FC<CheckoutProps> = ({
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    // Validate payment amount
+    // Validate discount
+    if (discountAmount < 0 || discountAmount > subtotal) {
+      newErrors.discountAmount = `Discount must be between 0 and ${subtotal.toFixed(2)}`;
+    }
+
+    // Validate payment amount (against total after discount)
     if (paymentMethod === 'cash') {
       const received = parseFloat(amountReceived);
       if (!amountReceived || isNaN(received)) {
         newErrors.amountReceived = 'Please enter a valid amount';
       } else {
-        const paymentValidation = validatePaymentAmount(received, total, paymentMethod);
+        const paymentValidation = validatePaymentAmount(received, totalAfterDiscount, paymentMethod);
         if (!paymentValidation.isValid) {
-          newErrors.amountReceived = paymentValidation.error || `Amount must be at least $${total.toFixed(2)}`;
+          newErrors.amountReceived = paymentValidation.error || `Amount must be at least $${totalAfterDiscount.toFixed(2)}`;
         }
       }
     }
@@ -128,7 +141,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           {
             errors: newErrors,
             paymentMethod,
-            totalAmount: total,
+            totalAmount: totalAfterDiscount,
           },
           'medium',
           userInfo?.id,
@@ -152,6 +165,7 @@ const Checkout: React.FC<CheckoutProps> = ({
       paymentMethod,
       customerName: customerName.trim() || undefined,
       customerPhone: customerPhone.trim() || undefined,
+      ...(discountAmount > 0 && { discountAmount }),
     };
 
     if (paymentMethod === 'cash') {
@@ -159,7 +173,7 @@ const Checkout: React.FC<CheckoutProps> = ({
     }
 
     if (paymentMethod === 'credit') {
-      paymentData.creditAmount = total;
+      paymentData.creditAmount = totalAfterDiscount;
       if (creditDueDate) {
         paymentData.creditDueDate = creditDueDate;
       }
@@ -173,7 +187,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   };
 
   const change = paymentMethod === 'cash' && amountReceived
-    ? parseFloat(amountReceived) - total
+    ? parseFloat(amountReceived) - totalAfterDiscount
     : 0;
 
   return (
@@ -218,14 +232,44 @@ const Checkout: React.FC<CheckoutProps> = ({
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
+              {discountAmount > 0 && (
+                <div className="total-row discount-row">
+                  <span>Discount</span>
+                  <span className="discount-amount">−${discountAmount.toFixed(2)}</span>
+                </div>
+              )}
               <div className="total-row">
                 <span>VAT (16%)</span>
-                <span>${vat.toFixed(2)}</span>
+                <span>${vatAfterDiscount.toFixed(2)}</span>
               </div>
               <div className="total-row grand-total">
                 <span>Total Amount</span>
-                <span className="total-amount">${total.toFixed(2)}</span>
+                <span className="total-amount">${totalAfterDiscount.toFixed(2)}</span>
               </div>
+            </div>
+
+            <div className="discount-input-section">
+              <label className="input-label">
+                <span className="label-icon">🏷️</span>
+                Discount (optional)
+              </label>
+              <div className="input-wrapper">
+                <span className="currency-symbol">$</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  min={0}
+                  max={subtotal}
+                  value={discountAmount === 0 ? '' : discountAmount}
+                  onChange={(e) => setDiscountAmount(Math.max(0, parseFloat(e.target.value) || 0))}
+                  placeholder="0.00"
+                  className={`currency-input ${errors.discountAmount ? 'error' : ''}`}
+                  aria-describedby="discount-error"
+                />
+              </div>
+              {errors.discountAmount && (
+                <span id="discount-error" className="error-text">{errors.discountAmount}</span>
+              )}
             </div>
           </div>
         </div>
@@ -309,10 +353,10 @@ const Checkout: React.FC<CheckoutProps> = ({
                     <input
                       type="number"
                       step="0.01"
-                      min={total.toFixed(2)}
+                      min={totalAfterDiscount.toFixed(2)}
                       value={amountReceived}
                       onChange={(e) => setAmountReceived(e.target.value)}
-                      placeholder={total.toFixed(2)}
+                      placeholder={totalAfterDiscount.toFixed(2)}
                       required
                       className={`currency-input ${errors.amountReceived ? 'error' : ''}`}
                       aria-describedby="amount-error"

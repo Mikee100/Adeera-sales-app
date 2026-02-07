@@ -1025,6 +1025,13 @@ body {
   gap: 8px;
 }
 
+.shortcut-hint {
+  margin: 0;
+  font-size: 11px;
+  color: #6c757d;
+  text-align: center;
+}
+
 .checkout-btn {
   width: 100%;
   padding: 12px;

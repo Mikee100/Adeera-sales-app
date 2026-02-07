@@ -37,6 +37,7 @@ interface PaymentData {
   creditAmount?: number;
   creditDueDate?: string;
   creditNotes?: string;
+  discountAmount?: number;
 }
 
 interface ProductsResponse {
@@ -62,6 +63,27 @@ const POS: React.FC = () => {
   useEffect(() => {
     loadProducts(0);
   }, [selectedBranch]);
+
+  // Keyboard shortcuts (only when not typing in an input)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('input, textarea, select')) return;
+
+      if (e.key === 'F2') {
+        e.preventDefault();
+        if (currentStep === 'products' && cart.length > 0) handleProceedToCheckout();
+      } else if (e.key === 'F3') {
+        e.preventDefault();
+        if (currentStep === 'receipt') handleNewSale();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        if (currentStep === 'checkout') handleBackToProducts();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentStep, cart.length]);
 
   const loadProducts = async (retryCount: number = 0) => {
     try {
@@ -395,7 +417,7 @@ const POS: React.FC = () => {
         }
       }
 
-      // Prepare sale data
+      // Prepare sale data (include discount so backend applies it before VAT)
       const saleData = {
         items: cart.map(item => ({
           productId: item.product.id,
@@ -408,6 +430,9 @@ const POS: React.FC = () => {
         customerPhone: paymentData.customerPhone,
         branchId: branchId,
         idempotencyKey: `sale_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        ...(paymentData.discountAmount != null && paymentData.discountAmount > 0 && {
+          discountAmount: paymentData.discountAmount,
+        }),
         ...(paymentData.paymentMethod === 'credit' && {
           creditAmount: paymentData.creditAmount || getGrandTotal(),
           creditDueDate: paymentData.creditDueDate,

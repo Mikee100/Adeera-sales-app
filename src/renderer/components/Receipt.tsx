@@ -46,7 +46,7 @@ const Receipt: React.FC<ReceiptProps> = ({
           </div>
         </div>
         <div className="receipt-actions-top">
-          <button onClick={onNewSale} className="action-btn-top primary-btn">
+          <button onClick={onNewSale} className="action-btn-top primary-btn" title="New Sale (F3)">
             <span className="btn-icon">🛒</span>
             <span>New Sale</span>
           </button>

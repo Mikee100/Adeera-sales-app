@@ -568,9 +568,11 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               onClick={onProceedToCheckout}
               className="checkout-btn proceed"
               disabled={cart.length === 0}
+              title="Proceed to Checkout (F2)"
             >
               Proceed to Checkout
             </button>
+            <p className="shortcut-hint">F2 Checkout · Esc Back</p>
           </div>
 
           {/* Pending Transactions Panel */}

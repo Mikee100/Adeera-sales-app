@@ -276,6 +276,24 @@
   font-size: 15px;
 }
 
+.total-row.discount-row .discount-amount {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.discount-input-section {
+  padding: 10px 14px;
+  border-top: 1px solid #e9ecef;
+  background: #fff;
+}
+
+.discount-input-section .error-text {
+  display: block;
+  font-size: 11px;
+  color: #dc3545;
+  margin-top: 4px;
+}
+
 .payment-options {
   padding: 12px 14px;
 }
