@@ -1,6 +1,31 @@
 import { logger } from '../shared/logger';
 import ElectronStore from 'electron-store';
 
+// Lazy load serialport to avoid native module issues during import
+// SerialPort is excluded from webpack bundling and loaded at runtime
+let SerialPort: any = null;
+
+function loadSerialPort() {
+  if (SerialPort !== null) {
+    return SerialPort; // Already tried loading
+  }
+  
+  try {
+    // Try to load serialport - will fail if not rebuilt for Electron
+    const serialportModule = require('serialport');
+    SerialPort = serialportModule.SerialPort || serialportModule.default?.SerialPort || serialportModule;
+    logger.info('SerialPort loaded successfully', { component: 'printer' });
+  } catch (error) {
+    SerialPort = false; // Mark as failed to avoid repeated attempts
+    logger.warn('SerialPort not available - USB printing will use file fallback', { 
+      component: 'printer', 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+  }
+  
+  return SerialPort;
+}
+
 interface PrinterConfig {
   type: 'usb' | 'network' | 'file';
   vendorId?: number;
@@ -223,7 +248,7 @@ class PrinterService {
     commands.push(0x0A);
 
     // Totals
-    this.addText(commands, `Subtotal:${' '.repeat(22)}$${receiptData.subtotal.toFixed(2)}`);
+    this.addText(commands, `Subtotal:${' '.repeat(22)}Ksh ${receiptData.subtotal.toFixed(2)}`);
     commands.push(0x0A);
     this.addText(commands, `VAT (16%):${' '.repeat(21)}Ksh ${receiptData.vatAmount.toFixed(2)}`);
     commands.push(0x0A);
@@ -238,7 +263,7 @@ class PrinterService {
     this.addText(commands, `Payment: ${receiptData.paymentMethod.toUpperCase()}`);
     commands.push(0x0A);
     if (receiptData.amountReceived) {
-      this.addText(commands, `Received: $${receiptData.amountReceived.toFixed(2)}`);
+      this.addText(commands, `Received: Ksh ${receiptData.amountReceived.toFixed(2)}`);
       commands.push(0x0A);
     }
     if (receiptData.change !== undefined && receiptData.change > 0) {
@@ -294,41 +319,87 @@ class PrinterService {
 
   private async printToUSB(commands: Buffer): Promise<{ success: boolean; error?: string }> {
     try {
-      // For USB printing, we'll use a file-based approach or require USB library
-      // This is a simplified version - in production, you'd use 'usb' package
+      // Lazy load SerialPort
+      const SerialPortClass = loadSerialPort();
       
-      // Try to use Windows COM port or Linux /dev/usb/lp* device
+      // Check if SerialPort is available
+      if (!SerialPortClass || SerialPortClass === false) {
+        logger.warn('SerialPort not available, falling back to file printing', { component: 'printer' });
+        return await this.printToFile(commands, 'receipt');
+      }
+
       const platform = process.platform;
       let devicePath: string | undefined;
 
       if (platform === 'win32') {
-        // Windows: Try common COM ports
+        // Windows: Use COM port from config or default
         devicePath = this.config?.path || 'COM1';
       } else if (platform === 'linux') {
-        // Linux: Try common USB printer paths
+        // Linux: Use USB printer path from config or common paths
         devicePath = this.config?.path || '/dev/usb/lp0';
       } else if (platform === 'darwin') {
-        // macOS: Use CUPS or direct device
+        // macOS: Use CUPS or direct device path
         devicePath = this.config?.path;
       }
 
       if (!devicePath) {
         // Fallback: Save to file for manual printing
+        logger.warn('No USB device path configured, falling back to file', { component: 'printer' });
         return await this.printToFile(commands, 'receipt');
       }
 
-      // In a real implementation, you would use a USB library here
-      // For now, we'll simulate and log
-      logger.info('Printing to USB device', { component: 'printer', devicePath });
-      
-      // Simulate printing delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      logger.info('Printing to USB/Serial device', { component: 'printer', devicePath });
 
-      logger.info('Receipt printed successfully to USB', { component: 'printer' });
-      return { success: true };
+      // Use SerialPort for USB/Serial printing
+      return new Promise((resolve) => {
+        const port = new SerialPortClass({
+          path: devicePath,
+          baudRate: 9600, // Common ESC/POS baud rate
+          autoOpen: false,
+        });
+
+        port.open((err) => {
+          if (err) {
+            logger.error('Failed to open serial port', { component: 'printer', devicePath, error: err.message });
+            // Fallback to file if serial port fails
+            this.printToFile(commands, 'receipt').then(resolve);
+            return;
+          }
+
+          logger.info('Serial port opened successfully', { component: 'printer', devicePath });
+
+          // Write commands to printer
+          port.write(commands, (writeErr) => {
+            if (writeErr) {
+              logger.error('Failed to write to serial port', { component: 'printer', error: writeErr.message });
+              port.close();
+              resolve({ success: false, error: `Write failed: ${writeErr.message}` });
+              return;
+            }
+
+            // Wait a bit for the print job to complete
+            setTimeout(() => {
+              port.close((closeErr) => {
+                if (closeErr) {
+                  logger.warn('Error closing serial port', { component: 'printer', error: closeErr.message });
+                }
+                logger.info('Receipt printed successfully to USB/Serial', { component: 'printer', devicePath });
+                resolve({ success: true });
+              });
+            }, 2000); // 2 second delay for print completion
+          });
+        });
+
+        // Handle errors
+        port.on('error', (portErr) => {
+          logger.error('Serial port error', { component: 'printer', error: portErr.message });
+          resolve({ success: false, error: `Serial port error: ${portErr.message}` });
+        });
+      });
     } catch (error: any) {
       logger.error('USB print error', { component: 'printer', error: error.message });
-      return { success: false, error: `USB print failed: ${error.message}` };
+      // Fallback to file printing
+      return await this.printToFile(commands, 'receipt');
     }
   }
 
@@ -400,8 +471,79 @@ class PrinterService {
   }
 
   private async sendToUSB(command: Buffer): Promise<{ success: boolean; error?: string }> {
-    // Similar to printToUSB but for cash drawer
-    return await this.printToUSB(command);
+    try {
+      // Lazy load SerialPort
+      const SerialPortClass = loadSerialPort();
+      
+      // Check if SerialPort is available
+      if (!SerialPortClass || SerialPortClass === false) {
+        logger.warn('SerialPort not available for cash drawer', { component: 'printer' });
+        return { success: false, error: 'SerialPort not available. Please rebuild native modules for Electron.' };
+      }
+
+      const platform = process.platform;
+      let devicePath: string | undefined;
+
+      if (platform === 'win32') {
+        devicePath = this.config?.path || 'COM1';
+      } else if (platform === 'linux') {
+        devicePath = this.config?.path || '/dev/usb/lp0';
+      } else if (platform === 'darwin') {
+        devicePath = this.config?.path;
+      }
+
+      if (!devicePath) {
+        logger.warn('No USB device path configured for cash drawer', { component: 'printer' });
+        return { success: false, error: 'No USB device path configured' };
+      }
+
+      logger.info('Opening cash drawer via USB/Serial', { component: 'printer', devicePath });
+
+      return new Promise((resolve) => {
+        const port = new SerialPortClass({
+          path: devicePath,
+          baudRate: 9600,
+          autoOpen: false,
+        });
+
+        port.open((err) => {
+          if (err) {
+            logger.error('Failed to open serial port for cash drawer', { component: 'printer', devicePath, error: err.message });
+            resolve({ success: false, error: `Failed to open port: ${err.message}` });
+            return;
+          }
+
+          // Send cash drawer command
+          port.write(command, (writeErr) => {
+            if (writeErr) {
+              logger.error('Failed to send cash drawer command', { component: 'printer', error: writeErr.message });
+              port.close();
+              resolve({ success: false, error: `Command failed: ${writeErr.message}` });
+              return;
+            }
+
+            // Close port after sending command
+            setTimeout(() => {
+              port.close((closeErr) => {
+                if (closeErr) {
+                  logger.warn('Error closing serial port after cash drawer', { component: 'printer', error: closeErr.message });
+                }
+                logger.info('Cash drawer command sent successfully', { component: 'printer', devicePath });
+                resolve({ success: true });
+              });
+            }, 500);
+          });
+        });
+
+        port.on('error', (portErr) => {
+          logger.error('Serial port error during cash drawer', { component: 'printer', error: portErr.message });
+          resolve({ success: false, error: `Serial port error: ${portErr.message}` });
+        });
+      });
+    } catch (error: any) {
+      logger.error('Cash drawer USB error', { component: 'printer', error: error.message });
+      return { success: false, error: `Cash drawer failed: ${error.message}` };
+    }
   }
 
   private async sendToNetwork(command: Buffer): Promise<{ success: boolean; error?: string }> {
@@ -410,9 +552,71 @@ class PrinterService {
   }
 
   async listAvailablePrinters(): Promise<Array<{ name: string; type: string; path?: string }>> {
-    // This would list available printers
-    // For now, return empty array - can be enhanced with platform-specific code
-    return [];
+    try {
+      const printers: Array<{ name: string; type: string; path?: string }> = [];
+      const platform = process.platform;
+
+      // List serial ports (USB printers) - only if SerialPort is available
+      const SerialPortClass = loadSerialPort();
+      if (SerialPortClass && SerialPortClass !== false) {
+        try {
+          // SerialPort.list() is a static method in serialport v12
+          const listMethod = SerialPortClass.list;
+          if (listMethod && typeof listMethod === 'function') {
+            const ports = await listMethod();
+            ports.forEach((port: any) => {
+              printers.push({
+                name: port.friendlyName || port.path || 'Unknown Printer',
+                type: 'usb',
+                path: port.path,
+              });
+            });
+          } else {
+            logger.warn('SerialPort.list() not available', { component: 'printer' });
+          }
+        } catch (error: any) {
+          logger.warn('Failed to list serial ports', { component: 'printer', error: error.message });
+        }
+      } else {
+        logger.info('SerialPort not available, skipping USB printer detection', { component: 'printer' });
+      }
+
+      // Add common COM ports on Windows if none found
+      if (platform === 'win32' && printers.length === 0) {
+        for (let i = 1; i <= 10; i++) {
+          printers.push({
+            name: `COM${i}`,
+            type: 'usb',
+            path: `COM${i}`,
+          });
+        }
+      }
+
+      // Add common Linux USB printer paths if none found
+      if (platform === 'linux' && printers.length === 0) {
+        const fs = require('fs');
+        const commonPaths = ['/dev/usb/lp0', '/dev/usb/lp1', '/dev/usb/lp2'];
+        commonPaths.forEach((path) => {
+          try {
+            if (fs.existsSync(path)) {
+              printers.push({
+                name: path,
+                type: 'usb',
+                path: path,
+              });
+            }
+          } catch {
+            // Ignore errors checking paths
+          }
+        });
+      }
+
+      logger.info(`Found ${printers.length} available printers`, { component: 'printer', count: printers.length });
+      return printers;
+    } catch (error: any) {
+      logger.error('Error listing printers', { component: 'printer', error: error.message });
+      return [];
+    }
   }
 }
 

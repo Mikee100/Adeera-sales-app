@@ -22,7 +22,16 @@ interface Product {
   images?: string[];
   branchId?: string;
   tenantId?: string;
+  hasVariations?: boolean;
+  variations?: Array<{
+    id: string;
+    sku: string;
+    price?: number | null;
+    stock: number;
+    attributes?: Record<string, string>;
+  }>;
 }
+
 
 interface CartItem {
   product: Product;
@@ -33,6 +42,12 @@ interface ProductsResponse {
   success: boolean;
   products?: Product[];
   error?: string;
+}
+
+interface Branch {
+  id: string;
+  name: string;
+  [key: string]: any;
 }
 
 interface ProductSelectionProps {
@@ -48,6 +63,9 @@ interface ProductSelectionProps {
   getTotal: () => number;
   getVAT: () => number;
   getGrandTotal: () => number;
+  branches?: Branch[];
+  selectedBranch?: string;
+  onBranchChange?: (branchId: string) => void;
 }
 
 const ProductSelection: React.FC<ProductSelectionProps> = ({
@@ -62,16 +80,36 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   pendingTransactions = [],
   getTotal,
   getVAT,
-  getGrandTotal
+  getGrandTotal,
+  branches = [],
+  selectedBranch: propSelectedBranch = '',
+  onBranchChange
 }) => {
   const { logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedBranch, setSelectedBranch] = useState<string>('');
+  const [selectedBranch, setSelectedBranch] = useState<string>(propSelectedBranch);
+
+  // Sync with prop when it changes
+  useEffect(() => {
+    if (propSelectedBranch !== selectedBranch) {
+      setSelectedBranch(propSelectedBranch);
+    }
+  }, [propSelectedBranch]);
+
+  const handleBranchChange = (branchId: string) => {
+    setSelectedBranch(branchId);
+    if (onBranchChange) {
+      onBranchChange(branchId);
+    }
+  };
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(false);
-  const [selectedVariation, setSelectedVariation] = useState<{ [productId: string]: string }>({});
+  const [showVariationModal, setShowVariationModal] = useState(false);
+  const [selectedProductForVariation, setSelectedProductForVariation] = useState<Product | null>(null);
+  const [modalVariations, setModalVariations] = useState<Array<{ id: string; sku: string; price?: number | null; stock: number; attributes?: Record<string, string> }>>([]);
+  const [loadingVariations, setLoadingVariations] = useState(false);
   const [showPrinterSettings, setShowPrinterSettings] = useState(false);
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
   const [showBarcodeHelp, setShowBarcodeHelp] = useState(false);
@@ -166,62 +204,87 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     return (nameMatch || skuMatch || barcodeMatch) && categoryMatch;
   });
 
-  const handleAddToCart = (product: Product) => {
-    // Validate price before adding
+  type Variation = { id: string; sku: string; price?: number | null; stock: number; attributes?: Record<string, string> };
+
+  const mapVariation = (v: any) => ({
+    id: v.id,
+    sku: v.sku,
+    price: v.price != null ? parseFloat(v.price) : null,
+    stock: parseInt(v.stock) || 0,
+    attributes: v.attributes || {},
+  });
+
+  const handleProductClick = async (product: Product) => {
+    setSelectedProductForVariation(product);
+    setShowVariationModal(true);
+    // Use product.variations immediately if available (from products list with includeVariations)
+    const fromProduct = (product.variations || []).map(mapVariation);
+    if (fromProduct.length > 0) {
+      setModalVariations(fromProduct);
+      setLoadingVariations(false);
+      return;
+    }
+    setModalVariations([]);
+    setLoadingVariations(true);
+    try {
+      const res = await window.electronAPI.getProductVariations(product.id);
+      const vars = (res.variations || []).map(mapVariation);
+      setModalVariations(vars.length > 0 ? vars : fromProduct);
+      if (!res.success && (res as any).unauthorized) {
+        showToast('Session expired. Please log in again to load variations.', 'warning', 4000);
+      }
+    } catch {
+      // API failed - fall back to product.variations if we have them
+      setModalVariations(fromProduct);
+    } finally {
+      setLoadingVariations(false);
+    }
+  };
+
+  const handleAddVariationToCart = (product: Product, variation: Variation) => {
+    const variationProduct = {
+      ...product,
+      id: variation.id,
+      sku: variation.sku,
+      price: variation.price ?? product.price,
+      stock: variation.stock,
+      variationAttributes: variation.attributes,
+      baseProductId: product.id,
+      variationId: variation.id,
+    };
+    const variationPriceValidation = validatePrice(variationProduct.price);
+    if (!variationPriceValidation.isValid) {
+      showToast(`Cannot add: ${variationPriceValidation.error}`, 'error');
+      return;
+    }
+    const existingCartItem = cart.find(item => item.product.id === variationProduct.id);
+    const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
+    const stockValidation = validateStock(variationProduct, 1, currentCartQuantity);
+    if (!stockValidation.isValid) {
+      showToast(stockValidation.error || 'Insufficient stock', 'error');
+      return;
+    }
+    onAddToCart(variationProduct);
+    setShowVariationModal(false);
+    setSelectedProductForVariation(null);
+  };
+
+  const handleAddBaseProductToCart = (product: Product) => {
     const priceValidation = validatePrice(product.price);
     if (!priceValidation.isValid) {
       showToast(`Cannot add ${product.name}: ${priceValidation.error}`, 'error');
       return;
     }
-
-    if (product.hasVariations && product.variations && product.variations.length > 0) {
-      // If product has variations, show variation selector
-      const selectedVariationId = selectedVariation[product.id];
-      if (selectedVariationId) {
-        const variation = product.variations.find(v => v.id === selectedVariationId);
-        if (variation) {
-          const variationProduct = {
-            ...product,
-            id: variation.id,
-            sku: variation.sku,
-            price: variation.price || product.price,
-            stock: variation.stock,
-            variationAttributes: variation.attributes
-          };
-
-          // Validate variation price and stock
-          const variationPriceValidation = validatePrice(variationProduct.price);
-          if (!variationPriceValidation.isValid) {
-            showToast(`Cannot add ${product.name}: ${variationPriceValidation.error}`, 'error');
-            return;
-          }
-
-          const existingCartItem = cart.find(item => item.product.id === variationProduct.id);
-          const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
-          const stockValidation = validateStock(variationProduct, 1, currentCartQuantity);
-          if (!stockValidation.isValid) {
-            showToast(stockValidation.error || 'Insufficient stock', 'error');
-            return;
-          }
-
-          onAddToCart(variationProduct);
-        }
-      } else {
-        // Show variation selector modal or toast
-        showToast('Please select a variation first', 'warning');
-      }
-    } else {
-      // Validate stock before adding
-      const existingCartItem = cart.find(item => item.product.id === product.id);
-      const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
-      const stockValidation = validateStock(product, 1, currentCartQuantity);
-      if (!stockValidation.isValid) {
-        showToast(stockValidation.error || 'Insufficient stock', 'error');
-        return;
-      }
-
-      onAddToCart(product);
+    const existingCartItem = cart.find(item => item.product.id === product.id);
+    const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
+    const stockValidation = validateStock(product, 1, currentCartQuantity);
+    if (!stockValidation.isValid) {
+      showToast(stockValidation.error || 'Insufficient stock', 'error');
+      return;
     }
+    onAddToCart(product);
+    setShowVariationModal(false);
+    setSelectedProductForVariation(null);
   };
 
   return (
@@ -249,12 +312,15 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
         <div className="header-right">
           <select
             value={selectedBranch}
-            onChange={(e) => setSelectedBranch(e.target.value)}
+            onChange={(e) => handleBranchChange(e.target.value)}
             className="branch-select"
           >
-            <option value="">All Branches</option>
-            <option value="branch1">Main Branch</option>
-            <option value="branch2">Downtown Branch</option>
+            <option value="">Select Branch</option>
+            {branches.map((branch) => (
+              <option key={branch.id} value={branch.id}>
+                {branch.name}
+              </option>
+            ))}
           </select>
           <button 
             className="icon-btn theme-toggle-btn" 
@@ -282,6 +348,58 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               <button className="close-btn" onClick={() => setShowPrinterSettings(false)}>×</button>
             </div>
             <PrinterSettings />
+          </div>
+        </div>
+      )}
+
+      {showVariationModal && selectedProductForVariation && (
+        <div className="variation-modal-overlay" onClick={() => { setShowVariationModal(false); setSelectedProductForVariation(null); }}>
+          <div className="variation-modal" onClick={e => e.stopPropagation()}>
+            <div className="variation-modal-header">
+              <h2>Select Variation</h2>
+              <p className="variation-modal-product-name">{selectedProductForVariation.name}</p>
+              <button className="variation-modal-close" onClick={() => { setShowVariationModal(false); setSelectedProductForVariation(null); }}>×</button>
+            </div>
+            <div className="variation-modal-list">
+              {loadingVariations ? (
+                <p className="variation-modal-empty">Loading variations...</p>
+              ) : modalVariations.length === 0 ? (
+                <div className="variation-modal-empty">
+                  <p>No variations for this product.</p>
+                  <button
+                    type="button"
+                    className="add-base-product-btn"
+                    onClick={() => selectedProductForVariation && handleAddBaseProductToCart(selectedProductForVariation)}
+                  >
+                    Add base product to cart
+                  </button>
+                </div>
+              ) : modalVariations.map(variation => {
+                const attrsLabel = variation.attributes && typeof variation.attributes === 'object'
+                  ? Object.entries(variation.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')
+                  : variation.sku;
+                const price = variation.price ?? selectedProductForVariation!.price;
+                const hasStock = variation.stock > 0;
+                return (
+                  <button
+                    key={variation.id}
+                    type="button"
+                    disabled={!hasStock}
+                    className={`variation-card ${hasStock ? '' : 'variation-card-out-of-stock'}`}
+                    onClick={() => hasStock && selectedProductForVariation && handleAddVariationToCart(selectedProductForVariation, variation)}
+                  >
+                    <div className="variation-card-main">
+                      <span className="variation-card-label">{attrsLabel || variation.sku}</span>
+                      <span className="variation-card-sku">SKU: {variation.sku}</span>
+                      <span className="variation-card-price">${(price ?? 0).toFixed(2)}</span>
+                    </div>
+                    <span className={`variation-card-stock ${hasStock ? 'in-stock' : 'out-of-stock'}`}>
+                      {hasStock ? `${variation.stock} in stock` : 'Out of stock'}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
@@ -377,7 +495,14 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               <div className="loading">No products found</div>
             ) : (
               filteredProducts.map(product => (
-                <div key={product.id} className="product-card">
+                <div
+                  key={product.id}
+                  className="product-card product-card-clickable"
+                  onClick={() => handleProductClick(product)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleProductClick(product); }}
+                >
                   {product.category && (
                     <div className="product-category">
                       {product.category.name}
@@ -400,30 +525,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                     )}
                     <p className="price">${product.price?.toFixed(2) || '0.00'}</p>
                     <p className="stock">Stock: {product.stock || 0}</p>
-                    {product.hasVariations && product.variations && product.variations.length > 0 && (
-                      <div className="variations-selector">
-                        <select
-                          value={selectedVariation[product.id] || ''}
-                          onChange={(e) => setSelectedVariation(prev => ({ ...prev, [product.id]: e.target.value }))}
-                          className="variation-select"
-                        >
-                          <option value="">Select Variation</option>
-                          {product.variations.map(variation => (
-                            <option key={variation.id} value={variation.id}>
-                              {variation.sku} - ${variation.price?.toFixed(2) || product.price.toFixed(2)} (Stock: {variation.stock})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
+                    <p className="variations-hint">Tap to add to cart</p>
                   </div>
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    className="add-to-cart-btn"
-                    disabled={(product.stock || 0) <= 0}
-                  >
-                    Add to Cart
-                  </button>
                 </div>
               ))
             )}

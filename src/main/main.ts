@@ -5,6 +5,7 @@ import axios from 'axios';
 import { logger } from '../shared/logger';
 import { cacheService } from '../shared/cache-service';
 import { printerService } from './printer-service';
+import { API_BASE_URL } from '../shared/config';
 
 interface Credentials {
   email: string;
@@ -32,11 +33,20 @@ interface AuthResponse {
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null;
 
+// Backend configuration: prefer explicit environment variables when present.
+// The shared API_BASE_URL already handles dev vs production defaults.
+const BACKEND_BASE_URL =
+  process.env.BACKEND_BASE_URL || API_BASE_URL;
+
+const BACKEND_HEALTH_URL =
+  process.env.BACKEND_HEALTH_URL || `${BACKEND_BASE_URL.replace(/\/$/, '')}/health`;
+
 const createWindow = (): void => {
-  // Create the browser window.
+  // Create the browser window – fullscreen like games and POS systems
   mainWindow = new BrowserWindow({
-    height: 800,
-    width: 1200,
+    fullscreen: true,
+    fullscreenable: true,
+    frame: true, // Keep title bar for close/minimize (user can press Esc to exit fullscreen)
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -78,7 +88,20 @@ const createWindow = (): void => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  // Start POS at login when packaged (not in dev mode)
+  if (app.isPackaged) {
+    try {
+      app.setLoginItemSettings({
+        openAtLogin: true,
+        path: process.execPath,
+      });
+    } catch (e) {
+      logger.warn('Could not set login item settings', { component: 'app', errorMessage: (e as Error).message });
+    }
+  }
+  createWindow();
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -113,7 +136,7 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
   try {
     logger.debug('Checking backend health', { component: 'auth' });
     // Use the root endpoint to check if backend is online (it's public)
-    await axios.get('http://127.0.0.1:9000/', { timeout: 5000 });
+    await axios.get(BACKEND_HEALTH_URL, { timeout: 5000 });
     online = true;
     logger.info('Backend is online', { component: 'auth' });
   } catch (error: any) {
@@ -125,7 +148,7 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
     // Online mode: authenticate against backend API
     try {
       logger.debug('Sending login request to backend', { component: 'auth' });
-      const response = await axios.post('http://127.0.0.1:9000/auth/login', credentials);
+      const response = await axios.post(`${BACKEND_BASE_URL}/auth/login`, credentials);
       logger.debug('Backend response received', { component: 'auth', status: response.status });
 
       if (response.data.access_token && response.data.user) {
@@ -177,11 +200,77 @@ ipcMain.handle('getUserData', () => {
   return store.get('user', null);
 });
 
+ipcMain.handle('getBranches', async () => {
+  const store = new ElectronStore();
+  const token = store.get('authToken') as string;
+  
+  if (!token) {
+    logger.warn('No authentication token found for branches', { component: 'branches' });
+    return { success: false, branches: [], error: 'Not authenticated', unauthorized: true };
+  }
+
+  try {
+    // Check online status
+    let online = false;
+    try {
+      await axios.get(BACKEND_HEALTH_URL, { timeout: 5000 });
+      online = true;
+    } catch {
+      online = false;
+    }
+
+    if (online) {
+      const response = await axios.get(`${BACKEND_BASE_URL}/branches`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000,
+      });
+      
+      const branches = Array.isArray(response.data) ? response.data : [];
+      logger.info(`Fetched ${branches.length} branches`, { component: 'branches' });
+      
+      // Cache branches for offline use
+      store.set('cachedBranches', branches);
+      
+      return { success: true, branches };
+    } else {
+      // Offline mode: return cached branches if available
+      const cachedBranches = store.get('cachedBranches') as any[];
+      if (cachedBranches && Array.isArray(cachedBranches)) {
+        logger.info(`Returning ${cachedBranches.length} cached branches (offline)`, { component: 'branches' });
+        return { success: true, branches: cachedBranches };
+      }
+      return { success: false, branches: [], error: 'Backend offline and no cached branches' };
+    }
+  } catch (error: any) {
+    const status = error.response?.status;
+    const unauthorized = status === 401 || status === 403;
+    logger.warn('Failed to fetch branches', { component: 'branches', status, error: error.message });
+    
+    // Try to return cached branches on error
+    const cachedBranches = store.get('cachedBranches') as any[];
+    if (cachedBranches && Array.isArray(cachedBranches)) {
+      logger.info(`Returning ${cachedBranches.length} cached branches (error fallback)`, { component: 'branches' });
+      return { success: true, branches: cachedBranches };
+    }
+    
+    return {
+      success: false,
+      branches: [],
+      error: error.response?.data?.message || error.message,
+      unauthorized,
+    };
+  }
+});
+
 ipcMain.handle('logout', () => {
   const store = new ElectronStore();
   store.delete('authToken');
   store.delete('user');
   store.delete('cachedProducts'); // Clear cached products on logout
+  store.delete('cachedBranches'); // Clear cached branches on logout
   logger.info('User logged out, cleared all cached data', { component: 'auth' });
   return { success: true };
 });
@@ -211,7 +300,7 @@ ipcMain.handle('getProducts', async () => {
     // Check online status first
     let online = false;
     try {
-      await axios.get('http://127.0.0.1:9000/', { timeout: 5000 });
+      await axios.get(BACKEND_HEALTH_URL, { timeout: 5000 });
       online = true;
     } catch {
       online = false;
@@ -220,11 +309,13 @@ ipcMain.handle('getProducts', async () => {
     if (online) {
       // Online mode: fetch from backend and cache
       try {
-        // Fetch products with pagination - use a high limit to get all products
-        const response = await axios.get('http://127.0.0.1:9000/products?page=1&limit=1000', {
+        // Fetch products with pagination and variations for POS (includeVariations needed for product variation selection)
+        const user = store.get('user') as { branchId?: string } | undefined;
+        const response = await axios.get(`${BACKEND_BASE_URL}/products?page=1&limit=1000&includeVariations=true`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
+            ...(user?.branchId && { 'x-branch-id': user.branchId }),
           },
           timeout: 10000, // 10 second timeout
         });
@@ -251,20 +342,34 @@ ipcMain.handle('getProducts', async () => {
           productsArray = [];
         }
 
-        // Transform product data to match frontend expectations
-        const products = productsArray.map((product: any) => ({
-          id: product.id,
-          name: product.name,
-          sku: product.sku,
-          price: parseFloat(product.price),
-          stock: parseInt(product.stock) || 0,
-          description: product.description || '',
-          cost: product.cost ? parseFloat(product.cost) : 0,
-          supplier: product.supplier ? product.supplier.name : null,
-          images: product.images || [],
-          branchId: product.branchId,
-          tenantId: product.tenantId,
-        }));
+        // Transform product data to match frontend expectations (preserve hasVariations and variations for POS)
+        const products = productsArray.map((product: any) => {
+          const base: any = {
+            id: product.id,
+            name: product.name,
+            sku: product.sku,
+            price: parseFloat(product.price),
+            stock: parseInt(product.stock) || 0,
+            description: product.description || '',
+            cost: product.cost ? parseFloat(product.cost) : 0,
+            supplier: product.supplier ? product.supplier.name : null,
+            images: product.images || [],
+            branchId: product.branchId,
+            tenantId: product.tenantId,
+          };
+          // Show variations when product has them, even if hasVariations flag isn't set
+          if (product.variations && Array.isArray(product.variations) && product.variations.length > 0) {
+            base.hasVariations = true;
+            base.variations = product.variations.map((v: any) => ({
+              id: v.id,
+              sku: v.sku,
+              price: v.price != null ? parseFloat(v.price) : null,
+              stock: parseInt(v.stock) || 0,
+              attributes: v.attributes || {},
+            }));
+          }
+          return base;
+        });
 
         // Cache the products locally
         store.set('cachedProducts', products);
@@ -317,6 +422,34 @@ ipcMain.handle('getProducts', async () => {
   }
 });
 
+ipcMain.handle('getProductVariations', async (_event, productId: string) => {
+  const store = new ElectronStore();
+  const token = store.get('authToken') as string;
+  if (!token) return { success: false, variations: [], error: 'Not authenticated', unauthorized: true };
+  try {
+    const response = await axios.get(`${BACKEND_BASE_URL}/products/${productId}/variations`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'x-branch-id': (store.get('user') as any)?.branchId || '',
+      },
+      timeout: 10000,
+    });
+    const variations = Array.isArray(response.data) ? response.data : [];
+    return { success: true, variations };
+  } catch (error: any) {
+    const status = error.response?.status;
+    const unauthorized = status === 401 || status === 403;
+    logger.warn('Failed to fetch variations', { component: 'products', productId, status, error: error.message });
+    return {
+      success: false,
+      variations: [],
+      error: error.response?.data?.message || error.message,
+      unauthorized,
+    };
+  }
+});
+
 ipcMain.handle('createSale', async (event, saleData) => {
   const store = new ElectronStore();
 
@@ -328,12 +461,35 @@ ipcMain.handle('createSale', async (event, saleData) => {
       return { success: false, error: 'No authentication token found' };
     }
 
-    logger.info('Creating sale', { component: 'sales', items: saleData.items.length, paymentMethod: saleData.paymentMethod });
+    logger.info('Creating sale', { 
+      component: 'sales', 
+      items: saleData.items?.length,
+      paymentMethod: saleData.paymentMethod,
+      branchId: saleData.branchId,
+      hasIdempotencyKey: !!saleData.idempotencyKey,
+      saleDataKeys: Object.keys(saleData),
+    });
+
+    // Log full sale data for debugging (excluding sensitive data)
+    logger.debug('Sale data being sent', {
+      component: 'sales',
+      items: saleData.items?.map((item: any) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.price,
+        hasVariationId: !!item.variationId,
+      })),
+      paymentMethod: saleData.paymentMethod,
+      branchId: saleData.branchId,
+      idempotencyKey: saleData.idempotencyKey,
+      amountReceived: saleData.amountReceived,
+      discountAmount: saleData.discountAmount,
+    });
 
     // Check online status
     let online = false;
     try {
-      await axios.get('http://127.0.0.1:9000/', { timeout: 5000 });
+      await axios.get(BACKEND_HEALTH_URL, { timeout: 5000 });
       online = true;
     } catch {
       online = false;
@@ -342,7 +498,31 @@ ipcMain.handle('createSale', async (event, saleData) => {
     if (online) {
       // Online mode: create sale via backend API
       try {
-        const response = await axios.post('http://127.0.0.1:9000/sales', saleData, {
+        // Console log the request being sent for debugging
+        console.log('📤 Sending sale request:', {
+          url: `${BACKEND_BASE_URL}/sales`,
+          items: saleData.items?.map((item: any) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price,
+            variationId: item.variationId,
+          })),
+          paymentMethod: saleData.paymentMethod,
+          branchId: saleData.branchId,
+          idempotencyKey: saleData.idempotencyKey,
+          amountReceived: saleData.amountReceived,
+          discountAmount: saleData.discountAmount,
+          customerName: saleData.customerName,
+          customerPhone: saleData.customerPhone,
+          creditAmount: saleData.creditAmount,
+          creditDueDate: saleData.creditDueDate,
+          creditNotes: saleData.creditNotes,
+        });
+        
+        // Log the full JSON payload for debugging backend validation issues
+        console.log('📋 Full JSON payload:', JSON.stringify(saleData, null, 2));
+        
+        const response = await axios.post(`${BACKEND_BASE_URL}/sales`, saleData, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -383,17 +563,141 @@ ipcMain.handle('createSale', async (event, saleData) => {
           receipt: response.data.data // The backend returns receipt data in the response
         };
       } catch (error: any) {
-        logger.error('Error creating online sale', { component: 'sales', status: error.response?.status, error: error.response?.data || error.message });
+        // Log full error details for debugging - handle both axios errors and other errors
+        const errorResponse = error.response;
+        const errorData = errorResponse?.data;
+        const errorStatus = errorResponse?.status;
+        const errorStatusText = errorResponse?.statusText;
+        
+        // Console log for immediate debugging (logger might not serialize objects properly)
+        console.error('❌ Sale creation error:', {
+          status: errorStatus,
+          statusText: errorStatusText,
+          errorData: errorData,
+          errorDataString: JSON.stringify(errorData, null, 2),
+          errorMessage: error.message,
+          errorCode: error.code,
+          hasResponse: !!errorResponse,
+          responseHeaders: errorResponse?.headers ? Object.fromEntries(Object.entries(errorResponse.headers)) : null,
+          fullError: error,
+        });
+        
+        // Try to get more details from the response
+        if (errorResponse?.data) {
+          console.error('📋 Full error response data:', JSON.stringify(errorResponse.data, null, 2));
+        }
+        
+        logger.error('Error creating online sale', { 
+          component: 'sales', 
+          status: errorStatus,
+          statusText: errorStatusText,
+          errorData: errorData ? JSON.stringify(errorData) : null,
+          errorMessage: error.message,
+          errorCode: error.code,
+          errorType: error.name,
+          hasResponse: !!errorResponse,
+          saleData: {
+            itemsCount: saleData.items?.length,
+            paymentMethod: saleData.paymentMethod,
+            branchId: saleData.branchId,
+            hasIdempotencyKey: !!saleData.idempotencyKey,
+          }
+        });
         
         // Handle 401 Unauthorized - token expired
-        if (error.response?.status === 401 || error.response?.status === 403) {
+        if (errorStatus === 401 || errorStatus === 403) {
           logger.warn('Authentication failed, clearing token', { component: 'sales' });
           // Clear invalid token
           store.delete('authToken');
           return { success: false, error: 'Unauthorized - Please log in again' };
         }
         
-        const errorMessage = error.response?.data?.message || error.message || 'Failed to create sale';
+        let errorMessage = 'Failed to create sale';
+        
+        // Extract error message from various possible formats (NestJS validation errors)
+        if (errorData) {
+          // Check for validation error array (common NestJS format)
+          if (Array.isArray(errorData)) {
+            errorMessage = errorData.map((err: any) => {
+              if (typeof err === 'string') return err;
+              if (err?.constraints) {
+                return Object.values(err.constraints).join(', ');
+              }
+              if (err?.property && err?.constraints) {
+                return `${err.property}: ${Object.values(err.constraints).join(', ')}`;
+              }
+              return JSON.stringify(err);
+            }).join('; ');
+          } else if (errorData.message) {
+            if (Array.isArray(errorData.message)) {
+              // NestJS validation errors come as array of constraint messages
+              errorMessage = errorData.message.map((msg: any) => {
+                if (typeof msg === 'string') return msg;
+                if (msg?.constraints) {
+                  const property = msg.property ? `${msg.property}: ` : '';
+                  return property + Object.values(msg.constraints).join(', ');
+                }
+                return JSON.stringify(msg);
+              }).join('; ');
+            } else {
+              errorMessage = String(errorData.message);
+            }
+          } else if (errorData.error) {
+            errorMessage = Array.isArray(errorData.error) ? errorData.error.join('; ') : String(errorData.error);
+          } else if (typeof errorData === 'string') {
+            errorMessage = errorData;
+          } else {
+            // Try to extract any useful information from the error object
+            const errorKeys = Object.keys(errorData);
+            if (errorKeys.length > 0) {
+              const errorDetails = errorKeys
+                .map(key => {
+                  const value = errorData[key];
+                  if (key === 'message' || key === 'statusCode') return null;
+                  return `${key}: ${typeof value === 'object' ? JSON.stringify(value) : value}`;
+                })
+                .filter(Boolean)
+                .join(', ');
+              if (errorDetails) {
+                errorMessage = `Bad Request: ${errorDetails}`;
+              } else {
+                errorMessage = errorStatus === 400 ? `Bad Request: ${JSON.stringify(errorData)}` : JSON.stringify(errorData);
+              }
+            } else {
+              errorMessage = errorStatus === 400 ? `Bad Request: ${JSON.stringify(errorData)}` : JSON.stringify(errorData);
+            }
+          }
+        } else if (errorStatus === 400) {
+          // For 400 errors, provide more context about what might be wrong
+          const requestSummary = `Items: ${saleData.items?.length || 0}, Payment: ${saleData.paymentMethod}, Branch: ${saleData.branchId ? 'set' : 'missing'}`;
+          if (errorData && typeof errorData === 'object') {
+            // Try to extract any additional error details
+            const errorDetails = Object.keys(errorData)
+              .filter(key => key !== 'message' && key !== 'statusCode')
+              .map(key => `${key}: ${JSON.stringify(errorData[key])}`)
+              .join(', ');
+            errorMessage = `Bad Request: ${errorDetails || errorStatusText || 'Invalid request data'}. Request: ${requestSummary}. Note: Backend validation errors are hidden in production. Check server logs for details.`;
+          } else {
+            errorMessage = `Bad Request: ${errorStatusText || 'Invalid request data'}. Request: ${requestSummary}. Note: Backend validation errors are hidden in production. Check server logs for details.`;
+          }
+        } else if (error.message) {
+          errorMessage = error.message;
+        } else if (error.code) {
+          errorMessage = `Network error: ${error.code}`;
+        }
+        
+        logger.error('Extracted error message', { 
+          component: 'sales', 
+          errorMessage, 
+          rawData: errorData ? JSON.stringify(errorData) : null,
+          status: errorStatus,
+          requestSummary: {
+            itemsCount: saleData.items?.length,
+            paymentMethod: saleData.paymentMethod,
+            branchId: saleData.branchId,
+            hasIdempotencyKey: !!saleData.idempotencyKey,
+          }
+        });
         return { success: false, error: errorMessage };
       }
     } else {
@@ -495,7 +799,7 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
     // Check online status
     let online = false;
     try {
-      await axios.get('http://127.0.0.1:9000/', { timeout: 5000 });
+      await axios.get(BACKEND_HEALTH_URL, { timeout: 5000 });
       online = true;
     } catch {
       online = false;
@@ -507,7 +811,7 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
     }
 
     // Get receipt from backend API
-    const response = await axios.get(`http://127.0.0.1:9000/sales/${saleId}/receipt`, {
+    const response = await axios.get(`${BACKEND_BASE_URL}/sales/${saleId}/receipt`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -538,7 +842,8 @@ ipcMain.handle('printReceipt', async (event, receiptData) => {
     if (result.success) {
       logger.info('Receipt printed successfully', { component: 'receipts', saleId: receiptData.saleId });
     } else {
-      logger.error('Receipt print failed', { component: 'receipts', saleId: receiptData.saleId, error: result.error });
+      const errorMsg: string = result.error || 'Unknown error';
+      logger.error('Receipt print failed', { component: 'receipts', saleId: receiptData.saleId, errorMessage: errorMsg });
     }
 
     return result;
@@ -558,7 +863,8 @@ ipcMain.handle('openCashDrawer', async () => {
     if (result.success) {
       logger.info('Cash drawer opened successfully', { component: 'cashdrawer' });
     } else {
-      logger.error('Cash drawer open failed', { component: 'cashdrawer', error: result.error });
+      const errorMessage: string = result.error || 'Unknown error';
+      logger.error('Cash drawer open failed', { component: 'cashdrawer', errorMessage });
     }
 
     return result;
@@ -681,7 +987,7 @@ ipcMain.handle('syncOfflineSales', async () => {
             const timeout = 15000 * Math.pow(2, retryCount);
 
             // Attempt to sync with backend
-            const response = await axios.post('http://127.0.0.1:9000/sales', offlineSale.saleData, {
+            const response = await axios.post(`${BACKEND_BASE_URL}/sales`, offlineSale.saleData, {
               headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',

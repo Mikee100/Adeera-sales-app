@@ -13,6 +13,12 @@ module.exports = (env, argv) => {
       target: 'electron-main',
       mode: isProduction ? 'production' : 'development',
       devtool: isProduction ? false : 'source-map',
+      externals: {
+        // Exclude serialport and its native bindings from webpack bundling
+        // These will be loaded at runtime from node_modules
+        'serialport': 'commonjs serialport',
+        '@serialport/bindings-cpp': 'commonjs @serialport/bindings-cpp',
+      },
       module: {
         rules: [
           {

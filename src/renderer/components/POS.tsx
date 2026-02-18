@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ProductSelection from './ProductSelection';
 import Checkout from './Checkout';
 import Receipt from './Receipt';
+import PrintPreview from './PrintPreview';
 import SyncStatus from './SyncStatus';
 import { useAuth } from '../contexts/AuthContext';
 import { showToast } from './Toast';
@@ -46,7 +47,13 @@ interface ProductsResponse {
   error?: string;
 }
 
-type POSStep = 'products' | 'checkout' | 'receipt';
+type POSStep = 'products' | 'checkout' | 'receipt' | 'print-preview';
+
+interface Branch {
+  id: string;
+  name: string;
+  [key: string]: any;
+}
 
 const POS: React.FC = () => {
   const { user } = useAuth();
@@ -55,10 +62,37 @@ const POS: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<string>('');
+  const [branches, setBranches] = useState<Branch[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentReceipt, setCurrentReceipt] = useState<any>(null);
   const [processingSale, setProcessingSale] = useState(false);
   const [printing, setPrinting] = useState(false);
+
+  // Load branches on mount and when user changes
+  useEffect(() => {
+    const loadBranches = async () => {
+      try {
+        const response = await window.electronAPI.getBranches();
+        if (response.success && response.branches) {
+          setBranches(response.branches);
+          
+          // Set default branch: user's branchId or first available branch
+          if (!selectedBranch && response.branches.length > 0) {
+            const defaultBranchId = user?.branchId || response.branches[0]?.id;
+            if (defaultBranchId) {
+              setSelectedBranch(defaultBranchId);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load branches:', error);
+      }
+    };
+
+    if (user) {
+      loadBranches();
+    }
+  }, [user]);
 
   useEffect(() => {
     loadProducts(0);
@@ -340,20 +374,26 @@ const POS: React.FC = () => {
       console.log('  - User branchId:', user?.branchId);
       console.log('  - User branchName:', user?.branchName);
       console.log('  - Selected branch:', selectedBranch);
+      console.log('  - Available branches:', branches.length);
       console.log('  - User object:', user);
 
-      // Check if branch ID is available
-      const branchId = user?.branchId || selectedBranch;
+      // Prioritize selectedBranch over user.branchId (user explicitly selected a branch)
+      // Fallback to user.branchId if no branch is selected
+      const branchId = selectedBranch || user?.branchId;
       console.log('  - Final branchId to use:', branchId);
 
       if (!branchId) {
+        const errorMessage = branches.length === 0 
+          ? 'No branches available. Please contact your administrator.'
+          : 'Please select a branch before completing the sale.';
+        
         handleError(
-          new AppError('Branch ID is required to complete sale', 'VALIDATION_ERROR', {
+          new AppError(errorMessage, 'VALIDATION_ERROR', {
             operation: 'completeSale',
             component: 'POS',
             userId: user?.id,
             userName: user?.name,
-            metadata: { branchId, userBranchId: user?.branchId, selectedBranch },
+            metadata: { branchId, userBranchId: user?.branchId, selectedBranch, branchesCount: branches.length },
           }),
           {
             operation: 'completeSale',
@@ -418,30 +458,92 @@ const POS: React.FC = () => {
       }
 
       // Prepare sale data (include discount so backend applies it before VAT)
+      // For variation items: productId = base product, variationId = variation
+      // Ensure all numeric fields are numbers for backend validation
       const saleData = {
-        items: cart.map(item => ({
-          productId: item.product.id,
-          quantity: item.quantity,
-          price: item.product.price,
-        })),
-        paymentMethod: paymentData.paymentMethod,
-        amountReceived: paymentData.amountReceived,
-        customerName: paymentData.customerName,
-        customerPhone: paymentData.customerPhone,
-        branchId: branchId,
+        items: cart.map(item => {
+          const productPrice = item.product.price;
+          const priceValue = (productPrice != null && !isNaN(Number(productPrice))) 
+            ? Number(productPrice) 
+            : undefined;
+          
+          const base: { productId: string; quantity: number; price?: number; variationId?: string } = {
+            productId: (item.product as any).baseProductId || item.product.id,
+            quantity: Number(item.quantity) || 1,
+          };
+          
+          // Only include price if it's a valid number (price is optional in DTO)
+          if (priceValue != null && priceValue >= 0) {
+            base.price = priceValue;
+          }
+          
+          if ((item.product as any).variationId) {
+            base.variationId = (item.product as any).variationId;
+          }
+          return base;
+        }),
+        paymentMethod: String(paymentData.paymentMethod || 'cash'),
+        amountReceived: paymentData.amountReceived != null ? Number(paymentData.amountReceived) : undefined,
+        customerName: paymentData.customerName || undefined,
+        customerPhone: paymentData.customerPhone || undefined,
+        branchId: branchId || undefined,
         idempotencyKey: `sale_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         ...(paymentData.discountAmount != null && paymentData.discountAmount > 0 && {
-          discountAmount: paymentData.discountAmount,
-        }),
-        ...(paymentData.paymentMethod === 'credit' && {
-          creditAmount: paymentData.creditAmount || getGrandTotal(),
-          creditDueDate: paymentData.creditDueDate,
-          creditNotes: paymentData.creditNotes,
+          discountAmount: Number(paymentData.discountAmount),
         }),
       };
+      
+      // Remove undefined values to avoid sending them (backend ValidationPipe forbids non-whitelisted)
+      // Also ensure all types match backend DTO expectations
+      const cleanSaleData: any = {};
+      
+      // Required fields
+      cleanSaleData.items = saleData.items;
+      cleanSaleData.paymentMethod = String(saleData.paymentMethod);
+      cleanSaleData.idempotencyKey = String(saleData.idempotencyKey);
+      
+      // Optional fields - only include if they have values
+      if (saleData.branchId) cleanSaleData.branchId = String(saleData.branchId);
+      if (saleData.customerName) cleanSaleData.customerName = String(saleData.customerName);
+      if (saleData.customerPhone) cleanSaleData.customerPhone = String(saleData.customerPhone);
+      if (saleData.amountReceived != null) cleanSaleData.amountReceived = Number(saleData.amountReceived);
+      if (saleData.discountAmount != null && saleData.discountAmount > 0) {
+        cleanSaleData.discountAmount = Number(saleData.discountAmount);
+      }
+      
+      // Credit-specific fields - only include if payment method is credit
+      if (paymentData.paymentMethod === 'credit') {
+        const creditAmount = paymentData.creditAmount ?? getGrandTotal();
+        if (creditAmount != null) {
+          cleanSaleData.creditAmount = Number(creditAmount);
+        }
+        if (paymentData.creditDueDate) {
+          // Ensure date is in ISO format (YYYY-MM-DD) for backend validation
+          const dateStr = String(paymentData.creditDueDate);
+          // If it's already in YYYY-MM-DD format, use it; otherwise try to parse and format
+          if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+            cleanSaleData.creditDueDate = dateStr;
+          } else {
+            // Try to parse and format as ISO date string
+            try {
+              const date = new Date(dateStr);
+              if (!isNaN(date.getTime())) {
+                cleanSaleData.creditDueDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+              } else {
+                cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+              }
+            } catch {
+              cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+            }
+          }
+        }
+        if (paymentData.creditNotes) {
+          cleanSaleData.creditNotes = String(paymentData.creditNotes);
+        }
+      }
 
       // Validate sale data integrity
-      const saleValidation = validateSaleData(saleData);
+      const saleValidation = validateSaleData(cleanSaleData);
       if (!saleValidation.isValid) {
         handleError(
           new AppError(saleValidation.error || 'Sale data validation failed', 'VALIDATION_ERROR', {
@@ -449,7 +551,7 @@ const POS: React.FC = () => {
             component: 'POS',
             userId: user?.id,
             userName: user?.name,
-            metadata: { saleData },
+            metadata: { saleData: cleanSaleData },
           }),
           {
             operation: 'completeSale',
@@ -475,11 +577,28 @@ const POS: React.FC = () => {
         user?.name
       );
 
-      console.log('Creating sale:', saleData);
+      console.log('Creating sale:', {
+        items: cleanSaleData.items.map((item: any) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.price,
+          variationId: item.variationId,
+        })),
+        paymentMethod: cleanSaleData.paymentMethod,
+        branchId: cleanSaleData.branchId,
+        idempotencyKey: cleanSaleData.idempotencyKey,
+        amountReceived: cleanSaleData.amountReceived,
+        discountAmount: cleanSaleData.discountAmount,
+        customerName: cleanSaleData.customerName,
+        customerPhone: cleanSaleData.customerPhone,
+        creditAmount: cleanSaleData.creditAmount,
+        creditDueDate: cleanSaleData.creditDueDate,
+        creditNotes: cleanSaleData.creditNotes,
+      });
 
       // Use network operation handler with retry logic
       const response = await handleNetworkOperation(
-        () => (window as any).electronAPI.createSale(saleData),
+        () => (window as any).electronAPI.createSale(cleanSaleData),
         {
           operation: 'createSale',
           component: 'POS',
@@ -656,6 +775,10 @@ const POS: React.FC = () => {
     }
   };
 
+  const handleShowPrintPreview = () => {
+    setCurrentStep('print-preview');
+  };
+
   const handlePrintReceipt = async () => {
     if (!currentReceipt) return;
 
@@ -714,6 +837,8 @@ const POS: React.FC = () => {
         );
 
         showToast('Receipt printed successfully!', 'success');
+        // Return to receipt view after successful print
+        setCurrentStep('receipt');
       } else {
         console.error('Print failed:', response.error);
         showToast(`Print failed: ${response.error}`, 'error');
@@ -724,6 +849,14 @@ const POS: React.FC = () => {
     } finally {
       setPrinting(false);
     }
+  };
+
+  const handlePrintViaBrowser = () => {
+    window.print();
+  };
+
+  const handleBackFromPrintPreview = () => {
+    setCurrentStep('receipt');
   };
 
   const handleNewSale = () => {
@@ -825,6 +958,9 @@ const POS: React.FC = () => {
           getTotal={getTotal}
           getVAT={getVAT}
           getGrandTotal={getGrandTotal}
+          branches={branches}
+          selectedBranch={selectedBranch}
+          onBranchChange={setSelectedBranch}
         />
       )}
 
@@ -843,8 +979,18 @@ const POS: React.FC = () => {
       {currentStep === 'receipt' && (
         <Receipt
           receipt={currentReceipt}
-          onPrint={handlePrintReceipt}
+          onPrint={handleShowPrintPreview}
           onNewSale={handleNewSale}
+          printing={printing}
+        />
+      )}
+
+      {currentStep === 'print-preview' && (
+        <PrintPreview
+          receipt={currentReceipt}
+          onPrint={handlePrintReceipt}
+          onBack={handleBackFromPrintPreview}
+          onPrintViaBrowser={handlePrintViaBrowser}
           printing={printing}
         />
       )}

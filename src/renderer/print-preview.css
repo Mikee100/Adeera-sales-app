@@ -1,0 +1,357 @@
+/* Print Preview Page Styles */
+.print-preview-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+.print-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  background: white;
+  border-bottom: 2px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.preview-title h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+  font-weight: 600;
+}
+
+.preview-title p {
+  margin: 5px 0 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-secondary,
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-print-large {
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+}
+
+.btn-icon {
+  font-size: 18px;
+}
+
+.btn-icon-large {
+  font-size: 24px;
+}
+
+.loading-spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Print Preview Container */
+.print-preview-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.receipt-preview {
+  background: white;
+  width: 100%;
+  max-width: 400px; /* Standard receipt width */
+  padding: 35px 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #000;
+}
+
+/* Receipt Preview Styles */
+.receipt-preview-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.receipt-preview-logo {
+  max-width: 120px;
+  max-height: 60px;
+  margin-bottom: 10px;
+}
+
+.receipt-preview-business-name {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.receipt-preview-address {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.receipt-preview-phone {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.receipt-preview-email {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.receipt-separator {
+  border-top: 1px dashed #999;
+  margin: 18px 0;
+  height: 0;
+}
+
+.receipt-preview-info {
+  margin-bottom: 15px;
+}
+
+.receipt-info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+  padding: 4px 0;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  color: #000;
+  font-weight: 500;
+  text-align: right;
+  word-break: break-word;
+}
+
+.receipt-preview-items {
+  margin-bottom: 15px;
+}
+
+.items-header-row {
+  display: grid;
+  grid-template-columns: 2fr 0.6fr 1fr 1fr;
+  gap: 10px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #000;
+  margin-bottom: 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: 2fr 0.6fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  padding-bottom: 8px;
+  border-bottom: 1px dotted #ccc;
+}
+
+.item-col-name {
+  text-align: left;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.item-col-qty {
+  text-align: center;
+  font-weight: 500;
+}
+
+.item-col-price,
+.item-col-total {
+  text-align: right;
+  font-weight: 500;
+}
+
+.receipt-preview-totals {
+  margin-bottom: 20px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+  padding: 6px 0;
+}
+
+.total-label {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.total-value {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.grand-total-row {
+  border-top: 3px double #000;
+  border-bottom: 3px double #000;
+  padding: 12px 0;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  background: #f9f9f9;
+}
+
+.total-value-grand {
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+}
+
+.receipt-preview-payment {
+  margin-bottom: 20px;
+}
+
+.payment-method-row,
+.payment-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+  padding: 4px 0;
+}
+
+.payment-method-row {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+.payment-label {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.payment-value {
+  color: #000;
+  font-weight: 500;
+}
+
+.receipt-preview-footer {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px dashed #ccc;
+}
+
+.footer-thank-you {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-note {
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Print Media Query - Hide header when printing */
+@media print {
+  .print-preview-header {
+    display: none;
+  }
+
+  .print-preview-container {
+    padding: 0;
+  }
+
+  .receipt-preview {
+    box-shadow: none;
+    border-radius: 0;
+    max-width: 100%;
+    padding: 20px;
+  }
+}

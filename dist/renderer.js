@@ -3401,6 +3401,170 @@ body {
   background: white;
 }
 
+.variations-hint {
+  font-size: 10px;
+  color: #666;
+  margin: 2px 0;
+}
+
+/* Variation selection modal */
+.variation-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 20px;
+}
+
+.variation-modal {
+  background: white;
+  border-radius: 10px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.variation-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e9ecef;
+  position: relative;
+}
+
+.variation-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.variation-modal-product-name {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.variation-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.variation-modal-close:hover {
+  color: #333;
+}
+
+.variation-modal-list {
+  padding: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.variation-modal-empty {
+  text-align: center;
+  padding: 24px;
+  color: #666;
+  font-size: 14px;
+}
+
+.variation-modal-empty .add-base-product-btn {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.variation-modal-empty .add-base-product-btn:hover {
+  background: #218838;
+}
+
+.product-card-clickable {
+  cursor: pointer;
+}
+
+.product-card-clickable:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.variation-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.variation-card:hover:not(:disabled) {
+  border-color: #28a745;
+  background: #f0fff4;
+}
+
+.variation-card-out-of-stock {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.variation-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.variation-card-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.variation-card-sku {
+  font-size: 11px;
+  color: #666;
+}
+
+.variation-card-price {
+  font-weight: 700;
+  font-size: 15px;
+  color: #28a745;
+}
+
+.variation-card-stock {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.variation-card-stock.in-stock {
+  background: #d4edda;
+  color: #155724;
+}
+
+.variation-card-stock.out-of-stock {
+  background: #f8d7da;
+  color: #721c24;
+}
+
 .add-to-cart-btn {
   background: #28a745;
   color: white;
@@ -3838,7 +4002,7 @@ body {
     height: 160px;
   }
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/styles.css"],"names":[],"mappings":"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","sourcesContent":["/* Global Styles */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;\n  background-color: #f5f5f5;\n  color: #333;\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* Loading Screen */\n.loading-screen {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100vh;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n}\n\n.loading-spinner {\n  width: 50px;\n  height: 50px;\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top: 4px solid white;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n  margin-bottom: 20px;\n}\n\n@keyframes spin {\n  0% { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n/* Login Styles */\n.login-container {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n  padding: 32px 16px;\n  background: radial-gradient(circle at top left, #9f7aea 0, transparent 55%),\n    radial-gradient(circle at bottom right, #4299e1 0, transparent 55%),\n    linear-gradient(135deg, #0f172a 0%, #020617 100%);\n  color: #e5e7eb;\n}\n\n.login-shell {\n  display: grid;\n  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);\n  gap: 1px;\n  width: 100%;\n  max-width: 960px;\n  border-radius: 18px;\n  background: linear-gradient(135deg, rgba(148, 163, 184, 0.6), rgba(56, 189, 248, 0.6));\n  box-shadow:\n    0 22px 45px rgba(15, 23, 42, 0.6),\n    0 0 0 1px rgba(148, 163, 184, 0.35);\n  overflow: hidden;\n}\n\n.login-brand-panel {\n  position: relative;\n  padding: 32px 32px 28px;\n  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), transparent 55%),\n    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.22), transparent 55%),\n    linear-gradient(145deg, #020617 0%, #020617 40%, #020617 100%);\n  color: #e5e7eb;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n.login-brand-logo {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 18px;\n}\n\n.login-logo-mark {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 32px;\n  height: 32px;\n  border-radius: 11px;\n  background: radial-gradient(circle at 0 0, #22c55e 0, #16a34a 40%, #065f46 100%);\n  color: #ecfdf5;\n  font-weight: 700;\n  font-size: 18px;\n}\n\n.login-logo-text {\n  font-size: 20px;\n  font-weight: 600;\n  letter-spacing: 0.02em;\n}\n\n.login-brand-tagline {\n  font-size: 14px;\n  color: #9ca3af;\n  max-width: 320px;\n}\n\n.login-brand-highlights {\n  margin-top: 28px;\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n\n.login-highlight {\n  display: flex;\n  gap: 10px;\n  align-items: flex-start;\n}\n\n.login-highlight-dot {\n  margin-top: 4px;\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: linear-gradient(135deg, #22c55e, #a3e635);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);\n  flex-shrink: 0;\n}\n\n.login-highlight-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: #e5e7eb;\n}\n\n.login-highlight-subtitle {\n  font-size: 13px;\n  color: #9ca3af;\n}\n\n.login-environment-pill {\n  align-self: flex-start;\n  margin-top: 24px;\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 12px;\n  border-radius: 999px;\n  background: rgba(15, 23, 42, 0.9);\n  border: 1px solid rgba(148, 163, 184, 0.7);\n  font-size: 12px;\n  color: #e5e7eb;\n}\n\n.login-env-dot {\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: radial-gradient(circle at 30% 0, #22c55e 0, #16a34a 60%, #14532d 100%);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);\n}\n\n.login-card {\n  background: #f9fafb;\n  padding: 32px 32px 28px;\n  border-radius: 18px;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n}\n\n.login-header {\n  margin-bottom: 24px;\n}\n\n.login-header h1 {\n  color: #020617;\n  margin-bottom: 6px;\n  font-size: 24px;\n  font-weight: 600;\n}\n\n.login-header p {\n  color: #6b7280;\n  font-size: 14px;\n}\n\n.login-form {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n}\n\n.form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.form-group label {\n  font-size: 14px;\n  font-weight: 500;\n  color: #111827;\n}\n\n.form-input-wrapper {\n  position: relative;\n}\n\n.form-group input {\n  width: 100%;\n  padding: 11px 12px;\n  border-radius: 10px;\n  border: 1px solid #e5e7eb;\n  font-size: 14px;\n  background: #ffffff;\n  color: #111827;\n  outline: none;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background-color 0.15s ease;\n}\n\n.form-group input::placeholder {\n  color: #9ca3af;\n}\n\n.form-group input:focus {\n  border-color: #4f46e5;\n  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.65), 0 10px 18px rgba(15, 23, 42, 0.12);\n}\n\n.form-group.has-error input {\n  border-color: #f97316;\n  background-color: #fffbeb;\n}\n\n.form-group.has-error input:focus {\n  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.85), 0 10px 18px rgba(124, 45, 18, 0.25);\n}\n\n.login-form-meta {\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.checkbox-label {\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 13px;\n  color: #4b5563;\n}\n\n.checkbox-label input[type='checkbox'] {\n  width: 14px;\n  height: 14px;\n  border-radius: 4px;\n  border: 1px solid #d1d5db;\n  cursor: pointer;\n}\n\n.link-button {\n  border: none;\n  background: none;\n  padding: 0;\n  font-size: 13px;\n  color: #4f46e5;\n  cursor: pointer;\n  text-decoration: none;\n}\n\n.link-button:hover {\n  text-decoration: underline;\n}\n\n.login-button {\n  margin-top: 6px;\n  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #22c55e 120%);\n  color: white;\n  border: none;\n  padding: 12px 16px;\n  border-radius: 12px;\n  font-size: 15px;\n  font-weight: 600;\n  cursor: pointer;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  box-shadow:\n    0 12px 22px rgba(15, 23, 42, 0.35),\n    0 0 0 1px rgba(15, 23, 42, 0.75);\n  transition:\n    transform 0.12s ease,\n    box-shadow 0.12s ease,\n    filter 0.12s ease;\n}\n\n.login-button:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow:\n    0 16px 28px rgba(15, 23, 42, 0.45),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n  filter: brightness(1.03);\n}\n\n.login-button:active:not(:disabled) {\n  transform: translateY(0);\n  box-shadow:\n    0 8px 16px rgba(15, 23, 42, 0.4),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n}\n\n.login-button:disabled {\n  opacity: 0.7;\n  cursor: not-allowed;\n  filter: grayscale(0.1);\n}\n\n.error-message {\n  margin-bottom: 8px;\n  background: #fffbeb;\n  color: #92400e;\n  padding: 10px 12px;\n  border-radius: 10px;\n  border: 1px solid #fed7aa;\n  border-left-width: 4px;\n  border-left-color: #f97316;\n  font-size: 13px;\n  display: flex;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.error-message::before {\n  content: '⚠';\n  font-size: 14px;\n  line-height: 1.2;\n}\n\n.field-error {\n  font-size: 12px;\n  color: #c2410c;\n}\n\n.field-hint {\n  margin-top: 4px;\n  font-size: 12px;\n}\n\n.field-hint.warning {\n  color: #b45309;\n}\n\n.login-footer {\n  margin-top: 18px;\n  color: #6b7280;\n  font-size: 12px;\n}\n\n.login-footer p {\n  margin: 0;\n}\n\n@media (max-width: 800px) {\n  .login-shell {\n    grid-template-columns: minmax(0, 1fr);\n  }\n\n  .login-brand-panel {\n    display: none;\n  }\n\n  .login-card {\n    border-radius: 18px;\n  }\n}\n\n/* POS Styles */\n.pos-container {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n  background: #f5f7fa;\n  overflow: hidden;\n}\n\n.pos-header {\n  background: white;\n  padding: 6px 12px;\n  border-bottom: 1px solid #e1e5e9;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);\n  position: relative;\n  flex-shrink: 0;\n  gap: 12px;\n}\n\n.header-left {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  flex-shrink: 0;\n}\n\n.pos-header h1 {\n  color: #333;\n  font-size: 14px;\n  font-weight: 700;\n  margin: 0;\n  letter-spacing: -0.3px;\n}\n\n.header-center {\n  flex: 1;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 0;\n}\n\n.header-right {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  flex-shrink: 0;\n}\n\n.header-indicators {\n  display: flex;\n  gap: 6px;\n  align-items: center;\n  justify-content: center;\n}\n\n.branch-select {\n  padding: 5px 8px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 11px;\n  cursor: pointer;\n  min-width: 100px;\n}\n\n.icon-btn {\n  background: transparent;\n  border: 1px solid #e1e5e9;\n  padding: 5px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 14px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n}\n\n.icon-btn:hover {\n  background: #f8f9fa;\n  border-color: #adb5bd;\n}\n\n.icon-btn.logout-btn {\n  border-color: #dc3545;\n  color: #dc3545;\n}\n\n.icon-btn.logout-btn:hover {\n  background: #dc3545;\n  color: white;\n}\n\n.icon-btn.settings-btn:hover {\n  border-color: #667eea;\n  color: #667eea;\n}\n\n.icon-btn.theme-toggle-btn:hover {\n  border-color: #ffc107;\n}\n\n.pos-content {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n  gap: 12px;\n  padding: 12px;\n}\n\n.products-section {\n  flex: 2;\n  padding: 12px;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n}\n\n.search-bar {\n  margin-bottom: 12px;\n  display: flex;\n  gap: 8px;\n}\n\n.search-input-wrapper {\n  flex: 1;\n  position: relative;\n}\n\n.search-input {\n  width: 100%;\n  padding: 8px 12px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  font-size: 13px;\n}\n\n.search-input:focus {\n  outline: none;\n  border-color: #667eea;\n  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);\n}\n\n.category-select {\n  padding: 8px 10px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 12px;\n  cursor: pointer;\n  min-width: 140px;\n}\n\n.products-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, 140px);\n  gap: 10px;\n  overflow-y: auto;\n  flex: 1;\n  min-height: 0;\n  justify-content: start;\n}\n\n.product-card {\n  background: #f8f9fa;\n  border: 1px solid #e1e5e9;\n  border-radius: 6px;\n  padding: 8px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  transition: all 0.2s ease;\n  position: relative;\n  width: 140px;\n  height: 180px;\n  box-sizing: border-box;\n}\n\n.product-category {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  background: #667eea;\n  color: white;\n  padding: 2px 6px;\n  border-radius: 8px;\n  font-size: 9px;\n  font-weight: 600;\n  text-transform: uppercase;\n  z-index: 1;\n}\n\n.product-card:hover {\n  border-color: #667eea;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.product-image {\n  width: 100%;\n  height: 60px;\n  margin-bottom: 6px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: #e9ecef;\n  flex-shrink: 0;\n}\n\n.product-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.product-info {\n  flex: 1;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n\n.product-info h3 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 11px;\n  font-weight: 600;\n  line-height: 1.2;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  flex-shrink: 0;\n}\n\n.product-info .sku {\n  color: #666;\n  font-size: 9px;\n  margin-bottom: 2px;\n  flex-shrink: 0;\n}\n\n.product-info .barcode {\n  color: #667eea;\n  font-size: 8px;\n  margin-bottom: 2px;\n  font-weight: 500;\n  flex-shrink: 0;\n}\n\n.product-info .price {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 13px;\n  margin: 3px 0 2px 0;\n  flex-shrink: 0;\n}\n\n.product-info .stock {\n  color: #666;\n  font-size: 9px;\n  flex-shrink: 0;\n}\n\n.variations-selector {\n  margin: 4px 0;\n  flex-shrink: 0;\n}\n\n.variation-select {\n  width: 100%;\n  padding: 3px 5px;\n  border: 1px solid #e1e5e9;\n  border-radius: 3px;\n  font-size: 9px;\n  background: white;\n}\n\n.add-to-cart-btn {\n  background: #28a745;\n  color: white;\n  border: none;\n  padding: 6px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 10px;\n  margin-top: 6px;\n  transition: background-color 0.2s ease;\n  touch-action: manipulation;\n  width: 100%;\n  flex-shrink: 0;\n}\n\n.add-to-cart-btn:hover:not(:disabled) {\n  background: #218838;\n}\n\n.add-to-cart-btn:disabled {\n  background: #adb5bd;\n  cursor: not-allowed;\n}\n\n.cart-section {\n  flex: 1;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  padding: 12px;\n  min-width: 320px;\n  max-width: 400px;\n}\n\n.cart-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 12px;\n}\n\n.cart-section h2 {\n  margin: 0;\n  color: #333;\n  font-size: 14px;\n  font-weight: 600;\n}\n\n.hold-transaction-btn-header {\n  background: #ffc107;\n  color: #333;\n  border: none;\n  padding: 6px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 500;\n  font-size: 11px;\n  transition: all 0.2s ease;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n\n.hold-transaction-btn-header:hover {\n  background: #ffb300;\n  transform: translateY(-1px);\n}\n\n.cart-items {\n  flex: 1;\n  overflow-y: auto;\n  margin-bottom: 12px;\n  min-height: 0;\n}\n\n.empty-cart {\n  text-align: center;\n  color: #666;\n  font-style: italic;\n  padding: 20px 0;\n  font-size: 12px;\n}\n\n.cart-item {\n  display: flex;\n  gap: 10px;\n  padding: 10px;\n  border-bottom: 1px solid #e1e5e9;\n  background: #f8f9fa;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: all 0.2s ease;\n}\n\n.cart-item:hover {\n  background: #f0f0f0;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\n}\n\n.cart-item-image {\n  flex-shrink: 0;\n  width: 50px;\n  height: 50px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #e1e5e9;\n}\n\n.cart-item-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.cart-item-content {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n  min-width: 0;\n}\n\n.cart-item-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.item-info {\n  flex: 1;\n  min-width: 0;\n}\n\n.item-info h4 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 13px;\n  font-weight: 600;\n  line-height: 1.3;\n}\n\n.item-info .sku {\n  color: #6c757d;\n  font-size: 10px;\n  margin: 0;\n}\n\n.item-info .variation-info {\n  color: #667eea;\n  font-size: 9px;\n  margin: 2px 0 0 0;\n  font-style: italic;\n}\n\n.remove-btn {\n  background: #dc3545;\n  color: white;\n  border: none;\n  width: 22px;\n  height: 22px;\n  border-radius: 50%;\n  font-size: 16px;\n  line-height: 1;\n  transition: all 0.2s ease;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  padding: 0;\n  font-weight: bold;\n}\n\n.remove-btn:hover {\n  background: #c82333;\n  transform: scale(1.1);\n}\n\n.cart-item-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.price-info {\n  display: flex;\n  align-items: baseline;\n  gap: 4px;\n}\n\n.unit-price {\n  color: #28a745;\n  font-weight: 700;\n  font-size: 13px;\n}\n\n.unit-label {\n  color: #6c757d;\n  font-size: 9px;\n  text-transform: lowercase;\n}\n\n.quantity-section {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  align-items: center;\n}\n\n.quantity-controls {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: white;\n  border: 1px solid #dee2e6;\n  border-radius: 4px;\n  padding: 2px;\n}\n\n.quantity-btn {\n  background: transparent;\n  border: none;\n  width: 26px;\n  height: 26px;\n  border-radius: 3px;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: bold;\n  font-size: 16px;\n  color: #495057;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quantity-btn:hover {\n  background: #e9ecef;\n}\n\n.quantity-btn.decrease {\n  color: #dc3545;\n}\n\n.quantity-btn.increase {\n  color: #28a745;\n}\n\n.quantity {\n  min-width: 30px;\n  text-align: center;\n  font-weight: 700;\n  font-size: 13px;\n  color: #333;\n  padding: 0 4px;\n}\n\n.quick-quantity-buttons {\n  display: flex;\n  gap: 3px;\n  flex-wrap: wrap;\n  justify-content: center;\n}\n\n.quick-qty-btn {\n  background: white;\n  border: 1px solid #dee2e6;\n  padding: 3px 6px;\n  border-radius: 3px;\n  cursor: pointer;\n  font-size: 9px;\n  font-weight: 600;\n  color: #495057;\n  min-width: 24px;\n  min-height: 20px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quick-qty-btn:hover {\n  background: #667eea;\n  border-color: #667eea;\n  color: white;\n}\n\n.item-total {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 2px;\n  flex-shrink: 0;\n}\n\n.total-label {\n  font-size: 9px;\n  color: #6c757d;\n  text-transform: uppercase;\n  letter-spacing: 0.5px;\n}\n\n.total-amount {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 14px;\n}\n\n.cart-item:last-child {\n  border-bottom: none;\n  margin-bottom: 0;\n}\n\n.cart-summary {\n  border-top: 2px solid #e1e5e9;\n  padding-top: 10px;\n  margin-bottom: 12px;\n}\n\n.summary-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 6px;\n  font-size: 12px;\n  color: #495057;\n}\n\n.summary-row.total {\n  font-size: 14px;\n  font-weight: 700;\n  color: #333;\n  border-top: 1px solid #e1e5e9;\n  padding-top: 8px;\n  margin-top: 6px;\n}\n\n.checkout-section {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.shortcut-hint {\n  margin: 0;\n  font-size: 11px;\n  color: #6c757d;\n  text-align: center;\n}\n\n.checkout-btn {\n  width: 100%;\n  padding: 12px;\n  border: none;\n  border-radius: 4px;\n  font-size: 13px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.2s ease;\n}\n\n.checkout-btn:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.checkout-btn:active:not(:disabled) {\n  transform: translateY(0);\n}\n\n.checkout-btn:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n  transform: none;\n}\n\n.checkout-btn.proceed {\n  background: #007bff;\n  color: white;\n}\n\n.checkout-btn.proceed:hover:not(:disabled) {\n  background: #0056b3;\n}\n\n.loading {\n  text-align: center;\n  padding: 20px;\n  color: #666;\n  font-style: italic;\n  font-size: 12px;\n}\n\n/* Responsive Design */\n@media (max-width: 1200px) {\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 130px);\n  }\n  \n  .product-card {\n    width: 130px;\n    height: 170px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    flex: none;\n    height: 50vh;\n  }\n\n  .checkout-section {\n    flex-direction: column;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 120px);\n    gap: 8px;\n  }\n  \n  .product-card {\n    width: 120px;\n    height: 160px;\n  }\n}\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/styles.css"],"names":[],"mappings":"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","sourcesContent":["/* Global Styles */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;\n  background-color: #f5f5f5;\n  color: #333;\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* Loading Screen */\n.loading-screen {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100vh;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n}\n\n.loading-spinner {\n  width: 50px;\n  height: 50px;\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top: 4px solid white;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n  margin-bottom: 20px;\n}\n\n@keyframes spin {\n  0% { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n/* Login Styles */\n.login-container {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n  padding: 32px 16px;\n  background: radial-gradient(circle at top left, #9f7aea 0, transparent 55%),\n    radial-gradient(circle at bottom right, #4299e1 0, transparent 55%),\n    linear-gradient(135deg, #0f172a 0%, #020617 100%);\n  color: #e5e7eb;\n}\n\n.login-shell {\n  display: grid;\n  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);\n  gap: 1px;\n  width: 100%;\n  max-width: 960px;\n  border-radius: 18px;\n  background: linear-gradient(135deg, rgba(148, 163, 184, 0.6), rgba(56, 189, 248, 0.6));\n  box-shadow:\n    0 22px 45px rgba(15, 23, 42, 0.6),\n    0 0 0 1px rgba(148, 163, 184, 0.35);\n  overflow: hidden;\n}\n\n.login-brand-panel {\n  position: relative;\n  padding: 32px 32px 28px;\n  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), transparent 55%),\n    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.22), transparent 55%),\n    linear-gradient(145deg, #020617 0%, #020617 40%, #020617 100%);\n  color: #e5e7eb;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n.login-brand-logo {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 18px;\n}\n\n.login-logo-mark {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 32px;\n  height: 32px;\n  border-radius: 11px;\n  background: radial-gradient(circle at 0 0, #22c55e 0, #16a34a 40%, #065f46 100%);\n  color: #ecfdf5;\n  font-weight: 700;\n  font-size: 18px;\n}\n\n.login-logo-text {\n  font-size: 20px;\n  font-weight: 600;\n  letter-spacing: 0.02em;\n}\n\n.login-brand-tagline {\n  font-size: 14px;\n  color: #9ca3af;\n  max-width: 320px;\n}\n\n.login-brand-highlights {\n  margin-top: 28px;\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n\n.login-highlight {\n  display: flex;\n  gap: 10px;\n  align-items: flex-start;\n}\n\n.login-highlight-dot {\n  margin-top: 4px;\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: linear-gradient(135deg, #22c55e, #a3e635);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);\n  flex-shrink: 0;\n}\n\n.login-highlight-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: #e5e7eb;\n}\n\n.login-highlight-subtitle {\n  font-size: 13px;\n  color: #9ca3af;\n}\n\n.login-environment-pill {\n  align-self: flex-start;\n  margin-top: 24px;\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 12px;\n  border-radius: 999px;\n  background: rgba(15, 23, 42, 0.9);\n  border: 1px solid rgba(148, 163, 184, 0.7);\n  font-size: 12px;\n  color: #e5e7eb;\n}\n\n.login-env-dot {\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: radial-gradient(circle at 30% 0, #22c55e 0, #16a34a 60%, #14532d 100%);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);\n}\n\n.login-card {\n  background: #f9fafb;\n  padding: 32px 32px 28px;\n  border-radius: 18px;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n}\n\n.login-header {\n  margin-bottom: 24px;\n}\n\n.login-header h1 {\n  color: #020617;\n  margin-bottom: 6px;\n  font-size: 24px;\n  font-weight: 600;\n}\n\n.login-header p {\n  color: #6b7280;\n  font-size: 14px;\n}\n\n.login-form {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n}\n\n.form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.form-group label {\n  font-size: 14px;\n  font-weight: 500;\n  color: #111827;\n}\n\n.form-input-wrapper {\n  position: relative;\n}\n\n.form-group input {\n  width: 100%;\n  padding: 11px 12px;\n  border-radius: 10px;\n  border: 1px solid #e5e7eb;\n  font-size: 14px;\n  background: #ffffff;\n  color: #111827;\n  outline: none;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background-color 0.15s ease;\n}\n\n.form-group input::placeholder {\n  color: #9ca3af;\n}\n\n.form-group input:focus {\n  border-color: #4f46e5;\n  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.65), 0 10px 18px rgba(15, 23, 42, 0.12);\n}\n\n.form-group.has-error input {\n  border-color: #f97316;\n  background-color: #fffbeb;\n}\n\n.form-group.has-error input:focus {\n  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.85), 0 10px 18px rgba(124, 45, 18, 0.25);\n}\n\n.login-form-meta {\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.checkbox-label {\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 13px;\n  color: #4b5563;\n}\n\n.checkbox-label input[type='checkbox'] {\n  width: 14px;\n  height: 14px;\n  border-radius: 4px;\n  border: 1px solid #d1d5db;\n  cursor: pointer;\n}\n\n.link-button {\n  border: none;\n  background: none;\n  padding: 0;\n  font-size: 13px;\n  color: #4f46e5;\n  cursor: pointer;\n  text-decoration: none;\n}\n\n.link-button:hover {\n  text-decoration: underline;\n}\n\n.login-button {\n  margin-top: 6px;\n  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #22c55e 120%);\n  color: white;\n  border: none;\n  padding: 12px 16px;\n  border-radius: 12px;\n  font-size: 15px;\n  font-weight: 600;\n  cursor: pointer;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  box-shadow:\n    0 12px 22px rgba(15, 23, 42, 0.35),\n    0 0 0 1px rgba(15, 23, 42, 0.75);\n  transition:\n    transform 0.12s ease,\n    box-shadow 0.12s ease,\n    filter 0.12s ease;\n}\n\n.login-button:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow:\n    0 16px 28px rgba(15, 23, 42, 0.45),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n  filter: brightness(1.03);\n}\n\n.login-button:active:not(:disabled) {\n  transform: translateY(0);\n  box-shadow:\n    0 8px 16px rgba(15, 23, 42, 0.4),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n}\n\n.login-button:disabled {\n  opacity: 0.7;\n  cursor: not-allowed;\n  filter: grayscale(0.1);\n}\n\n.error-message {\n  margin-bottom: 8px;\n  background: #fffbeb;\n  color: #92400e;\n  padding: 10px 12px;\n  border-radius: 10px;\n  border: 1px solid #fed7aa;\n  border-left-width: 4px;\n  border-left-color: #f97316;\n  font-size: 13px;\n  display: flex;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.error-message::before {\n  content: '⚠';\n  font-size: 14px;\n  line-height: 1.2;\n}\n\n.field-error {\n  font-size: 12px;\n  color: #c2410c;\n}\n\n.field-hint {\n  margin-top: 4px;\n  font-size: 12px;\n}\n\n.field-hint.warning {\n  color: #b45309;\n}\n\n.login-footer {\n  margin-top: 18px;\n  color: #6b7280;\n  font-size: 12px;\n}\n\n.login-footer p {\n  margin: 0;\n}\n\n@media (max-width: 800px) {\n  .login-shell {\n    grid-template-columns: minmax(0, 1fr);\n  }\n\n  .login-brand-panel {\n    display: none;\n  }\n\n  .login-card {\n    border-radius: 18px;\n  }\n}\n\n/* POS Styles */\n.pos-container {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n  background: #f5f7fa;\n  overflow: hidden;\n}\n\n.pos-header {\n  background: white;\n  padding: 6px 12px;\n  border-bottom: 1px solid #e1e5e9;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);\n  position: relative;\n  flex-shrink: 0;\n  gap: 12px;\n}\n\n.header-left {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  flex-shrink: 0;\n}\n\n.pos-header h1 {\n  color: #333;\n  font-size: 14px;\n  font-weight: 700;\n  margin: 0;\n  letter-spacing: -0.3px;\n}\n\n.header-center {\n  flex: 1;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 0;\n}\n\n.header-right {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  flex-shrink: 0;\n}\n\n.header-indicators {\n  display: flex;\n  gap: 6px;\n  align-items: center;\n  justify-content: center;\n}\n\n.branch-select {\n  padding: 5px 8px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 11px;\n  cursor: pointer;\n  min-width: 100px;\n}\n\n.icon-btn {\n  background: transparent;\n  border: 1px solid #e1e5e9;\n  padding: 5px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 14px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n}\n\n.icon-btn:hover {\n  background: #f8f9fa;\n  border-color: #adb5bd;\n}\n\n.icon-btn.logout-btn {\n  border-color: #dc3545;\n  color: #dc3545;\n}\n\n.icon-btn.logout-btn:hover {\n  background: #dc3545;\n  color: white;\n}\n\n.icon-btn.settings-btn:hover {\n  border-color: #667eea;\n  color: #667eea;\n}\n\n.icon-btn.theme-toggle-btn:hover {\n  border-color: #ffc107;\n}\n\n.pos-content {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n  gap: 12px;\n  padding: 12px;\n}\n\n.products-section {\n  flex: 2;\n  padding: 12px;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n}\n\n.search-bar {\n  margin-bottom: 12px;\n  display: flex;\n  gap: 8px;\n}\n\n.search-input-wrapper {\n  flex: 1;\n  position: relative;\n}\n\n.search-input {\n  width: 100%;\n  padding: 8px 12px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  font-size: 13px;\n}\n\n.search-input:focus {\n  outline: none;\n  border-color: #667eea;\n  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);\n}\n\n.category-select {\n  padding: 8px 10px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 12px;\n  cursor: pointer;\n  min-width: 140px;\n}\n\n.products-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, 140px);\n  gap: 10px;\n  overflow-y: auto;\n  flex: 1;\n  min-height: 0;\n  justify-content: start;\n}\n\n.product-card {\n  background: #f8f9fa;\n  border: 1px solid #e1e5e9;\n  border-radius: 6px;\n  padding: 8px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  transition: all 0.2s ease;\n  position: relative;\n  width: 140px;\n  height: 180px;\n  box-sizing: border-box;\n}\n\n.product-category {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  background: #667eea;\n  color: white;\n  padding: 2px 6px;\n  border-radius: 8px;\n  font-size: 9px;\n  font-weight: 600;\n  text-transform: uppercase;\n  z-index: 1;\n}\n\n.product-card:hover {\n  border-color: #667eea;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.product-image {\n  width: 100%;\n  height: 60px;\n  margin-bottom: 6px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: #e9ecef;\n  flex-shrink: 0;\n}\n\n.product-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.product-info {\n  flex: 1;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n\n.product-info h3 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 11px;\n  font-weight: 600;\n  line-height: 1.2;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  flex-shrink: 0;\n}\n\n.product-info .sku {\n  color: #666;\n  font-size: 9px;\n  margin-bottom: 2px;\n  flex-shrink: 0;\n}\n\n.product-info .barcode {\n  color: #667eea;\n  font-size: 8px;\n  margin-bottom: 2px;\n  font-weight: 500;\n  flex-shrink: 0;\n}\n\n.product-info .price {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 13px;\n  margin: 3px 0 2px 0;\n  flex-shrink: 0;\n}\n\n.product-info .stock {\n  color: #666;\n  font-size: 9px;\n  flex-shrink: 0;\n}\n\n.variations-selector {\n  margin: 4px 0;\n  flex-shrink: 0;\n}\n\n.variation-select {\n  width: 100%;\n  padding: 3px 5px;\n  border: 1px solid #e1e5e9;\n  border-radius: 3px;\n  font-size: 9px;\n  background: white;\n}\n\n.variations-hint {\n  font-size: 10px;\n  color: #666;\n  margin: 2px 0;\n}\n\n/* Variation selection modal */\n.variation-modal-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1100;\n  padding: 20px;\n}\n\n.variation-modal {\n  background: white;\n  border-radius: 10px;\n  max-width: 480px;\n  width: 100%;\n  max-height: 80vh;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);\n}\n\n.variation-modal-header {\n  padding: 16px 20px;\n  border-bottom: 1px solid #e9ecef;\n  position: relative;\n}\n\n.variation-modal-header h2 {\n  margin: 0;\n  font-size: 18px;\n  color: #333;\n}\n\n.variation-modal-product-name {\n  margin: 4px 0 0;\n  font-size: 13px;\n  color: #666;\n}\n\n.variation-modal-close {\n  position: absolute;\n  top: 12px;\n  right: 12px;\n  background: none;\n  border: none;\n  font-size: 24px;\n  color: #666;\n  cursor: pointer;\n  padding: 4px;\n  line-height: 1;\n}\n\n.variation-modal-close:hover {\n  color: #333;\n}\n\n.variation-modal-list {\n  padding: 12px;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.variation-modal-empty {\n  text-align: center;\n  padding: 24px;\n  color: #666;\n  font-size: 14px;\n}\n\n.variation-modal-empty .add-base-product-btn {\n  margin-top: 12px;\n  padding: 10px 20px;\n  background: #28a745;\n  color: white;\n  border: none;\n  border-radius: 6px;\n  font-weight: 600;\n  cursor: pointer;\n}\n\n.variation-modal-empty .add-base-product-btn:hover {\n  background: #218838;\n}\n\n.product-card-clickable {\n  cursor: pointer;\n}\n\n.product-card-clickable:hover {\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);\n}\n\n.variation-card {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 12px 16px;\n  border: 2px solid #e1e5e9;\n  border-radius: 8px;\n  background: white;\n  cursor: pointer;\n  text-align: left;\n  transition: border-color 0.2s, background 0.2s;\n}\n\n.variation-card:hover:not(:disabled) {\n  border-color: #28a745;\n  background: #f0fff4;\n}\n\n.variation-card-out-of-stock {\n  opacity: 0.6;\n  cursor: not-allowed;\n}\n\n.variation-card-main {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.variation-card-label {\n  font-weight: 600;\n  font-size: 14px;\n  color: #333;\n}\n\n.variation-card-sku {\n  font-size: 11px;\n  color: #666;\n}\n\n.variation-card-price {\n  font-weight: 700;\n  font-size: 15px;\n  color: #28a745;\n}\n\n.variation-card-stock {\n  font-size: 12px;\n  padding: 4px 8px;\n  border-radius: 4px;\n}\n\n.variation-card-stock.in-stock {\n  background: #d4edda;\n  color: #155724;\n}\n\n.variation-card-stock.out-of-stock {\n  background: #f8d7da;\n  color: #721c24;\n}\n\n.add-to-cart-btn {\n  background: #28a745;\n  color: white;\n  border: none;\n  padding: 6px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 10px;\n  margin-top: 6px;\n  transition: background-color 0.2s ease;\n  touch-action: manipulation;\n  width: 100%;\n  flex-shrink: 0;\n}\n\n.add-to-cart-btn:hover:not(:disabled) {\n  background: #218838;\n}\n\n.add-to-cart-btn:disabled {\n  background: #adb5bd;\n  cursor: not-allowed;\n}\n\n.cart-section {\n  flex: 1;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  padding: 12px;\n  min-width: 320px;\n  max-width: 400px;\n}\n\n.cart-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 12px;\n}\n\n.cart-section h2 {\n  margin: 0;\n  color: #333;\n  font-size: 14px;\n  font-weight: 600;\n}\n\n.hold-transaction-btn-header {\n  background: #ffc107;\n  color: #333;\n  border: none;\n  padding: 6px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 500;\n  font-size: 11px;\n  transition: all 0.2s ease;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n\n.hold-transaction-btn-header:hover {\n  background: #ffb300;\n  transform: translateY(-1px);\n}\n\n.cart-items {\n  flex: 1;\n  overflow-y: auto;\n  margin-bottom: 12px;\n  min-height: 0;\n}\n\n.empty-cart {\n  text-align: center;\n  color: #666;\n  font-style: italic;\n  padding: 20px 0;\n  font-size: 12px;\n}\n\n.cart-item {\n  display: flex;\n  gap: 10px;\n  padding: 10px;\n  border-bottom: 1px solid #e1e5e9;\n  background: #f8f9fa;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: all 0.2s ease;\n}\n\n.cart-item:hover {\n  background: #f0f0f0;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\n}\n\n.cart-item-image {\n  flex-shrink: 0;\n  width: 50px;\n  height: 50px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #e1e5e9;\n}\n\n.cart-item-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.cart-item-content {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n  min-width: 0;\n}\n\n.cart-item-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.item-info {\n  flex: 1;\n  min-width: 0;\n}\n\n.item-info h4 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 13px;\n  font-weight: 600;\n  line-height: 1.3;\n}\n\n.item-info .sku {\n  color: #6c757d;\n  font-size: 10px;\n  margin: 0;\n}\n\n.item-info .variation-info {\n  color: #667eea;\n  font-size: 9px;\n  margin: 2px 0 0 0;\n  font-style: italic;\n}\n\n.remove-btn {\n  background: #dc3545;\n  color: white;\n  border: none;\n  width: 22px;\n  height: 22px;\n  border-radius: 50%;\n  font-size: 16px;\n  line-height: 1;\n  transition: all 0.2s ease;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  padding: 0;\n  font-weight: bold;\n}\n\n.remove-btn:hover {\n  background: #c82333;\n  transform: scale(1.1);\n}\n\n.cart-item-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.price-info {\n  display: flex;\n  align-items: baseline;\n  gap: 4px;\n}\n\n.unit-price {\n  color: #28a745;\n  font-weight: 700;\n  font-size: 13px;\n}\n\n.unit-label {\n  color: #6c757d;\n  font-size: 9px;\n  text-transform: lowercase;\n}\n\n.quantity-section {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  align-items: center;\n}\n\n.quantity-controls {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: white;\n  border: 1px solid #dee2e6;\n  border-radius: 4px;\n  padding: 2px;\n}\n\n.quantity-btn {\n  background: transparent;\n  border: none;\n  width: 26px;\n  height: 26px;\n  border-radius: 3px;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: bold;\n  font-size: 16px;\n  color: #495057;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quantity-btn:hover {\n  background: #e9ecef;\n}\n\n.quantity-btn.decrease {\n  color: #dc3545;\n}\n\n.quantity-btn.increase {\n  color: #28a745;\n}\n\n.quantity {\n  min-width: 30px;\n  text-align: center;\n  font-weight: 700;\n  font-size: 13px;\n  color: #333;\n  padding: 0 4px;\n}\n\n.quick-quantity-buttons {\n  display: flex;\n  gap: 3px;\n  flex-wrap: wrap;\n  justify-content: center;\n}\n\n.quick-qty-btn {\n  background: white;\n  border: 1px solid #dee2e6;\n  padding: 3px 6px;\n  border-radius: 3px;\n  cursor: pointer;\n  font-size: 9px;\n  font-weight: 600;\n  color: #495057;\n  min-width: 24px;\n  min-height: 20px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quick-qty-btn:hover {\n  background: #667eea;\n  border-color: #667eea;\n  color: white;\n}\n\n.item-total {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 2px;\n  flex-shrink: 0;\n}\n\n.total-label {\n  font-size: 9px;\n  color: #6c757d;\n  text-transform: uppercase;\n  letter-spacing: 0.5px;\n}\n\n.total-amount {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 14px;\n}\n\n.cart-item:last-child {\n  border-bottom: none;\n  margin-bottom: 0;\n}\n\n.cart-summary {\n  border-top: 2px solid #e1e5e9;\n  padding-top: 10px;\n  margin-bottom: 12px;\n}\n\n.summary-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 6px;\n  font-size: 12px;\n  color: #495057;\n}\n\n.summary-row.total {\n  font-size: 14px;\n  font-weight: 700;\n  color: #333;\n  border-top: 1px solid #e1e5e9;\n  padding-top: 8px;\n  margin-top: 6px;\n}\n\n.checkout-section {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.shortcut-hint {\n  margin: 0;\n  font-size: 11px;\n  color: #6c757d;\n  text-align: center;\n}\n\n.checkout-btn {\n  width: 100%;\n  padding: 12px;\n  border: none;\n  border-radius: 4px;\n  font-size: 13px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.2s ease;\n}\n\n.checkout-btn:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.checkout-btn:active:not(:disabled) {\n  transform: translateY(0);\n}\n\n.checkout-btn:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n  transform: none;\n}\n\n.checkout-btn.proceed {\n  background: #007bff;\n  color: white;\n}\n\n.checkout-btn.proceed:hover:not(:disabled) {\n  background: #0056b3;\n}\n\n.loading {\n  text-align: center;\n  padding: 20px;\n  color: #666;\n  font-style: italic;\n  font-size: 12px;\n}\n\n/* Responsive Design */\n@media (max-width: 1200px) {\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 130px);\n  }\n  \n  .product-card {\n    width: 130px;\n    height: 170px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    flex: none;\n    height: 50vh;\n  }\n\n  .checkout-section {\n    flex-direction: column;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 120px);\n    gap: 8px;\n  }\n  \n  .product-card {\n    width: 120px;\n    height: 160px;\n  }\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -39802,6 +39966,7 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const ProductSelection_1 = __importDefault(__webpack_require__(/*! ./ProductSelection */ "./src/renderer/components/ProductSelection.tsx"));
 const Checkout_1 = __importDefault(__webpack_require__(/*! ./Checkout */ "./src/renderer/components/Checkout.tsx"));
 const Receipt_1 = __importDefault(__webpack_require__(/*! ./Receipt */ "./src/renderer/components/Receipt.tsx"));
+const PrintPreview_1 = __importDefault(__webpack_require__(Object(function webpackMissingModule() { var e = new Error("Cannot find module './PrintPreview'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())));
 const AuthContext_1 = __webpack_require__(/*! ../contexts/AuthContext */ "./src/renderer/contexts/AuthContext.tsx");
 const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
 const usePendingTransactions_1 = __webpack_require__(/*! ../hooks/usePendingTransactions */ "./src/renderer/hooks/usePendingTransactions.ts");
@@ -39815,10 +39980,35 @@ const POS = () => {
     const [products, setProducts] = (0, react_1.useState)([]);
     const [cart, setCart] = (0, react_1.useState)([]);
     const [selectedBranch, setSelectedBranch] = (0, react_1.useState)('');
+    const [branches, setBranches] = (0, react_1.useState)([]);
     const [loading, setLoading] = (0, react_1.useState)(false);
     const [currentReceipt, setCurrentReceipt] = (0, react_1.useState)(null);
     const [processingSale, setProcessingSale] = (0, react_1.useState)(false);
     const [printing, setPrinting] = (0, react_1.useState)(false);
+    // Load branches on mount and when user changes
+    (0, react_1.useEffect)(() => {
+        const loadBranches = async () => {
+            try {
+                const response = await window.electronAPI.getBranches();
+                if (response.success && response.branches) {
+                    setBranches(response.branches);
+                    // Set default branch: user's branchId or first available branch
+                    if (!selectedBranch && response.branches.length > 0) {
+                        const defaultBranchId = user?.branchId || response.branches[0]?.id;
+                        if (defaultBranchId) {
+                            setSelectedBranch(defaultBranchId);
+                        }
+                    }
+                }
+            }
+            catch (error) {
+                console.error('Failed to load branches:', error);
+            }
+        };
+        if (user) {
+            loadBranches();
+        }
+    }, [user]);
     (0, react_1.useEffect)(() => {
         loadProducts(0);
     }, [selectedBranch]);
@@ -40047,17 +40237,22 @@ const POS = () => {
             console.log('  - User branchId:', user?.branchId);
             console.log('  - User branchName:', user?.branchName);
             console.log('  - Selected branch:', selectedBranch);
+            console.log('  - Available branches:', branches.length);
             console.log('  - User object:', user);
-            // Check if branch ID is available
-            const branchId = user?.branchId || selectedBranch;
+            // Prioritize selectedBranch over user.branchId (user explicitly selected a branch)
+            // Fallback to user.branchId if no branch is selected
+            const branchId = selectedBranch || user?.branchId;
             console.log('  - Final branchId to use:', branchId);
             if (!branchId) {
-                (0, error_handler_1.handleError)(new error_handler_1.AppError('Branch ID is required to complete sale', 'VALIDATION_ERROR', {
+                const errorMessage = branches.length === 0
+                    ? 'No branches available. Please contact your administrator.'
+                    : 'Please select a branch before completing the sale.';
+                (0, error_handler_1.handleError)(new error_handler_1.AppError(errorMessage, 'VALIDATION_ERROR', {
                     operation: 'completeSale',
                     component: 'POS',
                     userId: user?.id,
                     userName: user?.name,
-                    metadata: { branchId, userBranchId: user?.branchId, selectedBranch },
+                    metadata: { branchId, userBranchId: user?.branchId, selectedBranch, branchesCount: branches.length },
                 }), {
                     operation: 'completeSale',
                     component: 'POS',
@@ -40111,36 +40306,98 @@ const POS = () => {
                 }
             }
             // Prepare sale data (include discount so backend applies it before VAT)
+            // For variation items: productId = base product, variationId = variation
+            // Ensure all numeric fields are numbers for backend validation
             const saleData = {
-                items: cart.map(item => ({
-                    productId: item.product.id,
-                    quantity: item.quantity,
-                    price: item.product.price,
-                })),
-                paymentMethod: paymentData.paymentMethod,
-                amountReceived: paymentData.amountReceived,
-                customerName: paymentData.customerName,
-                customerPhone: paymentData.customerPhone,
-                branchId: branchId,
+                items: cart.map(item => {
+                    const productPrice = item.product.price;
+                    const priceValue = (productPrice != null && !isNaN(Number(productPrice)))
+                        ? Number(productPrice)
+                        : undefined;
+                    const base = {
+                        productId: item.product.baseProductId || item.product.id,
+                        quantity: Number(item.quantity) || 1,
+                    };
+                    // Only include price if it's a valid number (price is optional in DTO)
+                    if (priceValue != null && priceValue >= 0) {
+                        base.price = priceValue;
+                    }
+                    if (item.product.variationId) {
+                        base.variationId = item.product.variationId;
+                    }
+                    return base;
+                }),
+                paymentMethod: String(paymentData.paymentMethod || 'cash'),
+                amountReceived: paymentData.amountReceived != null ? Number(paymentData.amountReceived) : undefined,
+                customerName: paymentData.customerName || undefined,
+                customerPhone: paymentData.customerPhone || undefined,
+                branchId: branchId || undefined,
                 idempotencyKey: `sale_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 ...(paymentData.discountAmount != null && paymentData.discountAmount > 0 && {
-                    discountAmount: paymentData.discountAmount,
-                }),
-                ...(paymentData.paymentMethod === 'credit' && {
-                    creditAmount: paymentData.creditAmount || getGrandTotal(),
-                    creditDueDate: paymentData.creditDueDate,
-                    creditNotes: paymentData.creditNotes,
+                    discountAmount: Number(paymentData.discountAmount),
                 }),
             };
+            // Remove undefined values to avoid sending them (backend ValidationPipe forbids non-whitelisted)
+            // Also ensure all types match backend DTO expectations
+            const cleanSaleData = {};
+            // Required fields
+            cleanSaleData.items = saleData.items;
+            cleanSaleData.paymentMethod = String(saleData.paymentMethod);
+            cleanSaleData.idempotencyKey = String(saleData.idempotencyKey);
+            // Optional fields - only include if they have values
+            if (saleData.branchId)
+                cleanSaleData.branchId = String(saleData.branchId);
+            if (saleData.customerName)
+                cleanSaleData.customerName = String(saleData.customerName);
+            if (saleData.customerPhone)
+                cleanSaleData.customerPhone = String(saleData.customerPhone);
+            if (saleData.amountReceived != null)
+                cleanSaleData.amountReceived = Number(saleData.amountReceived);
+            if (saleData.discountAmount != null && saleData.discountAmount > 0) {
+                cleanSaleData.discountAmount = Number(saleData.discountAmount);
+            }
+            // Credit-specific fields - only include if payment method is credit
+            if (paymentData.paymentMethod === 'credit') {
+                const creditAmount = paymentData.creditAmount ?? getGrandTotal();
+                if (creditAmount != null) {
+                    cleanSaleData.creditAmount = Number(creditAmount);
+                }
+                if (paymentData.creditDueDate) {
+                    // Ensure date is in ISO format (YYYY-MM-DD) for backend validation
+                    const dateStr = String(paymentData.creditDueDate);
+                    // If it's already in YYYY-MM-DD format, use it; otherwise try to parse and format
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                        cleanSaleData.creditDueDate = dateStr;
+                    }
+                    else {
+                        // Try to parse and format as ISO date string
+                        try {
+                            const date = new Date(dateStr);
+                            if (!isNaN(date.getTime())) {
+                                cleanSaleData.creditDueDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                            }
+                            else {
+                                cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+                            }
+                        }
+                        catch {
+                            cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+                        }
+                    }
+                }
+                if (paymentData.creditNotes) {
+                    cleanSaleData.creditNotes = String(paymentData.creditNotes);
+                }
+            }
             // Validate sale data integrity
-            const saleValidation = (0, validation_1.validateSaleData)(saleData);
+            const saleValidation = (0, validation_1.validateSaleData)(cleanSaleData);
             if (!saleValidation.isValid) {
                 (0, error_handler_1.handleError)(new error_handler_1.AppError(saleValidation.error || 'Sale data validation failed', 'VALIDATION_ERROR', {
                     operation: 'completeSale',
                     component: 'POS',
                     userId: user?.id,
                     userName: user?.name,
-                    metadata: { saleData },
+                    metadata: { saleData: cleanSaleData },
                 }), {
                     operation: 'completeSale',
                     component: 'POS',
@@ -40156,9 +40413,26 @@ const POS = () => {
                 paymentMethod: paymentData.paymentMethod,
                 branchId,
             }, 'medium', user?.id, user?.name);
-            console.log('Creating sale:', saleData);
+            console.log('Creating sale:', {
+                items: cleanSaleData.items.map((item) => ({
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    price: item.price,
+                    variationId: item.variationId,
+                })),
+                paymentMethod: cleanSaleData.paymentMethod,
+                branchId: cleanSaleData.branchId,
+                idempotencyKey: cleanSaleData.idempotencyKey,
+                amountReceived: cleanSaleData.amountReceived,
+                discountAmount: cleanSaleData.discountAmount,
+                customerName: cleanSaleData.customerName,
+                customerPhone: cleanSaleData.customerPhone,
+                creditAmount: cleanSaleData.creditAmount,
+                creditDueDate: cleanSaleData.creditDueDate,
+                creditNotes: cleanSaleData.creditNotes,
+            });
             // Use network operation handler with retry logic
-            const response = await (0, error_handler_1.handleNetworkOperation)(() => window.electronAPI.createSale(saleData), {
+            const response = await (0, error_handler_1.handleNetworkOperation)(() => window.electronAPI.createSale(cleanSaleData), {
                 operation: 'createSale',
                 component: 'POS',
                 userId: user?.id,
@@ -40297,6 +40571,9 @@ const POS = () => {
             setProcessingSale(false);
         }
     };
+    const handleShowPrintPreview = () => {
+        setCurrentStep('print-preview');
+    };
     const handlePrintReceipt = async () => {
         if (!currentReceipt)
             return;
@@ -40332,6 +40609,8 @@ const POS = () => {
                     totalAmount: currentReceipt.total,
                 }, 'low', user?.id, user?.name);
                 (0, Toast_1.showToast)('Receipt printed successfully!', 'success');
+                // Return to receipt view after successful print
+                setCurrentStep('receipt');
             }
             else {
                 console.error('Print failed:', response.error);
@@ -40345,6 +40624,12 @@ const POS = () => {
         finally {
             setPrinting(false);
         }
+    };
+    const handlePrintViaBrowser = () => {
+        window.print();
+    };
+    const handleBackFromPrintPreview = () => {
+        setCurrentStep('receipt');
     };
     const handleNewSale = () => {
         setCurrentStep('products');
@@ -40395,7 +40680,7 @@ const POS = () => {
         deleteTransaction(transactionId);
         (0, Toast_1.showToast)('Pending transaction deleted.', 'info');
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-app", children: [currentStep === 'products' && ((0, jsx_runtime_1.jsx)(ProductSelection_1.default, { cart: cart, onAddToCart: addToCart, onUpdateQuantity: updateQuantity, onRemoveFromCart: removeFromCart, onProceedToCheckout: handleProceedToCheckout, onHoldTransaction: handleHoldTransaction, onResumeTransaction: handleResumeTransaction, onDeletePendingTransaction: handleDeletePendingTransaction, pendingTransactions: pendingTransactions, getTotal: getTotal, getVAT: getVAT, getGrandTotal: getGrandTotal })), currentStep === 'checkout' && ((0, jsx_runtime_1.jsx)(Checkout_1.default, { cart: cart, subtotal: getTotal(), vat: getVAT(), total: getGrandTotal(), onCompleteSale: handleCompleteSale, onBackToProducts: handleBackToProducts, loading: processingSale })), currentStep === 'receipt' && ((0, jsx_runtime_1.jsx)(Receipt_1.default, { receipt: currentReceipt, onPrint: handlePrintReceipt, onNewSale: handleNewSale, printing: printing }))] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-app", children: [currentStep === 'products' && ((0, jsx_runtime_1.jsx)(ProductSelection_1.default, { cart: cart, onAddToCart: addToCart, onUpdateQuantity: updateQuantity, onRemoveFromCart: removeFromCart, onProceedToCheckout: handleProceedToCheckout, onHoldTransaction: handleHoldTransaction, onResumeTransaction: handleResumeTransaction, onDeletePendingTransaction: handleDeletePendingTransaction, pendingTransactions: pendingTransactions, getTotal: getTotal, getVAT: getVAT, getGrandTotal: getGrandTotal, branches: branches, selectedBranch: selectedBranch, onBranchChange: setSelectedBranch })), currentStep === 'checkout' && ((0, jsx_runtime_1.jsx)(Checkout_1.default, { cart: cart, subtotal: getTotal(), vat: getVAT(), total: getGrandTotal(), onCompleteSale: handleCompleteSale, onBackToProducts: handleBackToProducts, loading: processingSale })), currentStep === 'receipt' && ((0, jsx_runtime_1.jsx)(Receipt_1.default, { receipt: currentReceipt, onPrint: handleShowPrintPreview, onNewSale: handleNewSale, printing: printing })), currentStep === 'print-preview' && ((0, jsx_runtime_1.jsx)(PrintPreview_1.default, { receipt: currentReceipt, onPrint: handlePrintReceipt, onBack: handleBackFromPrintPreview, onPrintViaBrowser: handlePrintViaBrowser, printing: printing }))] }));
 };
 exports["default"] = POS;
 
@@ -40613,15 +40898,30 @@ const validation_1 = __webpack_require__(/*! ../utils/validation */ "./src/rende
 const useBarcodeScanner_1 = __webpack_require__(/*! ../hooks/useBarcodeScanner */ "./src/renderer/hooks/useBarcodeScanner.ts");
 __webpack_require__(/*! ../pending-transactions.css */ "./src/renderer/pending-transactions.css");
 __webpack_require__(/*! ../barcode-scanner.css */ "./src/renderer/barcode-scanner.css");
-const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCart, onProceedToCheckout, onHoldTransaction, onResumeTransaction, onDeletePendingTransaction, pendingTransactions = [], getTotal, getVAT, getGrandTotal }) => {
+const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCart, onProceedToCheckout, onHoldTransaction, onResumeTransaction, onDeletePendingTransaction, pendingTransactions = [], getTotal, getVAT, getGrandTotal, branches = [], selectedBranch: propSelectedBranch = '', onBranchChange }) => {
     const { logout } = (0, AuthContext_1.useAuth)();
     const { theme, toggleTheme } = (0, ThemeContext_1.useTheme)();
     const [products, setProducts] = (0, react_1.useState)([]);
     const [searchTerm, setSearchTerm] = (0, react_1.useState)('');
-    const [selectedBranch, setSelectedBranch] = (0, react_1.useState)('');
+    const [selectedBranch, setSelectedBranch] = (0, react_1.useState)(propSelectedBranch);
+    // Sync with prop when it changes
+    (0, react_1.useEffect)(() => {
+        if (propSelectedBranch !== selectedBranch) {
+            setSelectedBranch(propSelectedBranch);
+        }
+    }, [propSelectedBranch]);
+    const handleBranchChange = (branchId) => {
+        setSelectedBranch(branchId);
+        if (onBranchChange) {
+            onBranchChange(branchId);
+        }
+    };
     const [selectedCategory, setSelectedCategory] = (0, react_1.useState)('all');
     const [loading, setLoading] = (0, react_1.useState)(false);
-    const [selectedVariation, setSelectedVariation] = (0, react_1.useState)({});
+    const [showVariationModal, setShowVariationModal] = (0, react_1.useState)(false);
+    const [selectedProductForVariation, setSelectedProductForVariation] = (0, react_1.useState)(null);
+    const [modalVariations, setModalVariations] = (0, react_1.useState)([]);
+    const [loadingVariations, setLoadingVariations] = (0, react_1.useState)(false);
     const [showPrinterSettings, setShowPrinterSettings] = (0, react_1.useState)(false);
     const [scannedBarcode, setScannedBarcode] = (0, react_1.useState)(null);
     const [showBarcodeHelp, setShowBarcodeHelp] = (0, react_1.useState)(false);
@@ -40705,67 +41005,100 @@ const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCar
         const categoryMatch = selectedCategory === 'all' || product.category?.name === selectedCategory;
         return (nameMatch || skuMatch || barcodeMatch) && categoryMatch;
     });
-    const handleAddToCart = (product) => {
-        // Validate price before adding
+    const mapVariation = (v) => ({
+        id: v.id,
+        sku: v.sku,
+        price: v.price != null ? parseFloat(v.price) : null,
+        stock: parseInt(v.stock) || 0,
+        attributes: v.attributes || {},
+    });
+    const handleProductClick = async (product) => {
+        setSelectedProductForVariation(product);
+        setShowVariationModal(true);
+        // Use product.variations immediately if available (from products list with includeVariations)
+        const fromProduct = (product.variations || []).map(mapVariation);
+        if (fromProduct.length > 0) {
+            setModalVariations(fromProduct);
+            setLoadingVariations(false);
+            return;
+        }
+        setModalVariations([]);
+        setLoadingVariations(true);
+        try {
+            const res = await window.electronAPI.getProductVariations(product.id);
+            const vars = (res.variations || []).map(mapVariation);
+            setModalVariations(vars.length > 0 ? vars : fromProduct);
+            if (!res.success && res.unauthorized) {
+                (0, Toast_1.showToast)('Session expired. Please log in again to load variations.', 'warning', 4000);
+            }
+        }
+        catch {
+            // API failed - fall back to product.variations if we have them
+            setModalVariations(fromProduct);
+        }
+        finally {
+            setLoadingVariations(false);
+        }
+    };
+    const handleAddVariationToCart = (product, variation) => {
+        const variationProduct = {
+            ...product,
+            id: variation.id,
+            sku: variation.sku,
+            price: variation.price ?? product.price,
+            stock: variation.stock,
+            variationAttributes: variation.attributes,
+            baseProductId: product.id,
+            variationId: variation.id,
+        };
+        const variationPriceValidation = (0, validation_1.validatePrice)(variationProduct.price);
+        if (!variationPriceValidation.isValid) {
+            (0, Toast_1.showToast)(`Cannot add: ${variationPriceValidation.error}`, 'error');
+            return;
+        }
+        const existingCartItem = cart.find(item => item.product.id === variationProduct.id);
+        const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
+        const stockValidation = (0, validation_1.validateStock)(variationProduct, 1, currentCartQuantity);
+        if (!stockValidation.isValid) {
+            (0, Toast_1.showToast)(stockValidation.error || 'Insufficient stock', 'error');
+            return;
+        }
+        onAddToCart(variationProduct);
+        setShowVariationModal(false);
+        setSelectedProductForVariation(null);
+    };
+    const handleAddBaseProductToCart = (product) => {
         const priceValidation = (0, validation_1.validatePrice)(product.price);
         if (!priceValidation.isValid) {
             (0, Toast_1.showToast)(`Cannot add ${product.name}: ${priceValidation.error}`, 'error');
             return;
         }
-        if (product.hasVariations && product.variations && product.variations.length > 0) {
-            // If product has variations, show variation selector
-            const selectedVariationId = selectedVariation[product.id];
-            if (selectedVariationId) {
-                const variation = product.variations.find(v => v.id === selectedVariationId);
-                if (variation) {
-                    const variationProduct = {
-                        ...product,
-                        id: variation.id,
-                        sku: variation.sku,
-                        price: variation.price || product.price,
-                        stock: variation.stock,
-                        variationAttributes: variation.attributes
-                    };
-                    // Validate variation price and stock
-                    const variationPriceValidation = (0, validation_1.validatePrice)(variationProduct.price);
-                    if (!variationPriceValidation.isValid) {
-                        (0, Toast_1.showToast)(`Cannot add ${product.name}: ${variationPriceValidation.error}`, 'error');
-                        return;
-                    }
-                    const existingCartItem = cart.find(item => item.product.id === variationProduct.id);
-                    const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
-                    const stockValidation = (0, validation_1.validateStock)(variationProduct, 1, currentCartQuantity);
-                    if (!stockValidation.isValid) {
-                        (0, Toast_1.showToast)(stockValidation.error || 'Insufficient stock', 'error');
-                        return;
-                    }
-                    onAddToCart(variationProduct);
-                }
-            }
-            else {
-                // Show variation selector modal or toast
-                (0, Toast_1.showToast)('Please select a variation first', 'warning');
-            }
+        const existingCartItem = cart.find(item => item.product.id === product.id);
+        const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
+        const stockValidation = (0, validation_1.validateStock)(product, 1, currentCartQuantity);
+        if (!stockValidation.isValid) {
+            (0, Toast_1.showToast)(stockValidation.error || 'Insufficient stock', 'error');
+            return;
         }
-        else {
-            // Validate stock before adding
-            const existingCartItem = cart.find(item => item.product.id === product.id);
-            const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
-            const stockValidation = (0, validation_1.validateStock)(product, 1, currentCartQuantity);
-            if (!stockValidation.isValid) {
-                (0, Toast_1.showToast)(stockValidation.error || 'Insufficient stock', 'error');
-                return;
-            }
-            onAddToCart(product);
-        }
+        onAddToCart(product);
+        setShowVariationModal(false);
+        setSelectedProductForVariation(null);
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pos-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "header-left", children: [(0, jsx_runtime_1.jsx)("h1", { children: "POS" }), (0, jsx_runtime_1.jsx)(SyncStatus_1.default, {})] }), (0, jsx_runtime_1.jsx)("div", { className: "header-center", children: (0, jsx_runtime_1.jsxs)("div", { className: "header-indicators", children: [isScanning && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanning-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "scanning-pulse" }), (0, jsx_runtime_1.jsx)("span", { children: "Scanning..." })] })), scannedBarcode && !isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanned-indicator", children: (0, jsx_runtime_1.jsxs)("span", { children: ["\u2713 ", scannedBarcode] }) }))] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "header-right", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedBranch, onChange: (e) => setSelectedBranch(e.target.value), className: "branch-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "All Branches" }), (0, jsx_runtime_1.jsx)("option", { value: "branch1", children: "Main Branch" }), (0, jsx_runtime_1.jsx)("option", { value: "branch2", children: "Downtown Branch" })] }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn theme-toggle-btn", onClick: toggleTheme, title: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode', children: theme === 'dark' ? '☀️' : '🌙' }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn settings-btn", onClick: () => setShowPrinterSettings(!showPrinterSettings), title: "Printer Settings", children: "\u2699\uFE0F" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn logout-btn", onClick: logout, title: "Logout", children: "\uD83D\uDEAA" })] })] }), showPrinterSettings && ((0, jsx_runtime_1.jsx)("div", { className: "printer-settings-modal", children: (0, jsx_runtime_1.jsxs)("div", { className: "modal-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Printer Settings" }), (0, jsx_runtime_1.jsx)("button", { className: "close-btn", onClick: () => setShowPrinterSettings(false), children: "\u00D7" })] }), (0, jsx_runtime_1.jsx)(PrinterSettings_1.default, {})] }) })), (0, jsx_runtime_1.jsxs)("div", { className: "pos-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "products-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "search-bar", children: [(0, jsx_runtime_1.jsxs)("div", { className: "search-input-wrapper", children: [(0, jsx_runtime_1.jsx)("input", { type: "text", placeholder: "\uD83D\uDD0D Search products or scan barcode...", value: searchTerm, onChange: (e) => setSearchTerm(e.target.value), onFocus: () => {
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pos-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "header-left", children: [(0, jsx_runtime_1.jsx)("h1", { children: "POS" }), (0, jsx_runtime_1.jsx)(SyncStatus_1.default, {})] }), (0, jsx_runtime_1.jsx)("div", { className: "header-center", children: (0, jsx_runtime_1.jsxs)("div", { className: "header-indicators", children: [isScanning && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanning-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "scanning-pulse" }), (0, jsx_runtime_1.jsx)("span", { children: "Scanning..." })] })), scannedBarcode && !isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanned-indicator", children: (0, jsx_runtime_1.jsxs)("span", { children: ["\u2713 ", scannedBarcode] }) }))] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "header-right", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedBranch, onChange: (e) => handleBranchChange(e.target.value), className: "branch-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "Select Branch" }), branches.map((branch) => ((0, jsx_runtime_1.jsx)("option", { value: branch.id, children: branch.name }, branch.id)))] }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn theme-toggle-btn", onClick: toggleTheme, title: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode', children: theme === 'dark' ? '☀️' : '🌙' }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn settings-btn", onClick: () => setShowPrinterSettings(!showPrinterSettings), title: "Printer Settings", children: "\u2699\uFE0F" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn logout-btn", onClick: logout, title: "Logout", children: "\uD83D\uDEAA" })] })] }), showPrinterSettings && ((0, jsx_runtime_1.jsx)("div", { className: "printer-settings-modal", children: (0, jsx_runtime_1.jsxs)("div", { className: "modal-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Printer Settings" }), (0, jsx_runtime_1.jsx)("button", { className: "close-btn", onClick: () => setShowPrinterSettings(false), children: "\u00D7" })] }), (0, jsx_runtime_1.jsx)(PrinterSettings_1.default, {})] }) })), showVariationModal && selectedProductForVariation && ((0, jsx_runtime_1.jsx)("div", { className: "variation-modal-overlay", onClick: () => { setShowVariationModal(false); setSelectedProductForVariation(null); }, children: (0, jsx_runtime_1.jsxs)("div", { className: "variation-modal", onClick: e => e.stopPropagation(), children: [(0, jsx_runtime_1.jsxs)("div", { className: "variation-modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Select Variation" }), (0, jsx_runtime_1.jsx)("p", { className: "variation-modal-product-name", children: selectedProductForVariation.name }), (0, jsx_runtime_1.jsx)("button", { className: "variation-modal-close", onClick: () => { setShowVariationModal(false); setSelectedProductForVariation(null); }, children: "\u00D7" })] }), (0, jsx_runtime_1.jsx)("div", { className: "variation-modal-list", children: loadingVariations ? ((0, jsx_runtime_1.jsx)("p", { className: "variation-modal-empty", children: "Loading variations..." })) : modalVariations.length === 0 ? ((0, jsx_runtime_1.jsxs)("div", { className: "variation-modal-empty", children: [(0, jsx_runtime_1.jsx)("p", { children: "No variations for this product." }), (0, jsx_runtime_1.jsx)("button", { type: "button", className: "add-base-product-btn", onClick: () => selectedProductForVariation && handleAddBaseProductToCart(selectedProductForVariation), children: "Add base product to cart" })] })) : modalVariations.map(variation => {
+                                const attrsLabel = variation.attributes && typeof variation.attributes === 'object'
+                                    ? Object.entries(variation.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')
+                                    : variation.sku;
+                                const price = variation.price ?? selectedProductForVariation.price;
+                                const hasStock = variation.stock > 0;
+                                return ((0, jsx_runtime_1.jsxs)("button", { type: "button", disabled: !hasStock, className: `variation-card ${hasStock ? '' : 'variation-card-out-of-stock'}`, onClick: () => hasStock && selectedProductForVariation && handleAddVariationToCart(selectedProductForVariation, variation), children: [(0, jsx_runtime_1.jsxs)("div", { className: "variation-card-main", children: [(0, jsx_runtime_1.jsx)("span", { className: "variation-card-label", children: attrsLabel || variation.sku }), (0, jsx_runtime_1.jsxs)("span", { className: "variation-card-sku", children: ["SKU: ", variation.sku] }), (0, jsx_runtime_1.jsxs)("span", { className: "variation-card-price", children: ["$", (price ?? 0).toFixed(2)] })] }), (0, jsx_runtime_1.jsx)("span", { className: `variation-card-stock ${hasStock ? 'in-stock' : 'out-of-stock'}`, children: hasStock ? `${variation.stock} in stock` : 'Out of stock' })] }, variation.id));
+                            }) })] }) })), (0, jsx_runtime_1.jsxs)("div", { className: "pos-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "products-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "search-bar", children: [(0, jsx_runtime_1.jsxs)("div", { className: "search-input-wrapper", children: [(0, jsx_runtime_1.jsx)("input", { type: "text", placeholder: "\uD83D\uDD0D Search products or scan barcode...", value: searchTerm, onChange: (e) => setSearchTerm(e.target.value), onFocus: () => {
                                                     // Clear barcode scan when user starts typing manually
                                                     if (scannedBarcode) {
                                                         clearScan();
                                                         setScannedBarcode(null);
                                                     }
-                                                }, className: "search-input", autoFocus: false }), isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanner-icon", title: "Barcode scanner active", children: (0, jsx_runtime_1.jsx)("div", { className: "scanner-pulse-dot" }) })), !isScanning && !showBarcodeHelp && ((0, jsx_runtime_1.jsx)("button", { className: "barcode-help-toggle", onClick: () => setShowBarcodeHelp(true), title: "Show barcode scanner help", children: "\uD83D\uDCF7" }))] }), (0, jsx_runtime_1.jsx)("select", { value: selectedCategory, onChange: (e) => setSelectedCategory(e.target.value), className: "category-select", children: categories.map(category => ((0, jsx_runtime_1.jsx)("option", { value: category, children: category === 'all' ? 'All Categories' : category }, category))) })] }), showBarcodeHelp && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanner-help", children: [(0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-title", children: [(0, jsx_runtime_1.jsx)("span", { className: "scanner-icon", children: "\uD83D\uDCF7" }), (0, jsx_runtime_1.jsx)("span", { children: "Barcode Scanner Ready" })] }), (0, jsx_runtime_1.jsx)("button", { className: "barcode-help-close", onClick: () => setShowBarcodeHelp(false), title: "Hide help", children: "\u00D7" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\uD83C\uDFAF" }), (0, jsx_runtime_1.jsx)("span", { children: "Point scanner at product barcode" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Product auto-added to cart" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\uD83D\uDD0D" }), (0, jsx_runtime_1.jsx)("span", { children: "Not found? Search results shown" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\u2328\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Press ESC to cancel scanning" })] })] })] })), (0, jsx_runtime_1.jsx)("div", { className: "products-grid", children: loading ? ((0, jsx_runtime_1.jsx)("div", { className: "loading", children: "Loading products..." })) : filteredProducts.length === 0 ? ((0, jsx_runtime_1.jsx)("div", { className: "loading", children: "No products found" })) : (filteredProducts.map(product => ((0, jsx_runtime_1.jsxs)("div", { className: "product-card", children: [product.category && ((0, jsx_runtime_1.jsx)("div", { className: "product-category", children: product.category.name })), product.images && product.images.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "product-image", children: (0, jsx_runtime_1.jsx)("img", { src: product.images[0], alt: product.name || 'Product', style: { width: '100%', height: '120px', objectFit: 'cover', borderRadius: '4px' } }) })), (0, jsx_runtime_1.jsxs)("div", { className: "product-info", children: [(0, jsx_runtime_1.jsx)("h3", { children: product.name || 'Unnamed Product' }), (0, jsx_runtime_1.jsxs)("p", { className: "sku", children: ["SKU: ", product.sku || 'N/A'] }), product.barcode && ((0, jsx_runtime_1.jsxs)("p", { className: "barcode", children: ["Barcode: ", product.barcode] })), (0, jsx_runtime_1.jsxs)("p", { className: "price", children: ["$", product.price?.toFixed(2) || '0.00'] }), (0, jsx_runtime_1.jsxs)("p", { className: "stock", children: ["Stock: ", product.stock || 0] }), product.hasVariations && product.variations && product.variations.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "variations-selector", children: (0, jsx_runtime_1.jsxs)("select", { value: selectedVariation[product.id] || '', onChange: (e) => setSelectedVariation(prev => ({ ...prev, [product.id]: e.target.value })), className: "variation-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "Select Variation" }), product.variations.map(variation => ((0, jsx_runtime_1.jsxs)("option", { value: variation.id, children: [variation.sku, " - $", variation.price?.toFixed(2) || product.price.toFixed(2), " (Stock: ", variation.stock, ")"] }, variation.id)))] }) }))] }), (0, jsx_runtime_1.jsx)("button", { onClick: () => handleAddToCart(product), className: "add-to-cart-btn", disabled: (product.stock || 0) <= 0, children: "Add to Cart" })] }, product.id)))) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "cart-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "cart-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDED2 Current Sale" }), cart.length > 0 && onHoldTransaction && ((0, jsx_runtime_1.jsx)("button", { onClick: onHoldTransaction, className: "hold-transaction-btn-header", title: "Hold this transaction and start a new one", children: "\u23F8\uFE0F Hold" }))] }), (0, jsx_runtime_1.jsx)("div", { className: "cart-items", children: cart.length === 0 ? ((0, jsx_runtime_1.jsx)("p", { className: "empty-cart", children: "No items in cart" })) : (cart.map(item => ((0, jsx_runtime_1.jsxs)("div", { className: "cart-item", children: [item.product.images && item.product.images.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "cart-item-image", children: (0, jsx_runtime_1.jsx)("img", { src: item.product.images[0], alt: item.product.name || 'Product', onError: (e) => {
+                                                }, className: "search-input", autoFocus: false }), isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanner-icon", title: "Barcode scanner active", children: (0, jsx_runtime_1.jsx)("div", { className: "scanner-pulse-dot" }) })), !isScanning && !showBarcodeHelp && ((0, jsx_runtime_1.jsx)("button", { className: "barcode-help-toggle", onClick: () => setShowBarcodeHelp(true), title: "Show barcode scanner help", children: "\uD83D\uDCF7" }))] }), (0, jsx_runtime_1.jsx)("select", { value: selectedCategory, onChange: (e) => setSelectedCategory(e.target.value), className: "category-select", children: categories.map(category => ((0, jsx_runtime_1.jsx)("option", { value: category, children: category === 'all' ? 'All Categories' : category }, category))) })] }), showBarcodeHelp && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanner-help", children: [(0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-title", children: [(0, jsx_runtime_1.jsx)("span", { className: "scanner-icon", children: "\uD83D\uDCF7" }), (0, jsx_runtime_1.jsx)("span", { children: "Barcode Scanner Ready" })] }), (0, jsx_runtime_1.jsx)("button", { className: "barcode-help-close", onClick: () => setShowBarcodeHelp(false), title: "Hide help", children: "\u00D7" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "barcode-help-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\uD83C\uDFAF" }), (0, jsx_runtime_1.jsx)("span", { children: "Point scanner at product barcode" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Product auto-added to cart" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\uD83D\uDD0D" }), (0, jsx_runtime_1.jsx)("span", { children: "Not found? Search results shown" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "help-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "help-icon", children: "\u2328\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Press ESC to cancel scanning" })] })] })] })), (0, jsx_runtime_1.jsx)("div", { className: "products-grid", children: loading ? ((0, jsx_runtime_1.jsx)("div", { className: "loading", children: "Loading products..." })) : filteredProducts.length === 0 ? ((0, jsx_runtime_1.jsx)("div", { className: "loading", children: "No products found" })) : (filteredProducts.map(product => ((0, jsx_runtime_1.jsxs)("div", { className: "product-card product-card-clickable", onClick: () => handleProductClick(product), role: "button", tabIndex: 0, onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ')
+                                        handleProductClick(product); }, children: [product.category && ((0, jsx_runtime_1.jsx)("div", { className: "product-category", children: product.category.name })), product.images && product.images.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "product-image", children: (0, jsx_runtime_1.jsx)("img", { src: product.images[0], alt: product.name || 'Product', style: { width: '100%', height: '120px', objectFit: 'cover', borderRadius: '4px' } }) })), (0, jsx_runtime_1.jsxs)("div", { className: "product-info", children: [(0, jsx_runtime_1.jsx)("h3", { children: product.name || 'Unnamed Product' }), (0, jsx_runtime_1.jsxs)("p", { className: "sku", children: ["SKU: ", product.sku || 'N/A'] }), product.barcode && ((0, jsx_runtime_1.jsxs)("p", { className: "barcode", children: ["Barcode: ", product.barcode] })), (0, jsx_runtime_1.jsxs)("p", { className: "price", children: ["$", product.price?.toFixed(2) || '0.00'] }), (0, jsx_runtime_1.jsxs)("p", { className: "stock", children: ["Stock: ", product.stock || 0] }), (0, jsx_runtime_1.jsx)("p", { className: "variations-hint", children: "Tap to add to cart" })] })] }, product.id)))) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "cart-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "cart-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDED2 Current Sale" }), cart.length > 0 && onHoldTransaction && ((0, jsx_runtime_1.jsx)("button", { onClick: onHoldTransaction, className: "hold-transaction-btn-header", title: "Hold this transaction and start a new one", children: "\u23F8\uFE0F Hold" }))] }), (0, jsx_runtime_1.jsx)("div", { className: "cart-items", children: cart.length === 0 ? ((0, jsx_runtime_1.jsx)("p", { className: "empty-cart", children: "No items in cart" })) : (cart.map(item => ((0, jsx_runtime_1.jsxs)("div", { className: "cart-item", children: [item.product.images && item.product.images.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "cart-item-image", children: (0, jsx_runtime_1.jsx)("img", { src: item.product.images[0], alt: item.product.name || 'Product', onError: (e) => {
                                                     e.target.style.display = 'none';
                                                 } }) })), (0, jsx_runtime_1.jsxs)("div", { className: "cart-item-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "cart-item-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "item-info", children: [(0, jsx_runtime_1.jsx)("h4", { children: item.product.name || 'Unnamed Product' }), (0, jsx_runtime_1.jsx)("p", { className: "sku", children: item.product.sku || 'N/A' }), item.product.variationAttributes && ((0, jsx_runtime_1.jsx)("p", { className: "variation-info", children: Object.entries(item.product.variationAttributes).map(([key, value]) => `${key}: ${value}`).join(', ') }))] }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onRemoveFromCart(item.product.id), className: "remove-btn", title: "Remove from cart", children: "\u00D7" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "cart-item-footer", children: [(0, jsx_runtime_1.jsxs)("div", { className: "price-info", children: [(0, jsx_runtime_1.jsxs)("span", { className: "unit-price", children: ["$", item.product.price?.toFixed(2) || '0.00'] }), (0, jsx_runtime_1.jsx)("span", { className: "unit-label", children: "each" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "quantity-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "quantity-controls", children: [(0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, item.quantity - 1), className: "quantity-btn decrease", title: "Decrease quantity", children: "\u2212" }), (0, jsx_runtime_1.jsx)("span", { className: "quantity", children: item.quantity }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, item.quantity + 1), className: "quantity-btn increase", title: "Increase quantity", children: "+" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "quick-quantity-buttons", children: [(0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 1), className: "quick-qty-btn", title: "Set to 1", children: "1" }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 2), className: "quick-qty-btn", title: "Set to 2", children: "2" }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 5), className: "quick-qty-btn", title: "Set to 5", children: "5" }), (0, jsx_runtime_1.jsx)("button", { onClick: () => onUpdateQuantity(item.product.id, 10), className: "quick-qty-btn", title: "Set to 10", children: "10" })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "item-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Total" }), (0, jsx_runtime_1.jsxs)("span", { className: "total-amount", children: ["$", ((item.product.price || 0) * item.quantity).toFixed(2)] })] })] })] })] }, item.product.id)))) }), (0, jsx_runtime_1.jsxs)("div", { className: "cart-summary", children: [(0, jsx_runtime_1.jsxs)("div", { className: "summary-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Subtotal:" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", getTotal().toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "summary-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "VAT (16%):" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", getVAT().toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "summary-row total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total:" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", getGrandTotal().toFixed(2)] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-section", children: [(0, jsx_runtime_1.jsx)("button", { onClick: onProceedToCheckout, className: "checkout-btn proceed", disabled: cart.length === 0, title: "Proceed to Checkout (F2)", children: "Proceed to Checkout" }), (0, jsx_runtime_1.jsx)("p", { className: "shortcut-hint", children: "F2 Checkout \u00B7 Esc Back" })] }), pendingTransactions && pendingTransactions.length > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "pending-transactions-panel", children: [(0, jsx_runtime_1.jsxs)("h3", { className: "pending-header", children: ["\u23F8\uFE0F Pending Transactions (", pendingTransactions.length, ")"] }), (0, jsx_runtime_1.jsx)("div", { className: "pending-transactions-list", children: pendingTransactions.map(transaction => {
                                             const transactionTotal = transaction.cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
@@ -40785,14 +41118,71 @@ exports["default"] = ProductSelection;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 __webpack_require__(/*! ../receipt.css */ "./src/renderer/receipt.css");
 const Receipt = ({ receipt, onPrint, onNewSale, printing }) => {
+    const [businessInfo, setBusinessInfo] = (0, react_1.useState)(receipt.businessInfo);
+    (0, react_1.useEffect)(() => {
+        // Try to get business info from user data if not in receipt
+        if (!businessInfo || !businessInfo.name || businessInfo.name === 'Business Name') {
+            const fetchBusinessInfo = async () => {
+                try {
+                    const userData = await window.electronAPI.getUserData();
+                    if (userData) {
+                        const businessName = userData.tenantName || userData.businessName || userData.companyName;
+                        if (businessName) {
+                            setBusinessInfo({
+                                ...businessInfo,
+                                name: businessName,
+                                address: businessInfo?.address || userData.address,
+                                phone: businessInfo?.phone || userData.phone,
+                                email: businessInfo?.email || userData.email,
+                            });
+                        }
+                    }
+                }
+                catch (error) {
+                    console.error('Failed to fetch business info:', error);
+                }
+            };
+            fetchBusinessInfo();
+        }
+    }, [receipt]);
     if (!receipt)
         return null;
     const formatCurrency = (amount) => {
@@ -40815,7 +41205,9 @@ const Receipt = ({ receipt, onPrint, onNewSale, printing }) => {
                                     catch (error) {
                                         console.error('Failed to open cash drawer:', error);
                                     }
-                                }, className: "action-btn-top secondary-btn", title: "Open Cash Drawer", children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDCB0" }), (0, jsx_runtime_1.jsx)("span", { children: "Open Drawer" })] }), (0, jsx_runtime_1.jsx)("button", { onClick: onPrint, disabled: printing, className: "action-btn-top print-btn", children: printing ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Printing..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDDA8\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Print" })] })) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-main-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-left-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-header-card", children: [receipt.businessInfo?.receiptLogo && ((0, jsx_runtime_1.jsx)("img", { src: receipt.businessInfo.receiptLogo.startsWith('http') ? receipt.businessInfo.receiptLogo : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`, alt: "Business Logo", className: "receipt-logo", style: { maxHeight: '48px', width: 'auto', marginBottom: '8px', display: 'block' } })), (0, jsx_runtime_1.jsx)("div", { className: "business-name", children: receipt.businessInfo?.name || 'Business Name' }), receipt.businessInfo?.address && ((0, jsx_runtime_1.jsx)("div", { className: "business-address", children: receipt.businessInfo.address })), receipt.businessInfo?.phone && ((0, jsx_runtime_1.jsxs)("div", { className: "business-contact", children: ["Tel: ", receipt.businessInfo.phone] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-info-grid", children: [(0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Sale ID" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.saleId })] }), (0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Date & Time" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: formatDate(receipt.date) })] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Branch" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.branch.name })] })), receipt.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Customer" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.customerName })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-items-section", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Items Purchased" }), (0, jsx_runtime_1.jsxs)("div", { className: "items-table", children: [(0, jsx_runtime_1.jsxs)("div", { className: "items-header", children: [(0, jsx_runtime_1.jsx)("div", { className: "header-col-item", children: "Item" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-qty", children: "Qty" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-price", children: "Price" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-total", children: "Total" })] }), (0, jsx_runtime_1.jsx)("div", { className: "items-body", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "item-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "col-item", children: (0, jsx_runtime_1.jsx)("span", { className: "item-name", children: item.name }) }), (0, jsx_runtime_1.jsx)("div", { className: "col-qty", children: item.quantity }), (0, jsx_runtime_1.jsx)("div", { className: "col-price", children: formatCurrency(item.price || 0) }), (0, jsx_runtime_1.jsx)("div", { className: "col-total", children: formatCurrency((item.price || 0) * (item.quantity || 0)) })] }, index))) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-right-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "totals-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Summary" }), (0, jsx_runtime_1.jsxs)("div", { className: "totals-list", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Subtotal" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.subtotal || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "VAT (16%)" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.vatAmount || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item grand-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Total Amount" }), (0, jsx_runtime_1.jsx)("span", { className: "total-amount", children: formatCurrency(receipt.total || 0) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Payment Information" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-method-badge", "data-method": receipt.paymentMethod?.toLowerCase(), children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-icon", children: receipt.paymentMethod === 'cash' ? '💵' :
+                                }, className: "action-btn-top secondary-btn", title: "Open Cash Drawer", children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDCB0" }), (0, jsx_runtime_1.jsx)("span", { children: "Open Drawer" })] }), (0, jsx_runtime_1.jsx)("button", { onClick: onPrint, disabled: printing, className: "action-btn-top print-btn", children: printing ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Printing..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDDA8\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Print Preview" })] })) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-main-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-left-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-header-card", children: [receipt.businessInfo?.receiptLogo && ((0, jsx_runtime_1.jsx)("img", { src: receipt.businessInfo.receiptLogo.startsWith('http')
+                                            ? receipt.businessInfo.receiptLogo
+                                            : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`, alt: "Business Logo", className: "receipt-logo", style: { maxHeight: '48px', width: 'auto', marginBottom: '8px', display: 'block' } })), (0, jsx_runtime_1.jsx)("div", { className: "business-name", children: businessInfo?.name || receipt.businessInfo?.name || receipt.tenantName || receipt.businessName || 'BUSINESS NAME' }), (businessInfo?.address || receipt.businessInfo?.address) && ((0, jsx_runtime_1.jsx)("div", { className: "business-address", children: businessInfo?.address || receipt.businessInfo?.address })), (businessInfo?.phone || receipt.businessInfo?.phone) && ((0, jsx_runtime_1.jsxs)("div", { className: "business-contact", children: ["Tel: ", businessInfo?.phone || receipt.businessInfo?.phone] })), (businessInfo?.email || receipt.businessInfo?.email) && ((0, jsx_runtime_1.jsx)("div", { className: "business-email", children: businessInfo?.email || receipt.businessInfo?.email }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-info-grid", children: [(0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Sale ID" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.saleId })] }), (0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Date & Time" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: formatDate(receipt.date) })] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Branch" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.branch.name })] })), receipt.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Customer" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.customerName })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-items-section", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Items Purchased" }), (0, jsx_runtime_1.jsxs)("div", { className: "items-table", children: [(0, jsx_runtime_1.jsxs)("div", { className: "items-header", children: [(0, jsx_runtime_1.jsx)("div", { className: "header-col-item", children: "Item" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-qty", children: "Qty" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-price", children: "Price" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-total", children: "Total" })] }), (0, jsx_runtime_1.jsx)("div", { className: "items-body", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "item-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "col-item", children: (0, jsx_runtime_1.jsx)("span", { className: "item-name", children: item.name }) }), (0, jsx_runtime_1.jsx)("div", { className: "col-qty", children: item.quantity }), (0, jsx_runtime_1.jsx)("div", { className: "col-price", children: formatCurrency(item.price || 0) }), (0, jsx_runtime_1.jsx)("div", { className: "col-total", children: formatCurrency((item.price || 0) * (item.quantity || 0)) })] }, index))) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-right-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "totals-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Summary" }), (0, jsx_runtime_1.jsxs)("div", { className: "totals-list", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Subtotal" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.subtotal || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "VAT (16%)" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.vatAmount || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item grand-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Total Amount" }), (0, jsx_runtime_1.jsx)("span", { className: "total-amount", children: formatCurrency(receipt.total || 0) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Payment Information" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-method-badge", "data-method": receipt.paymentMethod?.toLowerCase(), children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-icon", children: receipt.paymentMethod === 'cash' ? '💵' :
                                                     receipt.paymentMethod === 'mpesa' ? '📱' :
                                                         receipt.paymentMethod === 'credit' ? '💳' : '💰' }), (0, jsx_runtime_1.jsx)("span", { className: "payment-text", children: receipt.paymentMethod?.toUpperCase() || 'PAYMENT' })] }), isCreditSale && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-details", children: [(0, jsx_runtime_1.jsxs)("div", { className: "credit-badge", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsx)("span", { children: "Credit Sale" })] }), receipt.creditDueDate && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-label", children: "Due Date:" }), (0, jsx_runtime_1.jsx)("span", { className: "credit-value", children: new Date(receipt.creditDueDate).toLocaleDateString('en-US', {
                                                             year: 'numeric',
@@ -41664,24 +42056,23 @@ const useBarcodeScanner = (options) => {
     const handleKeyPress = (0, react_1.useCallback)((event) => {
         if (!enabled)
             return;
-        // Ignore if user is typing in an input field
+        // Ignore if user is typing in an input field (unless it's very fast barcode scanner input)
         const target = event.target;
-        if (target.tagName === 'INPUT' ||
-            target.tagName === 'TEXTAREA' ||
-            target.isContentEditable) {
-            // Only process if it's a barcode scanner pattern (very fast input)
-            const timeSinceLastKey = Date.now() - lastKeyTimeRef.current;
-            if (timeSinceLastKey > 50) {
-                // User is typing manually, ignore
-                return;
-            }
-        }
+        const isInputField = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
         const currentTime = Date.now();
         const timeSinceLastKey = currentTime - lastKeyTimeRef.current;
+        // Barcode scanners typically send characters very quickly (< 50ms between chars)
+        // If user is typing manually in an input field and it's slow, ignore it
+        if (isInputField && timeSinceLastKey > 100 && bufferRef.current.length === 0) {
+            // User is typing manually, ignore
+            return;
+        }
         // If too much time passed since last key, reset buffer (user typing manually)
-        if (timeSinceLastKey > timeout * 2 && bufferRef.current.length > 0) {
+        // Barcode scanners send data very quickly, so if there's a long delay, it's manual typing
+        if (timeSinceLastKey > timeout * 3 && bufferRef.current.length > 0) {
             bufferRef.current = '';
             setIsScanning(false);
+            return;
         }
         // Handle Enter key (barcode scanner sends Enter at the end)
         if (event.key === 'Enter') {

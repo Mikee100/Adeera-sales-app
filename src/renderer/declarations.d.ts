@@ -2,8 +2,10 @@ interface ElectronAPI {
   authenticate: (credentials: { email: string; password: string }) => Promise<{ success: boolean; token?: string; user?: any; error?: string }>;
   getAuthToken: () => Promise<string | null>;
   getUserData: () => Promise<any | null>;
+  getBranches: () => Promise<{ success: boolean; branches?: any[]; error?: string; unauthorized?: boolean }>;
   logout: () => Promise<{ success: boolean }>;
   getProducts: () => Promise<{ success: boolean; products?: any[]; error?: string }>;
+  getProductVariations: (productId: string) => Promise<{ success: boolean; variations?: any[]; error?: string }>;
   createSale: (saleData: any) => Promise<{ success: boolean; sale?: any; receipt?: any; error?: string }>;
   getReceipt: (saleId: string) => Promise<{ success: boolean; receipt?: any; error?: string }>;
   printReceipt: (receiptData: any) => Promise<{ success: boolean; error?: string }>;

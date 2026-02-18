@@ -46099,14 +46099,20 @@ const electron_store_1 = __importDefault(__webpack_require__(/*! electron-store 
 const axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/dist/node/axios.cjs"));
 const logger_1 = __webpack_require__(/*! ../shared/logger */ "./src/shared/logger.ts");
 const printer_service_1 = __webpack_require__(/*! ./printer-service */ "./src/main/printer-service.ts");
+const config_1 = __webpack_require__(/*! ../shared/config */ "./src/shared/config.ts");
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+// Backend configuration: prefer explicit environment variables when present.
+// The shared API_BASE_URL already handles dev vs production defaults.
+const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL || config_1.API_BASE_URL;
+const BACKEND_HEALTH_URL = process.env.BACKEND_HEALTH_URL || `${BACKEND_BASE_URL.replace(/\/$/, '')}/health`;
 const createWindow = () => {
-    // Create the browser window.
+    // Create the browser window – fullscreen like games and POS systems
     mainWindow = new electron_1.BrowserWindow({
-        height: 800,
-        width: 1200,
+        fullscreen: true,
+        fullscreenable: true,
+        frame: true, // Keep title bar for close/minimize (user can press Esc to exit fullscreen)
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
@@ -46143,7 +46149,21 @@ const createWindow = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-electron_1.app.whenReady().then(createWindow);
+electron_1.app.whenReady().then(() => {
+    // Start POS at login when packaged (not in dev mode)
+    if (electron_1.app.isPackaged) {
+        try {
+            electron_1.app.setLoginItemSettings({
+                openAtLogin: true,
+                path: process.execPath,
+            });
+        }
+        catch (e) {
+            logger_1.logger.warn('Could not set login item settings', { component: 'app', errorMessage: e.message });
+        }
+    }
+    createWindow();
+});
 // Quit when all windows are closed.
 electron_1.app.on('window-all-closed', () => {
     // On OS X it is common for applications and their menu bar
@@ -46172,7 +46192,7 @@ electron_1.ipcMain.handle('authenticate', async (event, credentials) => {
     try {
         logger_1.logger.debug('Checking backend health', { component: 'auth' });
         // Use the root endpoint to check if backend is online (it's public)
-        await axios_1.default.get('http://127.0.0.1:9000/', { timeout: 5000 });
+        await axios_1.default.get(BACKEND_HEALTH_URL, { timeout: 5000 });
         online = true;
         logger_1.logger.info('Backend is online', { component: 'auth' });
     }
@@ -46184,7 +46204,7 @@ electron_1.ipcMain.handle('authenticate', async (event, credentials) => {
         // Online mode: authenticate against backend API
         try {
             logger_1.logger.debug('Sending login request to backend', { component: 'auth' });
-            const response = await axios_1.default.post('http://127.0.0.1:9000/auth/login', credentials);
+            const response = await axios_1.default.post(`${BACKEND_BASE_URL}/auth/login`, credentials);
             logger_1.logger.debug('Backend response received', { component: 'auth', status: response.status });
             if (response.data.access_token && response.data.user) {
                 logger_1.logger.info('Login successful, caching data', { component: 'auth' });
@@ -46236,11 +46256,71 @@ electron_1.ipcMain.handle('getUserData', () => {
     const store = new electron_store_1.default();
     return store.get('user', null);
 });
+electron_1.ipcMain.handle('getBranches', async () => {
+    const store = new electron_store_1.default();
+    const token = store.get('authToken');
+    if (!token) {
+        logger_1.logger.warn('No authentication token found for branches', { component: 'branches' });
+        return { success: false, branches: [], error: 'Not authenticated', unauthorized: true };
+    }
+    try {
+        // Check online status
+        let online = false;
+        try {
+            await axios_1.default.get(BACKEND_HEALTH_URL, { timeout: 5000 });
+            online = true;
+        }
+        catch {
+            online = false;
+        }
+        if (online) {
+            const response = await axios_1.default.get(`${BACKEND_BASE_URL}/branches`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                timeout: 10000,
+            });
+            const branches = Array.isArray(response.data) ? response.data : [];
+            logger_1.logger.info(`Fetched ${branches.length} branches`, { component: 'branches' });
+            // Cache branches for offline use
+            store.set('cachedBranches', branches);
+            return { success: true, branches };
+        }
+        else {
+            // Offline mode: return cached branches if available
+            const cachedBranches = store.get('cachedBranches');
+            if (cachedBranches && Array.isArray(cachedBranches)) {
+                logger_1.logger.info(`Returning ${cachedBranches.length} cached branches (offline)`, { component: 'branches' });
+                return { success: true, branches: cachedBranches };
+            }
+            return { success: false, branches: [], error: 'Backend offline and no cached branches' };
+        }
+    }
+    catch (error) {
+        const status = error.response?.status;
+        const unauthorized = status === 401 || status === 403;
+        logger_1.logger.warn('Failed to fetch branches', { component: 'branches', status, error: error.message });
+        // Try to return cached branches on error
+        const cachedBranches = store.get('cachedBranches');
+        if (cachedBranches && Array.isArray(cachedBranches)) {
+            logger_1.logger.info(`Returning ${cachedBranches.length} cached branches (error fallback)`, { component: 'branches' });
+            return { success: true, branches: cachedBranches };
+        }
+        return {
+            success: false,
+            branches: [],
+            error: error.response?.data?.message || error.message,
+            unauthorized,
+        };
+    }
+});
 electron_1.ipcMain.handle('logout', () => {
     const store = new electron_store_1.default();
     store.delete('authToken');
     store.delete('user');
     store.delete('cachedProducts'); // Clear cached products on logout
+    store.delete('cachedBranches'); // Clear cached branches on logout
     logger_1.logger.info('User logged out, cleared all cached data', { component: 'auth' });
     return { success: true };
 });
@@ -46267,7 +46347,7 @@ electron_1.ipcMain.handle('getProducts', async () => {
         // Check online status first
         let online = false;
         try {
-            await axios_1.default.get('http://127.0.0.1:9000/', { timeout: 5000 });
+            await axios_1.default.get(BACKEND_HEALTH_URL, { timeout: 5000 });
             online = true;
         }
         catch {
@@ -46276,11 +46356,13 @@ electron_1.ipcMain.handle('getProducts', async () => {
         if (online) {
             // Online mode: fetch from backend and cache
             try {
-                // Fetch products with pagination - use a high limit to get all products
-                const response = await axios_1.default.get('http://127.0.0.1:9000/products?page=1&limit=1000', {
+                // Fetch products with pagination and variations for POS (includeVariations needed for product variation selection)
+                const user = store.get('user');
+                const response = await axios_1.default.get(`${BACKEND_BASE_URL}/products?page=1&limit=1000&includeVariations=true`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
+                        ...(user?.branchId && { 'x-branch-id': user.branchId }),
                     },
                     timeout: 10000, // 10 second timeout
                 });
@@ -46304,20 +46386,34 @@ electron_1.ipcMain.handle('getProducts', async () => {
                     logger_1.logger.error('productsArray is not an array', { component: 'products', type: typeof productsArray, value: productsArray });
                     productsArray = [];
                 }
-                // Transform product data to match frontend expectations
-                const products = productsArray.map((product) => ({
-                    id: product.id,
-                    name: product.name,
-                    sku: product.sku,
-                    price: parseFloat(product.price),
-                    stock: parseInt(product.stock) || 0,
-                    description: product.description || '',
-                    cost: product.cost ? parseFloat(product.cost) : 0,
-                    supplier: product.supplier ? product.supplier.name : null,
-                    images: product.images || [],
-                    branchId: product.branchId,
-                    tenantId: product.tenantId,
-                }));
+                // Transform product data to match frontend expectations (preserve hasVariations and variations for POS)
+                const products = productsArray.map((product) => {
+                    const base = {
+                        id: product.id,
+                        name: product.name,
+                        sku: product.sku,
+                        price: parseFloat(product.price),
+                        stock: parseInt(product.stock) || 0,
+                        description: product.description || '',
+                        cost: product.cost ? parseFloat(product.cost) : 0,
+                        supplier: product.supplier ? product.supplier.name : null,
+                        images: product.images || [],
+                        branchId: product.branchId,
+                        tenantId: product.tenantId,
+                    };
+                    // Show variations when product has them, even if hasVariations flag isn't set
+                    if (product.variations && Array.isArray(product.variations) && product.variations.length > 0) {
+                        base.hasVariations = true;
+                        base.variations = product.variations.map((v) => ({
+                            id: v.id,
+                            sku: v.sku,
+                            price: v.price != null ? parseFloat(v.price) : null,
+                            stock: parseInt(v.stock) || 0,
+                            attributes: v.attributes || {},
+                        }));
+                    }
+                    return base;
+                });
                 // Cache the products locally
                 store.set('cachedProducts', products);
                 logger_1.logger.debug('Products cached successfully', { component: 'products' });
@@ -46372,6 +46468,35 @@ electron_1.ipcMain.handle('getProducts', async () => {
         return { success: false, error: errorMessage };
     }
 });
+electron_1.ipcMain.handle('getProductVariations', async (_event, productId) => {
+    const store = new electron_store_1.default();
+    const token = store.get('authToken');
+    if (!token)
+        return { success: false, variations: [], error: 'Not authenticated', unauthorized: true };
+    try {
+        const response = await axios_1.default.get(`${BACKEND_BASE_URL}/products/${productId}/variations`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'x-branch-id': store.get('user')?.branchId || '',
+            },
+            timeout: 10000,
+        });
+        const variations = Array.isArray(response.data) ? response.data : [];
+        return { success: true, variations };
+    }
+    catch (error) {
+        const status = error.response?.status;
+        const unauthorized = status === 401 || status === 403;
+        logger_1.logger.warn('Failed to fetch variations', { component: 'products', productId, status, error: error.message });
+        return {
+            success: false,
+            variations: [],
+            error: error.response?.data?.message || error.message,
+            unauthorized,
+        };
+    }
+});
 electron_1.ipcMain.handle('createSale', async (event, saleData) => {
     const store = new electron_store_1.default();
     try {
@@ -46381,11 +46506,33 @@ electron_1.ipcMain.handle('createSale', async (event, saleData) => {
             logger_1.logger.warn('No authentication token found for sale creation', { component: 'sales' });
             return { success: false, error: 'No authentication token found' };
         }
-        logger_1.logger.info('Creating sale', { component: 'sales', items: saleData.items.length, paymentMethod: saleData.paymentMethod });
+        logger_1.logger.info('Creating sale', {
+            component: 'sales',
+            items: saleData.items?.length,
+            paymentMethod: saleData.paymentMethod,
+            branchId: saleData.branchId,
+            hasIdempotencyKey: !!saleData.idempotencyKey,
+            saleDataKeys: Object.keys(saleData),
+        });
+        // Log full sale data for debugging (excluding sensitive data)
+        logger_1.logger.debug('Sale data being sent', {
+            component: 'sales',
+            items: saleData.items?.map((item) => ({
+                productId: item.productId,
+                quantity: item.quantity,
+                price: item.price,
+                hasVariationId: !!item.variationId,
+            })),
+            paymentMethod: saleData.paymentMethod,
+            branchId: saleData.branchId,
+            idempotencyKey: saleData.idempotencyKey,
+            amountReceived: saleData.amountReceived,
+            discountAmount: saleData.discountAmount,
+        });
         // Check online status
         let online = false;
         try {
-            await axios_1.default.get('http://127.0.0.1:9000/', { timeout: 5000 });
+            await axios_1.default.get(BACKEND_HEALTH_URL, { timeout: 5000 });
             online = true;
         }
         catch {
@@ -46394,7 +46541,29 @@ electron_1.ipcMain.handle('createSale', async (event, saleData) => {
         if (online) {
             // Online mode: create sale via backend API
             try {
-                const response = await axios_1.default.post('http://127.0.0.1:9000/sales', saleData, {
+                // Console log the request being sent for debugging
+                console.log('📤 Sending sale request:', {
+                    url: `${BACKEND_BASE_URL}/sales`,
+                    items: saleData.items?.map((item) => ({
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        price: item.price,
+                        variationId: item.variationId,
+                    })),
+                    paymentMethod: saleData.paymentMethod,
+                    branchId: saleData.branchId,
+                    idempotencyKey: saleData.idempotencyKey,
+                    amountReceived: saleData.amountReceived,
+                    discountAmount: saleData.discountAmount,
+                    customerName: saleData.customerName,
+                    customerPhone: saleData.customerPhone,
+                    creditAmount: saleData.creditAmount,
+                    creditDueDate: saleData.creditDueDate,
+                    creditNotes: saleData.creditNotes,
+                });
+                // Log the full JSON payload for debugging backend validation issues
+                console.log('📋 Full JSON payload:', JSON.stringify(saleData, null, 2));
+                const response = await axios_1.default.post(`${BACKEND_BASE_URL}/sales`, saleData, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
@@ -46432,15 +46601,148 @@ electron_1.ipcMain.handle('createSale', async (event, saleData) => {
                 };
             }
             catch (error) {
-                logger_1.logger.error('Error creating online sale', { component: 'sales', status: error.response?.status, error: error.response?.data || error.message });
+                // Log full error details for debugging - handle both axios errors and other errors
+                const errorResponse = error.response;
+                const errorData = errorResponse?.data;
+                const errorStatus = errorResponse?.status;
+                const errorStatusText = errorResponse?.statusText;
+                // Console log for immediate debugging (logger might not serialize objects properly)
+                console.error('❌ Sale creation error:', {
+                    status: errorStatus,
+                    statusText: errorStatusText,
+                    errorData: errorData,
+                    errorDataString: JSON.stringify(errorData, null, 2),
+                    errorMessage: error.message,
+                    errorCode: error.code,
+                    hasResponse: !!errorResponse,
+                    responseHeaders: errorResponse?.headers ? Object.fromEntries(Object.entries(errorResponse.headers)) : null,
+                    fullError: error,
+                });
+                // Try to get more details from the response
+                if (errorResponse?.data) {
+                    console.error('📋 Full error response data:', JSON.stringify(errorResponse.data, null, 2));
+                }
+                logger_1.logger.error('Error creating online sale', {
+                    component: 'sales',
+                    status: errorStatus,
+                    statusText: errorStatusText,
+                    errorData: errorData ? JSON.stringify(errorData) : null,
+                    errorMessage: error.message,
+                    errorCode: error.code,
+                    errorType: error.name,
+                    hasResponse: !!errorResponse,
+                    saleData: {
+                        itemsCount: saleData.items?.length,
+                        paymentMethod: saleData.paymentMethod,
+                        branchId: saleData.branchId,
+                        hasIdempotencyKey: !!saleData.idempotencyKey,
+                    }
+                });
                 // Handle 401 Unauthorized - token expired
-                if (error.response?.status === 401 || error.response?.status === 403) {
+                if (errorStatus === 401 || errorStatus === 403) {
                     logger_1.logger.warn('Authentication failed, clearing token', { component: 'sales' });
                     // Clear invalid token
                     store.delete('authToken');
                     return { success: false, error: 'Unauthorized - Please log in again' };
                 }
-                const errorMessage = error.response?.data?.message || error.message || 'Failed to create sale';
+                let errorMessage = 'Failed to create sale';
+                // Extract error message from various possible formats (NestJS validation errors)
+                if (errorData) {
+                    // Check for validation error array (common NestJS format)
+                    if (Array.isArray(errorData)) {
+                        errorMessage = errorData.map((err) => {
+                            if (typeof err === 'string')
+                                return err;
+                            if (err?.constraints) {
+                                return Object.values(err.constraints).join(', ');
+                            }
+                            if (err?.property && err?.constraints) {
+                                return `${err.property}: ${Object.values(err.constraints).join(', ')}`;
+                            }
+                            return JSON.stringify(err);
+                        }).join('; ');
+                    }
+                    else if (errorData.message) {
+                        if (Array.isArray(errorData.message)) {
+                            // NestJS validation errors come as array of constraint messages
+                            errorMessage = errorData.message.map((msg) => {
+                                if (typeof msg === 'string')
+                                    return msg;
+                                if (msg?.constraints) {
+                                    const property = msg.property ? `${msg.property}: ` : '';
+                                    return property + Object.values(msg.constraints).join(', ');
+                                }
+                                return JSON.stringify(msg);
+                            }).join('; ');
+                        }
+                        else {
+                            errorMessage = String(errorData.message);
+                        }
+                    }
+                    else if (errorData.error) {
+                        errorMessage = Array.isArray(errorData.error) ? errorData.error.join('; ') : String(errorData.error);
+                    }
+                    else if (typeof errorData === 'string') {
+                        errorMessage = errorData;
+                    }
+                    else {
+                        // Try to extract any useful information from the error object
+                        const errorKeys = Object.keys(errorData);
+                        if (errorKeys.length > 0) {
+                            const errorDetails = errorKeys
+                                .map(key => {
+                                const value = errorData[key];
+                                if (key === 'message' || key === 'statusCode')
+                                    return null;
+                                return `${key}: ${typeof value === 'object' ? JSON.stringify(value) : value}`;
+                            })
+                                .filter(Boolean)
+                                .join(', ');
+                            if (errorDetails) {
+                                errorMessage = `Bad Request: ${errorDetails}`;
+                            }
+                            else {
+                                errorMessage = errorStatus === 400 ? `Bad Request: ${JSON.stringify(errorData)}` : JSON.stringify(errorData);
+                            }
+                        }
+                        else {
+                            errorMessage = errorStatus === 400 ? `Bad Request: ${JSON.stringify(errorData)}` : JSON.stringify(errorData);
+                        }
+                    }
+                }
+                else if (errorStatus === 400) {
+                    // For 400 errors, provide more context about what might be wrong
+                    const requestSummary = `Items: ${saleData.items?.length || 0}, Payment: ${saleData.paymentMethod}, Branch: ${saleData.branchId ? 'set' : 'missing'}`;
+                    if (errorData && typeof errorData === 'object') {
+                        // Try to extract any additional error details
+                        const errorDetails = Object.keys(errorData)
+                            .filter(key => key !== 'message' && key !== 'statusCode')
+                            .map(key => `${key}: ${JSON.stringify(errorData[key])}`)
+                            .join(', ');
+                        errorMessage = `Bad Request: ${errorDetails || errorStatusText || 'Invalid request data'}. Request: ${requestSummary}. Note: Backend validation errors are hidden in production. Check server logs for details.`;
+                    }
+                    else {
+                        errorMessage = `Bad Request: ${errorStatusText || 'Invalid request data'}. Request: ${requestSummary}. Note: Backend validation errors are hidden in production. Check server logs for details.`;
+                    }
+                }
+                else if (error.message) {
+                    errorMessage = error.message;
+                }
+                else if (error.code) {
+                    errorMessage = `Network error: ${error.code}`;
+                }
+                logger_1.logger.error('Extracted error message', {
+                    component: 'sales',
+                    errorMessage,
+                    rawData: errorData ? JSON.stringify(errorData) : null,
+                    status: errorStatus,
+                    requestSummary: {
+                        itemsCount: saleData.items?.length,
+                        paymentMethod: saleData.paymentMethod,
+                        branchId: saleData.branchId,
+                        hasIdempotencyKey: !!saleData.idempotencyKey,
+                    }
+                });
                 return { success: false, error: errorMessage };
             }
         }
@@ -46531,7 +46833,7 @@ electron_1.ipcMain.handle('getReceipt', async (event, saleId) => {
         // Check online status
         let online = false;
         try {
-            await axios_1.default.get('http://127.0.0.1:9000/', { timeout: 5000 });
+            await axios_1.default.get(BACKEND_HEALTH_URL, { timeout: 5000 });
             online = true;
         }
         catch {
@@ -46542,7 +46844,7 @@ electron_1.ipcMain.handle('getReceipt', async (event, saleId) => {
             return { success: false, error: 'Cannot fetch receipt while offline. Please check your internet connection.' };
         }
         // Get receipt from backend API
-        const response = await axios_1.default.get(`http://127.0.0.1:9000/sales/${saleId}/receipt`, {
+        const response = await axios_1.default.get(`${BACKEND_BASE_URL}/sales/${saleId}/receipt`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
@@ -46569,7 +46871,8 @@ electron_1.ipcMain.handle('printReceipt', async (event, receiptData) => {
             logger_1.logger.info('Receipt printed successfully', { component: 'receipts', saleId: receiptData.saleId });
         }
         else {
-            logger_1.logger.error('Receipt print failed', { component: 'receipts', saleId: receiptData.saleId, error: result.error });
+            const errorMsg = result.error || 'Unknown error';
+            logger_1.logger.error('Receipt print failed', { component: 'receipts', saleId: receiptData.saleId, errorMessage: errorMsg });
         }
         return result;
     }
@@ -46587,7 +46890,8 @@ electron_1.ipcMain.handle('openCashDrawer', async () => {
             logger_1.logger.info('Cash drawer opened successfully', { component: 'cashdrawer' });
         }
         else {
-            logger_1.logger.error('Cash drawer open failed', { component: 'cashdrawer', error: result.error });
+            const errorMessage = result.error || 'Unknown error';
+            logger_1.logger.error('Cash drawer open failed', { component: 'cashdrawer', errorMessage });
         }
         return result;
     }
@@ -46697,7 +47001,7 @@ electron_1.ipcMain.handle('syncOfflineSales', async () => {
                         // Calculate timeout with exponential backoff (15s, 30s, 60s)
                         const timeout = 15000 * Math.pow(2, retryCount);
                         // Attempt to sync with backend
-                        const response = await axios_1.default.post('http://127.0.0.1:9000/sales', offlineSale.saleData, {
+                        const response = await axios_1.default.post(`${BACKEND_BASE_URL}/sales`, offlineSale.saleData, {
                             headers: {
                                 'Authorization': `Bearer ${token}`,
                                 'Content-Type': 'application/json',
@@ -46888,6 +47192,28 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.printerService = void 0;
 const logger_1 = __webpack_require__(/*! ../shared/logger */ "./src/shared/logger.ts");
 const electron_store_1 = __importDefault(__webpack_require__(/*! electron-store */ "./node_modules/electron-store/index.js"));
+// Lazy load serialport to avoid native module issues during import
+// SerialPort is excluded from webpack bundling and loaded at runtime
+let SerialPort = null;
+function loadSerialPort() {
+    if (SerialPort !== null) {
+        return SerialPort; // Already tried loading
+    }
+    try {
+        // Try to load serialport - will fail if not rebuilt for Electron
+        const serialportModule = __webpack_require__(/*! serialport */ "serialport");
+        SerialPort = serialportModule.SerialPort || serialportModule.default?.SerialPort || serialportModule;
+        logger_1.logger.info('SerialPort loaded successfully', { component: 'printer' });
+    }
+    catch (error) {
+        SerialPort = false; // Mark as failed to avoid repeated attempts
+        logger_1.logger.warn('SerialPort not available - USB printing will use file fallback', {
+            component: 'printer',
+            error: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+    return SerialPort;
+}
 class PrinterService {
     constructor() {
         this.config = null;
@@ -47045,7 +47371,7 @@ class PrinterService {
         this.addText(commands, '--------------------------------');
         commands.push(0x0A);
         // Totals
-        this.addText(commands, `Subtotal:${' '.repeat(22)}$${receiptData.subtotal.toFixed(2)}`);
+        this.addText(commands, `Subtotal:${' '.repeat(22)}Ksh ${receiptData.subtotal.toFixed(2)}`);
         commands.push(0x0A);
         this.addText(commands, `VAT (16%):${' '.repeat(21)}Ksh ${receiptData.vatAmount.toFixed(2)}`);
         commands.push(0x0A);
@@ -47059,7 +47385,7 @@ class PrinterService {
         this.addText(commands, `Payment: ${receiptData.paymentMethod.toUpperCase()}`);
         commands.push(0x0A);
         if (receiptData.amountReceived) {
-            this.addText(commands, `Received: $${receiptData.amountReceived.toFixed(2)}`);
+            this.addText(commands, `Received: Ksh ${receiptData.amountReceived.toFixed(2)}`);
             commands.push(0x0A);
         }
         if (receiptData.change !== undefined && receiptData.change > 0) {
@@ -47107,38 +47433,79 @@ class PrinterService {
     }
     async printToUSB(commands) {
         try {
-            // For USB printing, we'll use a file-based approach or require USB library
-            // This is a simplified version - in production, you'd use 'usb' package
-            // Try to use Windows COM port or Linux /dev/usb/lp* device
+            // Lazy load SerialPort
+            const SerialPortClass = loadSerialPort();
+            // Check if SerialPort is available
+            if (!SerialPortClass || SerialPortClass === false) {
+                logger_1.logger.warn('SerialPort not available, falling back to file printing', { component: 'printer' });
+                return await this.printToFile(commands, 'receipt');
+            }
             const platform = process.platform;
             let devicePath;
             if (platform === 'win32') {
-                // Windows: Try common COM ports
+                // Windows: Use COM port from config or default
                 devicePath = this.config?.path || 'COM1';
             }
             else if (platform === 'linux') {
-                // Linux: Try common USB printer paths
+                // Linux: Use USB printer path from config or common paths
                 devicePath = this.config?.path || '/dev/usb/lp0';
             }
             else if (platform === 'darwin') {
-                // macOS: Use CUPS or direct device
+                // macOS: Use CUPS or direct device path
                 devicePath = this.config?.path;
             }
             if (!devicePath) {
                 // Fallback: Save to file for manual printing
+                logger_1.logger.warn('No USB device path configured, falling back to file', { component: 'printer' });
                 return await this.printToFile(commands, 'receipt');
             }
-            // In a real implementation, you would use a USB library here
-            // For now, we'll simulate and log
-            logger_1.logger.info('Printing to USB device', { component: 'printer', devicePath });
-            // Simulate printing delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            logger_1.logger.info('Receipt printed successfully to USB', { component: 'printer' });
-            return { success: true };
+            logger_1.logger.info('Printing to USB/Serial device', { component: 'printer', devicePath });
+            // Use SerialPort for USB/Serial printing
+            return new Promise((resolve) => {
+                const port = new SerialPortClass({
+                    path: devicePath,
+                    baudRate: 9600, // Common ESC/POS baud rate
+                    autoOpen: false,
+                });
+                port.open((err) => {
+                    if (err) {
+                        logger_1.logger.error('Failed to open serial port', { component: 'printer', devicePath, error: err.message });
+                        // Fallback to file if serial port fails
+                        this.printToFile(commands, 'receipt').then(resolve);
+                        return;
+                    }
+                    logger_1.logger.info('Serial port opened successfully', { component: 'printer', devicePath });
+                    // Write commands to printer
+                    port.write(commands, (writeErr) => {
+                        if (writeErr) {
+                            logger_1.logger.error('Failed to write to serial port', { component: 'printer', error: writeErr.message });
+                            port.close();
+                            resolve({ success: false, error: `Write failed: ${writeErr.message}` });
+                            return;
+                        }
+                        // Wait a bit for the print job to complete
+                        setTimeout(() => {
+                            port.close((closeErr) => {
+                                if (closeErr) {
+                                    logger_1.logger.warn('Error closing serial port', { component: 'printer', error: closeErr.message });
+                                }
+                                logger_1.logger.info('Receipt printed successfully to USB/Serial', { component: 'printer', devicePath });
+                                resolve({ success: true });
+                            });
+                        }, 2000); // 2 second delay for print completion
+                    });
+                });
+                // Handle errors
+                port.on('error', (portErr) => {
+                    logger_1.logger.error('Serial port error', { component: 'printer', error: portErr.message });
+                    resolve({ success: false, error: `Serial port error: ${portErr.message}` });
+                });
+            });
         }
         catch (error) {
             logger_1.logger.error('USB print error', { component: 'printer', error: error.message });
-            return { success: false, error: `USB print failed: ${error.message}` };
+            // Fallback to file printing
+            return await this.printToFile(commands, 'receipt');
         }
     }
     async printToNetwork(commands) {
@@ -47196,20 +47563,183 @@ class PrinterService {
         }
     }
     async sendToUSB(command) {
-        // Similar to printToUSB but for cash drawer
-        return await this.printToUSB(command);
+        try {
+            // Lazy load SerialPort
+            const SerialPortClass = loadSerialPort();
+            // Check if SerialPort is available
+            if (!SerialPortClass || SerialPortClass === false) {
+                logger_1.logger.warn('SerialPort not available for cash drawer', { component: 'printer' });
+                return { success: false, error: 'SerialPort not available. Please rebuild native modules for Electron.' };
+            }
+            const platform = process.platform;
+            let devicePath;
+            if (platform === 'win32') {
+                devicePath = this.config?.path || 'COM1';
+            }
+            else if (platform === 'linux') {
+                devicePath = this.config?.path || '/dev/usb/lp0';
+            }
+            else if (platform === 'darwin') {
+                devicePath = this.config?.path;
+            }
+            if (!devicePath) {
+                logger_1.logger.warn('No USB device path configured for cash drawer', { component: 'printer' });
+                return { success: false, error: 'No USB device path configured' };
+            }
+            logger_1.logger.info('Opening cash drawer via USB/Serial', { component: 'printer', devicePath });
+            return new Promise((resolve) => {
+                const port = new SerialPortClass({
+                    path: devicePath,
+                    baudRate: 9600,
+                    autoOpen: false,
+                });
+                port.open((err) => {
+                    if (err) {
+                        logger_1.logger.error('Failed to open serial port for cash drawer', { component: 'printer', devicePath, error: err.message });
+                        resolve({ success: false, error: `Failed to open port: ${err.message}` });
+                        return;
+                    }
+                    // Send cash drawer command
+                    port.write(command, (writeErr) => {
+                        if (writeErr) {
+                            logger_1.logger.error('Failed to send cash drawer command', { component: 'printer', error: writeErr.message });
+                            port.close();
+                            resolve({ success: false, error: `Command failed: ${writeErr.message}` });
+                            return;
+                        }
+                        // Close port after sending command
+                        setTimeout(() => {
+                            port.close((closeErr) => {
+                                if (closeErr) {
+                                    logger_1.logger.warn('Error closing serial port after cash drawer', { component: 'printer', error: closeErr.message });
+                                }
+                                logger_1.logger.info('Cash drawer command sent successfully', { component: 'printer', devicePath });
+                                resolve({ success: true });
+                            });
+                        }, 500);
+                    });
+                });
+                port.on('error', (portErr) => {
+                    logger_1.logger.error('Serial port error during cash drawer', { component: 'printer', error: portErr.message });
+                    resolve({ success: false, error: `Serial port error: ${portErr.message}` });
+                });
+            });
+        }
+        catch (error) {
+            logger_1.logger.error('Cash drawer USB error', { component: 'printer', error: error.message });
+            return { success: false, error: `Cash drawer failed: ${error.message}` };
+        }
     }
     async sendToNetwork(command) {
         // Similar to printToNetwork but for cash drawer
         return await this.printToNetwork(command);
     }
     async listAvailablePrinters() {
-        // This would list available printers
-        // For now, return empty array - can be enhanced with platform-specific code
-        return [];
+        try {
+            const printers = [];
+            const platform = process.platform;
+            // List serial ports (USB printers) - only if SerialPort is available
+            const SerialPortClass = loadSerialPort();
+            if (SerialPortClass && SerialPortClass !== false) {
+                try {
+                    // SerialPort.list() is a static method in serialport v12
+                    const listMethod = SerialPortClass.list;
+                    if (listMethod && typeof listMethod === 'function') {
+                        const ports = await listMethod();
+                        ports.forEach((port) => {
+                            printers.push({
+                                name: port.friendlyName || port.path || 'Unknown Printer',
+                                type: 'usb',
+                                path: port.path,
+                            });
+                        });
+                    }
+                    else {
+                        logger_1.logger.warn('SerialPort.list() not available', { component: 'printer' });
+                    }
+                }
+                catch (error) {
+                    logger_1.logger.warn('Failed to list serial ports', { component: 'printer', error: error.message });
+                }
+            }
+            else {
+                logger_1.logger.info('SerialPort not available, skipping USB printer detection', { component: 'printer' });
+            }
+            // Add common COM ports on Windows if none found
+            if (platform === 'win32' && printers.length === 0) {
+                for (let i = 1; i <= 10; i++) {
+                    printers.push({
+                        name: `COM${i}`,
+                        type: 'usb',
+                        path: `COM${i}`,
+                    });
+                }
+            }
+            // Add common Linux USB printer paths if none found
+            if (platform === 'linux' && printers.length === 0) {
+                const fs = __webpack_require__(/*! fs */ "fs");
+                const commonPaths = ['/dev/usb/lp0', '/dev/usb/lp1', '/dev/usb/lp2'];
+                commonPaths.forEach((path) => {
+                    try {
+                        if (fs.existsSync(path)) {
+                            printers.push({
+                                name: path,
+                                type: 'usb',
+                                path: path,
+                            });
+                        }
+                    }
+                    catch {
+                        // Ignore errors checking paths
+                    }
+                });
+            }
+            logger_1.logger.info(`Found ${printers.length} available printers`, { component: 'printer', count: printers.length });
+            return printers;
+        }
+        catch (error) {
+            logger_1.logger.error('Error listing printers', { component: 'printer', error: error.message });
+            return [];
+        }
     }
 }
 exports.printerService = PrinterService.getInstance();
+
+
+/***/ }),
+
+/***/ "./src/shared/config.ts":
+/*!******************************!*\
+  !*** ./src/shared/config.ts ***!
+  \******************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.APP_CONFIG = exports.WS_BASE_URL = exports.API_BASE_URL = void 0;
+// Configuration constants for the POS application
+// Use localhost backend for development; override via env vars.
+// Use 127.0.0.1 instead of localhost to avoid IPv6 (::1) connection issues on Windows
+exports.API_BASE_URL = process.env.API_BASE_URL || 'http://127.0.0.1:9000';
+exports.WS_BASE_URL = process.env.WS_BASE_URL || 'ws://127.0.0.1:9000';
+exports.APP_CONFIG = {
+    name: 'SaaS POS',
+    version: '1.0.0',
+    window: {
+        minWidth: 1000,
+        minHeight: 700,
+        defaultWidth: 1400,
+        defaultHeight: 900,
+    },
+    features: {
+        offlineMode: true,
+        multiBranch: true,
+        realTimeUpdates: true,
+        receiptPrinting: true,
+        barcodeScanning: true,
+    },
+};
 
 
 /***/ }),
@@ -47538,6 +48068,17 @@ module.exports = require("os");
 
 "use strict";
 module.exports = require("path");
+
+/***/ }),
+
+/***/ "serialport":
+/*!*****************************!*\
+  !*** external "serialport" ***!
+  \*****************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("serialport");
 
 /***/ }),
 

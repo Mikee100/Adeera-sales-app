@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../receipt.css';
 
 interface ReceiptProps {
@@ -14,6 +14,34 @@ const Receipt: React.FC<ReceiptProps> = ({
   onNewSale,
   printing
 }) => {
+  const [businessInfo, setBusinessInfo] = useState<any>(receipt.businessInfo);
+
+  useEffect(() => {
+    // Try to get business info from user data if not in receipt
+    if (!businessInfo || !businessInfo.name || businessInfo.name === 'Business Name') {
+      const fetchBusinessInfo = async () => {
+        try {
+          const userData = await (window as any).electronAPI.getUserData();
+          if (userData) {
+            const businessName = userData.tenantName || userData.businessName || userData.companyName;
+            if (businessName) {
+              setBusinessInfo({
+                ...businessInfo,
+                name: businessName,
+                address: businessInfo?.address || userData.address,
+                phone: businessInfo?.phone || userData.phone,
+                email: businessInfo?.email || userData.email,
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch business info:', error);
+        }
+      };
+      fetchBusinessInfo();
+    }
+  }, [receipt]);
+
   if (!receipt) return null;
 
   const formatCurrency = (amount: number) => {
@@ -73,7 +101,7 @@ const Receipt: React.FC<ReceiptProps> = ({
             ) : (
               <>
                 <span className="btn-icon">🖨️</span>
-                <span>Print</span>
+                <span>Print Preview</span>
               </>
             )}
           </button>
@@ -88,20 +116,33 @@ const Receipt: React.FC<ReceiptProps> = ({
           <div className="receipt-header-card">
             {receipt.businessInfo?.receiptLogo && (
               <img
-                src={receipt.businessInfo.receiptLogo.startsWith('http') ? receipt.businessInfo.receiptLogo : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`}
+                src={
+                  receipt.businessInfo.receiptLogo.startsWith('http')
+                    ? receipt.businessInfo.receiptLogo
+                    : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`
+                }
                 alt="Business Logo"
                 className="receipt-logo"
                 style={{ maxHeight: '48px', width: 'auto', marginBottom: '8px', display: 'block' }}
               />
             )}
             <div className="business-name">
-              {receipt.businessInfo?.name || 'Business Name'}
+              {businessInfo?.name || receipt.businessInfo?.name || receipt.tenantName || receipt.businessName || 'BUSINESS NAME'}
             </div>
-            {receipt.businessInfo?.address && (
-              <div className="business-address">{receipt.businessInfo.address}</div>
+            {(businessInfo?.address || receipt.businessInfo?.address) && (
+              <div className="business-address">
+                {businessInfo?.address || receipt.businessInfo?.address}
+              </div>
             )}
-            {receipt.businessInfo?.phone && (
-              <div className="business-contact">Tel: {receipt.businessInfo.phone}</div>
+            {(businessInfo?.phone || receipt.businessInfo?.phone) && (
+              <div className="business-contact">
+                Tel: {businessInfo?.phone || receipt.businessInfo?.phone}
+              </div>
+            )}
+            {(businessInfo?.email || receipt.businessInfo?.email) && (
+              <div className="business-email">
+                {businessInfo?.email || receipt.businessInfo?.email}
+              </div>
             )}
           </div>
 

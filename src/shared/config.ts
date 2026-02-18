@@ -1,11 +1,11 @@
 // Configuration constants for the POS application
-export const API_BASE_URL = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:3001' // Next.js API routes
-  : 'https://your-saas-domain.com/api'; // Production API
+// Use localhost backend for development; override via env vars.
+// Use 127.0.0.1 instead of localhost to avoid IPv6 (::1) connection issues on Windows
+export const API_BASE_URL =
+  process.env.API_BASE_URL || 'http://127.0.0.1:9000';
 
-export const WS_BASE_URL = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:3001' // WebSocket connection
-  : 'wss://your-saas-domain.com'; // Production WebSocket
+export const WS_BASE_URL =
+  process.env.WS_BASE_URL || 'ws://127.0.0.1:9000';
 
 export const APP_CONFIG = {
   name: 'SaaS POS',

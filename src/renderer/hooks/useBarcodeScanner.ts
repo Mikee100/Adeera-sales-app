@@ -80,28 +80,25 @@ export const useBarcodeScanner = (options: UseBarcodeScannerOptions) => {
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     if (!enabled) return;
 
-    // Ignore if user is typing in an input field
+    // Ignore if user is typing in an input field (unless it's very fast barcode scanner input)
     const target = event.target as HTMLElement;
-    if (
-      target.tagName === 'INPUT' ||
-      target.tagName === 'TEXTAREA' ||
-      target.isContentEditable
-    ) {
-      // Only process if it's a barcode scanner pattern (very fast input)
-      const timeSinceLastKey = Date.now() - lastKeyTimeRef.current;
-      if (timeSinceLastKey > 50) {
-        // User is typing manually, ignore
-        return;
-      }
-    }
-
+    const isInputField = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
     const currentTime = Date.now();
     const timeSinceLastKey = currentTime - lastKeyTimeRef.current;
+    
+    // Barcode scanners typically send characters very quickly (< 50ms between chars)
+    // If user is typing manually in an input field and it's slow, ignore it
+    if (isInputField && timeSinceLastKey > 100 && bufferRef.current.length === 0) {
+      // User is typing manually, ignore
+      return;
+    }
 
     // If too much time passed since last key, reset buffer (user typing manually)
-    if (timeSinceLastKey > timeout * 2 && bufferRef.current.length > 0) {
+    // Barcode scanners send data very quickly, so if there's a long delay, it's manual typing
+    if (timeSinceLastKey > timeout * 3 && bufferRef.current.length > 0) {
       bufferRef.current = '';
       setIsScanning(false);
+      return;
     }
 
     // Handle Enter key (barcode scanner sends Enter at the end)
