@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
-import PrinterSettings from './PrinterSettings';
+import Settings from './Settings';
 import SyncStatus from './SyncStatus';
 import { showToast } from './Toast';
 import { PendingTransaction } from '../hooks/usePendingTransactions';
@@ -110,7 +110,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   const [selectedProductForVariation, setSelectedProductForVariation] = useState<Product | null>(null);
   const [modalVariations, setModalVariations] = useState<Array<{ id: string; sku: string; price?: number | null; stock: number; attributes?: Record<string, string> }>>([]);
   const [loadingVariations, setLoadingVariations] = useState(false);
-  const [showPrinterSettings, setShowPrinterSettings] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
   const [showBarcodeHelp, setShowBarcodeHelp] = useState(false);
 
@@ -331,8 +331,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
           </button>
           <button 
             className="icon-btn settings-btn" 
-            onClick={() => setShowPrinterSettings(!showPrinterSettings)}
-            title="Printer Settings"
+            onClick={() => setShowSettings(true)}
+            title="Settings"
           >
             ⚙️
           </button>
@@ -340,16 +340,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
         </div>
       </div>
 
-      {showPrinterSettings && (
-        <div className="printer-settings-modal">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Printer Settings</h2>
-              <button className="close-btn" onClick={() => setShowPrinterSettings(false)}>×</button>
-            </div>
-            <PrinterSettings />
-          </div>
-        </div>
+      {showSettings && (
+        <Settings onClose={() => setShowSettings(false)} />
       )}
 
       {showVariationModal && selectedProductForVariation && (

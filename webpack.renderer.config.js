@@ -26,6 +26,13 @@ module.exports = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
+      {
+        test: /\.(png|jpg|jpeg|gif|svg)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[name][ext]',
+        },
+      },
     ],
   },
   resolve: {
@@ -70,8 +77,14 @@ module.exports = {
     hot: false,
     liveReload: false,
     client: false,
-    static: {
-      directory: path.join(__dirname, 'dist'),
-    },
+    static: [
+      {
+        directory: path.join(__dirname, 'dist'),
+      },
+      {
+        directory: path.join(__dirname, 'images'),
+        publicPath: '/images',
+      },
+    ],
   },
 };

@@ -6,20 +6,32 @@ interface AuthContextType {
   login: (credentials: { email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
+  initialSyncComplete: boolean;
+  onInitialSyncComplete: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
+  onInitialSyncComplete?: () => void;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onInitialSyncComplete }) => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [user, setUser] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
+  const [initialSyncComplete, setInitialSyncComplete] = React.useState(false);
+
+  const handleInitialSyncComplete = React.useCallback(() => {
+    setInitialSyncComplete(true);
+    if (onInitialSyncComplete) {
+      onInitialSyncComplete();
+    }
+  }, [onInitialSyncComplete]);
 
   React.useEffect(() => {
+    // This will be called after initial sync completes
     // Check if user is already logged in (from local storage or previous session)
     const checkAuth = async () => {
       try {
@@ -49,8 +61,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     };
 
-    checkAuth();
-  }, []);
+    // Only check auth after initial sync is complete
+    if (initialSyncComplete) {
+      checkAuth();
+    }
+  }, [initialSyncComplete]);
 
   const login = async (credentials: { email: string; password: string }) => {
     try {
@@ -91,7 +106,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, loading }}>
+    <AuthContext.Provider value={{ 
+      isAuthenticated, 
+      user, 
+      login, 
+      logout, 
+      loading,
+      initialSyncComplete,
+      onInitialSyncComplete: handleInitialSyncComplete,
+    }}>
       {children}
     </AuthContext.Provider>
   );

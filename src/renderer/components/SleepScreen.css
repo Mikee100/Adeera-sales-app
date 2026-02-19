@@ -1,0 +1,503 @@
+/* Sleep Screen - Premium Screensaver Design */
+.sleep-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 10000;
+  animation: sleepFadeIn 0.8s ease-out;
+}
+
+@keyframes sleepFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Background Image - Image is set inline via component */
+.sleep-background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: sleepBackgroundZoom 30s ease-in-out infinite;
+  filter: brightness(0.4) blur(0.5px);
+  z-index: 1;
+}
+
+@keyframes sleepBackgroundZoom {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+/* Gradient Overlay */
+.sleep-gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.7) 0%,
+    rgba(51, 65, 85, 0.65) 50%,
+    rgba(30, 41, 59, 0.7) 100%
+  );
+  backdrop-filter: blur(2px);
+  z-index: 2;
+}
+
+/* Animated Particles/Stars */
+.sleep-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.sleep-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: sleepParticleFloat linear infinite;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+}
+
+@keyframes sleepParticleFloat {
+  0% {
+    transform: translateY(100vh) translateX(0) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(90vh) translateX(10px) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(10vh) translateX(-20px) scale(1);
+  }
+  100% {
+    transform: translateY(-10px) translateX(-30px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Floating Shapes */
+.sleep-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sleep-shape {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sleep-shape-1 {
+  width: 300px;
+  height: 300px;
+  top: 10%;
+  left: 10%;
+  animation: sleepShapeFloat1 20s ease-in-out infinite;
+}
+
+.sleep-shape-2 {
+  width: 200px;
+  height: 200px;
+  top: 60%;
+  right: 15%;
+  animation: sleepShapeFloat2 25s ease-in-out infinite;
+}
+
+.sleep-shape-3 {
+  width: 150px;
+  height: 150px;
+  bottom: 20%;
+  left: 50%;
+  animation: sleepShapeFloat3 18s ease-in-out infinite;
+}
+
+@keyframes sleepShapeFloat1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(50px, -50px) scale(1.1);
+    opacity: 0.5;
+  }
+}
+
+@keyframes sleepShapeFloat2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-40px, 40px) scale(0.9);
+    opacity: 0.5;
+  }
+}
+
+@keyframes sleepShapeFloat3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.15);
+    opacity: 0.5;
+  }
+}
+
+/* Content Wrapper */
+.sleep-content-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 700px;
+  padding: 40px;
+  animation: sleepContentFadeIn 1s ease-out;
+}
+
+@keyframes sleepContentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Main Content */
+.sleep-content {
+  background: transparent;
+  padding: 80px 60px;
+  position: relative;
+}
+
+/* Logo Container */
+.sleep-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+.sleep-logo-circle {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sleep-logo-icon {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
+  animation: sleepLogoFloat 4s ease-in-out infinite;
+}
+
+@keyframes sleepLogoFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+.sleep-logo-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+  animation: sleepLogoGlow 3s ease-in-out infinite;
+}
+
+@keyframes sleepLogoGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
+/* Time Container */
+.sleep-time-container {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.sleep-time-main {
+  font-size: 96px;
+  font-weight: 300;
+  color: white;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sleep-time-part {
+  background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: sleepTimePulse 2s ease-in-out infinite;
+}
+
+.sleep-time-part:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.sleep-time-part:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.sleep-time-part:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+@keyframes sleepTimePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+.sleep-time-separator {
+  color: rgba(255, 255, 255, 0.4);
+  animation: sleepSeparatorBlink 1s ease-in-out infinite;
+}
+
+@keyframes sleepSeparatorBlink {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.sleep-date {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
+}
+
+/* Wake Message */
+.sleep-wake-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: sleepWakeMessagePulse 3s ease-in-out infinite;
+}
+
+@keyframes sleepWakeMessagePulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+.sleep-wake-icon {
+  opacity: 0.6;
+  animation: sleepWakeIconFloat 2s ease-in-out infinite;
+}
+
+@keyframes sleepWakeIconFloat {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-5px);
+    opacity: 0.8;
+  }
+}
+
+.sleep-wake-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* Pulse Rings */
+.sleep-pulse-rings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+}
+
+.sleep-pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.sleep-pulse-ring.ring-1 {
+  animation: sleepPulseRing1 3s ease-out infinite;
+}
+
+.sleep-pulse-ring.ring-2 {
+  animation: sleepPulseRing2 3s ease-out infinite;
+  animation-delay: 1s;
+}
+
+.sleep-pulse-ring.ring-3 {
+  animation: sleepPulseRing3 3s ease-out infinite;
+  animation-delay: 2s;
+}
+
+@keyframes sleepPulseRing1 {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes sleepPulseRing2 {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes sleepPulseRing3 {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sleep-content-wrapper {
+    padding: 20px;
+  }
+
+  .sleep-content {
+    padding: 60px 40px;
+    border-radius: 24px;
+  }
+
+  .sleep-time-main {
+    font-size: 64px;
+  }
+
+  .sleep-date {
+    font-size: 16px;
+  }
+
+  .sleep-logo-circle {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sleep-content {
+    padding: 50px 30px;
+  }
+
+  .sleep-time-main {
+    font-size: 48px;
+    gap: 4px;
+  }
+
+  .sleep-date {
+    font-size: 14px;
+  }
+
+  .sleep-logo-circle {
+    width: 100px;
+    height: 100px;
+  }
+
+  .sleep-wake-text {
+    font-size: 12px;
+  }
+}

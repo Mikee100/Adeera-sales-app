@@ -32,6 +32,16 @@ interface CheckoutProps {
   loading: boolean;
 }
 
+interface SplitPayment {
+  method: 'cash' | 'mpesa' | 'credit';
+  amount: number;
+  amountReceived?: number; // For cash payments
+  mpesaTransactionId?: string; // For M-Pesa payments
+  mpesaReceipt?: string; // For M-Pesa payments
+  creditDueDate?: string; // For credit payments
+  creditNotes?: string; // For credit payments
+}
+
 interface PaymentData {
   paymentMethod: 'cash' | 'mpesa' | 'credit';
   amountReceived?: number;
@@ -42,6 +52,10 @@ interface PaymentData {
   creditNotes?: string;
   /** Fixed discount amount applied to subtotal (before VAT). */
   discountAmount?: number;
+  /** Split payments - multiple payment methods */
+  splitPayments?: SplitPayment[];
+  /** Whether this is a split payment */
+  isSplitPayment?: boolean;
 }
 
 const Checkout: React.FC<CheckoutProps> = ({
@@ -72,6 +86,10 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [discountAmount, setDiscountAmount] = useState<number>(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [success, setSuccess] = useState(false);
+  
+  // Split payment state
+  const [isSplitPayment, setIsSplitPayment] = useState(false);
+  const [splitPayments, setSplitPayments] = useState<SplitPayment[]>([]);
 
   // Computed totals after discount (discount applied to subtotal, then VAT on remainder)
   const subtotalAfterDiscount = Math.max(0, subtotal - discountAmount);
@@ -97,23 +115,53 @@ const Checkout: React.FC<CheckoutProps> = ({
       newErrors.discountAmount = `Discount must be between 0 and ${subtotal.toFixed(2)}`;
     }
 
-    // Validate payment amount (against total after discount)
-    if (paymentMethod === 'cash') {
-      const received = parseFloat(amountReceived);
-      if (!amountReceived || isNaN(received)) {
-        newErrors.amountReceived = 'Please enter a valid amount';
+    // Validate split payments
+    if (isSplitPayment) {
+      if (splitPayments.length === 0) {
+        newErrors.splitPayments = 'Please add at least one payment method';
       } else {
-        const paymentValidation = validatePaymentAmount(received, totalAfterDiscount, paymentMethod);
-        if (!paymentValidation.isValid) {
-          newErrors.amountReceived = paymentValidation.error || `Amount must be at least $${totalAfterDiscount.toFixed(2)}`;
+        const totalSplitAmount = splitPayments.reduce((sum, payment) => sum + payment.amount, 0);
+        const difference = Math.abs(totalSplitAmount - totalAfterDiscount);
+        
+        if (difference > 0.01) { // Allow small rounding differences
+          newErrors.splitPayments = `Split payments total (Ksh ${totalSplitAmount.toFixed(2)}) must equal total (Ksh ${totalAfterDiscount.toFixed(2)})`;
+        }
+
+        // Validate each split payment
+        splitPayments.forEach((payment, index) => {
+          if (payment.amount <= 0) {
+            newErrors[`splitPayment_${index}_amount`] = 'Payment amount must be greater than 0';
+          }
+          
+          if (payment.method === 'cash' && (!payment.amountReceived || payment.amountReceived < payment.amount)) {
+            newErrors[`splitPayment_${index}_cash`] = `Cash received must be at least Ksh ${payment.amount.toFixed(2)}`;
+          }
+          
+          if (payment.method === 'credit' && !customerName?.trim()) {
+            newErrors.customerName = 'Customer name is required for credit payments';
+          }
+        });
+      }
+    } else {
+      // Validate single payment method
+      // Validate payment amount (against total after discount)
+      if (paymentMethod === 'cash') {
+        const received = parseFloat(amountReceived);
+        if (!amountReceived || isNaN(received)) {
+          newErrors.amountReceived = 'Please enter a valid amount';
+        } else {
+          const paymentValidation = validatePaymentAmount(received, totalAfterDiscount, paymentMethod);
+          if (!paymentValidation.isValid) {
+            newErrors.amountReceived = paymentValidation.error || `Amount must be at least Ksh ${totalAfterDiscount.toFixed(2)}`;
+          }
         }
       }
-    }
 
-    // Validate credit payment - customer name is required
-    if (paymentMethod === 'credit') {
-      if (!customerName || customerName.trim().length === 0) {
-        newErrors.customerName = 'Customer name is required for credit sales';
+      // Validate credit payment - customer name is required
+      if (paymentMethod === 'credit') {
+        if (!customerName || customerName.trim().length === 0) {
+          newErrors.customerName = 'Customer name is required for credit sales';
+        }
       }
     }
 
@@ -141,6 +189,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           {
             errors: newErrors,
             paymentMethod,
+            isSplitPayment,
             totalAmount: totalAfterDiscount,
           },
           'medium',
@@ -162,28 +211,77 @@ const Checkout: React.FC<CheckoutProps> = ({
     }
 
     const paymentData: PaymentData = {
-      paymentMethod,
+      paymentMethod: isSplitPayment ? 'split' : paymentMethod,
       customerName: customerName.trim() || undefined,
       customerPhone: customerPhone.trim() || undefined,
       ...(discountAmount > 0 && { discountAmount }),
+      isSplitPayment,
     };
 
-    if (paymentMethod === 'cash') {
-      paymentData.amountReceived = parseFloat(amountReceived);
-    }
-
-    if (paymentMethod === 'credit') {
-      paymentData.creditAmount = totalAfterDiscount;
-      if (creditDueDate) {
-        paymentData.creditDueDate = creditDueDate;
+    if (isSplitPayment) {
+      // For split payments, use the split payments array
+      paymentData.splitPayments = splitPayments;
+      // Set primary payment method to the first split payment method for backward compatibility
+      paymentData.paymentMethod = splitPayments[0]?.method || 'cash';
+    } else {
+      // Single payment method
+      if (paymentMethod === 'cash') {
+        paymentData.amountReceived = parseFloat(amountReceived);
       }
-      if (creditNotes) {
-        paymentData.creditNotes = creditNotes.trim();
+
+      if (paymentMethod === 'credit') {
+        paymentData.creditAmount = totalAfterDiscount;
+        if (creditDueDate) {
+          paymentData.creditDueDate = creditDueDate;
+        }
+        if (creditNotes) {
+          paymentData.creditNotes = creditNotes.trim();
+        }
       }
     }
 
     onCompleteSale(paymentData);
     setSuccess(true);
+  };
+
+  // Split payment handlers
+  const handleToggleSplitPayment = () => {
+    setIsSplitPayment(!isSplitPayment);
+    if (!isSplitPayment) {
+      // Initialize with one payment method
+      setSplitPayments([{
+        method: 'cash',
+        amount: totalAfterDiscount,
+        amountReceived: totalAfterDiscount,
+      }]);
+    } else {
+      // Clear split payments when disabling
+      setSplitPayments([]);
+    }
+  };
+
+  const handleAddSplitPayment = () => {
+    const remaining = totalAfterDiscount - splitPayments.reduce((sum, p) => sum + p.amount, 0);
+    setSplitPayments([...splitPayments, {
+      method: 'cash',
+      amount: Math.max(0, remaining),
+      amountReceived: Math.max(0, remaining),
+    }]);
+  };
+
+  const handleRemoveSplitPayment = (index: number) => {
+    setSplitPayments(splitPayments.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateSplitPayment = (index: number, updates: Partial<SplitPayment>) => {
+    const updated = [...splitPayments];
+    updated[index] = { ...updated[index], ...updates };
+    setSplitPayments(updated);
+  };
+
+  const getRemainingAmount = () => {
+    const totalSplit = splitPayments.reduce((sum, p) => sum + p.amount, 0);
+    return totalAfterDiscount - totalSplit;
   };
 
   const change = paymentMethod === 'cash' && amountReceived
@@ -279,9 +377,18 @@ const Checkout: React.FC<CheckoutProps> = ({
           <div className="checkout-card payment-card">
             <div className="card-header">
               <h2>💰 Payment Method</h2>
+              <label className="split-payment-toggle">
+                <input
+                  type="checkbox"
+                  checked={isSplitPayment}
+                  onChange={handleToggleSplitPayment}
+                />
+                <span>Split Payment</span>
+              </label>
             </div>
 
-            <div className="payment-options">
+            {!isSplitPayment ? (
+              <div className="payment-options">
               <label className={`payment-option ${paymentMethod === 'cash' ? 'selected' : ''}`}>
                 <input
                   type="radio"
@@ -339,6 +446,156 @@ const Checkout: React.FC<CheckoutProps> = ({
                 </div>
               </label>
             </div>
+            ) : (
+              <div className="split-payment-section">
+                <div className="split-payment-header">
+                  <p className="split-payment-info">
+                    Split the payment across multiple methods. Total must equal <strong>Ksh {totalAfterDiscount.toFixed(2)}</strong>
+                  </p>
+                  {errors.splitPayments && (
+                    <span className="error-message">{errors.splitPayments}</span>
+                  )}
+                  <div className="remaining-amount">
+                    Remaining: <strong className={getRemainingAmount() < 0 ? 'error' : getRemainingAmount() > 0.01 ? 'warning' : 'success'}>
+                      Ksh {getRemainingAmount().toFixed(2)}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="split-payments-list">
+                  {splitPayments.map((payment, index) => (
+                    <div key={index} className="split-payment-item">
+                      <div className="split-payment-row">
+                        <div className="split-payment-method">
+                          <select
+                            value={payment.method}
+                            onChange={(e) => handleUpdateSplitPayment(index, { 
+                              method: e.target.value as 'cash' | 'mpesa' | 'credit',
+                              amountReceived: e.target.value === 'cash' ? payment.amount : undefined,
+                            })}
+                            className="split-method-select"
+                          >
+                            <option value="cash">Cash</option>
+                            <option value="mpesa">M-Pesa</option>
+                            <option value="credit">Credit</option>
+                          </select>
+                        </div>
+                        <div className="split-payment-amount">
+                          <label>Amount</label>
+                          <div className="input-wrapper">
+                            <span className="currency-symbol">Ksh</span>
+                            <input
+                              type="number"
+                              step="0.01"
+                              min={0}
+                              max={totalAfterDiscount}
+                              value={payment.amount || ''}
+                              onChange={(e) => {
+                                const amount = parseFloat(e.target.value) || 0;
+                                handleUpdateSplitPayment(index, { 
+                                  amount,
+                                  amountReceived: payment.method === 'cash' ? amount : payment.amountReceived,
+                                });
+                              }}
+                              className={`currency-input ${errors[`splitPayment_${index}_amount`] ? 'error' : ''}`}
+                              placeholder="0.00"
+                            />
+                          </div>
+                          {errors[`splitPayment_${index}_amount`] && (
+                            <span className="error-text">{errors[`splitPayment_${index}_amount`]}</span>
+                          )}
+                        </div>
+                        {splitPayments.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSplitPayment(index)}
+                            className="remove-split-btn"
+                            title="Remove payment method"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Cash-specific fields */}
+                      {payment.method === 'cash' && (
+                        <div className="split-payment-details">
+                          <label>Cash Received</label>
+                          <div className="input-wrapper">
+                            <span className="currency-symbol">Ksh</span>
+                            <input
+                              type="number"
+                              step="0.01"
+                              min={payment.amount}
+                              value={payment.amountReceived || ''}
+                              onChange={(e) => handleUpdateSplitPayment(index, { 
+                                amountReceived: parseFloat(e.target.value) || payment.amount 
+                              })}
+                              className={`currency-input ${errors[`splitPayment_${index}_cash`] ? 'error' : ''}`}
+                              placeholder={payment.amount.toFixed(2)}
+                            />
+                          </div>
+                          {errors[`splitPayment_${index}_cash`] && (
+                            <span className="error-text">{errors[`splitPayment_${index}_cash`]}</span>
+                          )}
+                          {payment.amountReceived && payment.amountReceived > payment.amount && (
+                            <div className="change-display-small">
+                              Change: Ksh {(payment.amountReceived - payment.amount).toFixed(2)}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* M-Pesa-specific fields */}
+                      {payment.method === 'mpesa' && (
+                        <div className="split-payment-details">
+                          <label>M-Pesa Transaction ID (Optional)</label>
+                          <input
+                            type="text"
+                            value={payment.mpesaTransactionId || ''}
+                            onChange={(e) => handleUpdateSplitPayment(index, { mpesaTransactionId: e.target.value })}
+                            className="text-input"
+                            placeholder="e.g., QHX123456789"
+                          />
+                        </div>
+                      )}
+
+                      {/* Credit-specific fields */}
+                      {payment.method === 'credit' && (
+                        <div className="split-payment-details">
+                          <label>Due Date (Optional)</label>
+                          <input
+                            type="date"
+                            value={payment.creditDueDate || ''}
+                            onChange={(e) => handleUpdateSplitPayment(index, { creditDueDate: e.target.value })}
+                            className="text-input"
+                            min={new Date().toISOString().split('T')[0]}
+                          />
+                          <label>Notes (Optional)</label>
+                          <textarea
+                            value={payment.creditNotes || ''}
+                            onChange={(e) => handleUpdateSplitPayment(index, { creditNotes: e.target.value })}
+                            className="text-input"
+                            placeholder="Add notes about this credit payment..."
+                            rows={2}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {getRemainingAmount() > 0.01 && (
+                  <button
+                    type="button"
+                    onClick={handleAddSplitPayment}
+                    className="add-split-payment-btn"
+                  >
+                    + Add Payment Method
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* Cash Payment Details */}
             {paymentMethod === 'cash' && (
@@ -416,7 +673,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                     onChange={(e) => setCreditNotes(e.target.value)}
                     placeholder="Add any notes about this credit sale..."
                     className="text-input"
-                    rows={3}
+                    rows={2}
                   />
                 </div>
               </div>

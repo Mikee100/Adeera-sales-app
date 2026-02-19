@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './SyncStatus.css';
 import { showToast } from './Toast';
 import { handleError, handleNetworkOperation, AppError } from '../utils/error-handler';
+import { useSyncProgress } from '../hooks/useSyncProgress';
 
 interface SyncStatusData {
   online: boolean;
@@ -16,6 +17,7 @@ const SyncStatus: React.FC = () => {
   const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasAutoSyncedRef = useRef(false);
   const lastPendingCountRef = useRef(0);
+  const { startSync } = useSyncProgress();
 
   const handleSyncNow = useCallback(async (isAutoSync: boolean = false) => {
     // Get current status to check conditions
@@ -25,6 +27,12 @@ const SyncStatus: React.FC = () => {
     }
 
     setIsSyncing(true);
+    
+    // Start sync with progress screen
+    if (!isAutoSync) {
+      startSync();
+    }
+    
     try {
       const response = await handleNetworkOperation(
         () => window.electronAPI.syncOfflineSales(),
@@ -172,6 +180,10 @@ const SyncStatus: React.FC = () => {
                   pendingCount: response.pendingSyncs
                 });
                 hasAutoSyncedRef.current = true;
+                // For auto-sync, also show the sync screen if there are many pending items
+                if (response.pendingSyncs > 3) {
+                  startSync();
+                }
                 handleSyncNow(true);
               }
             }, 1500);
@@ -245,7 +257,7 @@ const SyncStatus: React.FC = () => {
         clearTimeout(autoSyncTimeoutRef.current);
       }
     };
-  }, [handleSyncNow, updateSyncStatus, isSyncing]); // Include dependencies
+  }, [handleSyncNow, updateSyncStatus, isSyncing, startSync]); // Include dependencies
 
   const formatLastSync = (lastSync?: string) => {
     if (!lastSync) return 'Never';

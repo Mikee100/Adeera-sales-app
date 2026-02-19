@@ -341,12 +341,15 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
+___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles - Compact Layout */
 .checkout-page {
-  min-height: 100vh;
+  height: 100vh;
   background: #f5f7fa;
-  padding: 12px;
+  padding: 8px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* Progress Indicator */
@@ -405,16 +408,17 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .success-message {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(40, 167, 69, 0.3);
   animation: slideIn 0.3s ease-out;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
+  flex-shrink: 0;
 }
 
 .success-icon {
@@ -494,43 +498,70 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .checkout-main {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .checkout-left {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .checkout-right {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .checkout-card {
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.order-summary-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.customer-card {
+  flex-shrink: 0;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px;
+  padding: 8px 12px;
   background: #f8f9fa;
   border-bottom: 1px solid #e9ecef;
+  flex-shrink: 0;
 }
 
 .card-header h2 {
   margin: 0;
   color: #333;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -544,16 +575,17 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 }
 
 .order-items {
-  padding: 12px 14px;
-  max-height: 200px;
+  padding: 8px 12px;
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
 }
 
 .order-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 6px 0;
   border-bottom: 1px solid #f1f3f4;
 }
 
@@ -562,15 +594,16 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 }
 
 .item-details h4 {
-  margin: 0 0 3px 0;
+  margin: 0 0 2px 0;
   color: #333;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
+  line-height: 1.3;
 }
 
 .item-sku {
   color: #6c757d;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .item-meta {
@@ -580,35 +613,36 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .item-quantity {
   display: block;
   color: #6c757d;
-  font-size: 11px;
-  margin-bottom: 3px;
+  font-size: 10px;
+  margin-bottom: 2px;
 }
 
 .item-price {
   color: #333;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .order-totals {
-  padding: 12px 14px;
+  padding: 8px 12px;
   background: #f8f9fa;
   border-top: 1px solid #e9ecef;
+  flex-shrink: 0;
 }
 
 .total-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 0;
-  font-size: 12px;
+  padding: 3px 0;
+  font-size: 11px;
 }
 
 .total-row.grand-total {
   border-top: 2px solid #dee2e6;
-  padding-top: 8px;
-  margin-top: 6px;
-  font-size: 14px;
+  padding-top: 6px;
+  margin-top: 4px;
+  font-size: 13px;
   font-weight: 700;
   color: #333;
 }
@@ -616,7 +650,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .total-amount {
   color: #28a745;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .total-row.discount-row .discount-amount {
@@ -625,9 +659,10 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 }
 
 .discount-input-section {
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-top: 1px solid #e9ecef;
   background: #fff;
+  flex-shrink: 0;
 }
 
 .discount-input-section .error-text {
@@ -638,16 +673,19 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 }
 
 .payment-options {
-  padding: 12px 14px;
+  padding: 8px 12px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .payment-option {
   display: block;
   background: white;
   border: 2px solid #e9ecef;
-  border-radius: 6px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
+  border-radius: 5px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
@@ -673,12 +711,12 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .payment-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .payment-icon {
-  font-size: 18px;
-  width: 32px;
+  font-size: 16px;
+  width: 28px;
   text-align: center;
   flex-shrink: 0;
 }
@@ -703,13 +741,15 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   display: block;
   font-weight: 600;
   color: #333;
-  margin-bottom: 2px;
-  font-size: 13px;
+  margin-bottom: 1px;
+  font-size: 12px;
+  line-height: 1.2;
 }
 
 .payment-desc {
   color: #6c757d;
-  font-size: 11px;
+  font-size: 10px;
+  line-height: 1.2;
 }
 
 .payment-check {
@@ -720,24 +760,26 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 }
 
 .cash-payment-section {
-  padding: 12px 14px;
+  padding: 8px 12px;
   border-top: 1px solid #e9ecef;
+  flex-shrink: 0;
 }
 
 .credit-payment-section {
-  padding: 12px 14px;
+  padding: 8px 12px;
   border-top: 1px solid #e9ecef;
+  flex-shrink: 0;
 }
 
 .credit-info-banner {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 6px;
   background: #fff3cd;
   border: 1px solid #ffc107;
-  border-radius: 6px;
-  padding: 8px 10px;
-  margin-bottom: 12px;
+  border-radius: 5px;
+  padding: 6px 8px;
+  margin-bottom: 8px;
 }
 
 .info-icon {
@@ -752,34 +794,38 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .info-text strong {
   display: block;
   color: #856404;
-  font-size: 12px;
-  margin-bottom: 3px;
+  font-size: 11px;
+  margin-bottom: 2px;
   font-weight: 600;
 }
 
 .info-text p {
   margin: 0;
   color: #856404;
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.3;
 }
 
 .input-group {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.input-group:last-child {
+  margin-bottom: 0;
 }
 
 .input-label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 6px;
-  font-size: 12px;
+  margin-bottom: 4px;
+  font-size: 11px;
 }
 
 .label-icon {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .input-wrapper {
@@ -788,20 +834,21 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 
 .currency-symbol {
   position: absolute;
-  left: 12px;
+  left: 10px;
   top: 50%;
   transform: translateY(-50%);
   color: #6c757d;
   font-weight: 600;
   z-index: 1;
+  font-size: 11px;
 }
 
 .currency-input {
   width: 100%;
-  padding: 8px 10px 8px 28px;
-  border: 2px solid #e9ecef;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 6px 8px 6px 26px;
+  border: 1.5px solid #e9ecef;
+  border-radius: 5px;
+  font-size: 13px;
   font-weight: 600;
   color: #333;
   background: white;
@@ -822,19 +869,19 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 .input-hint {
   display: block;
   color: #6c757d;
-  font-size: 10px;
-  margin-top: 3px;
+  font-size: 9px;
+  margin-top: 2px;
 }
 
 .change-display {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: #d4edda;
   border: 1px solid #c3e6cb;
-  border-radius: 6px;
-  padding: 8px 10px;
-  margin-top: 8px;
+  border-radius: 5px;
+  padding: 6px 8px;
+  margin-top: 6px;
 }
 
 .change-icon {
@@ -851,13 +898,13 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   display: block;
   color: #155724;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .change-amount {
   color: #155724;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .customer-card .card-header {
@@ -884,18 +931,30 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 }
 
 .customer-form {
-  padding: 12px 14px;
+  padding: 8px 12px;
 }
 
 .text-input {
   width: 100%;
-  padding: 8px 10px;
-  border: 2px solid #e9ecef;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 6px 8px;
+  border: 1.5px solid #e9ecef;
+  border-radius: 5px;
+  font-size: 12px;
   color: #333;
   background: white;
   transition: border-color 0.2s ease;
+  font-family: inherit;
+}
+
+.text-input[type="date"] {
+  padding: 6px 8px;
+}
+
+textarea.text-input {
+  resize: vertical;
+  min-height: 45px;
+  max-height: 70px;
+  line-height: 1.4;
 }
 
 .text-input:focus {
@@ -916,33 +975,39 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
 /* Error Message Styles */
 .error-message {
   color: #dc3545;
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 10px;
+  margin-top: 3px;
   display: block;
+}
+
+.error-text {
+  font-size: 10px;
 }
 
 .checkout-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: flex-end;
-  padding: 12px 14px;
+  padding: 8px 12px;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+  margin-top: auto;
 }
 
 .secondary-btn {
   background: #6c757d;
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
+  padding: 8px 14px;
+  border-radius: 5px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 11px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   transition: background-color 0.2s ease;
 }
 
@@ -959,16 +1024,16 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
+  padding: 8px 14px;
+  border-radius: 5px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 11px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+  box-shadow: 0 1px 3px rgba(40, 167, 69, 0.2);
 }
 
 .primary-btn:hover:not(:disabled) {
@@ -1001,8 +1066,44 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
   100% { transform: rotate(360deg); }
 }
 
+/* Scrollbar styling for compact lists */
+.order-items::-webkit-scrollbar,
+.payment-options::-webkit-scrollbar,
+.split-payments-list::-webkit-scrollbar,
+.split-payment-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.order-items::-webkit-scrollbar-track,
+.payment-options::-webkit-scrollbar-track,
+.split-payments-list::-webkit-scrollbar-track,
+.split-payment-section::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.order-items::-webkit-scrollbar-thumb,
+.payment-options::-webkit-scrollbar-thumb,
+.split-payments-list::-webkit-scrollbar-thumb,
+.split-payment-section::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.order-items::-webkit-scrollbar-thumb:hover,
+.payment-options::-webkit-scrollbar-thumb:hover,
+.split-payments-list::-webkit-scrollbar-thumb:hover,
+.split-payment-section::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+  .checkout-page {
+    height: auto;
+    min-height: 100vh;
+  }
+  
   .checkout-main {
     grid-template-columns: 1fr;
   }
@@ -1047,7 +1148,2312 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles */
     justify-content: center;
   }
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/checkout.css"],"names":[],"mappings":"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","sourcesContent":["/* Enhanced Checkout Page Styles */\r\n.checkout-page {\r\n  min-height: 100vh;\r\n  background: #f5f7fa;\r\n  padding: 12px;\r\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\r\n}\r\n\r\n/* Progress Indicator */\r\n.progress-indicator {\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  gap: 40px;\r\n  margin-bottom: 20px;\r\n  padding: 16px;\r\n  background: #f8f9fa;\r\n  border-radius: 8px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.progress-step {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  gap: 8px;\r\n  opacity: 0.5;\r\n  transition: opacity 0.3s ease;\r\n}\r\n\r\n.progress-step.active {\r\n  opacity: 1;\r\n}\r\n\r\n.step-number {\r\n  width: 32px;\r\n  height: 32px;\r\n  border-radius: 50%;\r\n  background: #6c757d;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  color: white;\r\n  border: 2px solid #6c757d;\r\n  font-size: 14px;\r\n}\r\n\r\n.progress-step.active .step-number {\r\n  background: #007bff;\r\n  border-color: #007bff;\r\n}\r\n\r\n.step-label {\r\n  font-size: 12px;\r\n  color: #495057;\r\n  font-weight: 500;\r\n  text-align: center;\r\n}\r\n\r\n/* Success Message */\r\n.success-message {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  padding: 6px 12px;\r\n  border-radius: 6px;\r\n  margin-bottom: 12px;\r\n  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);\r\n  animation: slideIn 0.3s ease-out;\r\n  font-size: 12px;\r\n  font-weight: 500;\r\n}\r\n\r\n.success-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n@keyframes slideIn {\r\n  from {\r\n    transform: translateY(-20px);\r\n    opacity: 0;\r\n  }\r\n  to {\r\n    transform: translateY(0);\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.checkout-header {\r\n  background: white;\r\n  border-radius: 12px;\r\n  padding: 20px;\r\n  margin-bottom: 20px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.header-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\r\n}\r\n\r\n.back-button {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #dee2e6;\r\n  border-radius: 8px;\r\n  padding: 12px 16px;\r\n  color: #495057;\r\n  text-decoration: none;\r\n  font-weight: 500;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.back-button:hover:not(:disabled) {\r\n  background: #e9ecef;\r\n  border-color: #adb5bd;\r\n}\r\n\r\n.back-button:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.back-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.checkout-title {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n}\r\n\r\n.title-icon {\r\n  font-size: 24px;\r\n}\r\n\r\n.checkout-title h1 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 24px;\r\n  font-weight: 600;\r\n}\r\n\r\n.checkout-main {\r\n  display: grid;\r\n  grid-template-columns: 1fr 1fr;\r\n  gap: 12px;\r\n  max-width: 1200px;\r\n  margin: 0 auto;\r\n}\r\n\r\n.checkout-left {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 12px;\r\n}\r\n\r\n.checkout-right {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 12px;\r\n}\r\n\r\n.checkout-card {\r\n  background: white;\r\n  border-radius: 8px;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);\r\n  overflow: hidden;\r\n}\r\n\r\n.card-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 12px 14px;\r\n  background: #f8f9fa;\r\n  border-bottom: 1px solid #e9ecef;\r\n}\r\n\r\n.card-header h2 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n}\r\n\r\n.item-count {\r\n  background: #007bff;\r\n  color: white;\r\n  padding: 3px 6px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 600;\r\n}\r\n\r\n.order-items {\r\n  padding: 12px 14px;\r\n  max-height: 200px;\r\n  overflow-y: auto;\r\n}\r\n\r\n.order-item {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 8px 0;\r\n  border-bottom: 1px solid #f1f3f4;\r\n}\r\n\r\n.order-item:last-child {\r\n  border-bottom: none;\r\n}\r\n\r\n.item-details h4 {\r\n  margin: 0 0 3px 0;\r\n  color: #333;\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n}\r\n\r\n.item-sku {\r\n  color: #6c757d;\r\n  font-size: 11px;\r\n}\r\n\r\n.item-meta {\r\n  text-align: right;\r\n}\r\n\r\n.item-quantity {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 11px;\r\n  margin-bottom: 3px;\r\n}\r\n\r\n.item-price {\r\n  color: #333;\r\n  font-weight: 600;\r\n  font-size: 13px;\r\n}\r\n\r\n.order-totals {\r\n  padding: 12px 14px;\r\n  background: #f8f9fa;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.total-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 5px 0;\r\n  font-size: 12px;\r\n}\r\n\r\n.total-row.grand-total {\r\n  border-top: 2px solid #dee2e6;\r\n  padding-top: 8px;\r\n  margin-top: 6px;\r\n  font-size: 14px;\r\n  font-weight: 700;\r\n  color: #333;\r\n}\r\n\r\n.total-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n  font-size: 15px;\r\n}\r\n\r\n.total-row.discount-row .discount-amount {\r\n  color: #dc3545;\r\n  font-weight: 600;\r\n}\r\n\r\n.discount-input-section {\r\n  padding: 10px 14px;\r\n  border-top: 1px solid #e9ecef;\r\n  background: #fff;\r\n}\r\n\r\n.discount-input-section .error-text {\r\n  display: block;\r\n  font-size: 11px;\r\n  color: #dc3545;\r\n  margin-top: 4px;\r\n}\r\n\r\n.payment-options {\r\n  padding: 12px 14px;\r\n}\r\n\r\n.payment-option {\r\n  display: block;\r\n  background: white;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 6px;\r\n  padding: 10px 12px;\r\n  margin-bottom: 8px;\r\n  cursor: pointer;\r\n  transition: all 0.2s ease;\r\n  position: relative;\r\n}\r\n\r\n.payment-option:hover {\r\n  border-color: #007bff;\r\n  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.payment-option.selected {\r\n  border-color: #007bff;\r\n  background: #f8f9ff;\r\n}\r\n\r\n.payment-option input[type=\"radio\"] {\r\n  position: absolute;\r\n  opacity: 0;\r\n  width: 0;\r\n  height: 0;\r\n}\r\n\r\n.payment-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 10px;\r\n}\r\n\r\n.payment-icon {\r\n  font-size: 18px;\r\n  width: 32px;\r\n  text-align: center;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.cash-icon {\r\n  color: #28a745;\r\n}\r\n\r\n.mpesa-icon {\r\n  color: #007bff;\r\n}\r\n\r\n.credit-icon {\r\n  color: #ff9800;\r\n}\r\n\r\n.payment-info {\r\n  flex: 1;\r\n}\r\n\r\n.payment-name {\r\n  display: block;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 2px;\r\n  font-size: 13px;\r\n}\r\n\r\n.payment-desc {\r\n  color: #6c757d;\r\n  font-size: 11px;\r\n}\r\n\r\n.payment-check {\r\n  color: #007bff;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.cash-payment-section {\r\n  padding: 12px 14px;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.credit-payment-section {\r\n  padding: 12px 14px;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.credit-info-banner {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 8px;\r\n  background: #fff3cd;\r\n  border: 1px solid #ffc107;\r\n  border-radius: 6px;\r\n  padding: 8px 10px;\r\n  margin-bottom: 12px;\r\n}\r\n\r\n.info-icon {\r\n  font-size: 16px;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.info-text {\r\n  flex: 1;\r\n}\r\n\r\n.info-text strong {\r\n  display: block;\r\n  color: #856404;\r\n  font-size: 12px;\r\n  margin-bottom: 3px;\r\n  font-weight: 600;\r\n}\r\n\r\n.info-text p {\r\n  margin: 0;\r\n  color: #856404;\r\n  font-size: 11px;\r\n  line-height: 1.3;\r\n}\r\n\r\n.input-group {\r\n  margin-bottom: 12px;\r\n}\r\n\r\n.input-label {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 6px;\r\n  font-size: 12px;\r\n}\r\n\r\n.label-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n.input-wrapper {\r\n  position: relative;\r\n}\r\n\r\n.currency-symbol {\r\n  position: absolute;\r\n  left: 12px;\r\n  top: 50%;\r\n  transform: translateY(-50%);\r\n  color: #6c757d;\r\n  font-weight: 600;\r\n  z-index: 1;\r\n}\r\n\r\n.currency-input {\r\n  width: 100%;\r\n  padding: 8px 10px 8px 28px;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 6px;\r\n  font-size: 14px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.currency-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.currency-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.input-hint {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n  margin-top: 3px;\r\n}\r\n\r\n.change-display {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: #d4edda;\r\n  border: 1px solid #c3e6cb;\r\n  border-radius: 6px;\r\n  padding: 8px 10px;\r\n  margin-top: 8px;\r\n}\r\n\r\n.change-icon {\r\n  font-size: 16px;\r\n  color: #155724;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.change-info {\r\n  flex: 1;\r\n}\r\n\r\n.change-label {\r\n  display: block;\r\n  color: #155724;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n}\r\n\r\n.change-amount {\r\n  color: #155724;\r\n  font-weight: 700;\r\n  font-size: 13px;\r\n}\r\n\r\n.customer-card .card-header {\r\n  position: relative;\r\n}\r\n\r\n.optional-badge {\r\n  background: #17a2b8;\r\n  color: white;\r\n  padding: 2px 8px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 500;\r\n  text-transform: uppercase;\r\n}\r\n\r\n.required-badge {\r\n  background: #dc3545;\r\n}\r\n\r\n.required-indicator {\r\n  color: #dc3545;\r\n  margin-left: 4px;\r\n}\r\n\r\n.customer-form {\r\n  padding: 12px 14px;\r\n}\r\n\r\n.text-input {\r\n  width: 100%;\r\n  padding: 8px 10px;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 6px;\r\n  font-size: 13px;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.text-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.text-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.text-input::placeholder {\r\n  color: #adb5bd;\r\n}\r\n\r\n/* Error Message Styles */\r\n.error-message {\r\n  color: #dc3545;\r\n  font-size: 12px;\r\n  margin-top: 4px;\r\n  display: block;\r\n}\r\n\r\n.checkout-actions {\r\n  display: flex;\r\n  gap: 10px;\r\n  justify-content: flex-end;\r\n  padding: 12px 14px;\r\n  background: white;\r\n  border-radius: 8px;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);\r\n}\r\n\r\n.secondary-btn {\r\n  background: #6c757d;\r\n  color: white;\r\n  border: none;\r\n  padding: 10px 18px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  transition: background-color 0.2s ease;\r\n}\r\n\r\n.secondary-btn:hover:not(:disabled) {\r\n  background: #5a6268;\r\n}\r\n\r\n.secondary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.primary-btn {\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  border: none;\r\n  padding: 10px 18px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  transition: all 0.2s ease;\r\n  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);\r\n}\r\n\r\n.primary-btn:hover:not(:disabled) {\r\n  background: linear-gradient(135deg, #218838 0%, #1aa085 100%);\r\n  transform: translateY(-1px);\r\n  box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);\r\n}\r\n\r\n.primary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n  transform: none;\r\n}\r\n\r\n.btn-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 16px;\r\n  height: 16px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 1s linear infinite;\r\n}\r\n\r\n@keyframes spin {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n/* Responsive Design */\r\n@media (max-width: 768px) {\r\n  .checkout-main {\r\n    grid-template-columns: 1fr;\r\n  }\r\n\r\n  .checkout-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .header-content {\r\n    flex-direction: column;\r\n    gap: 16px;\r\n    text-align: center;\r\n  }\r\n\r\n  .checkout-title h1 {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .checkout-card {\r\n    margin-bottom: 16px;\r\n  }\r\n\r\n  .card-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .order-items,\r\n  .payment-options,\r\n  .cash-payment-section,\r\n  .customer-form,\r\n  .checkout-actions {\r\n    padding: 16px;\r\n  }\r\n\r\n  .checkout-actions {\r\n    flex-direction: column;\r\n  }\r\n\r\n  .secondary-btn,\r\n  .primary-btn {\r\n    width: 100%;\r\n    justify-content: center;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
+
+/* Split Payment Styles */
+.split-payment-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  color: #495057;
+  user-select: none;
+}
+
+.split-payment-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+.split-payment-section {
+  padding: 8px 12px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.split-payment-header {
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  border: 1px solid #e9ecef;
+  flex-shrink: 0;
+}
+
+.split-payment-info {
+  margin: 0 0 6px 0;
+  font-size: 11px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.split-payment-info strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+.remaining-amount {
+  margin-top: 6px;
+  padding: 6px 8px;
+  background: white;
+  border-radius: 5px;
+  font-size: 11px;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.remaining-amount strong.success {
+  color: #059669;
+}
+
+.remaining-amount strong.warning {
+  color: #d97706;
+}
+
+.remaining-amount strong.error {
+  color: #dc2626;
+}
+
+.split-payments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.split-payment-item {
+  padding: 16px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.split-payment-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.split-payment-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.split-payment-method {
+  flex: 0 0 140px;
+}
+
+.split-method-select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 5px;
+  font-size: 12px;
+  background: white;
+  color: #111827;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.split-method-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.split-payment-amount {
+  flex: 1;
+}
+
+.split-payment-amount label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.split-payment-details {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.split-payment-details label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+  margin-top: 12px;
+}
+
+.split-payment-details label:first-child {
+  margin-top: 0;
+}
+
+.remove-split-btn {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  margin-top: 20px;
+}
+
+.remove-split-btn:hover {
+  background: #fecaca;
+  border-color: #f87171;
+  transform: scale(1.05);
+}
+
+.remove-split-btn:active {
+  transform: scale(0.95);
+}
+
+.add-split-payment-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1.5px dashed #d1d5db;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.add-split-payment-btn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+  color: #111827;
+}
+
+.change-display-small {
+  margin-top: 4px;
+  padding: 4px 6px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #1e40af;
+  font-weight: 500;
+}
+`, "",{"version":3,"sources":["webpack://./src/renderer/checkout.css"],"names":[],"mappings":"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","sourcesContent":["/* Enhanced Checkout Page Styles - Compact Layout */\r\n.checkout-page {\r\n  height: 100vh;\r\n  background: #f5f7fa;\r\n  padding: 8px;\r\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\r\n  display: flex;\r\n  flex-direction: column;\r\n  overflow: hidden;\r\n}\r\n\r\n/* Progress Indicator */\r\n.progress-indicator {\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  gap: 40px;\r\n  margin-bottom: 20px;\r\n  padding: 16px;\r\n  background: #f8f9fa;\r\n  border-radius: 8px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.progress-step {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  gap: 8px;\r\n  opacity: 0.5;\r\n  transition: opacity 0.3s ease;\r\n}\r\n\r\n.progress-step.active {\r\n  opacity: 1;\r\n}\r\n\r\n.step-number {\r\n  width: 32px;\r\n  height: 32px;\r\n  border-radius: 50%;\r\n  background: #6c757d;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  color: white;\r\n  border: 2px solid #6c757d;\r\n  font-size: 14px;\r\n}\r\n\r\n.progress-step.active .step-number {\r\n  background: #007bff;\r\n  border-color: #007bff;\r\n}\r\n\r\n.step-label {\r\n  font-size: 12px;\r\n  color: #495057;\r\n  font-weight: 500;\r\n  text-align: center;\r\n}\r\n\r\n/* Success Message */\r\n.success-message {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  padding: 4px 10px;\r\n  border-radius: 5px;\r\n  margin-bottom: 8px;\r\n  box-shadow: 0 1px 3px rgba(40, 167, 69, 0.3);\r\n  animation: slideIn 0.3s ease-out;\r\n  font-size: 11px;\r\n  font-weight: 500;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.success-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n@keyframes slideIn {\r\n  from {\r\n    transform: translateY(-20px);\r\n    opacity: 0;\r\n  }\r\n  to {\r\n    transform: translateY(0);\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.checkout-header {\r\n  background: white;\r\n  border-radius: 12px;\r\n  padding: 20px;\r\n  margin-bottom: 20px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.header-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\r\n}\r\n\r\n.back-button {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #dee2e6;\r\n  border-radius: 8px;\r\n  padding: 12px 16px;\r\n  color: #495057;\r\n  text-decoration: none;\r\n  font-weight: 500;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.back-button:hover:not(:disabled) {\r\n  background: #e9ecef;\r\n  border-color: #adb5bd;\r\n}\r\n\r\n.back-button:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.back-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.checkout-title {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n}\r\n\r\n.title-icon {\r\n  font-size: 24px;\r\n}\r\n\r\n.checkout-title h1 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 24px;\r\n  font-weight: 600;\r\n}\r\n\r\n.checkout-main {\r\n  display: grid;\r\n  grid-template-columns: 1fr 1fr;\r\n  gap: 8px;\r\n  flex: 1;\r\n  min-height: 0;\r\n  overflow: hidden;\r\n}\r\n\r\n.checkout-left {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 8px;\r\n  min-height: 0;\r\n  overflow: hidden;\r\n}\r\n\r\n.checkout-right {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 8px;\r\n  min-height: 0;\r\n  overflow: hidden;\r\n}\r\n\r\n.checkout-card {\r\n  background: white;\r\n  border-radius: 6px;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\r\n  overflow: hidden;\r\n  display: flex;\r\n  flex-direction: column;\r\n  min-height: 0;\r\n}\r\n\r\n.order-summary-card {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.payment-card {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.customer-card {\r\n  flex-shrink: 0;\r\n}\r\n\r\n.card-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 8px 12px;\r\n  background: #f8f9fa;\r\n  border-bottom: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.card-header h2 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n}\r\n\r\n.item-count {\r\n  background: #007bff;\r\n  color: white;\r\n  padding: 3px 6px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 600;\r\n}\r\n\r\n.order-items {\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n}\r\n\r\n.order-item {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 6px 0;\r\n  border-bottom: 1px solid #f1f3f4;\r\n}\r\n\r\n.order-item:last-child {\r\n  border-bottom: none;\r\n}\r\n\r\n.item-details h4 {\r\n  margin: 0 0 2px 0;\r\n  color: #333;\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n  line-height: 1.3;\r\n}\r\n\r\n.item-sku {\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n}\r\n\r\n.item-meta {\r\n  text-align: right;\r\n}\r\n\r\n.item-quantity {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n  margin-bottom: 2px;\r\n}\r\n\r\n.item-price {\r\n  color: #333;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n}\r\n\r\n.order-totals {\r\n  padding: 8px 12px;\r\n  background: #f8f9fa;\r\n  border-top: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.total-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 3px 0;\r\n  font-size: 11px;\r\n}\r\n\r\n.total-row.grand-total {\r\n  border-top: 2px solid #dee2e6;\r\n  padding-top: 6px;\r\n  margin-top: 4px;\r\n  font-size: 13px;\r\n  font-weight: 700;\r\n  color: #333;\r\n}\r\n\r\n.total-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n  font-size: 14px;\r\n}\r\n\r\n.total-row.discount-row .discount-amount {\r\n  color: #dc3545;\r\n  font-weight: 600;\r\n}\r\n\r\n.discount-input-section {\r\n  padding: 8px 12px;\r\n  border-top: 1px solid #e9ecef;\r\n  background: #fff;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.discount-input-section .error-text {\r\n  display: block;\r\n  font-size: 11px;\r\n  color: #dc3545;\r\n  margin-top: 4px;\r\n}\r\n\r\n.payment-options {\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n}\r\n\r\n.payment-option {\r\n  display: block;\r\n  background: white;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 5px;\r\n  padding: 8px 10px;\r\n  margin-bottom: 6px;\r\n  cursor: pointer;\r\n  transition: all 0.2s ease;\r\n  position: relative;\r\n}\r\n\r\n.payment-option:hover {\r\n  border-color: #007bff;\r\n  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.payment-option.selected {\r\n  border-color: #007bff;\r\n  background: #f8f9ff;\r\n}\r\n\r\n.payment-option input[type=\"radio\"] {\r\n  position: absolute;\r\n  opacity: 0;\r\n  width: 0;\r\n  height: 0;\r\n}\r\n\r\n.payment-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.payment-icon {\r\n  font-size: 16px;\r\n  width: 28px;\r\n  text-align: center;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.cash-icon {\r\n  color: #28a745;\r\n}\r\n\r\n.mpesa-icon {\r\n  color: #007bff;\r\n}\r\n\r\n.credit-icon {\r\n  color: #ff9800;\r\n}\r\n\r\n.payment-info {\r\n  flex: 1;\r\n}\r\n\r\n.payment-name {\r\n  display: block;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 1px;\r\n  font-size: 12px;\r\n  line-height: 1.2;\r\n}\r\n\r\n.payment-desc {\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n  line-height: 1.2;\r\n}\r\n\r\n.payment-check {\r\n  color: #007bff;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.cash-payment-section {\r\n  padding: 8px 12px;\r\n  border-top: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.credit-payment-section {\r\n  padding: 8px 12px;\r\n  border-top: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.credit-info-banner {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 6px;\r\n  background: #fff3cd;\r\n  border: 1px solid #ffc107;\r\n  border-radius: 5px;\r\n  padding: 6px 8px;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.info-icon {\r\n  font-size: 16px;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.info-text {\r\n  flex: 1;\r\n}\r\n\r\n.info-text strong {\r\n  display: block;\r\n  color: #856404;\r\n  font-size: 11px;\r\n  margin-bottom: 2px;\r\n  font-weight: 600;\r\n}\r\n\r\n.info-text p {\r\n  margin: 0;\r\n  color: #856404;\r\n  font-size: 10px;\r\n  line-height: 1.3;\r\n}\r\n\r\n.input-group {\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.input-group:last-child {\r\n  margin-bottom: 0;\r\n}\r\n\r\n.input-label {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 4px;\r\n  font-size: 11px;\r\n}\r\n\r\n.label-icon {\r\n  font-size: 12px;\r\n}\r\n\r\n.input-wrapper {\r\n  position: relative;\r\n}\r\n\r\n.currency-symbol {\r\n  position: absolute;\r\n  left: 10px;\r\n  top: 50%;\r\n  transform: translateY(-50%);\r\n  color: #6c757d;\r\n  font-weight: 600;\r\n  z-index: 1;\r\n  font-size: 11px;\r\n}\r\n\r\n.currency-input {\r\n  width: 100%;\r\n  padding: 6px 8px 6px 26px;\r\n  border: 1.5px solid #e9ecef;\r\n  border-radius: 5px;\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.currency-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.currency-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.input-hint {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 9px;\r\n  margin-top: 2px;\r\n}\r\n\r\n.change-display {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  background: #d4edda;\r\n  border: 1px solid #c3e6cb;\r\n  border-radius: 5px;\r\n  padding: 6px 8px;\r\n  margin-top: 6px;\r\n}\r\n\r\n.change-icon {\r\n  font-size: 16px;\r\n  color: #155724;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.change-info {\r\n  flex: 1;\r\n}\r\n\r\n.change-label {\r\n  display: block;\r\n  color: #155724;\r\n  font-weight: 600;\r\n  font-size: 10px;\r\n}\r\n\r\n.change-amount {\r\n  color: #155724;\r\n  font-weight: 700;\r\n  font-size: 12px;\r\n}\r\n\r\n.customer-card .card-header {\r\n  position: relative;\r\n}\r\n\r\n.optional-badge {\r\n  background: #17a2b8;\r\n  color: white;\r\n  padding: 2px 8px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 500;\r\n  text-transform: uppercase;\r\n}\r\n\r\n.required-badge {\r\n  background: #dc3545;\r\n}\r\n\r\n.required-indicator {\r\n  color: #dc3545;\r\n  margin-left: 4px;\r\n}\r\n\r\n.customer-form {\r\n  padding: 8px 12px;\r\n}\r\n\r\n.text-input {\r\n  width: 100%;\r\n  padding: 6px 8px;\r\n  border: 1.5px solid #e9ecef;\r\n  border-radius: 5px;\r\n  font-size: 12px;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n  font-family: inherit;\r\n}\r\n\r\n.text-input[type=\"date\"] {\r\n  padding: 6px 8px;\r\n}\r\n\r\ntextarea.text-input {\r\n  resize: vertical;\r\n  min-height: 45px;\r\n  max-height: 70px;\r\n  line-height: 1.4;\r\n}\r\n\r\n.text-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.text-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.text-input::placeholder {\r\n  color: #adb5bd;\r\n}\r\n\r\n/* Error Message Styles */\r\n.error-message {\r\n  color: #dc3545;\r\n  font-size: 10px;\r\n  margin-top: 3px;\r\n  display: block;\r\n}\r\n\r\n.error-text {\r\n  font-size: 10px;\r\n}\r\n\r\n.checkout-actions {\r\n  display: flex;\r\n  gap: 8px;\r\n  justify-content: flex-end;\r\n  padding: 8px 12px;\r\n  background: white;\r\n  border-radius: 6px;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\r\n  flex-shrink: 0;\r\n  margin-top: auto;\r\n}\r\n\r\n.secondary-btn {\r\n  background: #6c757d;\r\n  color: white;\r\n  border: none;\r\n  padding: 8px 14px;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  transition: background-color 0.2s ease;\r\n}\r\n\r\n.secondary-btn:hover:not(:disabled) {\r\n  background: #5a6268;\r\n}\r\n\r\n.secondary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.primary-btn {\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  border: none;\r\n  padding: 8px 14px;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  transition: all 0.2s ease;\r\n  box-shadow: 0 1px 3px rgba(40, 167, 69, 0.2);\r\n}\r\n\r\n.primary-btn:hover:not(:disabled) {\r\n  background: linear-gradient(135deg, #218838 0%, #1aa085 100%);\r\n  transform: translateY(-1px);\r\n  box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);\r\n}\r\n\r\n.primary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n  transform: none;\r\n}\r\n\r\n.btn-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 16px;\r\n  height: 16px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 1s linear infinite;\r\n}\r\n\r\n@keyframes spin {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n/* Scrollbar styling for compact lists */\r\n.order-items::-webkit-scrollbar,\r\n.payment-options::-webkit-scrollbar,\r\n.split-payments-list::-webkit-scrollbar,\r\n.split-payment-section::-webkit-scrollbar {\r\n  width: 6px;\r\n}\r\n\r\n.order-items::-webkit-scrollbar-track,\r\n.payment-options::-webkit-scrollbar-track,\r\n.split-payments-list::-webkit-scrollbar-track,\r\n.split-payment-section::-webkit-scrollbar-track {\r\n  background: #f1f1f1;\r\n  border-radius: 3px;\r\n}\r\n\r\n.order-items::-webkit-scrollbar-thumb,\r\n.payment-options::-webkit-scrollbar-thumb,\r\n.split-payments-list::-webkit-scrollbar-thumb,\r\n.split-payment-section::-webkit-scrollbar-thumb {\r\n  background: #c1c1c1;\r\n  border-radius: 3px;\r\n}\r\n\r\n.order-items::-webkit-scrollbar-thumb:hover,\r\n.payment-options::-webkit-scrollbar-thumb:hover,\r\n.split-payments-list::-webkit-scrollbar-thumb:hover,\r\n.split-payment-section::-webkit-scrollbar-thumb:hover {\r\n  background: #a8a8a8;\r\n}\r\n\r\n/* Responsive Design */\r\n@media (max-width: 768px) {\r\n  .checkout-page {\r\n    height: auto;\r\n    min-height: 100vh;\r\n  }\r\n  \r\n  .checkout-main {\r\n    grid-template-columns: 1fr;\r\n  }\r\n\r\n  .checkout-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .header-content {\r\n    flex-direction: column;\r\n    gap: 16px;\r\n    text-align: center;\r\n  }\r\n\r\n  .checkout-title h1 {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .checkout-card {\r\n    margin-bottom: 16px;\r\n  }\r\n\r\n  .card-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .order-items,\r\n  .payment-options,\r\n  .cash-payment-section,\r\n  .customer-form,\r\n  .checkout-actions {\r\n    padding: 16px;\r\n  }\r\n\r\n  .checkout-actions {\r\n    flex-direction: column;\r\n  }\r\n\r\n  .secondary-btn,\r\n  .primary-btn {\r\n    width: 100%;\r\n    justify-content: center;\r\n  }\r\n}\r\n\r\n/* Split Payment Styles */\r\n.split-payment-toggle {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  cursor: pointer;\r\n  font-size: 11px;\r\n  font-weight: 500;\r\n  color: #495057;\r\n  user-select: none;\r\n}\r\n\r\n.split-payment-toggle input[type=\"checkbox\"] {\r\n  width: 16px;\r\n  height: 16px;\r\n  cursor: pointer;\r\n  accent-color: #007bff;\r\n}\r\n\r\n.split-payment-section {\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.split-payment-header {\r\n  margin-bottom: 8px;\r\n  padding: 8px 10px;\r\n  background: #f8f9fa;\r\n  border-radius: 5px;\r\n  border: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.split-payment-info {\r\n  margin: 0 0 6px 0;\r\n  font-size: 11px;\r\n  color: #6b7280;\r\n  line-height: 1.4;\r\n}\r\n\r\n.split-payment-info strong {\r\n  color: #111827;\r\n  font-weight: 600;\r\n}\r\n\r\n.remaining-amount {\r\n  margin-top: 6px;\r\n  padding: 6px 8px;\r\n  background: white;\r\n  border-radius: 5px;\r\n  font-size: 11px;\r\n  color: #374151;\r\n  border: 1px solid #d1d5db;\r\n}\r\n\r\n.remaining-amount strong.success {\r\n  color: #059669;\r\n}\r\n\r\n.remaining-amount strong.warning {\r\n  color: #d97706;\r\n}\r\n\r\n.remaining-amount strong.error {\r\n  color: #dc2626;\r\n}\r\n\r\n.split-payments-list {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 16px;\r\n  margin-bottom: 16px;\r\n}\r\n\r\n.split-payment-item {\r\n  padding: 16px;\r\n  background: white;\r\n  border: 2px solid #e5e7eb;\r\n  border-radius: 10px;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.split-payment-item:hover {\r\n  border-color: #d1d5db;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);\r\n}\r\n\r\n.split-payment-row {\r\n  display: flex;\r\n  gap: 8px;\r\n  align-items: flex-start;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.split-payment-method {\r\n  flex: 0 0 140px;\r\n}\r\n\r\n.split-method-select {\r\n  width: 100%;\r\n  padding: 6px 8px;\r\n  border: 1.5px solid #d1d5db;\r\n  border-radius: 5px;\r\n  font-size: 12px;\r\n  background: white;\r\n  color: #111827;\r\n  cursor: pointer;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.split-method-select:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.split-payment-amount {\r\n  flex: 1;\r\n}\r\n\r\n.split-payment-amount label {\r\n  display: block;\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n  color: #374151;\r\n  margin-bottom: 6px;\r\n}\r\n\r\n.split-payment-details {\r\n  margin-top: 12px;\r\n  padding-top: 12px;\r\n  border-top: 1px solid #e5e7eb;\r\n}\r\n\r\n.split-payment-details label {\r\n  display: block;\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n  color: #374151;\r\n  margin-bottom: 6px;\r\n  margin-top: 12px;\r\n}\r\n\r\n.split-payment-details label:first-child {\r\n  margin-top: 0;\r\n}\r\n\r\n.remove-split-btn {\r\n  flex: 0 0 28px;\r\n  width: 28px;\r\n  height: 28px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  background: #fee2e2;\r\n  color: #dc2626;\r\n  border: 1px solid #fecaca;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 14px;\r\n  font-weight: bold;\r\n  transition: all 0.2s ease;\r\n  margin-top: 20px;\r\n}\r\n\r\n.remove-split-btn:hover {\r\n  background: #fecaca;\r\n  border-color: #f87171;\r\n  transform: scale(1.05);\r\n}\r\n\r\n.remove-split-btn:active {\r\n  transform: scale(0.95);\r\n}\r\n\r\n.add-split-payment-btn {\r\n  width: 100%;\r\n  padding: 8px 12px;\r\n  background: #f3f4f6;\r\n  color: #374151;\r\n  border: 1.5px dashed #d1d5db;\r\n  border-radius: 5px;\r\n  font-size: 11px;\r\n  font-weight: 500;\r\n  cursor: pointer;\r\n  transition: all 0.2s ease;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  gap: 6px;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.add-split-payment-btn:hover {\r\n  background: #e5e7eb;\r\n  border-color: #9ca3af;\r\n  color: #111827;\r\n}\r\n\r\n.change-display-small {\r\n  margin-top: 4px;\r\n  padding: 4px 6px;\r\n  background: #eff6ff;\r\n  border: 1px solid #bfdbfe;\r\n  border-radius: 4px;\r\n  font-size: 10px;\r\n  color: #1e40af;\r\n  font-weight: 500;\r\n}\r\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./src/renderer/components/PrintPreview.css":
+/*!****************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./src/renderer/components/PrintPreview.css ***!
+  \****************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `/* Print Preview Page */
+.print-preview-page {
+  height: 100vh;
+  overflow: hidden;
+  background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* Print Controls Bar */
+.print-controls-bar {
+  background: white;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+.print-controls-left,
+.print-controls-right {
+  display: flex;
+  gap: 8px;
+}
+
+.control-btn {
+  background: white;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+  transform: translateY(-1px);
+}
+
+.control-btn.back-btn {
+  background: #6c757d;
+  color: white;
+  border-color: #6c757d;
+}
+
+.control-btn.back-btn:hover:not(:disabled) {
+  background: #5a6268;
+  border-color: #5a6268;
+}
+
+.control-btn.browser-print-btn {
+  background: #17a2b8;
+  color: white;
+  border-color: #17a2b8;
+}
+
+.control-btn.browser-print-btn:hover:not(:disabled) {
+  background: #138496;
+  border-color: #138496;
+}
+
+.control-btn.electron-print-btn {
+  background: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+.control-btn.electron-print-btn:hover:not(:disabled) {
+  background: #218838;
+  border-color: #218838;
+}
+
+.control-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Print Preview Content */
+.print-preview-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  background: #e9ecef;
+}
+
+.print-receipt {
+  background: white;
+  width: 100%;
+  max-width: 80mm; /* Standard receipt width */
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+}
+
+/* Print Header */
+.print-header {
+  text-align: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #333;
+}
+
+.print-logo {
+  max-height: 60px;
+  width: auto;
+  margin-bottom: 12px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.print-business-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.print-business-address {
+  font-size: 11px;
+  margin-bottom: 4px;
+  line-height: 1.4;
+  color: #495057;
+}
+
+.print-business-contact {
+  font-size: 10px;
+  color: #6c757d;
+  margin-bottom: 2px;
+}
+
+.print-business-email {
+  font-size: 10px;
+  color: #6c757d;
+}
+
+/* Receipt Info */
+.print-receipt-info {
+  margin-bottom: 12px;
+  font-size: 11px;
+}
+
+.print-info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.print-info-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.print-info-value {
+  color: #333;
+}
+
+/* Divider */
+.print-divider {
+  border-top: 1px dashed #adb5bd;
+  margin: 12px 0;
+}
+
+/* Items */
+.print-items {
+  margin-bottom: 12px;
+}
+
+.print-items-header {
+  display: grid;
+  grid-template-columns: 2fr 40px 60px 60px;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #495057;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.print-items-body {
+  margin-top: 8px;
+}
+
+.print-item-row {
+  display: grid;
+  grid-template-columns: 2fr 40px 60px 60px;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 11px;
+  border-bottom: 1px dotted #e9ecef;
+}
+
+.print-item-row:last-child {
+  border-bottom: none;
+}
+
+.print-col-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.print-item-name {
+  font-weight: 500;
+  color: #333;
+  line-height: 1.3;
+}
+
+.print-col-qty,
+.print-col-price,
+.print-col-total {
+  text-align: right;
+  font-size: 11px;
+}
+
+.print-col-qty {
+  color: #6c757d;
+}
+
+.print-col-price {
+  color: #495057;
+}
+
+.print-col-total {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Totals */
+.print-totals {
+  margin-bottom: 12px;
+  font-size: 11px;
+}
+
+.print-total-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.print-total-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.print-total-value {
+  font-weight: 600;
+  color: #333;
+}
+
+.print-grand-total {
+  border-top: 2px solid #333;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.print-grand-total .print-total-label {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.print-grand-total-value {
+  font-weight: 700;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Payment */
+.print-payment {
+  margin-bottom: 12px;
+  font-size: 11px;
+}
+
+.print-payment-method {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #adb5bd;
+}
+
+.print-payment-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.print-payment-value {
+  font-weight: 700;
+  color: #333;
+  text-transform: uppercase;
+}
+
+.print-payment-details {
+  margin-top: 8px;
+}
+
+.print-payment-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.print-change-value {
+  font-weight: 700;
+  color: #28a745;
+}
+
+.print-credit-info {
+  margin-top: 8px;
+  padding: 8px;
+  background: #fffbf0;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+}
+
+.print-credit-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.print-credit-label {
+  font-weight: 600;
+  color: #856404;
+}
+
+.print-credit-value {
+  color: #856404;
+}
+
+.print-credit-notes {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #ffc107;
+  display: flex;
+  flex-direction: column;
+}
+
+.print-credit-notes .print-credit-value {
+  margin-top: 4px;
+  font-style: italic;
+  font-size: 10px;
+}
+
+/* Footer */
+.print-footer {
+  text-align: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #333;
+}
+
+.print-thank-you {
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.print-footer-note {
+  font-size: 9px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Print Media Query */
+@media print {
+  .print-controls-bar {
+    display: none;
+  }
+
+  .print-preview-page {
+    background: white;
+  }
+
+  .print-preview-content {
+    padding: 0;
+    background: white;
+  }
+
+  .print-receipt {
+    max-width: 100%;
+    box-shadow: none;
+    padding: 10mm;
+  }
+
+  .print-item-row,
+  .print-items-header {
+    page-break-inside: avoid;
+  }
+}
+`, "",{"version":3,"sources":["webpack://./src/renderer/components/PrintPreview.css"],"names":[],"mappings":"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","sourcesContent":["/* Print Preview Page */\n.print-preview-page {\n  height: 100vh;\n  overflow: hidden;\n  background: #f5f7fa;\n  display: flex;\n  flex-direction: column;\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;\n}\n\n/* Print Controls Bar */\n.print-controls-bar {\n  background: white;\n  padding: 12px 20px;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  border-bottom: 1px solid #e9ecef;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);\n  flex-shrink: 0;\n}\n\n.print-controls-left,\n.print-controls-right {\n  display: flex;\n  gap: 8px;\n}\n\n.control-btn {\n  background: white;\n  color: #495057;\n  border: 1px solid #dee2e6;\n  padding: 8px 16px;\n  border-radius: 6px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 13px;\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  transition: all 0.2s ease;\n}\n\n.control-btn:hover:not(:disabled) {\n  background: #f8f9fa;\n  border-color: #adb5bd;\n  transform: translateY(-1px);\n}\n\n.control-btn.back-btn {\n  background: #6c757d;\n  color: white;\n  border-color: #6c757d;\n}\n\n.control-btn.back-btn:hover:not(:disabled) {\n  background: #5a6268;\n  border-color: #5a6268;\n}\n\n.control-btn.browser-print-btn {\n  background: #17a2b8;\n  color: white;\n  border-color: #17a2b8;\n}\n\n.control-btn.browser-print-btn:hover:not(:disabled) {\n  background: #138496;\n  border-color: #138496;\n}\n\n.control-btn.electron-print-btn {\n  background: #28a745;\n  color: white;\n  border-color: #28a745;\n}\n\n.control-btn.electron-print-btn:hover:not(:disabled) {\n  background: #218838;\n  border-color: #218838;\n}\n\n.control-btn:disabled {\n  opacity: 0.6;\n  cursor: not-allowed;\n}\n\n/* Print Preview Content */\n.print-preview-content {\n  flex: 1;\n  overflow-y: auto;\n  padding: 20px;\n  display: flex;\n  justify-content: center;\n  background: #e9ecef;\n}\n\n.print-receipt {\n  background: white;\n  width: 100%;\n  max-width: 80mm; /* Standard receipt width */\n  padding: 20px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\n  margin: 0 auto;\n}\n\n/* Print Header */\n.print-header {\n  text-align: center;\n  margin-bottom: 16px;\n  padding-bottom: 16px;\n  border-bottom: 2px solid #333;\n}\n\n.print-logo {\n  max-height: 60px;\n  width: auto;\n  margin-bottom: 12px;\n  display: block;\n  margin-left: auto;\n  margin-right: auto;\n}\n\n.print-business-name {\n  font-size: 18px;\n  font-weight: 700;\n  margin-bottom: 6px;\n  text-transform: uppercase;\n  letter-spacing: 0.5px;\n}\n\n.print-business-address {\n  font-size: 11px;\n  margin-bottom: 4px;\n  line-height: 1.4;\n  color: #495057;\n}\n\n.print-business-contact {\n  font-size: 10px;\n  color: #6c757d;\n  margin-bottom: 2px;\n}\n\n.print-business-email {\n  font-size: 10px;\n  color: #6c757d;\n}\n\n/* Receipt Info */\n.print-receipt-info {\n  margin-bottom: 12px;\n  font-size: 11px;\n}\n\n.print-info-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 4px;\n}\n\n.print-info-label {\n  font-weight: 600;\n  color: #495057;\n}\n\n.print-info-value {\n  color: #333;\n}\n\n/* Divider */\n.print-divider {\n  border-top: 1px dashed #adb5bd;\n  margin: 12px 0;\n}\n\n/* Items */\n.print-items {\n  margin-bottom: 12px;\n}\n\n.print-items-header {\n  display: grid;\n  grid-template-columns: 2fr 40px 60px 60px;\n  gap: 8px;\n  padding: 8px 0;\n  font-size: 9px;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.5px;\n  color: #495057;\n  border-bottom: 1px solid #dee2e6;\n}\n\n.print-items-body {\n  margin-top: 8px;\n}\n\n.print-item-row {\n  display: grid;\n  grid-template-columns: 2fr 40px 60px 60px;\n  gap: 8px;\n  padding: 6px 0;\n  font-size: 11px;\n  border-bottom: 1px dotted #e9ecef;\n}\n\n.print-item-row:last-child {\n  border-bottom: none;\n}\n\n.print-col-item {\n  display: flex;\n  flex-direction: column;\n}\n\n.print-item-name {\n  font-weight: 500;\n  color: #333;\n  line-height: 1.3;\n}\n\n.print-col-qty,\n.print-col-price,\n.print-col-total {\n  text-align: right;\n  font-size: 11px;\n}\n\n.print-col-qty {\n  color: #6c757d;\n}\n\n.print-col-price {\n  color: #495057;\n}\n\n.print-col-total {\n  font-weight: 600;\n  color: #333;\n}\n\n/* Totals */\n.print-totals {\n  margin-bottom: 12px;\n  font-size: 11px;\n}\n\n.print-total-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 4px;\n}\n\n.print-total-label {\n  font-weight: 500;\n  color: #495057;\n}\n\n.print-total-value {\n  font-weight: 600;\n  color: #333;\n}\n\n.print-grand-total {\n  border-top: 2px solid #333;\n  padding-top: 8px;\n  margin-top: 8px;\n}\n\n.print-grand-total .print-total-label {\n  font-weight: 700;\n  font-size: 12px;\n}\n\n.print-grand-total-value {\n  font-weight: 700;\n  font-size: 14px;\n  color: #333;\n}\n\n/* Payment */\n.print-payment {\n  margin-bottom: 12px;\n  font-size: 11px;\n}\n\n.print-payment-method {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 8px;\n  padding-bottom: 8px;\n  border-bottom: 1px dashed #adb5bd;\n}\n\n.print-payment-label {\n  font-weight: 600;\n  color: #495057;\n}\n\n.print-payment-value {\n  font-weight: 700;\n  color: #333;\n  text-transform: uppercase;\n}\n\n.print-payment-details {\n  margin-top: 8px;\n}\n\n.print-payment-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 4px;\n}\n\n.print-change-value {\n  font-weight: 700;\n  color: #28a745;\n}\n\n.print-credit-info {\n  margin-top: 8px;\n  padding: 8px;\n  background: #fffbf0;\n  border: 1px solid #ffc107;\n  border-radius: 4px;\n}\n\n.print-credit-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 4px;\n}\n\n.print-credit-label {\n  font-weight: 600;\n  color: #856404;\n}\n\n.print-credit-value {\n  color: #856404;\n}\n\n.print-credit-notes {\n  margin-top: 6px;\n  padding-top: 6px;\n  border-top: 1px solid #ffc107;\n  display: flex;\n  flex-direction: column;\n}\n\n.print-credit-notes .print-credit-value {\n  margin-top: 4px;\n  font-style: italic;\n  font-size: 10px;\n}\n\n/* Footer */\n.print-footer {\n  text-align: center;\n  margin-top: 16px;\n  padding-top: 16px;\n  border-top: 2px solid #333;\n}\n\n.print-thank-you {\n  font-weight: 600;\n  font-size: 12px;\n  margin-bottom: 4px;\n  color: #333;\n}\n\n.print-footer-note {\n  font-size: 9px;\n  color: #6c757d;\n  font-style: italic;\n}\n\n/* Print Media Query */\n@media print {\n  .print-controls-bar {\n    display: none;\n  }\n\n  .print-preview-page {\n    background: white;\n  }\n\n  .print-preview-content {\n    padding: 0;\n    background: white;\n  }\n\n  .print-receipt {\n    max-width: 100%;\n    box-shadow: none;\n    padding: 10mm;\n  }\n\n  .print-item-row,\n  .print-items-header {\n    page-break-inside: avoid;\n  }\n}\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./src/renderer/components/Settings.css":
+/*!************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./src/renderer/components/Settings.css ***!
+  \************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `/* Settings Modal - Modern Professional Design */
+.settings-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: settingsOverlayFadeIn 0.2s ease-out;
+}
+
+@keyframes settingsOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.settings-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  animation: settingsModalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes settingsModalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.settings-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+}
+
+.settings-header-content {
+  flex: 1;
+}
+
+.settings-title {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.5px;
+}
+
+.settings-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.settings-close-btn {
+  background: #f3f4f6;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.settings-close-btn:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.settings-close-btn:active {
+  transform: scale(0.95);
+}
+
+/* Tabs Navigation */
+.settings-tabs-nav {
+  display: flex;
+  gap: 4px;
+  padding: 0 32px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.settings-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  margin-bottom: -1px;
+}
+
+.settings-tab:hover {
+  color: #111827;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.settings-tab.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+  background: #ffffff;
+}
+
+.settings-tab svg {
+  flex-shrink: 0;
+}
+
+/* Alert Message */
+.settings-alert {
+  margin: 24px 32px 0;
+  padding: 14px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: settingsAlertSlideIn 0.3s ease-out;
+}
+
+@keyframes settingsAlertSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settings-alert.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.settings-alert.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.settings-alert-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.settings-alert-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Content Area */
+.settings-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+.settings-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Loading State */
+.settings-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.settings-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: settingsSpinnerRotate 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes settingsSpinnerRotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Settings Card */
+.settings-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.settings-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.settings-card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+  background: #f9fafb;
+}
+
+.settings-card-title {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.settings-card-description {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.settings-card-body {
+  padding: 24px;
+}
+
+/* Form Fields */
+.settings-field {
+  margin-bottom: 24px;
+}
+
+.settings-field:last-child {
+  margin-bottom: 0;
+}
+
+.settings-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-label-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.settings-label-description {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.settings-input,
+.settings-select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #111827;
+  background: #ffffff;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.settings-input:focus,
+.settings-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.settings-input::placeholder {
+  color: #9ca3af;
+}
+
+.settings-field-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* Checkbox */
+.settings-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.settings-checkbox-label:hover {
+  background: #f9fafb;
+}
+
+.settings-checkbox {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #2563eb;
+  flex-shrink: 0;
+}
+
+.settings-checkbox-text {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+  user-select: none;
+}
+
+/* Action Buttons Grid */
+.settings-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.settings-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.settings-action-btn:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.settings-action-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.settings-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-action-btn-secondary {
+  border-color: #d1d5db;
+}
+
+.settings-action-btn svg {
+  flex-shrink: 0;
+}
+
+/* Sleep Mode Button */
+.settings-sleep-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  margin-top: 8px;
+}
+
+.settings-sleep-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.settings-sleep-btn:active {
+  transform: translateY(0);
+}
+
+.settings-sleep-btn svg {
+  flex-shrink: 0;
+}
+
+/* Info Card */
+.settings-info-card {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+}
+
+.settings-info-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: #2563eb;
+  margin-top: 2px;
+}
+
+.settings-info-content {
+  flex: 1;
+}
+
+.settings-info-title {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.settings-info-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #1e3a8a;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.settings-info-list li {
+  margin-bottom: 6px;
+}
+
+.settings-info-list li:last-child {
+  margin-bottom: 0;
+}
+
+.settings-info-list strong {
+  font-weight: 600;
+  color: #1e40af;
+}
+
+/* Footer */
+.settings-footer {
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 8px;
+}
+
+.settings-save-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 24px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.settings-save-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.settings-save-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.settings-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.settings-btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: settingsSpinnerRotate 0.8s linear infinite;
+}
+
+.settings-save-btn svg {
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .settings-modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .settings-header {
+    padding: 24px 20px 20px;
+  }
+
+  .settings-title {
+    font-size: 24px;
+  }
+
+  .settings-tabs-nav {
+    padding: 0 20px;
+  }
+
+  .settings-content {
+    padding: 24px 20px;
+  }
+
+  .settings-card-header,
+  .settings-card-body {
+    padding: 20px;
+  }
+
+  .settings-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Scrollbar Styling */
+.settings-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.settings-content::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.settings-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+`, "",{"version":3,"sources":["webpack://./src/renderer/components/Settings.css"],"names":[],"mappings":"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","sourcesContent":["/* Settings Modal - Modern Professional Design */\n.settings-modal-overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.6);\n  backdrop-filter: blur(4px);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n  padding: 20px;\n  animation: settingsOverlayFadeIn 0.2s ease-out;\n}\n\n@keyframes settingsOverlayFadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n\n.settings-modal {\n  background: #ffffff;\n  border-radius: 16px;\n  width: 100%;\n  max-width: 900px;\n  max-height: 90vh;\n  display: flex;\n  flex-direction: column;\n  box-shadow: \n    0 20px 60px rgba(0, 0, 0, 0.3),\n    0 0 0 1px rgba(0, 0, 0, 0.05);\n  animation: settingsModalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);\n  overflow: hidden;\n}\n\n@keyframes settingsModalSlideIn {\n  from {\n    opacity: 0;\n    transform: translateY(20px) scale(0.95);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0) scale(1);\n  }\n}\n\n/* Header */\n.settings-header {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  padding: 32px 32px 24px;\n  border-bottom: 1px solid #e5e7eb;\n  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);\n}\n\n.settings-header-content {\n  flex: 1;\n}\n\n.settings-title {\n  margin: 0 0 8px 0;\n  font-size: 28px;\n  font-weight: 700;\n  color: #111827;\n  letter-spacing: -0.5px;\n}\n\n.settings-subtitle {\n  margin: 0;\n  font-size: 14px;\n  color: #6b7280;\n  font-weight: 400;\n}\n\n.settings-close-btn {\n  background: #f3f4f6;\n  border: none;\n  width: 40px;\n  height: 40px;\n  border-radius: 8px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n  color: #6b7280;\n  transition: all 0.2s ease;\n  flex-shrink: 0;\n}\n\n.settings-close-btn:hover {\n  background: #e5e7eb;\n  color: #111827;\n}\n\n.settings-close-btn:active {\n  transform: scale(0.95);\n}\n\n/* Tabs Navigation */\n.settings-tabs-nav {\n  display: flex;\n  gap: 4px;\n  padding: 0 32px;\n  border-bottom: 1px solid #e5e7eb;\n  background: #f9fafb;\n}\n\n.settings-tab {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 14px 20px;\n  background: transparent;\n  border: none;\n  border-bottom: 2px solid transparent;\n  color: #6b7280;\n  font-size: 14px;\n  font-weight: 500;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  position: relative;\n  margin-bottom: -1px;\n}\n\n.settings-tab:hover {\n  color: #111827;\n  background: rgba(0, 0, 0, 0.02);\n}\n\n.settings-tab.active {\n  color: #2563eb;\n  border-bottom-color: #2563eb;\n  background: #ffffff;\n}\n\n.settings-tab svg {\n  flex-shrink: 0;\n}\n\n/* Alert Message */\n.settings-alert {\n  margin: 24px 32px 0;\n  padding: 14px 16px;\n  border-radius: 8px;\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  animation: settingsAlertSlideIn 0.3s ease-out;\n}\n\n@keyframes settingsAlertSlideIn {\n  from {\n    opacity: 0;\n    transform: translateY(-10px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n.settings-alert.success {\n  background: #d1fae5;\n  color: #065f46;\n  border: 1px solid #a7f3d0;\n}\n\n.settings-alert.error {\n  background: #fee2e2;\n  color: #991b1b;\n  border: 1px solid #fecaca;\n}\n\n.settings-alert-icon {\n  flex-shrink: 0;\n  display: flex;\n  align-items: center;\n}\n\n.settings-alert-text {\n  font-size: 14px;\n  font-weight: 500;\n}\n\n/* Content Area */\n.settings-content {\n  flex: 1;\n  overflow-y: auto;\n  padding: 32px;\n}\n\n.settings-tab-content {\n  display: flex;\n  flex-direction: column;\n  gap: 24px;\n}\n\n/* Loading State */\n.settings-loading {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 60px 20px;\n  color: #6b7280;\n}\n\n.settings-spinner {\n  width: 40px;\n  height: 40px;\n  border: 3px solid #e5e7eb;\n  border-top-color: #2563eb;\n  border-radius: 50%;\n  animation: settingsSpinnerRotate 0.8s linear infinite;\n  margin-bottom: 16px;\n}\n\n@keyframes settingsSpinnerRotate {\n  to {\n    transform: rotate(360deg);\n  }\n}\n\n/* Settings Card */\n.settings-card {\n  background: #ffffff;\n  border: 1px solid #e5e7eb;\n  border-radius: 12px;\n  overflow: hidden;\n  transition: all 0.2s ease;\n}\n\n.settings-card:hover {\n  border-color: #d1d5db;\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);\n}\n\n.settings-card-header {\n  padding: 20px 24px;\n  border-bottom: 1px solid #f3f4f6;\n  background: #f9fafb;\n}\n\n.settings-card-title {\n  margin: 0 0 6px 0;\n  font-size: 18px;\n  font-weight: 600;\n  color: #111827;\n}\n\n.settings-card-description {\n  margin: 0;\n  font-size: 13px;\n  color: #6b7280;\n  line-height: 1.5;\n}\n\n.settings-card-body {\n  padding: 24px;\n}\n\n/* Form Fields */\n.settings-field {\n  margin-bottom: 24px;\n}\n\n.settings-field:last-child {\n  margin-bottom: 0;\n}\n\n.settings-label {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.settings-label-text {\n  font-size: 14px;\n  font-weight: 600;\n  color: #374151;\n}\n\n.settings-label-description {\n  font-size: 13px;\n  color: #6b7280;\n  margin-top: 4px;\n  line-height: 1.5;\n}\n\n.settings-input,\n.settings-select {\n  width: 100%;\n  padding: 12px 16px;\n  font-size: 14px;\n  color: #111827;\n  background: #ffffff;\n  border: 1.5px solid #d1d5db;\n  border-radius: 8px;\n  transition: all 0.2s ease;\n  font-family: inherit;\n}\n\n.settings-input:focus,\n.settings-select:focus {\n  outline: none;\n  border-color: #2563eb;\n  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);\n}\n\n.settings-input::placeholder {\n  color: #9ca3af;\n}\n\n.settings-field-hint {\n  margin-top: 6px;\n  font-size: 12px;\n  color: #6b7280;\n  line-height: 1.5;\n}\n\n/* Checkbox */\n.settings-checkbox-label {\n  display: flex;\n  align-items: flex-start;\n  gap: 12px;\n  cursor: pointer;\n  padding: 12px;\n  border-radius: 8px;\n  transition: background 0.2s ease;\n}\n\n.settings-checkbox-label:hover {\n  background: #f9fafb;\n}\n\n.settings-checkbox {\n  width: 20px;\n  height: 20px;\n  margin-top: 2px;\n  cursor: pointer;\n  accent-color: #2563eb;\n  flex-shrink: 0;\n}\n\n.settings-checkbox-text {\n  font-size: 14px;\n  color: #374151;\n  line-height: 1.5;\n  user-select: none;\n}\n\n/* Action Buttons Grid */\n.settings-actions-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 12px;\n}\n\n.settings-action-btn {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 10px;\n  padding: 14px 20px;\n  font-size: 14px;\n  font-weight: 500;\n  border: 1.5px solid #d1d5db;\n  border-radius: 8px;\n  background: #ffffff;\n  color: #374151;\n  cursor: pointer;\n  transition: all 0.2s ease;\n}\n\n.settings-action-btn:hover:not(:disabled) {\n  background: #f9fafb;\n  border-color: #9ca3af;\n  transform: translateY(-1px);\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);\n}\n\n.settings-action-btn:active:not(:disabled) {\n  transform: translateY(0);\n}\n\n.settings-action-btn:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n}\n\n.settings-action-btn-secondary {\n  border-color: #d1d5db;\n}\n\n.settings-action-btn svg {\n  flex-shrink: 0;\n}\n\n/* Sleep Mode Button */\n.settings-sleep-btn {\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 12px;\n  padding: 16px 24px;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n  border: none;\n  border-radius: 10px;\n  font-size: 15px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.3s ease;\n  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);\n  margin-top: 8px;\n}\n\n.settings-sleep-btn:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);\n  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);\n}\n\n.settings-sleep-btn:active {\n  transform: translateY(0);\n}\n\n.settings-sleep-btn svg {\n  flex-shrink: 0;\n}\n\n/* Info Card */\n.settings-info-card {\n  background: #eff6ff;\n  border: 1px solid #bfdbfe;\n  border-radius: 12px;\n  padding: 20px;\n  display: flex;\n  gap: 16px;\n}\n\n.settings-info-icon {\n  flex-shrink: 0;\n  width: 24px;\n  height: 24px;\n  color: #2563eb;\n  margin-top: 2px;\n}\n\n.settings-info-content {\n  flex: 1;\n}\n\n.settings-info-title {\n  margin: 0 0 12px 0;\n  font-size: 15px;\n  font-weight: 600;\n  color: #1e40af;\n}\n\n.settings-info-list {\n  margin: 0;\n  padding-left: 20px;\n  color: #1e3a8a;\n  font-size: 13px;\n  line-height: 1.8;\n}\n\n.settings-info-list li {\n  margin-bottom: 6px;\n}\n\n.settings-info-list li:last-child {\n  margin-bottom: 0;\n}\n\n.settings-info-list strong {\n  font-weight: 600;\n  color: #1e40af;\n}\n\n/* Footer */\n.settings-footer {\n  padding-top: 8px;\n  border-top: 1px solid #e5e7eb;\n  margin-top: 8px;\n}\n\n.settings-save-btn {\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 10px;\n  padding: 16px 24px;\n  background: #2563eb;\n  color: white;\n  border: none;\n  border-radius: 10px;\n  font-size: 15px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);\n}\n\n.settings-save-btn:hover:not(:disabled) {\n  background: #1d4ed8;\n  transform: translateY(-1px);\n  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);\n}\n\n.settings-save-btn:active:not(:disabled) {\n  transform: translateY(0);\n}\n\n.settings-save-btn:disabled {\n  opacity: 0.6;\n  cursor: not-allowed;\n}\n\n.settings-btn-spinner {\n  width: 16px;\n  height: 16px;\n  border: 2px solid rgba(255, 255, 255, 0.3);\n  border-top-color: white;\n  border-radius: 50%;\n  animation: settingsSpinnerRotate 0.8s linear infinite;\n}\n\n.settings-save-btn svg {\n  flex-shrink: 0;\n}\n\n/* Responsive */\n@media (max-width: 768px) {\n  .settings-modal {\n    max-width: 100%;\n    max-height: 100vh;\n    border-radius: 0;\n  }\n\n  .settings-header {\n    padding: 24px 20px 20px;\n  }\n\n  .settings-title {\n    font-size: 24px;\n  }\n\n  .settings-tabs-nav {\n    padding: 0 20px;\n  }\n\n  .settings-content {\n    padding: 24px 20px;\n  }\n\n  .settings-card-header,\n  .settings-card-body {\n    padding: 20px;\n  }\n\n  .settings-actions-grid {\n    grid-template-columns: 1fr;\n  }\n}\n\n/* Scrollbar Styling */\n.settings-content::-webkit-scrollbar {\n  width: 8px;\n}\n\n.settings-content::-webkit-scrollbar-track {\n  background: #f9fafb;\n}\n\n.settings-content::-webkit-scrollbar-thumb {\n  background: #d1d5db;\n  border-radius: 4px;\n}\n\n.settings-content::-webkit-scrollbar-thumb:hover {\n  background: #9ca3af;\n}\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./src/renderer/components/SleepScreen.css":
+/*!***************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./src/renderer/components/SleepScreen.css ***!
+  \***************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `/* Sleep Screen - Premium Screensaver Design */
+.sleep-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 10000;
+  animation: sleepFadeIn 0.8s ease-out;
+}
+
+@keyframes sleepFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Background Image - Image is set inline via component */
+.sleep-background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: sleepBackgroundZoom 30s ease-in-out infinite;
+  filter: brightness(0.4) blur(0.5px);
+  z-index: 1;
+}
+
+@keyframes sleepBackgroundZoom {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+/* Gradient Overlay */
+.sleep-gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.7) 0%,
+    rgba(51, 65, 85, 0.65) 50%,
+    rgba(30, 41, 59, 0.7) 100%
+  );
+  backdrop-filter: blur(2px);
+  z-index: 2;
+}
+
+/* Animated Particles/Stars */
+.sleep-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.sleep-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: sleepParticleFloat linear infinite;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+}
+
+@keyframes sleepParticleFloat {
+  0% {
+    transform: translateY(100vh) translateX(0) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(90vh) translateX(10px) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(10vh) translateX(-20px) scale(1);
+  }
+  100% {
+    transform: translateY(-10px) translateX(-30px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Floating Shapes */
+.sleep-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sleep-shape {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sleep-shape-1 {
+  width: 300px;
+  height: 300px;
+  top: 10%;
+  left: 10%;
+  animation: sleepShapeFloat1 20s ease-in-out infinite;
+}
+
+.sleep-shape-2 {
+  width: 200px;
+  height: 200px;
+  top: 60%;
+  right: 15%;
+  animation: sleepShapeFloat2 25s ease-in-out infinite;
+}
+
+.sleep-shape-3 {
+  width: 150px;
+  height: 150px;
+  bottom: 20%;
+  left: 50%;
+  animation: sleepShapeFloat3 18s ease-in-out infinite;
+}
+
+@keyframes sleepShapeFloat1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(50px, -50px) scale(1.1);
+    opacity: 0.5;
+  }
+}
+
+@keyframes sleepShapeFloat2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-40px, 40px) scale(0.9);
+    opacity: 0.5;
+  }
+}
+
+@keyframes sleepShapeFloat3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.15);
+    opacity: 0.5;
+  }
+}
+
+/* Content Wrapper */
+.sleep-content-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 700px;
+  padding: 40px;
+  animation: sleepContentFadeIn 1s ease-out;
+}
+
+@keyframes sleepContentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Main Content */
+.sleep-content {
+  background: transparent;
+  padding: 80px 60px;
+  position: relative;
+}
+
+/* Logo Container */
+.sleep-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+.sleep-logo-circle {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sleep-logo-icon {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
+  animation: sleepLogoFloat 4s ease-in-out infinite;
+}
+
+@keyframes sleepLogoFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+.sleep-logo-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+  animation: sleepLogoGlow 3s ease-in-out infinite;
+}
+
+@keyframes sleepLogoGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
+/* Time Container */
+.sleep-time-container {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.sleep-time-main {
+  font-size: 96px;
+  font-weight: 300;
+  color: white;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sleep-time-part {
+  background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: sleepTimePulse 2s ease-in-out infinite;
+}
+
+.sleep-time-part:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.sleep-time-part:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.sleep-time-part:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+@keyframes sleepTimePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+.sleep-time-separator {
+  color: rgba(255, 255, 255, 0.4);
+  animation: sleepSeparatorBlink 1s ease-in-out infinite;
+}
+
+@keyframes sleepSeparatorBlink {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.sleep-date {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
+}
+
+/* Wake Message */
+.sleep-wake-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: sleepWakeMessagePulse 3s ease-in-out infinite;
+}
+
+@keyframes sleepWakeMessagePulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+.sleep-wake-icon {
+  opacity: 0.6;
+  animation: sleepWakeIconFloat 2s ease-in-out infinite;
+}
+
+@keyframes sleepWakeIconFloat {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-5px);
+    opacity: 0.8;
+  }
+}
+
+.sleep-wake-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* Pulse Rings */
+.sleep-pulse-rings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+}
+
+.sleep-pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.sleep-pulse-ring.ring-1 {
+  animation: sleepPulseRing1 3s ease-out infinite;
+}
+
+.sleep-pulse-ring.ring-2 {
+  animation: sleepPulseRing2 3s ease-out infinite;
+  animation-delay: 1s;
+}
+
+.sleep-pulse-ring.ring-3 {
+  animation: sleepPulseRing3 3s ease-out infinite;
+  animation-delay: 2s;
+}
+
+@keyframes sleepPulseRing1 {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes sleepPulseRing2 {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes sleepPulseRing3 {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sleep-content-wrapper {
+    padding: 20px;
+  }
+
+  .sleep-content {
+    padding: 60px 40px;
+    border-radius: 24px;
+  }
+
+  .sleep-time-main {
+    font-size: 64px;
+  }
+
+  .sleep-date {
+    font-size: 16px;
+  }
+
+  .sleep-logo-circle {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sleep-content {
+    padding: 50px 30px;
+  }
+
+  .sleep-time-main {
+    font-size: 48px;
+    gap: 4px;
+  }
+
+  .sleep-date {
+    font-size: 14px;
+  }
+
+  .sleep-logo-circle {
+    width: 100px;
+    height: 100px;
+  }
+
+  .sleep-wake-text {
+    font-size: 12px;
+  }
+}
+`, "",{"version":3,"sources":["webpack://./src/renderer/components/SleepScreen.css"],"names":[],"mappings":"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","sourcesContent":["/* Sleep Screen - Premium Screensaver Design */\n.sleep-screen {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100vw;\n  height: 100vh;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow: hidden;\n  z-index: 10000;\n  animation: sleepFadeIn 0.8s ease-out;\n}\n\n@keyframes sleepFadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n\n/* Background Image - Image is set inline via component */\n.sleep-background-image {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-size: cover;\n  background-position: center;\n  background-repeat: no-repeat;\n  animation: sleepBackgroundZoom 30s ease-in-out infinite;\n  filter: brightness(0.4) blur(0.5px);\n  z-index: 1;\n}\n\n@keyframes sleepBackgroundZoom {\n  0%, 100% {\n    transform: scale(1);\n  }\n  50% {\n    transform: scale(1.15);\n  }\n}\n\n/* Gradient Overlay */\n.sleep-gradient-overlay {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background: linear-gradient(\n    135deg,\n    rgba(30, 41, 59, 0.7) 0%,\n    rgba(51, 65, 85, 0.65) 50%,\n    rgba(30, 41, 59, 0.7) 100%\n  );\n  backdrop-filter: blur(2px);\n  z-index: 2;\n}\n\n/* Animated Particles/Stars */\n.sleep-particles {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  z-index: 1;\n}\n\n.sleep-particle {\n  position: absolute;\n  width: 3px;\n  height: 3px;\n  background: rgba(255, 255, 255, 0.8);\n  border-radius: 50%;\n  animation: sleepParticleFloat linear infinite;\n  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);\n}\n\n@keyframes sleepParticleFloat {\n  0% {\n    transform: translateY(100vh) translateX(0) scale(0);\n    opacity: 0;\n  }\n  10% {\n    opacity: 1;\n    transform: translateY(90vh) translateX(10px) scale(1);\n  }\n  90% {\n    opacity: 1;\n    transform: translateY(10vh) translateX(-20px) scale(1);\n  }\n  100% {\n    transform: translateY(-10px) translateX(-30px) scale(0);\n    opacity: 0;\n  }\n}\n\n/* Floating Shapes */\n.sleep-shapes {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 2;\n  pointer-events: none;\n}\n\n.sleep-shape {\n  position: absolute;\n  border-radius: 50%;\n  background: rgba(255, 255, 255, 0.05);\n  backdrop-filter: blur(20px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n}\n\n.sleep-shape-1 {\n  width: 300px;\n  height: 300px;\n  top: 10%;\n  left: 10%;\n  animation: sleepShapeFloat1 20s ease-in-out infinite;\n}\n\n.sleep-shape-2 {\n  width: 200px;\n  height: 200px;\n  top: 60%;\n  right: 15%;\n  animation: sleepShapeFloat2 25s ease-in-out infinite;\n}\n\n.sleep-shape-3 {\n  width: 150px;\n  height: 150px;\n  bottom: 20%;\n  left: 50%;\n  animation: sleepShapeFloat3 18s ease-in-out infinite;\n}\n\n@keyframes sleepShapeFloat1 {\n  0%, 100% {\n    transform: translate(0, 0) scale(1);\n    opacity: 0.3;\n  }\n  50% {\n    transform: translate(50px, -50px) scale(1.1);\n    opacity: 0.5;\n  }\n}\n\n@keyframes sleepShapeFloat2 {\n  0%, 100% {\n    transform: translate(0, 0) scale(1);\n    opacity: 0.3;\n  }\n  50% {\n    transform: translate(-40px, 40px) scale(0.9);\n    opacity: 0.5;\n  }\n}\n\n@keyframes sleepShapeFloat3 {\n  0%, 100% {\n    transform: translate(0, 0) scale(1);\n    opacity: 0.3;\n  }\n  50% {\n    transform: translate(30px, -30px) scale(1.15);\n    opacity: 0.5;\n  }\n}\n\n/* Content Wrapper */\n.sleep-content-wrapper {\n  position: relative;\n  z-index: 10;\n  width: 100%;\n  max-width: 700px;\n  padding: 40px;\n  animation: sleepContentFadeIn 1s ease-out;\n}\n\n@keyframes sleepContentFadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(30px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n/* Main Content */\n.sleep-content {\n  background: transparent;\n  padding: 80px 60px;\n  position: relative;\n}\n\n/* Logo Container */\n.sleep-logo-container {\n  display: flex;\n  justify-content: center;\n  margin-bottom: 50px;\n}\n\n.sleep-logo-circle {\n  position: relative;\n  width: 140px;\n  height: 140px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.sleep-logo-icon {\n  width: 100%;\n  height: 100%;\n  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));\n  animation: sleepLogoFloat 4s ease-in-out infinite;\n}\n\n@keyframes sleepLogoFloat {\n  0%, 100% {\n    transform: translateY(0) rotate(0deg);\n  }\n  50% {\n    transform: translateY(-10px) rotate(5deg);\n  }\n}\n\n.sleep-logo-glow {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 160px;\n  height: 160px;\n  border-radius: 50%;\n  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);\n  animation: sleepLogoGlow 3s ease-in-out infinite;\n}\n\n@keyframes sleepLogoGlow {\n  0%, 100% {\n    opacity: 0.4;\n    transform: translate(-50%, -50%) scale(1);\n  }\n  50% {\n    opacity: 0.7;\n    transform: translate(-50%, -50%) scale(1.15);\n  }\n}\n\n/* Time Container */\n.sleep-time-container {\n  text-align: center;\n  margin-bottom: 50px;\n}\n\n.sleep-time-main {\n  font-size: 96px;\n  font-weight: 300;\n  color: white;\n  display: flex;\n  align-items: baseline;\n  justify-content: center;\n  gap: 8px;\n  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);\n  letter-spacing: -2px;\n  margin-bottom: 16px;\n  font-variant-numeric: tabular-nums;\n}\n\n.sleep-time-part {\n  background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  animation: sleepTimePulse 2s ease-in-out infinite;\n}\n\n.sleep-time-part:nth-child(1) {\n  animation-delay: 0s;\n}\n\n.sleep-time-part:nth-child(2) {\n  animation-delay: 0.1s;\n}\n\n.sleep-time-part:nth-child(3) {\n  animation-delay: 0.2s;\n}\n\n@keyframes sleepTimePulse {\n  0%, 100% {\n    opacity: 1;\n    transform: scale(1);\n  }\n  50% {\n    opacity: 0.9;\n    transform: scale(1.02);\n  }\n}\n\n.sleep-time-separator {\n  color: rgba(255, 255, 255, 0.4);\n  animation: sleepSeparatorBlink 1s ease-in-out infinite;\n}\n\n@keyframes sleepSeparatorBlink {\n  0%, 100% {\n    opacity: 0.4;\n  }\n  50% {\n    opacity: 0.8;\n  }\n}\n\n.sleep-date {\n  font-size: 20px;\n  color: rgba(255, 255, 255, 0.7);\n  font-weight: 300;\n  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);\n  letter-spacing: 1px;\n}\n\n/* Wake Message */\n.sleep-wake-message {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 16px;\n  padding: 24px;\n  background: rgba(255, 255, 255, 0.03);\n  border-radius: 16px;\n  border: 1px solid rgba(255, 255, 255, 0.08);\n  animation: sleepWakeMessagePulse 3s ease-in-out infinite;\n}\n\n@keyframes sleepWakeMessagePulse {\n  0%, 100% {\n    opacity: 0.6;\n    transform: scale(1);\n  }\n  50% {\n    opacity: 1;\n    transform: scale(1.02);\n  }\n}\n\n.sleep-wake-icon {\n  opacity: 0.6;\n  animation: sleepWakeIconFloat 2s ease-in-out infinite;\n}\n\n@keyframes sleepWakeIconFloat {\n  0%, 100% {\n    transform: translateY(0);\n    opacity: 0.6;\n  }\n  50% {\n    transform: translateY(-5px);\n    opacity: 0.8;\n  }\n}\n\n.sleep-wake-text {\n  font-size: 14px;\n  color: rgba(255, 255, 255, 0.6);\n  font-weight: 400;\n  text-align: center;\n  letter-spacing: 0.5px;\n  margin: 0;\n}\n\n/* Pulse Rings */\n.sleep-pulse-rings {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 200px;\n  height: 200px;\n  pointer-events: none;\n}\n\n.sleep-pulse-ring {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 200px;\n  height: 200px;\n  border: 2px solid rgba(255, 255, 255, 0.1);\n  border-radius: 50%;\n}\n\n.sleep-pulse-ring.ring-1 {\n  animation: sleepPulseRing1 3s ease-out infinite;\n}\n\n.sleep-pulse-ring.ring-2 {\n  animation: sleepPulseRing2 3s ease-out infinite;\n  animation-delay: 1s;\n}\n\n.sleep-pulse-ring.ring-3 {\n  animation: sleepPulseRing3 3s ease-out infinite;\n  animation-delay: 2s;\n}\n\n@keyframes sleepPulseRing1 {\n  0% {\n    transform: translate(-50%, -50%) scale(0.8);\n    opacity: 0.8;\n  }\n  100% {\n    transform: translate(-50%, -50%) scale(2);\n    opacity: 0;\n  }\n}\n\n@keyframes sleepPulseRing2 {\n  0% {\n    transform: translate(-50%, -50%) scale(0.8);\n    opacity: 0.6;\n  }\n  100% {\n    transform: translate(-50%, -50%) scale(2);\n    opacity: 0;\n  }\n}\n\n@keyframes sleepPulseRing3 {\n  0% {\n    transform: translate(-50%, -50%) scale(0.8);\n    opacity: 0.4;\n  }\n  100% {\n    transform: translate(-50%, -50%) scale(2);\n    opacity: 0;\n  }\n}\n\n/* Responsive Design */\n@media (max-width: 768px) {\n  .sleep-content-wrapper {\n    padding: 20px;\n  }\n\n  .sleep-content {\n    padding: 60px 40px;\n    border-radius: 24px;\n  }\n\n  .sleep-time-main {\n    font-size: 64px;\n  }\n\n  .sleep-date {\n    font-size: 16px;\n  }\n\n  .sleep-logo-circle {\n    width: 120px;\n    height: 120px;\n  }\n}\n\n@media (max-width: 480px) {\n  .sleep-content {\n    padding: 50px 30px;\n  }\n\n  .sleep-time-main {\n    font-size: 48px;\n    gap: 4px;\n  }\n\n  .sleep-date {\n    font-size: 14px;\n  }\n\n  .sleep-logo-circle {\n    width: 100px;\n    height: 100px;\n  }\n\n  .sleep-wake-text {\n    font-size: 12px;\n  }\n}\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./src/renderer/components/SyncScreen.css":
+/*!**************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./src/renderer/components/SyncScreen.css ***!
+  \**************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `/* Sync Screen - Premium Design with Image Background */
+.sync-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+/* Background Image - Image is set inline via component */
+.sync-background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+@keyframes backgroundZoom {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Gradient Overlay */
+.sync-gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.6) 0%,
+    rgba(139, 92, 246, 0.6) 50%,
+    rgba(59, 130, 246, 0.6) 100%
+  );
+  backdrop-filter: blur(1px);
+  z-index: 2;
+}
+
+/* Animated Particles */
+.sync-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sync-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: particleFloat linear infinite;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(100vh) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px);
+    opacity: 0;
+  }
+}
+
+/* Content Wrapper */
+.sync-content-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 800px;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: contentFadeIn 0.8s ease-out;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Main Content */
+.sync-content {
+  background: transparent;
+  padding: 40px;
+}
+
+/* Icon Wrapper */
+.sync-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.sync-icon-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sync-icon {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+}
+
+.sync-icon-path {
+  animation: iconRotate 3s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes iconRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sync-icon-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  animation: iconGlow 2s ease-in-out infinite;
+}
+
+@keyframes iconGlow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+/* Title */
+.sync-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: white;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
+}
+
+.sync-title-main {
+  background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sync-title-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.sync-title-dots span {
+  animation: dotPulse 1.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.2s);
+}
+
+.sync-title-dots span:nth-child(1) { --i: 0; }
+.sync-title-dots span:nth-child(2) { --i: 1; }
+.sync-title-dots span:nth-child(3) { --i: 2; }
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px);
+  }
+}
+
+/* Status */
+.sync-status {
+  font-size: 18px;
+  margin: 0 0 24px 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+  text-align: center;
+  min-height: 28px;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Step Info */
+.sync-step-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 44px;
+}
+
+.sync-step-icon {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.8);
+  animation: stepArrow 1.5s ease-in-out infinite;
+}
+
+@keyframes stepArrow {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateX(5px);
+    opacity: 1;
+  }
+}
+
+.sync-step-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+}
+
+.sync-step-count {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  margin-left: 4px;
+}
+
+/* Progress Wrapper */
+.sync-progress-wrapper {
+  margin: 40px 0 30px;
+}
+
+.sync-progress-bar-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.sync-progress-bar {
+  width: 100%;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.sync-progress-fill {
+  height: 100%;
+  border-radius: 12px;
+  position: relative;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.sync-progress-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(224, 231, 255, 0.95) 50%,
+    rgba(255, 255, 255, 0.95) 100%
+  );
+}
+
+.sync-progress-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+  animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.sync-progress-indicators {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sync-progress-dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 40px rgba(255, 255, 255, 0.4);
+  animation: progressDotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes progressDotPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.sync-progress-percentage {
+  text-align: center;
+  font-size: 48px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.8),
+    0 4px 20px rgba(0, 0, 0, 0.6);
+  letter-spacing: -2px;
+  margin-top: 20px;
+}
+
+.sync-percent-symbol {
+  font-size: 24px;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+/* Loading Dots */
+.sync-loading-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 30px;
+}
+
+.sync-loading-dots span {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: loadingDot 1.4s ease-in-out infinite;
+}
+
+.sync-loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.sync-loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.sync-loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes loadingDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sync-content-wrapper {
+    padding: 20px;
+  }
+
+  .sync-content {
+    padding: 40px 30px;
+  }
+
+  .sync-title {
+    font-size: 36px;
+  }
+
+  .sync-status {
+    font-size: 16px;
+  }
+
+  .sync-progress-percentage {
+    font-size: 28px;
+  }
+
+  .sync-icon-circle {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sync-content {
+    padding: 30px 20px;
+    border-radius: 20px;
+  }
+
+  .sync-title {
+    font-size: 28px;
+  }
+
+  .sync-icon-circle {
+    width: 80px;
+    height: 80px;
+  }
+}
+`, "",{"version":3,"sources":["webpack://./src/renderer/components/SyncScreen.css"],"names":[],"mappings":"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","sourcesContent":["/* Sync Screen - Premium Design with Image Background */\n.sync-screen {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100vw;\n  height: 100vh;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow: hidden;\n  z-index: 9999;\n}\n\n/* Background Image - Image is set inline via component */\n.sync-background-image {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-size: cover;\n  background-position: center;\n  background-repeat: no-repeat;\n  z-index: 1;\n}\n\n@keyframes backgroundZoom {\n  0%, 100% {\n    transform: scale(1);\n  }\n  50% {\n    transform: scale(1.1);\n  }\n}\n\n/* Gradient Overlay */\n.sync-gradient-overlay {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background: linear-gradient(\n    135deg,\n    rgba(99, 102, 241, 0.6) 0%,\n    rgba(139, 92, 246, 0.6) 50%,\n    rgba(59, 130, 246, 0.6) 100%\n  );\n  backdrop-filter: blur(1px);\n  z-index: 2;\n}\n\n/* Animated Particles */\n.sync-particles {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n}\n\n.sync-particle {\n  position: absolute;\n  width: 4px;\n  height: 4px;\n  background: rgba(255, 255, 255, 0.6);\n  border-radius: 50%;\n  animation: particleFloat linear infinite;\n  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);\n}\n\n@keyframes particleFloat {\n  0% {\n    transform: translateY(100vh) translateX(0);\n    opacity: 0;\n  }\n  10% {\n    opacity: 1;\n  }\n  90% {\n    opacity: 1;\n  }\n  100% {\n    transform: translateY(-100px) translateX(100px);\n    opacity: 0;\n  }\n}\n\n/* Content Wrapper */\n.sync-content-wrapper {\n  position: relative;\n  z-index: 10;\n  width: 100%;\n  max-width: 800px;\n  padding: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  animation: contentFadeIn 0.8s ease-out;\n}\n\n@keyframes contentFadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(20px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n/* Main Content */\n.sync-content {\n  background: transparent;\n  padding: 40px;\n}\n\n/* Icon Wrapper */\n.sync-icon-wrapper {\n  display: flex;\n  justify-content: center;\n  margin-bottom: 40px;\n}\n\n.sync-icon-circle {\n  position: relative;\n  width: 120px;\n  height: 120px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.sync-icon {\n  width: 100%;\n  height: 100%;\n  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));\n}\n\n.sync-icon-path {\n  animation: iconRotate 3s linear infinite;\n  transform-origin: center;\n}\n\n@keyframes iconRotate {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n\n.sync-icon-glow {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 140px;\n  height: 140px;\n  border-radius: 50%;\n  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);\n  animation: iconGlow 2s ease-in-out infinite;\n}\n\n@keyframes iconGlow {\n  0%, 100% {\n    opacity: 0.5;\n    transform: translate(-50%, -50%) scale(1);\n  }\n  50% {\n    opacity: 0.8;\n    transform: translate(-50%, -50%) scale(1.1);\n  }\n}\n\n/* Title */\n.sync-title {\n  font-size: 48px;\n  font-weight: 700;\n  margin: 0 0 16px 0;\n  color: white;\n  text-align: center;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);\n  letter-spacing: -0.5px;\n}\n\n.sync-title-main {\n  background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n}\n\n.sync-title-dots {\n  display: inline-flex;\n  gap: 4px;\n}\n\n.sync-title-dots span {\n  animation: dotPulse 1.4s ease-in-out infinite;\n  animation-delay: calc(var(--i) * 0.2s);\n}\n\n.sync-title-dots span:nth-child(1) { --i: 0; }\n.sync-title-dots span:nth-child(2) { --i: 1; }\n.sync-title-dots span:nth-child(3) { --i: 2; }\n\n@keyframes dotPulse {\n  0%, 100% {\n    opacity: 0.3;\n    transform: translateY(0);\n  }\n  50% {\n    opacity: 1;\n    transform: translateY(-5px);\n  }\n}\n\n/* Status */\n.sync-status {\n  font-size: 18px;\n  margin: 0 0 24px 0;\n  color: rgba(255, 255, 255, 0.9);\n  font-weight: 400;\n  text-align: center;\n  min-height: 28px;\n  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);\n}\n\n/* Step Info */\n.sync-step-info {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 12px;\n  margin-bottom: 40px;\n  padding: 12px 20px;\n  background: rgba(255, 255, 255, 0.05);\n  border-radius: 12px;\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  min-height: 44px;\n}\n\n.sync-step-icon {\n  font-size: 18px;\n  color: rgba(255, 255, 255, 0.8);\n  animation: stepArrow 1.5s ease-in-out infinite;\n}\n\n@keyframes stepArrow {\n  0%, 100% {\n    transform: translateX(0);\n    opacity: 0.6;\n  }\n  50% {\n    transform: translateX(5px);\n    opacity: 1;\n  }\n}\n\n.sync-step-text {\n  font-size: 14px;\n  color: rgba(255, 255, 255, 0.85);\n  font-weight: 400;\n}\n\n.sync-step-count {\n  color: rgba(255, 255, 255, 0.6);\n  font-size: 13px;\n  margin-left: 4px;\n}\n\n/* Progress Wrapper */\n.sync-progress-wrapper {\n  margin: 40px 0 30px;\n}\n\n.sync-progress-bar-container {\n  position: relative;\n  width: 100%;\n  margin-bottom: 16px;\n}\n\n.sync-progress-bar {\n  width: 100%;\n  height: 16px;\n  background: rgba(0, 0, 0, 0.4);\n  border-radius: 12px;\n  overflow: hidden;\n  position: relative;\n  backdrop-filter: blur(10px);\n  border: 2px solid rgba(255, 255, 255, 0.3);\n  box-shadow: \n    inset 0 2px 4px rgba(0, 0, 0, 0.3),\n    0 4px 12px rgba(0, 0, 0, 0.4);\n}\n\n.sync-progress-fill {\n  height: 100%;\n  border-radius: 12px;\n  position: relative;\n  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);\n  overflow: hidden;\n  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);\n}\n\n.sync-progress-gradient {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background: linear-gradient(\n    90deg,\n    rgba(255, 255, 255, 0.95) 0%,\n    rgba(224, 231, 255, 0.95) 50%,\n    rgba(255, 255, 255, 0.95) 100%\n  );\n}\n\n.sync-progress-shine {\n  position: absolute;\n  top: 0;\n  left: -100%;\n  width: 100%;\n  height: 100%;\n  background: linear-gradient(\n    90deg,\n    transparent,\n    rgba(255, 255, 255, 0.8),\n    transparent\n  );\n  animation: progressShine 2s infinite;\n}\n\n@keyframes progressShine {\n  0% {\n    left: -100%;\n  }\n  100% {\n    left: 100%;\n  }\n}\n\n.sync-progress-indicators {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  pointer-events: none;\n}\n\n.sync-progress-dot {\n  position: absolute;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  width: 20px;\n  height: 20px;\n  background: white;\n  border-radius: 50%;\n  box-shadow: \n    0 0 20px rgba(255, 255, 255, 0.8),\n    0 0 40px rgba(255, 255, 255, 0.4);\n  animation: progressDotPulse 1.5s ease-in-out infinite;\n}\n\n@keyframes progressDotPulse {\n  0%, 100% {\n    transform: translate(-50%, -50%) scale(1);\n    opacity: 1;\n  }\n  50% {\n    transform: translate(-50%, -50%) scale(1.2);\n    opacity: 0.8;\n  }\n}\n\n.sync-progress-percentage {\n  text-align: center;\n  font-size: 48px;\n  font-weight: 700;\n  color: white;\n  text-shadow: \n    0 2px 10px rgba(0, 0, 0, 0.8),\n    0 4px 20px rgba(0, 0, 0, 0.6);\n  letter-spacing: -2px;\n  margin-top: 20px;\n}\n\n.sync-percent-symbol {\n  font-size: 24px;\n  opacity: 0.7;\n  margin-left: 2px;\n}\n\n/* Loading Dots */\n.sync-loading-dots {\n  display: flex;\n  justify-content: center;\n  gap: 8px;\n  margin-top: 30px;\n}\n\n.sync-loading-dots span {\n  width: 8px;\n  height: 8px;\n  background: rgba(255, 255, 255, 0.6);\n  border-radius: 50%;\n  animation: loadingDot 1.4s ease-in-out infinite;\n}\n\n.sync-loading-dots span:nth-child(1) {\n  animation-delay: 0s;\n}\n\n.sync-loading-dots span:nth-child(2) {\n  animation-delay: 0.2s;\n}\n\n.sync-loading-dots span:nth-child(3) {\n  animation-delay: 0.4s;\n}\n\n@keyframes loadingDot {\n  0%, 100% {\n    transform: scale(1);\n    opacity: 0.6;\n  }\n  50% {\n    transform: scale(1.3);\n    opacity: 1;\n  }\n}\n\n/* Responsive Design */\n@media (max-width: 768px) {\n  .sync-content-wrapper {\n    padding: 20px;\n  }\n\n  .sync-content {\n    padding: 40px 30px;\n  }\n\n  .sync-title {\n    font-size: 36px;\n  }\n\n  .sync-status {\n    font-size: 16px;\n  }\n\n  .sync-progress-percentage {\n    font-size: 28px;\n  }\n\n  .sync-icon-circle {\n    width: 100px;\n    height: 100px;\n  }\n}\n\n@media (max-width: 480px) {\n  .sync-content {\n    padding: 30px 20px;\n    border-radius: 20px;\n  }\n\n  .sync-title {\n    font-size: 28px;\n  }\n\n  .sync-icon-circle {\n    width: 80px;\n    height: 80px;\n  }\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1848,290 +4254,6 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Pending Transactions Styles */
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./src/renderer/printer-settings.css":
-/*!*********************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./src/renderer/printer-settings.css ***!
-  \*********************************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-// Imports
-
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, `.printer-settings {
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.printer-settings h2 {
-  margin: 0 0 20px 0;
-  color: #333;
-  font-size: 24px;
-}
-
-.printer-settings-loading {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-}
-
-.settings-message {
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  font-weight: 500;
-}
-
-.settings-message.success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.settings-message.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.settings-section {
-  margin-bottom: 20px;
-}
-
-.setting-label {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-weight: 500;
-  color: #333;
-}
-
-.setting-label.checkbox-label {
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-}
-
-.setting-input {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-
-.setting-input:focus {
-  outline: none;
-  border-color: #007bff;
-}
-
-.setting-checkbox {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.setting-hint {
-  display: block;
-  margin-top: 4px;
-  font-size: 12px;
-  color: #666;
-  font-style: italic;
-}
-
-.settings-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 30px;
-  flex-wrap: wrap;
-}
-
-.test-btn,
-.save-btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.test-btn {
-  background: #6c757d;
-  color: white;
-}
-
-.test-btn:hover:not(:disabled) {
-  background: #5a6268;
-}
-
-.save-btn {
-  background: #007bff;
-  color: white;
-  flex: 1;
-}
-
-.save-btn:hover:not(:disabled) {
-  background: #0056b3;
-}
-
-.test-btn:disabled,
-.save-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.settings-info {
-  margin-top: 30px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 4px;
-  border-left: 4px solid #007bff;
-}
-
-.settings-info h3 {
-  margin: 0 0 10px 0;
-  color: #333;
-  font-size: 16px;
-}
-
-.settings-info ul {
-  margin: 0;
-  padding-left: 20px;
-  color: #666;
-}
-
-.settings-info li {
-  margin-bottom: 8px;
-  line-height: 1.5;
-}
-
-.settings-info strong {
-  color: #333;
-}
-
-/* Cash drawer button in receipt */
-.cash-drawer-btn {
-  padding: 12px 20px;
-  background: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.cash-drawer-btn:hover {
-  background: #218838;
-}
-
-.receipt-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* Modal styles */
-.printer-settings-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.printer-settings-modal .modal-content {
-  background: white;
-  border-radius: 8px;
-  max-width: 700px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.modal-header h2 {
-  margin: 0;
-  color: #333;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: #666;
-  cursor: pointer;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.close-btn:hover {
-  background: #f0f0f0;
-}
-
-.settings-btn {
-  padding: 8px 16px;
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.settings-btn:hover {
-  background: #5a6268;
-}
-
-`, "",{"version":3,"sources":["webpack://./src/renderer/printer-settings.css"],"names":[],"mappings":"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","sourcesContent":[".printer-settings {\r\n  max-width: 600px;\r\n  margin: 20px auto;\r\n  padding: 20px;\r\n  background: white;\r\n  border-radius: 8px;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.printer-settings h2 {\r\n  margin: 0 0 20px 0;\r\n  color: #333;\r\n  font-size: 24px;\r\n}\r\n\r\n.printer-settings-loading {\r\n  text-align: center;\r\n  padding: 40px;\r\n  color: #666;\r\n}\r\n\r\n.settings-message {\r\n  padding: 12px;\r\n  border-radius: 4px;\r\n  margin-bottom: 20px;\r\n  font-weight: 500;\r\n}\r\n\r\n.settings-message.success {\r\n  background: #d4edda;\r\n  color: #155724;\r\n  border: 1px solid #c3e6cb;\r\n}\r\n\r\n.settings-message.error {\r\n  background: #f8d7da;\r\n  color: #721c24;\r\n  border: 1px solid #f5c6cb;\r\n}\r\n\r\n.settings-section {\r\n  margin-bottom: 20px;\r\n}\r\n\r\n.setting-label {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 8px;\r\n  font-weight: 500;\r\n  color: #333;\r\n}\r\n\r\n.setting-label.checkbox-label {\r\n  flex-direction: row;\r\n  align-items: center;\r\n  gap: 10px;\r\n  cursor: pointer;\r\n}\r\n\r\n.setting-input {\r\n  padding: 10px;\r\n  border: 1px solid #ddd;\r\n  border-radius: 4px;\r\n  font-size: 14px;\r\n  transition: border-color 0.2s;\r\n}\r\n\r\n.setting-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n}\r\n\r\n.setting-checkbox {\r\n  width: 18px;\r\n  height: 18px;\r\n  cursor: pointer;\r\n}\r\n\r\n.setting-hint {\r\n  display: block;\r\n  margin-top: 4px;\r\n  font-size: 12px;\r\n  color: #666;\r\n  font-style: italic;\r\n}\r\n\r\n.settings-actions {\r\n  display: flex;\r\n  gap: 10px;\r\n  margin-top: 30px;\r\n  flex-wrap: wrap;\r\n}\r\n\r\n.test-btn,\r\n.save-btn {\r\n  padding: 12px 20px;\r\n  border: none;\r\n  border-radius: 4px;\r\n  font-size: 14px;\r\n  font-weight: 500;\r\n  cursor: pointer;\r\n  transition: all 0.2s;\r\n}\r\n\r\n.test-btn {\r\n  background: #6c757d;\r\n  color: white;\r\n}\r\n\r\n.test-btn:hover:not(:disabled) {\r\n  background: #5a6268;\r\n}\r\n\r\n.save-btn {\r\n  background: #007bff;\r\n  color: white;\r\n  flex: 1;\r\n}\r\n\r\n.save-btn:hover:not(:disabled) {\r\n  background: #0056b3;\r\n}\r\n\r\n.test-btn:disabled,\r\n.save-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.settings-info {\r\n  margin-top: 30px;\r\n  padding: 15px;\r\n  background: #f8f9fa;\r\n  border-radius: 4px;\r\n  border-left: 4px solid #007bff;\r\n}\r\n\r\n.settings-info h3 {\r\n  margin: 0 0 10px 0;\r\n  color: #333;\r\n  font-size: 16px;\r\n}\r\n\r\n.settings-info ul {\r\n  margin: 0;\r\n  padding-left: 20px;\r\n  color: #666;\r\n}\r\n\r\n.settings-info li {\r\n  margin-bottom: 8px;\r\n  line-height: 1.5;\r\n}\r\n\r\n.settings-info strong {\r\n  color: #333;\r\n}\r\n\r\n/* Cash drawer button in receipt */\r\n.cash-drawer-btn {\r\n  padding: 12px 20px;\r\n  background: #28a745;\r\n  color: white;\r\n  border: none;\r\n  border-radius: 4px;\r\n  font-size: 14px;\r\n  font-weight: 500;\r\n  cursor: pointer;\r\n  transition: background 0.2s;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.cash-drawer-btn:hover {\r\n  background: #218838;\r\n}\r\n\r\n.receipt-actions {\r\n  display: flex;\r\n  gap: 10px;\r\n  justify-content: center;\r\n  flex-wrap: wrap;\r\n}\r\n\r\n/* Modal styles */\r\n.printer-settings-modal {\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  right: 0;\r\n  bottom: 0;\r\n  background: rgba(0, 0, 0, 0.5);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  z-index: 1000;\r\n  padding: 20px;\r\n}\r\n\r\n.printer-settings-modal .modal-content {\r\n  background: white;\r\n  border-radius: 8px;\r\n  max-width: 700px;\r\n  width: 100%;\r\n  max-height: 90vh;\r\n  overflow-y: auto;\r\n  position: relative;\r\n}\r\n\r\n.modal-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 20px;\r\n  border-bottom: 1px solid #e9ecef;\r\n}\r\n\r\n.modal-header h2 {\r\n  margin: 0;\r\n  color: #333;\r\n}\r\n\r\n.close-btn {\r\n  background: none;\r\n  border: none;\r\n  font-size: 28px;\r\n  color: #666;\r\n  cursor: pointer;\r\n  padding: 0;\r\n  width: 30px;\r\n  height: 30px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  border-radius: 4px;\r\n  transition: background 0.2s;\r\n}\r\n\r\n.close-btn:hover {\r\n  background: #f0f0f0;\r\n}\r\n\r\n.settings-btn {\r\n  padding: 8px 16px;\r\n  background: #6c757d;\r\n  color: white;\r\n  border: none;\r\n  border-radius: 4px;\r\n  font-size: 14px;\r\n  cursor: pointer;\r\n  transition: background 0.2s;\r\n}\r\n\r\n.settings-btn:hover {\r\n  background: #5a6268;\r\n}\r\n\r\n"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/dist/cjs.js!./src/renderer/receipt.css":
 /*!************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./src/renderer/receipt.css ***!
@@ -2661,6 +4783,110 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Receipt Page - Full Width Layout */
   font-weight: 700;
 }
 
+/* Split Payment Display */
+.split-payment-display {
+  margin-top: 0;
+}
+
+.split-payment-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 1px solid #5a67d8;
+}
+
+.split-payments-list-receipt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.split-payment-item-receipt {
+  padding: 12px;
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+.split-payment-method-receipt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.split-payment-icon {
+  font-size: 16px;
+}
+
+.split-payment-method-name {
+  font-weight: 600;
+  font-size: 12px;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.split-payment-amount-receipt {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.split-payment-change,
+.split-payment-mpesa-id,
+.split-payment-credit-due {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.split-payment-total-receipt {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f0f9ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1e40af;
+}
+
+.split-total-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.split-payment-change-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.split-payment-change-total .change-amount {
+  font-weight: 700;
+  color: #28a745;
+}
+
 /* Footer Card */
 .receipt-footer-card {
   text-align: center;
@@ -2698,7 +4924,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Receipt Page - Full Width Layout */
     max-height: 400px;
   }
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/receipt.css"],"names":[],"mappings":"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","sourcesContent":["/* Receipt Page - Full Width Layout */\r\n.receipt-page {\r\n  height: 100vh;\r\n  overflow: hidden;\r\n  background: #f5f7fa;\r\n  display: flex;\r\n  flex-direction: column;\r\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;\r\n}\r\n\r\n/* Top Bar */\r\n.receipt-top-bar {\r\n  background: white;\r\n  padding: 12px 20px;\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  border-bottom: 1px solid #e9ecef;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);\r\n  flex-shrink: 0;\r\n}\r\n\r\n.success-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n}\r\n\r\n.success-icon-wrapper {\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  width: 36px;\r\n  height: 36px;\r\n  background: #28a745;\r\n  border-radius: 50%;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.success-icon {\r\n  font-size: 20px;\r\n  color: white;\r\n  font-weight: bold;\r\n}\r\n\r\n.success-text h2 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 18px;\r\n  font-weight: 600;\r\n}\r\n\r\n.success-subtitle {\r\n  margin: 2px 0 0 0;\r\n  color: #6c757d;\r\n  font-size: 12px;\r\n  font-weight: 500;\r\n}\r\n\r\n.receipt-actions-top {\r\n  display: flex;\r\n  gap: 8px;\r\n}\r\n\r\n.action-btn-top {\r\n  background: white;\r\n  color: #495057;\r\n  border: 1px solid #dee2e6;\r\n  padding: 8px 16px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 13px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.action-btn-top:hover:not(:disabled) {\r\n  background: #f8f9fa;\r\n  border-color: #adb5bd;\r\n  transform: translateY(-1px);\r\n}\r\n\r\n.action-btn-top.primary-btn {\r\n  background: #007bff;\r\n  color: white;\r\n  border-color: #007bff;\r\n}\r\n\r\n.action-btn-top.primary-btn:hover:not(:disabled) {\r\n  background: #0056b3;\r\n  border-color: #0056b3;\r\n}\r\n\r\n.action-btn-top.print-btn {\r\n  background: #28a745;\r\n  color: white;\r\n  border-color: #28a745;\r\n}\r\n\r\n.action-btn-top.print-btn:hover:not(:disabled) {\r\n  background: #218838;\r\n  border-color: #218838;\r\n}\r\n\r\n.action-btn-top:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.btn-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 14px;\r\n  height: 14px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 1s linear infinite;\r\n}\r\n\r\n@keyframes spin {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n/* Main Content - Two Column Layout */\r\n.receipt-main-content {\r\n  flex: 1;\r\n  display: grid;\r\n  grid-template-columns: 1fr 400px;\r\n  gap: 16px;\r\n  padding: 16px;\r\n  overflow: hidden;\r\n  min-height: 0;\r\n}\r\n\r\n/* Left Column */\r\n.receipt-left-column {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 16px;\r\n  overflow-y: auto;\r\n  overflow-x: hidden;\r\n}\r\n\r\n/* Right Column */\r\n.receipt-right-column {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 16px;\r\n  overflow-y: auto;\r\n  overflow-x: hidden;\r\n}\r\n\r\n/* Cards */\r\n.receipt-header-card,\r\n.receipt-info-grid,\r\n.receipt-items-section,\r\n.totals-card,\r\n.payment-card,\r\n.receipt-footer-card {\r\n  background: white;\r\n  border-radius: 8px;\r\n  padding: 16px;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n/* Business Header */\r\n.receipt-header-card {\r\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n  color: white;\r\n  text-align: center;\r\n}\r\n\r\n.business-name {\r\n  font-size: 20px;\r\n  font-weight: 700;\r\n  margin-bottom: 6px;\r\n}\r\n\r\n.business-address {\r\n  font-size: 12px;\r\n  opacity: 0.95;\r\n  margin-bottom: 4px;\r\n  line-height: 1.4;\r\n}\r\n\r\n.business-contact {\r\n  font-size: 11px;\r\n  opacity: 0.9;\r\n}\r\n\r\n/* Info Grid */\r\n.receipt-info-grid {\r\n  display: grid;\r\n  grid-template-columns: repeat(2, 1fr);\r\n  gap: 12px;\r\n}\r\n\r\n.info-card {\r\n  padding: 12px;\r\n  background: #f8f9fa;\r\n  border-radius: 6px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.info-label {\r\n  font-size: 11px;\r\n  color: #6c757d;\r\n  font-weight: 500;\r\n  margin-bottom: 4px;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n}\r\n\r\n.info-value {\r\n  font-size: 13px;\r\n  color: #333;\r\n  font-weight: 600;\r\n  word-break: break-all;\r\n}\r\n\r\n/* Items Section */\r\n.receipt-items-section {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.section-title {\r\n  font-size: 14px;\r\n  font-weight: 700;\r\n  color: #333;\r\n  margin-bottom: 12px;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n  padding-bottom: 8px;\r\n  border-bottom: 2px solid #e9ecef;\r\n}\r\n\r\n.items-table {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.items-header {\r\n  display: grid;\r\n  grid-template-columns: 2fr 60px 100px 100px;\r\n  gap: 12px;\r\n  padding: 8px 0;\r\n  font-size: 10px;\r\n  font-weight: 600;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n  color: #6c757d;\r\n  border-bottom: 2px solid #e9ecef;\r\n}\r\n\r\n.items-body {\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n}\r\n\r\n.item-row {\r\n  display: grid;\r\n  grid-template-columns: 2fr 60px 100px 100px;\r\n  gap: 12px;\r\n  padding: 10px 0;\r\n  border-bottom: 1px solid #f1f3f4;\r\n  align-items: center;\r\n}\r\n\r\n.item-row:last-child {\r\n  border-bottom: none;\r\n}\r\n\r\n.col-item {\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.item-name {\r\n  font-weight: 600;\r\n  color: #333;\r\n  font-size: 13px;\r\n  line-height: 1.3;\r\n}\r\n\r\n.col-qty,\r\n.col-price,\r\n.col-total {\r\n  font-size: 13px;\r\n  text-align: right;\r\n}\r\n\r\n.col-qty {\r\n  color: #6c757d;\r\n}\r\n\r\n.col-price {\r\n  color: #495057;\r\n}\r\n\r\n.col-total {\r\n  font-weight: 700;\r\n  color: #333;\r\n}\r\n\r\n/* Totals Card */\r\n.totals-card {\r\n  flex-shrink: 0;\r\n}\r\n\r\n.totals-list {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 12px;\r\n}\r\n\r\n.total-item {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 10px 0;\r\n}\r\n\r\n.total-label {\r\n  color: #495057;\r\n  font-weight: 500;\r\n  font-size: 13px;\r\n}\r\n\r\n.total-value {\r\n  color: #333;\r\n  font-weight: 600;\r\n  font-size: 13px;\r\n}\r\n\r\n.total-item.grand-total {\r\n  border-top: 2px solid #dee2e6;\r\n  padding-top: 16px;\r\n  margin-top: 4px;\r\n}\r\n\r\n.grand-total .total-label {\r\n  font-weight: 700;\r\n  font-size: 15px;\r\n  color: #333;\r\n}\r\n\r\n.total-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n  font-size: 18px;\r\n}\r\n\r\n/* Payment Card */\r\n.payment-card {\r\n  flex-shrink: 0;\r\n}\r\n\r\n.payment-method-badge {\r\n  display: inline-flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 10px 16px;\r\n  border-radius: 6px;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n  margin-bottom: 16px;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n}\r\n\r\n.payment-method-badge[data-method=\"cash\"] {\r\n  background: #d4edda;\r\n  color: #155724;\r\n  border: 1px solid #c3e6cb;\r\n}\r\n\r\n.payment-method-badge[data-method=\"mpesa\"] {\r\n  background: #cfe2ff;\r\n  color: #084298;\r\n  border: 1px solid #b6d4fe;\r\n}\r\n\r\n.payment-method-badge[data-method=\"credit\"] {\r\n  background: #fff3cd;\r\n  color: #856404;\r\n  border: 1px solid #ffc107;\r\n}\r\n\r\n.payment-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.payment-text {\r\n  font-size: 11px;\r\n}\r\n\r\n/* Credit Details */\r\n.credit-details {\r\n  margin-top: 16px;\r\n  padding: 12px;\r\n  background: #fffbf0;\r\n  border: 1px solid #ffc107;\r\n  border-radius: 6px;\r\n}\r\n\r\n.credit-badge {\r\n  display: inline-flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  padding: 6px 12px;\r\n  background: #ffc107;\r\n  color: #856404;\r\n  border-radius: 4px;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n  margin-bottom: 10px;\r\n}\r\n\r\n.credit-icon {\r\n  font-size: 12px;\r\n}\r\n\r\n.credit-info-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 6px 0;\r\n  font-size: 12px;\r\n}\r\n\r\n.credit-label {\r\n  color: #856404;\r\n  font-weight: 500;\r\n}\r\n\r\n.credit-value {\r\n  color: #856404;\r\n  font-weight: 600;\r\n}\r\n\r\n.credit-notes-section {\r\n  margin-top: 10px;\r\n  padding-top: 10px;\r\n  border-top: 1px solid #ffc107;\r\n}\r\n\r\n.credit-notes-section .credit-label {\r\n  display: block;\r\n  margin-bottom: 6px;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n}\r\n\r\n.credit-notes-text {\r\n  margin: 0;\r\n  color: #856404;\r\n  font-size: 11px;\r\n  line-height: 1.5;\r\n  font-style: italic;\r\n}\r\n\r\n/* Payment Details */\r\n.payment-details {\r\n  margin-top: 16px;\r\n  padding-top: 16px;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.payment-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 6px 0;\r\n  font-size: 13px;\r\n  color: #495057;\r\n}\r\n\r\n.payment-row span:first-child {\r\n  font-weight: 500;\r\n}\r\n\r\n.payment-row span:last-child {\r\n  font-weight: 600;\r\n  color: #333;\r\n}\r\n\r\n.change-row {\r\n  margin-top: 8px;\r\n  padding-top: 8px;\r\n  border-top: 1px solid #f1f3f4;\r\n}\r\n\r\n.change-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n}\r\n\r\n/* Footer Card */\r\n.receipt-footer-card {\r\n  text-align: center;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.thank-you {\r\n  margin: 0 0 6px 0;\r\n  color: #495057;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n}\r\n\r\n.footer-note {\r\n  margin: 0;\r\n  color: #6c757d;\r\n  font-size: 11px;\r\n  font-style: italic;\r\n}\r\n\r\n/* Responsive */\r\n@media (max-width: 1200px) {\r\n  .receipt-main-content {\r\n    grid-template-columns: 1fr 350px;\r\n  }\r\n}\r\n\r\n@media (max-width: 900px) {\r\n  .receipt-main-content {\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: auto auto;\r\n  }\r\n\r\n  .receipt-right-column {\r\n    max-height: 400px;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/receipt.css"],"names":[],"mappings":"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","sourcesContent":["/* Receipt Page - Full Width Layout */\r\n.receipt-page {\r\n  height: 100vh;\r\n  overflow: hidden;\r\n  background: #f5f7fa;\r\n  display: flex;\r\n  flex-direction: column;\r\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;\r\n}\r\n\r\n/* Top Bar */\r\n.receipt-top-bar {\r\n  background: white;\r\n  padding: 12px 20px;\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  border-bottom: 1px solid #e9ecef;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);\r\n  flex-shrink: 0;\r\n}\r\n\r\n.success-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n}\r\n\r\n.success-icon-wrapper {\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  width: 36px;\r\n  height: 36px;\r\n  background: #28a745;\r\n  border-radius: 50%;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.success-icon {\r\n  font-size: 20px;\r\n  color: white;\r\n  font-weight: bold;\r\n}\r\n\r\n.success-text h2 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 18px;\r\n  font-weight: 600;\r\n}\r\n\r\n.success-subtitle {\r\n  margin: 2px 0 0 0;\r\n  color: #6c757d;\r\n  font-size: 12px;\r\n  font-weight: 500;\r\n}\r\n\r\n.receipt-actions-top {\r\n  display: flex;\r\n  gap: 8px;\r\n}\r\n\r\n.action-btn-top {\r\n  background: white;\r\n  color: #495057;\r\n  border: 1px solid #dee2e6;\r\n  padding: 8px 16px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 13px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.action-btn-top:hover:not(:disabled) {\r\n  background: #f8f9fa;\r\n  border-color: #adb5bd;\r\n  transform: translateY(-1px);\r\n}\r\n\r\n.action-btn-top.primary-btn {\r\n  background: #007bff;\r\n  color: white;\r\n  border-color: #007bff;\r\n}\r\n\r\n.action-btn-top.primary-btn:hover:not(:disabled) {\r\n  background: #0056b3;\r\n  border-color: #0056b3;\r\n}\r\n\r\n.action-btn-top.print-btn {\r\n  background: #28a745;\r\n  color: white;\r\n  border-color: #28a745;\r\n}\r\n\r\n.action-btn-top.print-btn:hover:not(:disabled) {\r\n  background: #218838;\r\n  border-color: #218838;\r\n}\r\n\r\n.action-btn-top:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.btn-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 14px;\r\n  height: 14px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 1s linear infinite;\r\n}\r\n\r\n@keyframes spin {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n/* Main Content - Two Column Layout */\r\n.receipt-main-content {\r\n  flex: 1;\r\n  display: grid;\r\n  grid-template-columns: 1fr 400px;\r\n  gap: 16px;\r\n  padding: 16px;\r\n  overflow: hidden;\r\n  min-height: 0;\r\n}\r\n\r\n/* Left Column */\r\n.receipt-left-column {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 16px;\r\n  overflow-y: auto;\r\n  overflow-x: hidden;\r\n}\r\n\r\n/* Right Column */\r\n.receipt-right-column {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 16px;\r\n  overflow-y: auto;\r\n  overflow-x: hidden;\r\n}\r\n\r\n/* Cards */\r\n.receipt-header-card,\r\n.receipt-info-grid,\r\n.receipt-items-section,\r\n.totals-card,\r\n.payment-card,\r\n.receipt-footer-card {\r\n  background: white;\r\n  border-radius: 8px;\r\n  padding: 16px;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n/* Business Header */\r\n.receipt-header-card {\r\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n  color: white;\r\n  text-align: center;\r\n}\r\n\r\n.business-name {\r\n  font-size: 20px;\r\n  font-weight: 700;\r\n  margin-bottom: 6px;\r\n}\r\n\r\n.business-address {\r\n  font-size: 12px;\r\n  opacity: 0.95;\r\n  margin-bottom: 4px;\r\n  line-height: 1.4;\r\n}\r\n\r\n.business-contact {\r\n  font-size: 11px;\r\n  opacity: 0.9;\r\n}\r\n\r\n/* Info Grid */\r\n.receipt-info-grid {\r\n  display: grid;\r\n  grid-template-columns: repeat(2, 1fr);\r\n  gap: 12px;\r\n}\r\n\r\n.info-card {\r\n  padding: 12px;\r\n  background: #f8f9fa;\r\n  border-radius: 6px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.info-label {\r\n  font-size: 11px;\r\n  color: #6c757d;\r\n  font-weight: 500;\r\n  margin-bottom: 4px;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n}\r\n\r\n.info-value {\r\n  font-size: 13px;\r\n  color: #333;\r\n  font-weight: 600;\r\n  word-break: break-all;\r\n}\r\n\r\n/* Items Section */\r\n.receipt-items-section {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.section-title {\r\n  font-size: 14px;\r\n  font-weight: 700;\r\n  color: #333;\r\n  margin-bottom: 12px;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n  padding-bottom: 8px;\r\n  border-bottom: 2px solid #e9ecef;\r\n}\r\n\r\n.items-table {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.items-header {\r\n  display: grid;\r\n  grid-template-columns: 2fr 60px 100px 100px;\r\n  gap: 12px;\r\n  padding: 8px 0;\r\n  font-size: 10px;\r\n  font-weight: 600;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n  color: #6c757d;\r\n  border-bottom: 2px solid #e9ecef;\r\n}\r\n\r\n.items-body {\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n}\r\n\r\n.item-row {\r\n  display: grid;\r\n  grid-template-columns: 2fr 60px 100px 100px;\r\n  gap: 12px;\r\n  padding: 10px 0;\r\n  border-bottom: 1px solid #f1f3f4;\r\n  align-items: center;\r\n}\r\n\r\n.item-row:last-child {\r\n  border-bottom: none;\r\n}\r\n\r\n.col-item {\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.item-name {\r\n  font-weight: 600;\r\n  color: #333;\r\n  font-size: 13px;\r\n  line-height: 1.3;\r\n}\r\n\r\n.col-qty,\r\n.col-price,\r\n.col-total {\r\n  font-size: 13px;\r\n  text-align: right;\r\n}\r\n\r\n.col-qty {\r\n  color: #6c757d;\r\n}\r\n\r\n.col-price {\r\n  color: #495057;\r\n}\r\n\r\n.col-total {\r\n  font-weight: 700;\r\n  color: #333;\r\n}\r\n\r\n/* Totals Card */\r\n.totals-card {\r\n  flex-shrink: 0;\r\n}\r\n\r\n.totals-list {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 12px;\r\n}\r\n\r\n.total-item {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 10px 0;\r\n}\r\n\r\n.total-label {\r\n  color: #495057;\r\n  font-weight: 500;\r\n  font-size: 13px;\r\n}\r\n\r\n.total-value {\r\n  color: #333;\r\n  font-weight: 600;\r\n  font-size: 13px;\r\n}\r\n\r\n.total-item.grand-total {\r\n  border-top: 2px solid #dee2e6;\r\n  padding-top: 16px;\r\n  margin-top: 4px;\r\n}\r\n\r\n.grand-total .total-label {\r\n  font-weight: 700;\r\n  font-size: 15px;\r\n  color: #333;\r\n}\r\n\r\n.total-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n  font-size: 18px;\r\n}\r\n\r\n/* Payment Card */\r\n.payment-card {\r\n  flex-shrink: 0;\r\n}\r\n\r\n.payment-method-badge {\r\n  display: inline-flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 10px 16px;\r\n  border-radius: 6px;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n  margin-bottom: 16px;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n}\r\n\r\n.payment-method-badge[data-method=\"cash\"] {\r\n  background: #d4edda;\r\n  color: #155724;\r\n  border: 1px solid #c3e6cb;\r\n}\r\n\r\n.payment-method-badge[data-method=\"mpesa\"] {\r\n  background: #cfe2ff;\r\n  color: #084298;\r\n  border: 1px solid #b6d4fe;\r\n}\r\n\r\n.payment-method-badge[data-method=\"credit\"] {\r\n  background: #fff3cd;\r\n  color: #856404;\r\n  border: 1px solid #ffc107;\r\n}\r\n\r\n.payment-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.payment-text {\r\n  font-size: 11px;\r\n}\r\n\r\n/* Credit Details */\r\n.credit-details {\r\n  margin-top: 16px;\r\n  padding: 12px;\r\n  background: #fffbf0;\r\n  border: 1px solid #ffc107;\r\n  border-radius: 6px;\r\n}\r\n\r\n.credit-badge {\r\n  display: inline-flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  padding: 6px 12px;\r\n  background: #ffc107;\r\n  color: #856404;\r\n  border-radius: 4px;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n  margin-bottom: 10px;\r\n}\r\n\r\n.credit-icon {\r\n  font-size: 12px;\r\n}\r\n\r\n.credit-info-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 6px 0;\r\n  font-size: 12px;\r\n}\r\n\r\n.credit-label {\r\n  color: #856404;\r\n  font-weight: 500;\r\n}\r\n\r\n.credit-value {\r\n  color: #856404;\r\n  font-weight: 600;\r\n}\r\n\r\n.credit-notes-section {\r\n  margin-top: 10px;\r\n  padding-top: 10px;\r\n  border-top: 1px solid #ffc107;\r\n}\r\n\r\n.credit-notes-section .credit-label {\r\n  display: block;\r\n  margin-bottom: 6px;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n}\r\n\r\n.credit-notes-text {\r\n  margin: 0;\r\n  color: #856404;\r\n  font-size: 11px;\r\n  line-height: 1.5;\r\n  font-style: italic;\r\n}\r\n\r\n/* Payment Details */\r\n.payment-details {\r\n  margin-top: 16px;\r\n  padding-top: 16px;\r\n  border-top: 1px solid #e9ecef;\r\n}\r\n\r\n.payment-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 6px 0;\r\n  font-size: 13px;\r\n  color: #495057;\r\n}\r\n\r\n.payment-row span:first-child {\r\n  font-weight: 500;\r\n}\r\n\r\n.payment-row span:last-child {\r\n  font-weight: 600;\r\n  color: #333;\r\n}\r\n\r\n.change-row {\r\n  margin-top: 8px;\r\n  padding-top: 8px;\r\n  border-top: 1px solid #f1f3f4;\r\n}\r\n\r\n.change-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n}\r\n\r\n/* Split Payment Display */\r\n.split-payment-display {\r\n  margin-top: 0;\r\n}\r\n\r\n.split-payment-header-badge {\r\n  display: inline-flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 10px 16px;\r\n  border-radius: 6px;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n  margin-bottom: 16px;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n  color: white;\r\n  border: 1px solid #5a67d8;\r\n}\r\n\r\n.split-payments-list-receipt {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 12px;\r\n  margin-bottom: 16px;\r\n}\r\n\r\n.split-payment-item-receipt {\r\n  padding: 12px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #e5e7eb;\r\n  border-radius: 6px;\r\n}\r\n\r\n.split-payment-method-receipt {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.split-payment-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.split-payment-method-name {\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n  color: #374151;\r\n  text-transform: uppercase;\r\n  letter-spacing: 0.5px;\r\n}\r\n\r\n.split-payment-amount-receipt {\r\n  font-size: 16px;\r\n  font-weight: 700;\r\n  color: #111827;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.split-payment-change,\r\n.split-payment-mpesa-id,\r\n.split-payment-credit-due {\r\n  font-size: 11px;\r\n  color: #6b7280;\r\n  margin-top: 4px;\r\n}\r\n\r\n.split-payment-total-receipt {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 12px;\r\n  background: #f0f9ff;\r\n  border: 1px solid #bfdbfe;\r\n  border-radius: 6px;\r\n  margin-top: 12px;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n  color: #1e40af;\r\n}\r\n\r\n.split-total-amount {\r\n  font-size: 18px;\r\n  font-weight: 700;\r\n  color: #1e3a8a;\r\n}\r\n\r\n.split-payment-change-total {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 8px 12px;\r\n  margin-top: 8px;\r\n  font-size: 13px;\r\n  color: #374151;\r\n}\r\n\r\n.split-payment-change-total .change-amount {\r\n  font-weight: 700;\r\n  color: #28a745;\r\n}\r\n\r\n/* Footer Card */\r\n.receipt-footer-card {\r\n  text-align: center;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.thank-you {\r\n  margin: 0 0 6px 0;\r\n  color: #495057;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n}\r\n\r\n.footer-note {\r\n  margin: 0;\r\n  color: #6c757d;\r\n  font-size: 11px;\r\n  font-style: italic;\r\n}\r\n\r\n/* Responsive */\r\n@media (max-width: 1200px) {\r\n  .receipt-main-content {\r\n    grid-template-columns: 1fr 350px;\r\n  }\r\n}\r\n\r\n@media (max-width: 900px) {\r\n  .receipt-main-content {\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: auto auto;\r\n  }\r\n\r\n  .receipt-right-column {\r\n    max-height: 400px;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -39375,29 +41601,118 @@ module.exports = styleTagTransform;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Login_1 = __importDefault(__webpack_require__(/*! ./components/Login */ "./src/renderer/components/Login.tsx"));
 const POS_1 = __importDefault(__webpack_require__(/*! ./components/POS */ "./src/renderer/components/POS.tsx"));
+const SyncScreen_1 = __importDefault(__webpack_require__(/*! ./components/SyncScreen */ "./src/renderer/components/SyncScreen.tsx"));
+const SleepScreen_1 = __importDefault(__webpack_require__(/*! ./components/SleepScreen */ "./src/renderer/components/SleepScreen.tsx"));
 const AuthContext_1 = __webpack_require__(/*! ./contexts/AuthContext */ "./src/renderer/contexts/AuthContext.tsx");
 const ThemeContext_1 = __webpack_require__(/*! ./contexts/ThemeContext */ "./src/renderer/contexts/ThemeContext.tsx");
+const SleepModeContext_1 = __webpack_require__(/*! ./contexts/SleepModeContext */ "./src/renderer/contexts/SleepModeContext.tsx");
 const Toast_1 = __webpack_require__(/*! ./components/Toast */ "./src/renderer/components/Toast.tsx");
 const ErrorBoundary_1 = __importDefault(__webpack_require__(/*! ./components/ErrorBoundary */ "./src/renderer/components/ErrorBoundary.tsx"));
+const useInitialSync_1 = __webpack_require__(/*! ./hooks/useInitialSync */ "./src/renderer/hooks/useInitialSync.ts");
+const useIdleTimer_1 = __webpack_require__(/*! ./hooks/useIdleTimer */ "./src/renderer/hooks/useIdleTimer.ts");
 __webpack_require__(/*! ./error-boundary.css */ "./src/renderer/error-boundary.css");
 const AppContent = () => {
-    const { isAuthenticated, loading } = (0, AuthContext_1.useAuth)();
+    const { isAuthenticated, loading, initialSyncComplete, onInitialSyncComplete } = (0, AuthContext_1.useAuth)();
     const { toasts, removeToast } = (0, Toast_1.useToast)();
+    const { syncProgress, performInitialSync } = (0, useInitialSync_1.useInitialSync)();
+    const { isSleepMode, exitSleepMode, enterSleepMode } = (0, SleepModeContext_1.useSleepMode)();
+    const idleTimerRef = (0, react_1.useRef)(null);
+    // Debug: Log sleep mode state changes
+    (0, react_1.useEffect)(() => {
+        console.log('Sleep mode state changed:', isSleepMode);
+    }, [isSleepMode]);
+    // Idle timer - activate sleep mode after 5 minutes of inactivity
+    // Only enable when user is authenticated and not already in sleep mode
+    const idleTimer = (0, useIdleTimer_1.useIdleTimer)({
+        idleTime: 5 * 60 * 1000, // 5 minutes in milliseconds
+        onIdle: () => {
+            if (!isSleepMode && isAuthenticated) {
+                console.log('Auto-activating sleep mode due to inactivity');
+                enterSleepMode();
+            }
+        },
+        enabled: isAuthenticated && !isSleepMode && initialSyncComplete,
+    });
+    // Store timer reference
+    (0, react_1.useEffect)(() => {
+        idleTimerRef.current = idleTimer;
+    }, [idleTimer]);
+    // Reset idle timer when waking from sleep mode
+    (0, react_1.useEffect)(() => {
+        if (!isSleepMode && isAuthenticated && idleTimerRef.current) {
+            console.log('Resetting idle timer after waking from sleep mode');
+            idleTimerRef.current.reset();
+        }
+    }, [isSleepMode, isAuthenticated]);
+    // Perform initial sync on mount
+    (0, react_1.useEffect)(() => {
+        if (!initialSyncComplete) {
+            performInitialSync().then(() => {
+                // Wait a moment after sync completes before checking auth
+                setTimeout(() => {
+                    onInitialSyncComplete();
+                }, 500);
+            });
+        }
+    }, [initialSyncComplete, performInitialSync, onInitialSyncComplete]);
+    // Show sleep screen if sleep mode is active (highest priority)
+    if (isSleepMode) {
+        console.log('Rendering SleepScreen - isSleepMode is true');
+        return (0, jsx_runtime_1.jsx)(SleepScreen_1.default, { onWake: exitSleepMode });
+    }
+    // Show sync screen until initial sync is complete
+    if (!initialSyncComplete) {
+        return ((0, jsx_runtime_1.jsx)(SyncScreen_1.default, { progress: syncProgress.progress, status: syncProgress.status, currentStep: syncProgress.currentStep, totalSteps: syncProgress.totalSteps, completedSteps: syncProgress.completedSteps }));
+    }
+    // Show loading screen while checking auth (after sync completes)
     if (loading) {
         return ((0, jsx_runtime_1.jsxs)("div", { className: "loading-screen", children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("p", { children: "Loading SaaS POS..." })] }));
     }
     return ((0, jsx_runtime_1.jsx)(ErrorBoundary_1.default, { children: (0, jsx_runtime_1.jsxs)("div", { className: "app", children: [isAuthenticated ? (0, jsx_runtime_1.jsx)(POS_1.default, {}) : (0, jsx_runtime_1.jsx)(Login_1.default, {}), (0, jsx_runtime_1.jsx)(Toast_1.ToastContainer, { toasts: toasts, onRemove: removeToast })] }) }));
 };
 const App = () => {
-    return ((0, jsx_runtime_1.jsx)(ThemeContext_1.ThemeProvider, { children: (0, jsx_runtime_1.jsx)(AuthContext_1.AuthProvider, { children: (0, jsx_runtime_1.jsx)(AppContent, {}) }) }));
+    return ((0, jsx_runtime_1.jsx)(ThemeContext_1.ThemeProvider, { children: (0, jsx_runtime_1.jsx)(AuthContext_1.AuthProvider, { children: (0, jsx_runtime_1.jsx)(SleepModeContext_1.SleepModeProvider, { children: (0, jsx_runtime_1.jsx)(AppContent, {}) }) }) }));
 };
 exports["default"] = App;
 
@@ -39578,6 +41893,9 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
     const [discountAmount, setDiscountAmount] = (0, react_1.useState)(0);
     const [errors, setErrors] = (0, react_1.useState)({});
     const [success, setSuccess] = (0, react_1.useState)(false);
+    // Split payment state
+    const [isSplitPayment, setIsSplitPayment] = (0, react_1.useState)(false);
+    const [splitPayments, setSplitPayments] = (0, react_1.useState)([]);
     // Computed totals after discount (discount applied to subtotal, then VAT on remainder)
     const subtotalAfterDiscount = Math.max(0, subtotal - discountAmount);
     const vatAfterDiscount = Math.round(subtotalAfterDiscount * 0.16 * 100) / 100;
@@ -39597,23 +41915,51 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
         if (discountAmount < 0 || discountAmount > subtotal) {
             newErrors.discountAmount = `Discount must be between 0 and ${subtotal.toFixed(2)}`;
         }
-        // Validate payment amount (against total after discount)
-        if (paymentMethod === 'cash') {
-            const received = parseFloat(amountReceived);
-            if (!amountReceived || isNaN(received)) {
-                newErrors.amountReceived = 'Please enter a valid amount';
+        // Validate split payments
+        if (isSplitPayment) {
+            if (splitPayments.length === 0) {
+                newErrors.splitPayments = 'Please add at least one payment method';
             }
             else {
-                const paymentValidation = (0, validation_1.validatePaymentAmount)(received, totalAfterDiscount, paymentMethod);
-                if (!paymentValidation.isValid) {
-                    newErrors.amountReceived = paymentValidation.error || `Amount must be at least $${totalAfterDiscount.toFixed(2)}`;
+                const totalSplitAmount = splitPayments.reduce((sum, payment) => sum + payment.amount, 0);
+                const difference = Math.abs(totalSplitAmount - totalAfterDiscount);
+                if (difference > 0.01) { // Allow small rounding differences
+                    newErrors.splitPayments = `Split payments total (Ksh ${totalSplitAmount.toFixed(2)}) must equal total (Ksh ${totalAfterDiscount.toFixed(2)})`;
                 }
+                // Validate each split payment
+                splitPayments.forEach((payment, index) => {
+                    if (payment.amount <= 0) {
+                        newErrors[`splitPayment_${index}_amount`] = 'Payment amount must be greater than 0';
+                    }
+                    if (payment.method === 'cash' && (!payment.amountReceived || payment.amountReceived < payment.amount)) {
+                        newErrors[`splitPayment_${index}_cash`] = `Cash received must be at least Ksh ${payment.amount.toFixed(2)}`;
+                    }
+                    if (payment.method === 'credit' && !customerName?.trim()) {
+                        newErrors.customerName = 'Customer name is required for credit payments';
+                    }
+                });
             }
         }
-        // Validate credit payment - customer name is required
-        if (paymentMethod === 'credit') {
-            if (!customerName || customerName.trim().length === 0) {
-                newErrors.customerName = 'Customer name is required for credit sales';
+        else {
+            // Validate single payment method
+            // Validate payment amount (against total after discount)
+            if (paymentMethod === 'cash') {
+                const received = parseFloat(amountReceived);
+                if (!amountReceived || isNaN(received)) {
+                    newErrors.amountReceived = 'Please enter a valid amount';
+                }
+                else {
+                    const paymentValidation = (0, validation_1.validatePaymentAmount)(received, totalAfterDiscount, paymentMethod);
+                    if (!paymentValidation.isValid) {
+                        newErrors.amountReceived = paymentValidation.error || `Amount must be at least Ksh ${totalAfterDiscount.toFixed(2)}`;
+                    }
+                }
+            }
+            // Validate credit payment - customer name is required
+            if (paymentMethod === 'credit') {
+                if (!customerName || customerName.trim().length === 0) {
+                    newErrors.customerName = 'Customer name is required for credit sales';
+                }
             }
         }
         // Validate phone number
@@ -39636,6 +41982,7 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
                 audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.DATA_VALIDATION_FAILED, {
                     errors: newErrors,
                     paymentMethod,
+                    isSplitPayment,
                     totalAmount: totalAfterDiscount,
                 }, 'medium', userInfo?.id, userInfo?.name);
             });
@@ -39649,30 +41996,87 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
             return;
         }
         const paymentData = {
-            paymentMethod,
+            paymentMethod: isSplitPayment ? 'split' : paymentMethod,
             customerName: customerName.trim() || undefined,
             customerPhone: customerPhone.trim() || undefined,
             ...(discountAmount > 0 && { discountAmount }),
+            isSplitPayment,
         };
-        if (paymentMethod === 'cash') {
-            paymentData.amountReceived = parseFloat(amountReceived);
+        if (isSplitPayment) {
+            // For split payments, use the split payments array
+            paymentData.splitPayments = splitPayments;
+            // Set primary payment method to the first split payment method for backward compatibility
+            paymentData.paymentMethod = splitPayments[0]?.method || 'cash';
         }
-        if (paymentMethod === 'credit') {
-            paymentData.creditAmount = totalAfterDiscount;
-            if (creditDueDate) {
-                paymentData.creditDueDate = creditDueDate;
+        else {
+            // Single payment method
+            if (paymentMethod === 'cash') {
+                paymentData.amountReceived = parseFloat(amountReceived);
             }
-            if (creditNotes) {
-                paymentData.creditNotes = creditNotes.trim();
+            if (paymentMethod === 'credit') {
+                paymentData.creditAmount = totalAfterDiscount;
+                if (creditDueDate) {
+                    paymentData.creditDueDate = creditDueDate;
+                }
+                if (creditNotes) {
+                    paymentData.creditNotes = creditNotes.trim();
+                }
             }
         }
         onCompleteSale(paymentData);
         setSuccess(true);
     };
+    // Split payment handlers
+    const handleToggleSplitPayment = () => {
+        setIsSplitPayment(!isSplitPayment);
+        if (!isSplitPayment) {
+            // Initialize with one payment method
+            setSplitPayments([{
+                    method: 'cash',
+                    amount: totalAfterDiscount,
+                    amountReceived: totalAfterDiscount,
+                }]);
+        }
+        else {
+            // Clear split payments when disabling
+            setSplitPayments([]);
+        }
+    };
+    const handleAddSplitPayment = () => {
+        const remaining = totalAfterDiscount - splitPayments.reduce((sum, p) => sum + p.amount, 0);
+        setSplitPayments([...splitPayments, {
+                method: 'cash',
+                amount: Math.max(0, remaining),
+                amountReceived: Math.max(0, remaining),
+            }]);
+    };
+    const handleRemoveSplitPayment = (index) => {
+        setSplitPayments(splitPayments.filter((_, i) => i !== index));
+    };
+    const handleUpdateSplitPayment = (index, updates) => {
+        const updated = [...splitPayments];
+        updated[index] = { ...updated[index], ...updates };
+        setSplitPayments(updated);
+    };
+    const getRemainingAmount = () => {
+        const totalSplit = splitPayments.reduce((sum, p) => sum + p.amount, 0);
+        return totalAfterDiscount - totalSplit;
+    };
     const change = paymentMethod === 'cash' && amountReceived
         ? parseFloat(amountReceived) - totalAfterDiscount
         : 0;
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "checkout-page", children: [success && ((0, jsx_runtime_1.jsxs)("div", { className: "success-message", children: [(0, jsx_runtime_1.jsx)("span", { className: "success-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Sale completed!" })] })), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-main", children: [(0, jsx_runtime_1.jsx)("div", { className: "checkout-left", children: (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card order-summary-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDED2 Order Summary" }), (0, jsx_runtime_1.jsxs)("span", { className: "item-count", children: [cart.length, " item", cart.length !== 1 ? 's' : ''] })] }), (0, jsx_runtime_1.jsx)("div", { className: "order-items", children: cart.map(item => ((0, jsx_runtime_1.jsxs)("div", { className: "order-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "item-details", children: [(0, jsx_runtime_1.jsx)("h4", { className: "item-name", children: item.product.name }), (0, jsx_runtime_1.jsxs)("span", { className: "item-sku", children: ["SKU: ", item.product.sku] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "item-meta", children: [(0, jsx_runtime_1.jsxs)("span", { className: "item-quantity", children: ["Qty: ", item.quantity] }), (0, jsx_runtime_1.jsxs)("span", { className: "item-price", children: ["$", (item.product.price * item.quantity).toFixed(2)] })] })] }, item.product.id))) }), (0, jsx_runtime_1.jsxs)("div", { className: "order-totals", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Subtotal" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", subtotal.toFixed(2)] })] }), discountAmount > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "total-row discount-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Discount" }), (0, jsx_runtime_1.jsxs)("span", { className: "discount-amount", children: ["\u2212$", discountAmount.toFixed(2)] })] })), (0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "VAT (16%)" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", vatAfterDiscount.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row grand-total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total Amount" }), (0, jsx_runtime_1.jsxs)("span", { className: "total-amount", children: ["$", totalAfterDiscount.toFixed(2)] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "discount-input-section", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83C\uDFF7\uFE0F" }), "Discount (optional)"] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "$" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: 0, max: subtotal, value: discountAmount === 0 ? '' : discountAmount, onChange: (e) => setDiscountAmount(Math.max(0, parseFloat(e.target.value) || 0)), placeholder: "0.00", className: `currency-input ${errors.discountAmount ? 'error' : ''}`, "aria-describedby": "discount-error" })] }), errors.discountAmount && ((0, jsx_runtime_1.jsx)("span", { id: "discount-error", className: "error-text", children: errors.discountAmount }))] })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-right", children: [(0, jsx_runtime_1.jsxs)("div", { className: "checkout-card payment-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "card-header", children: (0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDCB0 Payment Method" }) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-options", children: [(0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'cash' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "cash", checked: paymentMethod === 'cash', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon cash-icon", children: "\uD83D\uDCB5" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Cash Payment" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay with physical cash" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'cash' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "mpesa", checked: paymentMethod === 'mpesa', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon mpesa-icon", children: "\uD83D\uDCF1" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "M-Pesa" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Mobile money payment" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'mpesa' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'credit' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "credit", checked: paymentMethod === 'credit', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon credit-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Credit" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay later / On account" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'credit' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] })] }), paymentMethod === 'cash' && ((0, jsx_runtime_1.jsxs)("div", { className: "cash-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCB0" }), "Amount Received"] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "Ksh" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: totalAfterDiscount.toFixed(2), value: amountReceived, onChange: (e) => setAmountReceived(e.target.value), placeholder: totalAfterDiscount.toFixed(2), required: true, className: `currency-input ${errors.amountReceived ? 'error' : ''}`, "aria-describedby": "amount-error" })] }), (0, jsx_runtime_1.jsxs)("span", { className: "input-hint", children: ["Minimum: $", total.toFixed(2)] }), errors.amountReceived && ((0, jsx_runtime_1.jsx)("span", { id: "amount-error", className: "error-message", children: errors.amountReceived }))] }), amountReceived && parseFloat(amountReceived) >= total && ((0, jsx_runtime_1.jsxs)("div", { className: "change-display", children: [(0, jsx_runtime_1.jsx)("div", { className: "change-icon", children: "\uD83D\uDD04" }), (0, jsx_runtime_1.jsxs)("div", { className: "change-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "change-label", children: "Change to return:" }), (0, jsx_runtime_1.jsxs)("span", { className: "change-amount", children: ["Ksh ", change.toFixed(2)] })] })] }))] })), paymentMethod === 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "credit-info-banner", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-icon", children: "\u2139\uFE0F" }), (0, jsx_runtime_1.jsxs)("div", { className: "info-text", children: [(0, jsx_runtime_1.jsx)("strong", { children: "Credit Sale" }), (0, jsx_runtime_1.jsxs)("p", { children: ["Total amount: Ksh ", total.toFixed(2), " will be added to customer's account"] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCC5" }), "Due Date (Optional)"] }), (0, jsx_runtime_1.jsx)("input", { type: "date", value: creditDueDate, onChange: (e) => setCreditDueDate(e.target.value), className: "text-input", min: new Date().toISOString().split('T')[0] }), (0, jsx_runtime_1.jsx)("span", { className: "input-hint", children: "When payment is expected" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDD" }), "Notes (Optional)"] }), (0, jsx_runtime_1.jsx)("textarea", { value: creditNotes, onChange: (e) => setCreditNotes(e.target.value), placeholder: "Add any notes about this credit sale...", className: "text-input", rows: 3 })] })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card customer-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDC64 Customer Details" }), (0, jsx_runtime_1.jsx)("span", { className: `optional-badge ${paymentMethod === 'credit' ? 'required-badge' : ''}`, children: paymentMethod === 'credit' ? 'Required' : 'Optional' })] }), (0, jsx_runtime_1.jsxs)("div", { className: "customer-form", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDC64" }), "Customer Name", paymentMethod === 'credit' && (0, jsx_runtime_1.jsx)("span", { className: "required-indicator", children: "*" })] }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: customerName, onChange: (e) => setCustomerName(e.target.value), placeholder: "Enter customer name", className: `text-input ${errors.customerName ? 'error' : ''}`, required: paymentMethod === 'credit', "aria-describedby": "name-error" }), errors.customerName && ((0, jsx_runtime_1.jsx)("span", { id: "name-error", className: "error-message", children: errors.customerName }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDE" }), "Phone Number"] }), (0, jsx_runtime_1.jsx)("input", { type: "tel", value: customerPhone, onChange: (e) => setCustomerPhone(e.target.value), placeholder: "Enter phone number", className: `text-input ${errors.customerPhone ? 'error' : ''}`, "aria-describedby": "phone-error" }), errors.customerPhone && ((0, jsx_runtime_1.jsx)("span", { id: "phone-error", className: "error-message", children: errors.customerPhone }))] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-actions", children: [(0, jsx_runtime_1.jsxs)("button", { type: "button", onClick: onBackToProducts, className: "secondary-btn", disabled: loading, children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u274C" }), "Cancel"] }), (0, jsx_runtime_1.jsx)("button", { onClick: handleSubmit, disabled: loading, className: "primary-btn complete-sale-btn", children: loading ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Processing Payment..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u2705" }), (0, jsx_runtime_1.jsxs)("span", { children: ["Complete Sale - $", total.toFixed(2)] })] })) })] })] })] })] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "checkout-page", children: [success && ((0, jsx_runtime_1.jsxs)("div", { className: "success-message", children: [(0, jsx_runtime_1.jsx)("span", { className: "success-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Sale completed!" })] })), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-main", children: [(0, jsx_runtime_1.jsx)("div", { className: "checkout-left", children: (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card order-summary-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDED2 Order Summary" }), (0, jsx_runtime_1.jsxs)("span", { className: "item-count", children: [cart.length, " item", cart.length !== 1 ? 's' : ''] })] }), (0, jsx_runtime_1.jsx)("div", { className: "order-items", children: cart.map(item => ((0, jsx_runtime_1.jsxs)("div", { className: "order-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "item-details", children: [(0, jsx_runtime_1.jsx)("h4", { className: "item-name", children: item.product.name }), (0, jsx_runtime_1.jsxs)("span", { className: "item-sku", children: ["SKU: ", item.product.sku] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "item-meta", children: [(0, jsx_runtime_1.jsxs)("span", { className: "item-quantity", children: ["Qty: ", item.quantity] }), (0, jsx_runtime_1.jsxs)("span", { className: "item-price", children: ["$", (item.product.price * item.quantity).toFixed(2)] })] })] }, item.product.id))) }), (0, jsx_runtime_1.jsxs)("div", { className: "order-totals", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Subtotal" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", subtotal.toFixed(2)] })] }), discountAmount > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "total-row discount-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Discount" }), (0, jsx_runtime_1.jsxs)("span", { className: "discount-amount", children: ["\u2212$", discountAmount.toFixed(2)] })] })), (0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "VAT (16%)" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", vatAfterDiscount.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row grand-total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total Amount" }), (0, jsx_runtime_1.jsxs)("span", { className: "total-amount", children: ["$", totalAfterDiscount.toFixed(2)] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "discount-input-section", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83C\uDFF7\uFE0F" }), "Discount (optional)"] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "$" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: 0, max: subtotal, value: discountAmount === 0 ? '' : discountAmount, onChange: (e) => setDiscountAmount(Math.max(0, parseFloat(e.target.value) || 0)), placeholder: "0.00", className: `currency-input ${errors.discountAmount ? 'error' : ''}`, "aria-describedby": "discount-error" })] }), errors.discountAmount && ((0, jsx_runtime_1.jsx)("span", { id: "discount-error", className: "error-text", children: errors.discountAmount }))] })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-right", children: [(0, jsx_runtime_1.jsxs)("div", { className: "checkout-card payment-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDCB0 Payment Method" }), (0, jsx_runtime_1.jsxs)("label", { className: "split-payment-toggle", children: [(0, jsx_runtime_1.jsx)("input", { type: "checkbox", checked: isSplitPayment, onChange: handleToggleSplitPayment }), (0, jsx_runtime_1.jsx)("span", { children: "Split Payment" })] })] }), !isSplitPayment ? ((0, jsx_runtime_1.jsxs)("div", { className: "payment-options", children: [(0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'cash' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "cash", checked: paymentMethod === 'cash', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon cash-icon", children: "\uD83D\uDCB5" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Cash Payment" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay with physical cash" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'cash' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "mpesa", checked: paymentMethod === 'mpesa', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon mpesa-icon", children: "\uD83D\uDCF1" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "M-Pesa" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Mobile money payment" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'mpesa' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'credit' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "credit", checked: paymentMethod === 'credit', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon credit-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Credit" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay later / On account" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'credit' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] })] })) : ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-header", children: [(0, jsx_runtime_1.jsxs)("p", { className: "split-payment-info", children: ["Split the payment across multiple methods. Total must equal ", (0, jsx_runtime_1.jsxs)("strong", { children: ["Ksh ", totalAfterDiscount.toFixed(2)] })] }), errors.splitPayments && ((0, jsx_runtime_1.jsx)("span", { className: "error-message", children: errors.splitPayments })), (0, jsx_runtime_1.jsxs)("div", { className: "remaining-amount", children: ["Remaining: ", (0, jsx_runtime_1.jsxs)("strong", { className: getRemainingAmount() < 0 ? 'error' : getRemainingAmount() > 0.01 ? 'warning' : 'success', children: ["Ksh ", getRemainingAmount().toFixed(2)] })] })] }), (0, jsx_runtime_1.jsx)("div", { className: "split-payments-list", children: splitPayments.map((payment, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "split-payment-method", children: (0, jsx_runtime_1.jsxs)("select", { value: payment.method, onChange: (e) => handleUpdateSplitPayment(index, {
+                                                                            method: e.target.value,
+                                                                            amountReceived: e.target.value === 'cash' ? payment.amount : undefined,
+                                                                        }), className: "split-method-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "cash", children: "Cash" }), (0, jsx_runtime_1.jsx)("option", { value: "mpesa", children: "M-Pesa" }), (0, jsx_runtime_1.jsx)("option", { value: "credit", children: "Credit" })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "split-payment-amount", children: [(0, jsx_runtime_1.jsx)("label", { children: "Amount" }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "Ksh" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: 0, max: totalAfterDiscount, value: payment.amount || '', onChange: (e) => {
+                                                                                        const amount = parseFloat(e.target.value) || 0;
+                                                                                        handleUpdateSplitPayment(index, {
+                                                                                            amount,
+                                                                                            amountReceived: payment.method === 'cash' ? amount : payment.amountReceived,
+                                                                                        });
+                                                                                    }, className: `currency-input ${errors[`splitPayment_${index}_amount`] ? 'error' : ''}`, placeholder: "0.00" })] }), errors[`splitPayment_${index}_amount`] && ((0, jsx_runtime_1.jsx)("span", { className: "error-text", children: errors[`splitPayment_${index}_amount`] }))] }), splitPayments.length > 1 && ((0, jsx_runtime_1.jsx)("button", { type: "button", onClick: () => handleRemoveSplitPayment(index), className: "remove-split-btn", title: "Remove payment method", children: "\u2715" }))] }), payment.method === 'cash' && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-details", children: [(0, jsx_runtime_1.jsx)("label", { children: "Cash Received" }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "Ksh" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: payment.amount, value: payment.amountReceived || '', onChange: (e) => handleUpdateSplitPayment(index, {
+                                                                                amountReceived: parseFloat(e.target.value) || payment.amount
+                                                                            }), className: `currency-input ${errors[`splitPayment_${index}_cash`] ? 'error' : ''}`, placeholder: payment.amount.toFixed(2) })] }), errors[`splitPayment_${index}_cash`] && ((0, jsx_runtime_1.jsx)("span", { className: "error-text", children: errors[`splitPayment_${index}_cash`] })), payment.amountReceived && payment.amountReceived > payment.amount && ((0, jsx_runtime_1.jsxs)("div", { className: "change-display-small", children: ["Change: Ksh ", (payment.amountReceived - payment.amount).toFixed(2)] }))] })), payment.method === 'mpesa' && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-details", children: [(0, jsx_runtime_1.jsx)("label", { children: "M-Pesa Transaction ID (Optional)" }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: payment.mpesaTransactionId || '', onChange: (e) => handleUpdateSplitPayment(index, { mpesaTransactionId: e.target.value }), className: "text-input", placeholder: "e.g., QHX123456789" })] })), payment.method === 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-details", children: [(0, jsx_runtime_1.jsx)("label", { children: "Due Date (Optional)" }), (0, jsx_runtime_1.jsx)("input", { type: "date", value: payment.creditDueDate || '', onChange: (e) => handleUpdateSplitPayment(index, { creditDueDate: e.target.value }), className: "text-input", min: new Date().toISOString().split('T')[0] }), (0, jsx_runtime_1.jsx)("label", { children: "Notes (Optional)" }), (0, jsx_runtime_1.jsx)("textarea", { value: payment.creditNotes || '', onChange: (e) => handleUpdateSplitPayment(index, { creditNotes: e.target.value }), className: "text-input", placeholder: "Add notes about this credit payment...", rows: 2 })] }))] }, index))) }), getRemainingAmount() > 0.01 && ((0, jsx_runtime_1.jsx)("button", { type: "button", onClick: handleAddSplitPayment, className: "add-split-payment-btn", children: "+ Add Payment Method" }))] })), paymentMethod === 'cash' && ((0, jsx_runtime_1.jsxs)("div", { className: "cash-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCB0" }), "Amount Received"] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "Ksh" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: totalAfterDiscount.toFixed(2), value: amountReceived, onChange: (e) => setAmountReceived(e.target.value), placeholder: totalAfterDiscount.toFixed(2), required: true, className: `currency-input ${errors.amountReceived ? 'error' : ''}`, "aria-describedby": "amount-error" })] }), (0, jsx_runtime_1.jsxs)("span", { className: "input-hint", children: ["Minimum: $", total.toFixed(2)] }), errors.amountReceived && ((0, jsx_runtime_1.jsx)("span", { id: "amount-error", className: "error-message", children: errors.amountReceived }))] }), amountReceived && parseFloat(amountReceived) >= total && ((0, jsx_runtime_1.jsxs)("div", { className: "change-display", children: [(0, jsx_runtime_1.jsx)("div", { className: "change-icon", children: "\uD83D\uDD04" }), (0, jsx_runtime_1.jsxs)("div", { className: "change-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "change-label", children: "Change to return:" }), (0, jsx_runtime_1.jsxs)("span", { className: "change-amount", children: ["Ksh ", change.toFixed(2)] })] })] }))] })), paymentMethod === 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "credit-info-banner", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-icon", children: "\u2139\uFE0F" }), (0, jsx_runtime_1.jsxs)("div", { className: "info-text", children: [(0, jsx_runtime_1.jsx)("strong", { children: "Credit Sale" }), (0, jsx_runtime_1.jsxs)("p", { children: ["Total amount: Ksh ", total.toFixed(2), " will be added to customer's account"] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCC5" }), "Due Date (Optional)"] }), (0, jsx_runtime_1.jsx)("input", { type: "date", value: creditDueDate, onChange: (e) => setCreditDueDate(e.target.value), className: "text-input", min: new Date().toISOString().split('T')[0] }), (0, jsx_runtime_1.jsx)("span", { className: "input-hint", children: "When payment is expected" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDD" }), "Notes (Optional)"] }), (0, jsx_runtime_1.jsx)("textarea", { value: creditNotes, onChange: (e) => setCreditNotes(e.target.value), placeholder: "Add any notes about this credit sale...", className: "text-input", rows: 2 })] })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card customer-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDC64 Customer Details" }), (0, jsx_runtime_1.jsx)("span", { className: `optional-badge ${paymentMethod === 'credit' ? 'required-badge' : ''}`, children: paymentMethod === 'credit' ? 'Required' : 'Optional' })] }), (0, jsx_runtime_1.jsxs)("div", { className: "customer-form", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDC64" }), "Customer Name", paymentMethod === 'credit' && (0, jsx_runtime_1.jsx)("span", { className: "required-indicator", children: "*" })] }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: customerName, onChange: (e) => setCustomerName(e.target.value), placeholder: "Enter customer name", className: `text-input ${errors.customerName ? 'error' : ''}`, required: paymentMethod === 'credit', "aria-describedby": "name-error" }), errors.customerName && ((0, jsx_runtime_1.jsx)("span", { id: "name-error", className: "error-message", children: errors.customerName }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDE" }), "Phone Number"] }), (0, jsx_runtime_1.jsx)("input", { type: "tel", value: customerPhone, onChange: (e) => setCustomerPhone(e.target.value), placeholder: "Enter phone number", className: `text-input ${errors.customerPhone ? 'error' : ''}`, "aria-describedby": "phone-error" }), errors.customerPhone && ((0, jsx_runtime_1.jsx)("span", { id: "phone-error", className: "error-message", children: errors.customerPhone }))] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-actions", children: [(0, jsx_runtime_1.jsxs)("button", { type: "button", onClick: onBackToProducts, className: "secondary-btn", disabled: loading, children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u274C" }), "Cancel"] }), (0, jsx_runtime_1.jsx)("button", { onClick: handleSubmit, disabled: loading, className: "primary-btn complete-sale-btn", children: loading ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Processing Payment..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u2705" }), (0, jsx_runtime_1.jsxs)("span", { children: ["Complete Sale - $", total.toFixed(2)] })] })) })] })] })] })] }));
 };
 exports["default"] = Checkout;
 
@@ -39872,9 +42276,25 @@ const Login = () => {
             }
         }
         catch (err) {
-            const errorMessage = err?.response?.data?.message ||
-                err?.message ||
-                'We could not sign you in. Please check your details and try again.';
+            // Extract error message - handle both Electron IPC errors and direct errors
+            let errorMessage = 'We could not sign you in. Please check your details and try again.';
+            if (err?.response?.data) {
+                // Axios error response
+                errorMessage =
+                    err.response.data.message ||
+                        err.response.data.error ||
+                        (Array.isArray(err.response.data.message) ? err.response.data.message[0] : null) ||
+                        err.message ||
+                        errorMessage;
+            }
+            else if (err?.message) {
+                // Direct error message (from Electron IPC or Error object)
+                errorMessage = err.message;
+            }
+            else if (typeof err === 'string') {
+                // String error
+                errorMessage = err;
+            }
             setFormError(errorMessage);
             (0, error_handler_1.handleError)(new error_handler_1.AppError(errorMessage, 'UNAUTHORIZED', {
                 operation: 'login',
@@ -39966,7 +42386,7 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const ProductSelection_1 = __importDefault(__webpack_require__(/*! ./ProductSelection */ "./src/renderer/components/ProductSelection.tsx"));
 const Checkout_1 = __importDefault(__webpack_require__(/*! ./Checkout */ "./src/renderer/components/Checkout.tsx"));
 const Receipt_1 = __importDefault(__webpack_require__(/*! ./Receipt */ "./src/renderer/components/Receipt.tsx"));
-const PrintPreview_1 = __importDefault(__webpack_require__(Object(function webpackMissingModule() { var e = new Error("Cannot find module './PrintPreview'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())));
+const PrintPreview_1 = __importDefault(__webpack_require__(/*! ./PrintPreview */ "./src/renderer/components/PrintPreview.tsx"));
 const AuthContext_1 = __webpack_require__(/*! ../contexts/AuthContext */ "./src/renderer/contexts/AuthContext.tsx");
 const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
 const usePendingTransactions_1 = __webpack_require__(/*! ../hooks/usePendingTransactions */ "./src/renderer/hooks/usePendingTransactions.ts");
@@ -40356,37 +42776,86 @@ const POS = () => {
             if (saleData.discountAmount != null && saleData.discountAmount > 0) {
                 cleanSaleData.discountAmount = Number(saleData.discountAmount);
             }
-            // Credit-specific fields - only include if payment method is credit
-            if (paymentData.paymentMethod === 'credit') {
-                const creditAmount = paymentData.creditAmount ?? getGrandTotal();
-                if (creditAmount != null) {
-                    cleanSaleData.creditAmount = Number(creditAmount);
-                }
-                if (paymentData.creditDueDate) {
-                    // Ensure date is in ISO format (YYYY-MM-DD) for backend validation
-                    const dateStr = String(paymentData.creditDueDate);
-                    // If it's already in YYYY-MM-DD format, use it; otherwise try to parse and format
-                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-                        cleanSaleData.creditDueDate = dateStr;
+            // Split payment fields
+            if (paymentData.isSplitPayment && paymentData.splitPayments && paymentData.splitPayments.length > 0) {
+                cleanSaleData.isSplitPayment = true;
+                cleanSaleData.splitPayments = paymentData.splitPayments.map(payment => {
+                    const splitPayment = {
+                        method: payment.method,
+                        amount: Number(payment.amount),
+                    };
+                    if (payment.method === 'cash' && payment.amountReceived != null) {
+                        splitPayment.amountReceived = Number(payment.amountReceived);
                     }
-                    else {
-                        // Try to parse and format as ISO date string
-                        try {
-                            const date = new Date(dateStr);
-                            if (!isNaN(date.getTime())) {
-                                cleanSaleData.creditDueDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                    if (payment.method === 'mpesa') {
+                        if (payment.mpesaTransactionId) {
+                            splitPayment.mpesaTransactionId = String(payment.mpesaTransactionId);
+                        }
+                        if (payment.mpesaReceipt) {
+                            splitPayment.mpesaReceipt = String(payment.mpesaReceipt);
+                        }
+                    }
+                    if (payment.method === 'credit') {
+                        if (payment.creditDueDate) {
+                            const dateStr = String(payment.creditDueDate);
+                            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                                splitPayment.creditDueDate = dateStr;
                             }
                             else {
+                                try {
+                                    const date = new Date(dateStr);
+                                    if (!isNaN(date.getTime())) {
+                                        splitPayment.creditDueDate = date.toISOString().split('T')[0];
+                                    }
+                                    else {
+                                        splitPayment.creditDueDate = dateStr;
+                                    }
+                                }
+                                catch {
+                                    splitPayment.creditDueDate = dateStr;
+                                }
+                            }
+                        }
+                        if (payment.creditNotes) {
+                            splitPayment.creditNotes = String(payment.creditNotes);
+                        }
+                    }
+                    return splitPayment;
+                });
+            }
+            else {
+                // Credit-specific fields - only include if payment method is credit
+                if (paymentData.paymentMethod === 'credit') {
+                    const creditAmount = paymentData.creditAmount ?? getGrandTotal();
+                    if (creditAmount != null) {
+                        cleanSaleData.creditAmount = Number(creditAmount);
+                    }
+                    if (paymentData.creditDueDate) {
+                        // Ensure date is in ISO format (YYYY-MM-DD) for backend validation
+                        const dateStr = String(paymentData.creditDueDate);
+                        // If it's already in YYYY-MM-DD format, use it; otherwise try to parse and format
+                        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                            cleanSaleData.creditDueDate = dateStr;
+                        }
+                        else {
+                            // Try to parse and format as ISO date string
+                            try {
+                                const date = new Date(dateStr);
+                                if (!isNaN(date.getTime())) {
+                                    cleanSaleData.creditDueDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                                }
+                                else {
+                                    cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+                                }
+                            }
+                            catch {
                                 cleanSaleData.creditDueDate = dateStr; // Fallback to original string
                             }
                         }
-                        catch {
-                            cleanSaleData.creditDueDate = dateStr; // Fallback to original string
-                        }
                     }
-                }
-                if (paymentData.creditNotes) {
-                    cleanSaleData.creditNotes = String(paymentData.creditNotes);
+                    if (paymentData.creditNotes) {
+                        cleanSaleData.creditNotes = String(paymentData.creditNotes);
+                    }
                 }
             }
             // Validate sale data integrity
@@ -40687,10 +43156,64 @@ exports["default"] = POS;
 
 /***/ }),
 
-/***/ "./src/renderer/components/PrinterSettings.tsx":
-/*!*****************************************************!*\
-  !*** ./src/renderer/components/PrinterSettings.tsx ***!
-  \*****************************************************/
+/***/ "./src/renderer/components/PrintPreview.css":
+/*!**************************************************!*\
+  !*** ./src/renderer/components/PrintPreview.css ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_PrintPreview_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!./PrintPreview.css */ "./node_modules/css-loader/dist/cjs.js!./src/renderer/components/PrintPreview.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_PrintPreview_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_PrintPreview_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_PrintPreview_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_PrintPreview_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./src/renderer/components/PrintPreview.tsx":
+/*!**************************************************!*\
+  !*** ./src/renderer/components/PrintPreview.tsx ***!
+  \**************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -40730,115 +43253,60 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-__webpack_require__(/*! ../printer-settings.css */ "./src/renderer/printer-settings.css");
-const PrinterSettings = () => {
-    const [config, setConfig] = (0, react_1.useState)({
-        type: 'usb',
-        autoOpenCashDrawer: true,
-    });
-    const [loading, setLoading] = (0, react_1.useState)(false);
-    const [saving, setSaving] = (0, react_1.useState)(false);
-    const [message, setMessage] = (0, react_1.useState)(null);
+__webpack_require__(/*! ../receipt.css */ "./src/renderer/receipt.css");
+__webpack_require__(/*! ./PrintPreview.css */ "./src/renderer/components/PrintPreview.css");
+const PrintPreview = ({ receipt, onPrint, onBack, onPrintViaBrowser, printing }) => {
+    const [businessInfo, setBusinessInfo] = (0, react_1.useState)(receipt.businessInfo);
     (0, react_1.useEffect)(() => {
-        loadConfig();
-    }, []);
-    const loadConfig = async () => {
-        setLoading(true);
-        try {
-            const response = await window.electronAPI.getPrinterConfig();
-            if (response.success && response.config) {
-                setConfig(response.config);
-            }
-        }
-        catch (error) {
-            console.error('Failed to load printer config:', error);
-        }
-        finally {
-            setLoading(false);
-        }
-    };
-    const handleSave = async () => {
-        setSaving(true);
-        setMessage(null);
-        try {
-            const response = await window.electronAPI.setPrinterConfig(config);
-            if (response.success) {
-                setMessage({ type: 'success', text: 'Printer settings saved successfully!' });
-            }
-            else {
-                setMessage({ type: 'error', text: response.error || 'Failed to save settings' });
-            }
-        }
-        catch (error) {
-            setMessage({ type: 'error', text: error.message || 'Failed to save settings' });
-        }
-        finally {
-            setSaving(false);
-            setTimeout(() => setMessage(null), 3000);
-        }
-    };
-    const handleTestPrint = async () => {
-        setSaving(true);
-        try {
-            const testReceipt = {
-                saleId: 'TEST-001',
-                date: new Date().toISOString(),
-                businessInfo: {
-                    name: 'Test Business',
-                    address: '123 Test Street',
-                    phone: '+1234567890',
-                },
-                items: [
-                    { name: 'Test Item', quantity: 1, price: 10.00, sku: 'TEST-001' },
-                ],
-                subtotal: 10.00,
-                vatAmount: 1.60,
-                total: 11.60,
-                paymentMethod: 'cash',
-                amountReceived: 20.00,
-                change: 8.40,
+        // Try to get business info from user data if not in receipt
+        if (!businessInfo || !businessInfo.name || businessInfo.name === 'Business Name') {
+            const fetchBusinessInfo = async () => {
+                try {
+                    const userData = await window.electronAPI.getUserData();
+                    if (userData) {
+                        const businessName = userData.tenantName || userData.businessName || userData.companyName;
+                        if (businessName) {
+                            setBusinessInfo({
+                                ...businessInfo,
+                                name: businessName,
+                                address: businessInfo?.address || userData.address,
+                                phone: businessInfo?.phone || userData.phone,
+                                email: businessInfo?.email || userData.email,
+                            });
+                        }
+                    }
+                }
+                catch (error) {
+                    console.error('Failed to fetch business info:', error);
+                }
             };
-            const response = await window.electronAPI.printReceipt(testReceipt);
-            if (response.success) {
-                setMessage({ type: 'success', text: 'Test print sent successfully!' });
-            }
-            else {
-                setMessage({ type: 'error', text: response.error || 'Test print failed' });
-            }
+            fetchBusinessInfo();
         }
-        catch (error) {
-            setMessage({ type: 'error', text: error.message || 'Test print failed' });
-        }
-        finally {
-            setSaving(false);
-            setTimeout(() => setMessage(null), 3000);
-        }
+    }, [receipt]);
+    if (!receipt)
+        return null;
+    const formatCurrency = (amount) => {
+        return `Ksh ${amount?.toFixed(2) || '0.00'}`;
     };
-    const handleTestCashDrawer = async () => {
-        setSaving(true);
-        try {
-            const response = await window.electronAPI.openCashDrawer();
-            if (response.success) {
-                setMessage({ type: 'success', text: 'Cash drawer opened!' });
-            }
-            else {
-                setMessage({ type: 'error', text: response.error || 'Failed to open cash drawer' });
-            }
-        }
-        catch (error) {
-            setMessage({ type: 'error', text: error.message || 'Failed to open cash drawer' });
-        }
-        finally {
-            setSaving(false);
-            setTimeout(() => setMessage(null), 3000);
-        }
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     };
-    if (loading) {
-        return (0, jsx_runtime_1.jsx)("div", { className: "printer-settings-loading", children: "Loading printer settings..." });
-    }
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "printer-settings", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDDA8\uFE0F Printer Settings" }), message && ((0, jsx_runtime_1.jsxs)("div", { className: `settings-message ${message.type}`, children: [message.type === 'success' ? '✅' : '❌', " ", message.text] })), (0, jsx_runtime_1.jsx)("div", { className: "settings-section", children: (0, jsx_runtime_1.jsxs)("label", { className: "setting-label", children: [(0, jsx_runtime_1.jsx)("span", { children: "Printer Type:" }), (0, jsx_runtime_1.jsxs)("select", { value: config.type, onChange: (e) => setConfig({ ...config, type: e.target.value }), className: "setting-input", children: [(0, jsx_runtime_1.jsx)("option", { value: "usb", children: "USB Printer" }), (0, jsx_runtime_1.jsx)("option", { value: "network", children: "Network Printer" }), (0, jsx_runtime_1.jsx)("option", { value: "file", children: "Save to File" })] })] }) }), config.type === 'usb' && ((0, jsx_runtime_1.jsxs)("div", { className: "settings-section", children: [(0, jsx_runtime_1.jsxs)("label", { className: "setting-label", children: [(0, jsx_runtime_1.jsx)("span", { children: "Device Path:" }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: config.path || '', onChange: (e) => setConfig({ ...config, path: e.target.value }), placeholder: "COM1 (Windows) or /dev/usb/lp0 (Linux)", className: "setting-input" })] }), (0, jsx_runtime_1.jsx)("small", { className: "setting-hint", children: "Windows: COM1, COM2, etc. | Linux: /dev/usb/lp0, /dev/usb/lp1, etc. | macOS: Leave empty for auto-detect" })] })), config.type === 'network' && ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-section", children: (0, jsx_runtime_1.jsxs)("label", { className: "setting-label", children: [(0, jsx_runtime_1.jsx)("span", { children: "Printer IP Address:" }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: config.ip || '', onChange: (e) => setConfig({ ...config, ip: e.target.value }), placeholder: "192.168.1.100", className: "setting-input" })] }) }), (0, jsx_runtime_1.jsx)("div", { className: "settings-section", children: (0, jsx_runtime_1.jsxs)("label", { className: "setting-label", children: [(0, jsx_runtime_1.jsx)("span", { children: "Port:" }), (0, jsx_runtime_1.jsx)("input", { type: "number", value: config.port || 9100, onChange: (e) => setConfig({ ...config, port: parseInt(e.target.value) || 9100 }), placeholder: "9100", className: "setting-input" })] }) })] })), (0, jsx_runtime_1.jsx)("div", { className: "settings-section", children: (0, jsx_runtime_1.jsxs)("label", { className: "setting-label checkbox-label", children: [(0, jsx_runtime_1.jsx)("input", { type: "checkbox", checked: config.autoOpenCashDrawer, onChange: (e) => setConfig({ ...config, autoOpenCashDrawer: e.target.checked }), className: "setting-checkbox" }), (0, jsx_runtime_1.jsx)("span", { children: "Auto-open cash drawer on cash payments" })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-actions", children: [(0, jsx_runtime_1.jsx)("button", { onClick: handleTestPrint, disabled: saving, className: "test-btn", children: "\uD83D\uDDA8\uFE0F Test Print" }), (0, jsx_runtime_1.jsx)("button", { onClick: handleTestCashDrawer, disabled: saving, className: "test-btn", children: "\uD83D\uDCB0 Test Cash Drawer" }), (0, jsx_runtime_1.jsx)("button", { onClick: handleSave, disabled: saving, className: "save-btn", children: saving ? 'Saving...' : '💾 Save Settings' })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-info", children: [(0, jsx_runtime_1.jsx)("h3", { children: "\uD83D\uDCCB Notes:" }), (0, jsx_runtime_1.jsxs)("ul", { children: [(0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "USB Printers:" }), " Make sure your printer is connected and drivers are installed."] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "Network Printers:" }), " Ensure the printer is on the same network and port 9100 is open."] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "File Mode:" }), " Receipts will be saved to Desktop/POS_Receipts folder."] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "Cash Drawer:" }), " Must be connected to the printer via RJ-11 or USB cable."] })] })] })] }));
+    const isCreditSale = receipt.paymentMethod === 'credit';
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "print-preview-page", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-controls-bar", children: [(0, jsx_runtime_1.jsx)("div", { className: "print-controls-left", children: (0, jsx_runtime_1.jsxs)("button", { onClick: onBack, className: "control-btn back-btn", children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u2190" }), (0, jsx_runtime_1.jsx)("span", { children: "Back" })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "print-controls-right", children: [(0, jsx_runtime_1.jsxs)("button", { onClick: onPrintViaBrowser, className: "control-btn browser-print-btn", disabled: printing, children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDDA8\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Print via Browser" })] }), (0, jsx_runtime_1.jsx)("button", { onClick: onPrint, className: "control-btn electron-print-btn", disabled: printing, children: printing ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Printing..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDDA8\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Print Receipt" })] })) })] })] }), (0, jsx_runtime_1.jsx)("div", { className: "print-preview-content", children: (0, jsx_runtime_1.jsxs)("div", { className: "print-receipt", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-header", children: [receipt.businessInfo?.receiptLogo && ((0, jsx_runtime_1.jsx)("img", { src: receipt.businessInfo.receiptLogo.startsWith('http')
+                                        ? receipt.businessInfo.receiptLogo
+                                        : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`, alt: "Business Logo", className: "print-logo" })), (0, jsx_runtime_1.jsx)("div", { className: "print-business-name", children: businessInfo?.name || receipt.businessInfo?.name || receipt.tenantName || receipt.businessName || 'BUSINESS NAME' }), (businessInfo?.address || receipt.businessInfo?.address) && ((0, jsx_runtime_1.jsx)("div", { className: "print-business-address", children: businessInfo?.address || receipt.businessInfo?.address })), (businessInfo?.phone || receipt.businessInfo?.phone) && ((0, jsx_runtime_1.jsxs)("div", { className: "print-business-contact", children: ["Tel: ", businessInfo?.phone || receipt.businessInfo?.phone] })), (businessInfo?.email || receipt.businessInfo?.email) && ((0, jsx_runtime_1.jsx)("div", { className: "print-business-email", children: businessInfo?.email || receipt.businessInfo?.email }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-receipt-info", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Receipt #:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: receipt.saleId })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Date:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: formatDate(receipt.date) })] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Branch:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: receipt.branch.name })] })), receipt.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Customer:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: receipt.customerName })] }))] }), (0, jsx_runtime_1.jsx)("div", { className: "print-divider" }), (0, jsx_runtime_1.jsxs)("div", { className: "print-items", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-items-header", children: [(0, jsx_runtime_1.jsx)("div", { className: "print-col-item", children: "Item" }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-qty", children: "Qty" }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-price", children: "Price" }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-total", children: "Total" })] }), (0, jsx_runtime_1.jsx)("div", { className: "print-items-body", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "print-item-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "print-col-item", children: (0, jsx_runtime_1.jsx)("span", { className: "print-item-name", children: item.name }) }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-qty", children: item.quantity }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-price", children: formatCurrency(item.price || 0) }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-total", children: formatCurrency((item.price || 0) * (item.quantity || 0)) })] }, index))) })] }), (0, jsx_runtime_1.jsx)("div", { className: "print-divider" }), (0, jsx_runtime_1.jsxs)("div", { className: "print-totals", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-total-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-total-label", children: "Subtotal:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-total-value", children: formatCurrency(receipt.subtotal || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-total-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-total-label", children: "VAT (16%):" }), (0, jsx_runtime_1.jsx)("span", { className: "print-total-value", children: formatCurrency(receipt.vatAmount || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-total-row print-grand-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-total-label", children: "Total:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-grand-total-value", children: formatCurrency(receipt.total || 0) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-payment", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-payment-method", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-payment-label", children: "Payment Method:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-payment-value", children: receipt.paymentMethod?.toUpperCase() || 'CASH' })] }), isCreditSale && ((0, jsx_runtime_1.jsxs)("div", { className: "print-credit-info", children: [receipt.creditDueDate && ((0, jsx_runtime_1.jsxs)("div", { className: "print-credit-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-credit-label", children: "Due Date:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-credit-value", children: new Date(receipt.creditDueDate).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    }) })] })), receipt.creditNotes && ((0, jsx_runtime_1.jsxs)("div", { className: "print-credit-notes", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-credit-label", children: "Notes:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-credit-value", children: receipt.creditNotes })] }))] })), receipt.amountReceived && receipt.paymentMethod !== 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "print-payment-details", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-payment-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-payment-label", children: "Amount Received:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-payment-value", children: formatCurrency(receipt.amountReceived) })] }), receipt.change !== undefined && receipt.change > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "print-payment-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-payment-label", children: "Change:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-change-value", children: formatCurrency(receipt.change) })] }))] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-footer", children: [(0, jsx_runtime_1.jsx)("div", { className: "print-thank-you", children: "Thank you for your business!" }), (0, jsx_runtime_1.jsx)("div", { className: "print-footer-note", children: "Please keep this receipt for your records" })] })] }) })] }));
 };
-exports["default"] = PrinterSettings;
+exports["default"] = PrintPreview;
 
 
 /***/ }),
@@ -40891,7 +43359,7 @@ const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modul
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const AuthContext_1 = __webpack_require__(/*! ../contexts/AuthContext */ "./src/renderer/contexts/AuthContext.tsx");
 const ThemeContext_1 = __webpack_require__(/*! ../contexts/ThemeContext */ "./src/renderer/contexts/ThemeContext.tsx");
-const PrinterSettings_1 = __importDefault(__webpack_require__(/*! ./PrinterSettings */ "./src/renderer/components/PrinterSettings.tsx"));
+const Settings_1 = __importDefault(__webpack_require__(/*! ./Settings */ "./src/renderer/components/Settings.tsx"));
 const SyncStatus_1 = __importDefault(__webpack_require__(/*! ./SyncStatus */ "./src/renderer/components/SyncStatus.tsx"));
 const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
 const validation_1 = __webpack_require__(/*! ../utils/validation */ "./src/renderer/utils/validation.ts");
@@ -40922,7 +43390,7 @@ const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCar
     const [selectedProductForVariation, setSelectedProductForVariation] = (0, react_1.useState)(null);
     const [modalVariations, setModalVariations] = (0, react_1.useState)([]);
     const [loadingVariations, setLoadingVariations] = (0, react_1.useState)(false);
-    const [showPrinterSettings, setShowPrinterSettings] = (0, react_1.useState)(false);
+    const [showSettings, setShowSettings] = (0, react_1.useState)(false);
     const [scannedBarcode, setScannedBarcode] = (0, react_1.useState)(null);
     const [showBarcodeHelp, setShowBarcodeHelp] = (0, react_1.useState)(false);
     // Barcode scanner hook
@@ -41084,7 +43552,7 @@ const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCar
         setShowVariationModal(false);
         setSelectedProductForVariation(null);
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pos-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "header-left", children: [(0, jsx_runtime_1.jsx)("h1", { children: "POS" }), (0, jsx_runtime_1.jsx)(SyncStatus_1.default, {})] }), (0, jsx_runtime_1.jsx)("div", { className: "header-center", children: (0, jsx_runtime_1.jsxs)("div", { className: "header-indicators", children: [isScanning && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanning-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "scanning-pulse" }), (0, jsx_runtime_1.jsx)("span", { children: "Scanning..." })] })), scannedBarcode && !isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanned-indicator", children: (0, jsx_runtime_1.jsxs)("span", { children: ["\u2713 ", scannedBarcode] }) }))] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "header-right", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedBranch, onChange: (e) => handleBranchChange(e.target.value), className: "branch-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "Select Branch" }), branches.map((branch) => ((0, jsx_runtime_1.jsx)("option", { value: branch.id, children: branch.name }, branch.id)))] }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn theme-toggle-btn", onClick: toggleTheme, title: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode', children: theme === 'dark' ? '☀️' : '🌙' }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn settings-btn", onClick: () => setShowPrinterSettings(!showPrinterSettings), title: "Printer Settings", children: "\u2699\uFE0F" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn logout-btn", onClick: logout, title: "Logout", children: "\uD83D\uDEAA" })] })] }), showPrinterSettings && ((0, jsx_runtime_1.jsx)("div", { className: "printer-settings-modal", children: (0, jsx_runtime_1.jsxs)("div", { className: "modal-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Printer Settings" }), (0, jsx_runtime_1.jsx)("button", { className: "close-btn", onClick: () => setShowPrinterSettings(false), children: "\u00D7" })] }), (0, jsx_runtime_1.jsx)(PrinterSettings_1.default, {})] }) })), showVariationModal && selectedProductForVariation && ((0, jsx_runtime_1.jsx)("div", { className: "variation-modal-overlay", onClick: () => { setShowVariationModal(false); setSelectedProductForVariation(null); }, children: (0, jsx_runtime_1.jsxs)("div", { className: "variation-modal", onClick: e => e.stopPropagation(), children: [(0, jsx_runtime_1.jsxs)("div", { className: "variation-modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Select Variation" }), (0, jsx_runtime_1.jsx)("p", { className: "variation-modal-product-name", children: selectedProductForVariation.name }), (0, jsx_runtime_1.jsx)("button", { className: "variation-modal-close", onClick: () => { setShowVariationModal(false); setSelectedProductForVariation(null); }, children: "\u00D7" })] }), (0, jsx_runtime_1.jsx)("div", { className: "variation-modal-list", children: loadingVariations ? ((0, jsx_runtime_1.jsx)("p", { className: "variation-modal-empty", children: "Loading variations..." })) : modalVariations.length === 0 ? ((0, jsx_runtime_1.jsxs)("div", { className: "variation-modal-empty", children: [(0, jsx_runtime_1.jsx)("p", { children: "No variations for this product." }), (0, jsx_runtime_1.jsx)("button", { type: "button", className: "add-base-product-btn", onClick: () => selectedProductForVariation && handleAddBaseProductToCart(selectedProductForVariation), children: "Add base product to cart" })] })) : modalVariations.map(variation => {
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pos-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "header-left", children: [(0, jsx_runtime_1.jsx)("h1", { children: "POS" }), (0, jsx_runtime_1.jsx)(SyncStatus_1.default, {})] }), (0, jsx_runtime_1.jsx)("div", { className: "header-center", children: (0, jsx_runtime_1.jsxs)("div", { className: "header-indicators", children: [isScanning && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanning-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "scanning-pulse" }), (0, jsx_runtime_1.jsx)("span", { children: "Scanning..." })] })), scannedBarcode && !isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanned-indicator", children: (0, jsx_runtime_1.jsxs)("span", { children: ["\u2713 ", scannedBarcode] }) }))] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "header-right", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedBranch, onChange: (e) => handleBranchChange(e.target.value), className: "branch-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "Select Branch" }), branches.map((branch) => ((0, jsx_runtime_1.jsx)("option", { value: branch.id, children: branch.name }, branch.id)))] }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn theme-toggle-btn", onClick: toggleTheme, title: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode', children: theme === 'dark' ? '☀️' : '🌙' }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn settings-btn", onClick: () => setShowSettings(true), title: "Settings", children: "\u2699\uFE0F" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn logout-btn", onClick: logout, title: "Logout", children: "\uD83D\uDEAA" })] })] }), showSettings && ((0, jsx_runtime_1.jsx)(Settings_1.default, { onClose: () => setShowSettings(false) })), showVariationModal && selectedProductForVariation && ((0, jsx_runtime_1.jsx)("div", { className: "variation-modal-overlay", onClick: () => { setShowVariationModal(false); setSelectedProductForVariation(null); }, children: (0, jsx_runtime_1.jsxs)("div", { className: "variation-modal", onClick: e => e.stopPropagation(), children: [(0, jsx_runtime_1.jsxs)("div", { className: "variation-modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Select Variation" }), (0, jsx_runtime_1.jsx)("p", { className: "variation-modal-product-name", children: selectedProductForVariation.name }), (0, jsx_runtime_1.jsx)("button", { className: "variation-modal-close", onClick: () => { setShowVariationModal(false); setSelectedProductForVariation(null); }, children: "\u00D7" })] }), (0, jsx_runtime_1.jsx)("div", { className: "variation-modal-list", children: loadingVariations ? ((0, jsx_runtime_1.jsx)("p", { className: "variation-modal-empty", children: "Loading variations..." })) : modalVariations.length === 0 ? ((0, jsx_runtime_1.jsxs)("div", { className: "variation-modal-empty", children: [(0, jsx_runtime_1.jsx)("p", { children: "No variations for this product." }), (0, jsx_runtime_1.jsx)("button", { type: "button", className: "add-base-product-btn", onClick: () => selectedProductForVariation && handleAddBaseProductToCart(selectedProductForVariation), children: "Add base product to cart" })] })) : modalVariations.map(variation => {
                                 const attrsLabel = variation.attributes && typeof variation.attributes === 'object'
                                     ? Object.entries(variation.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')
                                     : variation.sku;
@@ -41198,6 +43666,7 @@ const Receipt = ({ receipt, onPrint, onNewSale, printing }) => {
         });
     };
     const isCreditSale = receipt.paymentMethod === 'credit';
+    const isSplitPayment = receipt.isSplitPayment || (receipt.splitPayments && receipt.splitPayments.length > 0);
     return ((0, jsx_runtime_1.jsxs)("div", { className: "receipt-page", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-top-bar", children: [(0, jsx_runtime_1.jsxs)("div", { className: "success-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "success-icon-wrapper", children: (0, jsx_runtime_1.jsx)("div", { className: "success-icon", children: "\u2713" }) }), (0, jsx_runtime_1.jsxs)("div", { className: "success-text", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Sale Completed" }), (0, jsx_runtime_1.jsxs)("p", { className: "success-subtitle", children: ["Receipt #", receipt.saleId?.substring(0, 8).toUpperCase()] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-actions-top", children: [(0, jsx_runtime_1.jsxs)("button", { onClick: onNewSale, className: "action-btn-top primary-btn", title: "New Sale (F3)", children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDED2" }), (0, jsx_runtime_1.jsx)("span", { children: "New Sale" })] }), (0, jsx_runtime_1.jsxs)("button", { onClick: async () => {
                                     try {
                                         await window.electronAPI.openCashDrawer();
@@ -41207,15 +43676,580 @@ const Receipt = ({ receipt, onPrint, onNewSale, printing }) => {
                                     }
                                 }, className: "action-btn-top secondary-btn", title: "Open Cash Drawer", children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDCB0" }), (0, jsx_runtime_1.jsx)("span", { children: "Open Drawer" })] }), (0, jsx_runtime_1.jsx)("button", { onClick: onPrint, disabled: printing, className: "action-btn-top print-btn", children: printing ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Printing..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDDA8\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Print Preview" })] })) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-main-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-left-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-header-card", children: [receipt.businessInfo?.receiptLogo && ((0, jsx_runtime_1.jsx)("img", { src: receipt.businessInfo.receiptLogo.startsWith('http')
                                             ? receipt.businessInfo.receiptLogo
-                                            : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`, alt: "Business Logo", className: "receipt-logo", style: { maxHeight: '48px', width: 'auto', marginBottom: '8px', display: 'block' } })), (0, jsx_runtime_1.jsx)("div", { className: "business-name", children: businessInfo?.name || receipt.businessInfo?.name || receipt.tenantName || receipt.businessName || 'BUSINESS NAME' }), (businessInfo?.address || receipt.businessInfo?.address) && ((0, jsx_runtime_1.jsx)("div", { className: "business-address", children: businessInfo?.address || receipt.businessInfo?.address })), (businessInfo?.phone || receipt.businessInfo?.phone) && ((0, jsx_runtime_1.jsxs)("div", { className: "business-contact", children: ["Tel: ", businessInfo?.phone || receipt.businessInfo?.phone] })), (businessInfo?.email || receipt.businessInfo?.email) && ((0, jsx_runtime_1.jsx)("div", { className: "business-email", children: businessInfo?.email || receipt.businessInfo?.email }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-info-grid", children: [(0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Sale ID" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.saleId })] }), (0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Date & Time" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: formatDate(receipt.date) })] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Branch" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.branch.name })] })), receipt.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Customer" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.customerName })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-items-section", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Items Purchased" }), (0, jsx_runtime_1.jsxs)("div", { className: "items-table", children: [(0, jsx_runtime_1.jsxs)("div", { className: "items-header", children: [(0, jsx_runtime_1.jsx)("div", { className: "header-col-item", children: "Item" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-qty", children: "Qty" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-price", children: "Price" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-total", children: "Total" })] }), (0, jsx_runtime_1.jsx)("div", { className: "items-body", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "item-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "col-item", children: (0, jsx_runtime_1.jsx)("span", { className: "item-name", children: item.name }) }), (0, jsx_runtime_1.jsx)("div", { className: "col-qty", children: item.quantity }), (0, jsx_runtime_1.jsx)("div", { className: "col-price", children: formatCurrency(item.price || 0) }), (0, jsx_runtime_1.jsx)("div", { className: "col-total", children: formatCurrency((item.price || 0) * (item.quantity || 0)) })] }, index))) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-right-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "totals-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Summary" }), (0, jsx_runtime_1.jsxs)("div", { className: "totals-list", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Subtotal" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.subtotal || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "VAT (16%)" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.vatAmount || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item grand-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Total Amount" }), (0, jsx_runtime_1.jsx)("span", { className: "total-amount", children: formatCurrency(receipt.total || 0) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Payment Information" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-method-badge", "data-method": receipt.paymentMethod?.toLowerCase(), children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-icon", children: receipt.paymentMethod === 'cash' ? '💵' :
-                                                    receipt.paymentMethod === 'mpesa' ? '📱' :
-                                                        receipt.paymentMethod === 'credit' ? '💳' : '💰' }), (0, jsx_runtime_1.jsx)("span", { className: "payment-text", children: receipt.paymentMethod?.toUpperCase() || 'PAYMENT' })] }), isCreditSale && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-details", children: [(0, jsx_runtime_1.jsxs)("div", { className: "credit-badge", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsx)("span", { children: "Credit Sale" })] }), receipt.creditDueDate && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-label", children: "Due Date:" }), (0, jsx_runtime_1.jsx)("span", { className: "credit-value", children: new Date(receipt.creditDueDate).toLocaleDateString('en-US', {
-                                                            year: 'numeric',
-                                                            month: 'short',
-                                                            day: 'numeric'
-                                                        }) })] })), receipt.creditNotes && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-notes-section", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-label", children: "Notes:" }), (0, jsx_runtime_1.jsx)("p", { className: "credit-notes-text", children: receipt.creditNotes })] }))] })), receipt.amountReceived && receipt.paymentMethod !== 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "payment-details", children: [(0, jsx_runtime_1.jsxs)("div", { className: "payment-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Amount Received:" }), (0, jsx_runtime_1.jsx)("span", { children: formatCurrency(receipt.amountReceived) })] }), receipt.change !== undefined && receipt.change > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "payment-row change-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Change:" }), (0, jsx_runtime_1.jsx)("span", { className: "change-amount", children: formatCurrency(receipt.change) })] }))] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-footer-card", children: [(0, jsx_runtime_1.jsx)("p", { className: "thank-you", children: "Thank you for your business!" }), (0, jsx_runtime_1.jsx)("p", { className: "footer-note", children: "Please keep this receipt for your records" })] })] })] })] }));
+                                            : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`, alt: "Business Logo", className: "receipt-logo", style: { maxHeight: '48px', width: 'auto', marginBottom: '8px', display: 'block' } })), (0, jsx_runtime_1.jsx)("div", { className: "business-name", children: businessInfo?.name || receipt.businessInfo?.name || receipt.tenantName || receipt.businessName || 'BUSINESS NAME' }), (businessInfo?.address || receipt.businessInfo?.address) && ((0, jsx_runtime_1.jsx)("div", { className: "business-address", children: businessInfo?.address || receipt.businessInfo?.address })), (businessInfo?.phone || receipt.businessInfo?.phone) && ((0, jsx_runtime_1.jsxs)("div", { className: "business-contact", children: ["Tel: ", businessInfo?.phone || receipt.businessInfo?.phone] })), (businessInfo?.email || receipt.businessInfo?.email) && ((0, jsx_runtime_1.jsx)("div", { className: "business-email", children: businessInfo?.email || receipt.businessInfo?.email }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-info-grid", children: [(0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Sale ID" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.saleId })] }), (0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Date & Time" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: formatDate(receipt.date) })] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Branch" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.branch.name })] })), receipt.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Customer" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.customerName })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-items-section", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Items Purchased" }), (0, jsx_runtime_1.jsxs)("div", { className: "items-table", children: [(0, jsx_runtime_1.jsxs)("div", { className: "items-header", children: [(0, jsx_runtime_1.jsx)("div", { className: "header-col-item", children: "Item" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-qty", children: "Qty" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-price", children: "Price" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-total", children: "Total" })] }), (0, jsx_runtime_1.jsx)("div", { className: "items-body", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "item-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "col-item", children: (0, jsx_runtime_1.jsx)("span", { className: "item-name", children: item.name }) }), (0, jsx_runtime_1.jsx)("div", { className: "col-qty", children: item.quantity }), (0, jsx_runtime_1.jsx)("div", { className: "col-price", children: formatCurrency(item.price || 0) }), (0, jsx_runtime_1.jsx)("div", { className: "col-total", children: formatCurrency((item.price || 0) * (item.quantity || 0)) })] }, index))) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-right-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "totals-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Summary" }), (0, jsx_runtime_1.jsxs)("div", { className: "totals-list", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Subtotal" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.subtotal || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "VAT (16%)" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.vatAmount || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item grand-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Total Amount" }), (0, jsx_runtime_1.jsx)("span", { className: "total-amount", children: formatCurrency(receipt.total || 0) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Payment Information" }), isSplitPayment && receipt.splitPayments ? ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-display", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-header-badge", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-text", children: "SPLIT PAYMENT" })] }), (0, jsx_runtime_1.jsx)("div", { className: "split-payments-list-receipt", children: receipt.splitPayments.map((payment, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-item-receipt", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-method-receipt", children: [(0, jsx_runtime_1.jsx)("span", { className: "split-payment-icon", children: payment.method === 'cash' ? '💵' :
+                                                                        payment.method === 'mpesa' ? '📱' :
+                                                                            payment.method === 'credit' ? '💳' : '💰' }), (0, jsx_runtime_1.jsx)("span", { className: "split-payment-method-name", children: payment.method.toUpperCase() })] }), (0, jsx_runtime_1.jsx)("div", { className: "split-payment-amount-receipt", children: formatCurrency(payment.amount) }), payment.method === 'cash' && payment.amountReceived && payment.amountReceived > payment.amount && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-change", children: ["Change: ", formatCurrency(payment.amountReceived - payment.amount)] })), payment.method === 'mpesa' && payment.mpesaTransactionId && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-mpesa-id", children: ["Transaction: ", payment.mpesaTransactionId] })), payment.method === 'credit' && payment.creditDueDate && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-credit-due", children: ["Due: ", new Date(payment.creditDueDate).toLocaleDateString('en-US', {
+                                                                    year: 'numeric',
+                                                                    month: 'short',
+                                                                    day: 'numeric'
+                                                                })] }))] }, index))) }), (0, jsx_runtime_1.jsxs)("div", { className: "split-payment-total-receipt", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total Paid:" }), (0, jsx_runtime_1.jsx)("span", { className: "split-total-amount", children: formatCurrency(receipt.total || 0) })] }), receipt.change !== undefined && receipt.change > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-change-total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total Change:" }), (0, jsx_runtime_1.jsx)("span", { className: "change-amount", children: formatCurrency(receipt.change) })] }))] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)("div", { className: "payment-method-badge", "data-method": receipt.paymentMethod?.toLowerCase(), children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-icon", children: receipt.paymentMethod === 'cash' ? '💵' :
+                                                            receipt.paymentMethod === 'mpesa' ? '📱' :
+                                                                receipt.paymentMethod === 'credit' ? '💳' : '💰' }), (0, jsx_runtime_1.jsx)("span", { className: "payment-text", children: receipt.paymentMethod?.toUpperCase() || 'PAYMENT' })] }), isCreditSale && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-details", children: [(0, jsx_runtime_1.jsxs)("div", { className: "credit-badge", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsx)("span", { children: "Credit Sale" })] }), receipt.creditDueDate && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-label", children: "Due Date:" }), (0, jsx_runtime_1.jsx)("span", { className: "credit-value", children: new Date(receipt.creditDueDate).toLocaleDateString('en-US', {
+                                                                    year: 'numeric',
+                                                                    month: 'short',
+                                                                    day: 'numeric'
+                                                                }) })] })), receipt.creditNotes && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-notes-section", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-label", children: "Notes:" }), (0, jsx_runtime_1.jsx)("p", { className: "credit-notes-text", children: receipt.creditNotes })] }))] })), receipt.amountReceived && receipt.paymentMethod !== 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "payment-details", children: [(0, jsx_runtime_1.jsxs)("div", { className: "payment-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Amount Received:" }), (0, jsx_runtime_1.jsx)("span", { children: formatCurrency(receipt.amountReceived) })] }), receipt.change !== undefined && receipt.change > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "payment-row change-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Change:" }), (0, jsx_runtime_1.jsx)("span", { className: "change-amount", children: formatCurrency(receipt.change) })] }))] }))] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-footer-card", children: [(0, jsx_runtime_1.jsx)("p", { className: "thank-you", children: "Thank you for your business!" }), (0, jsx_runtime_1.jsx)("p", { className: "footer-note", children: "Please keep this receipt for your records" })] })] })] })] }));
 };
 exports["default"] = Receipt;
+
+
+/***/ }),
+
+/***/ "./src/renderer/components/Settings.css":
+/*!**********************************************!*\
+  !*** ./src/renderer/components/Settings.css ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_Settings_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!./Settings.css */ "./node_modules/css-loader/dist/cjs.js!./src/renderer/components/Settings.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_Settings_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_Settings_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_Settings_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_Settings_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./src/renderer/components/Settings.tsx":
+/*!**********************************************!*\
+  !*** ./src/renderer/components/Settings.tsx ***!
+  \**********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const SleepModeContext_1 = __webpack_require__(/*! ../contexts/SleepModeContext */ "./src/renderer/contexts/SleepModeContext.tsx");
+__webpack_require__(/*! ./Settings.css */ "./src/renderer/components/Settings.css");
+const Settings = ({ onClose }) => {
+    const { enterSleepMode } = (0, SleepModeContext_1.useSleepMode)();
+    const [activeTab, setActiveTab] = (0, react_1.useState)('printer');
+    const [config, setConfig] = (0, react_1.useState)({
+        type: 'usb',
+        autoOpenCashDrawer: true,
+    });
+    const [loading, setLoading] = (0, react_1.useState)(false);
+    const [saving, setSaving] = (0, react_1.useState)(false);
+    const [message, setMessage] = (0, react_1.useState)(null);
+    (0, react_1.useEffect)(() => {
+        loadConfig();
+    }, []);
+    const loadConfig = async () => {
+        setLoading(true);
+        try {
+            const response = await window.electronAPI.getPrinterConfig();
+            if (response.success && response.config) {
+                setConfig(response.config);
+            }
+        }
+        catch (error) {
+            console.error('Failed to load printer config:', error);
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+    const handleSave = async () => {
+        setSaving(true);
+        setMessage(null);
+        try {
+            const response = await window.electronAPI.setPrinterConfig(config);
+            if (response.success) {
+                setMessage({ type: 'success', text: 'Settings saved successfully' });
+                setTimeout(() => setMessage(null), 3000);
+            }
+            else {
+                setMessage({ type: 'error', text: response.error || 'Failed to save settings' });
+                setTimeout(() => setMessage(null), 5000);
+            }
+        }
+        catch (error) {
+            setMessage({ type: 'error', text: error.message || 'Failed to save settings' });
+            setTimeout(() => setMessage(null), 5000);
+        }
+        finally {
+            setSaving(false);
+        }
+    };
+    const handleTestPrint = async () => {
+        setSaving(true);
+        try {
+            const testReceipt = {
+                saleId: 'TEST-001',
+                date: new Date().toISOString(),
+                businessInfo: {
+                    name: 'Test Business',
+                    address: '123 Test Street',
+                    phone: '+1234567890',
+                },
+                items: [
+                    { name: 'Test Item', quantity: 1, price: 10.00, sku: 'TEST-001' },
+                ],
+                subtotal: 10.00,
+                vatAmount: 1.60,
+                total: 11.60,
+                paymentMethod: 'cash',
+                amountReceived: 20.00,
+                change: 8.40,
+            };
+            const response = await window.electronAPI.printReceipt(testReceipt);
+            if (response.success) {
+                setMessage({ type: 'success', text: 'Test print sent successfully' });
+                setTimeout(() => setMessage(null), 3000);
+            }
+            else {
+                setMessage({ type: 'error', text: response.error || 'Test print failed' });
+                setTimeout(() => setMessage(null), 5000);
+            }
+        }
+        catch (error) {
+            setMessage({ type: 'error', text: error.message || 'Test print failed' });
+            setTimeout(() => setMessage(null), 5000);
+        }
+        finally {
+            setSaving(false);
+        }
+    };
+    const handleTestCashDrawer = async () => {
+        setSaving(true);
+        try {
+            const response = await window.electronAPI.openCashDrawer();
+            if (response.success) {
+                setMessage({ type: 'success', text: 'Cash drawer opened successfully' });
+                setTimeout(() => setMessage(null), 3000);
+            }
+            else {
+                setMessage({ type: 'error', text: response.error || 'Failed to open cash drawer' });
+                setTimeout(() => setMessage(null), 5000);
+            }
+        }
+        catch (error) {
+            setMessage({ type: 'error', text: error.message || 'Failed to open cash drawer' });
+            setTimeout(() => setMessage(null), 5000);
+        }
+        finally {
+            setSaving(false);
+        }
+    };
+    return ((0, jsx_runtime_1.jsx)("div", { className: "settings-modal-overlay", onClick: onClose, children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-modal", onClick: (e) => e.stopPropagation(), children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-header-content", children: [(0, jsx_runtime_1.jsx)("h1", { className: "settings-title", children: "Settings" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-subtitle", children: "Configure your POS system preferences" })] }), (0, jsx_runtime_1.jsx)("button", { className: "settings-close-btn", onClick: onClose, "aria-label": "Close settings", children: (0, jsx_runtime_1.jsxs)("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("line", { x1: "18", y1: "6", x2: "6", y2: "18" }), (0, jsx_runtime_1.jsx)("line", { x1: "6", y1: "6", x2: "18", y2: "18" })] }) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-tabs-nav", children: [(0, jsx_runtime_1.jsxs)("button", { className: `settings-tab ${activeTab === 'printer' ? 'active' : ''}`, onClick: () => setActiveTab('printer'), children: [(0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("polyline", { points: "6 9 6 2 18 2 18 9" }), (0, jsx_runtime_1.jsx)("path", { d: "M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" }), (0, jsx_runtime_1.jsx)("rect", { x: "6", y: "14", width: "12", height: "8" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Printer" })] }), (0, jsx_runtime_1.jsxs)("button", { className: `settings-tab ${activeTab === 'system' ? 'active' : ''}`, onClick: () => setActiveTab('system'), children: [(0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("rect", { x: "2", y: "3", width: "20", height: "14", rx: "2", ry: "2" }), (0, jsx_runtime_1.jsx)("line", { x1: "8", y1: "21", x2: "16", y2: "21" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "17", x2: "12", y2: "21" })] }), (0, jsx_runtime_1.jsx)("span", { children: "System" })] })] }), message && ((0, jsx_runtime_1.jsxs)("div", { className: `settings-alert ${message.type}`, children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-alert-icon", children: message.type === 'success' ? ((0, jsx_runtime_1.jsx)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: (0, jsx_runtime_1.jsx)("polyline", { points: "20 6 9 17 4 12" }) })) : ((0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("circle", { cx: "12", cy: "12", r: "10" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "8", x2: "12", y2: "12" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "16", x2: "12.01", y2: "16" })] })) }), (0, jsx_runtime_1.jsx)("span", { className: "settings-alert-text", children: message.text })] })), (0, jsx_runtime_1.jsx)("div", { className: "settings-content", children: loading ? ((0, jsx_runtime_1.jsxs)("div", { className: "settings-loading", children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-spinner" }), (0, jsx_runtime_1.jsx)("p", { children: "Loading settings..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [activeTab === 'printer' && ((0, jsx_runtime_1.jsxs)("div", { className: "settings-tab-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card-header", children: [(0, jsx_runtime_1.jsx)("h3", { className: "settings-card-title", children: "Printer Configuration" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-card-description", children: "Select your printer type and configure connection settings" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-card-body", children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Printer Type" }), (0, jsx_runtime_1.jsxs)("select", { value: config.type, onChange: (e) => setConfig({ ...config, type: e.target.value }), className: "settings-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "usb", children: "USB Printer" }), (0, jsx_runtime_1.jsx)("option", { value: "network", children: "Network Printer" }), (0, jsx_runtime_1.jsx)("option", { value: "file", children: "Save to File" })] })] }) }), config.type === 'usb' && ((0, jsx_runtime_1.jsxs)("div", { className: "settings-field", children: [(0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Device Path" }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: config.path || '', onChange: (e) => setConfig({ ...config, path: e.target.value }), placeholder: "COM1 (Windows) or /dev/usb/lp0 (Linux)", className: "settings-input" })] }), (0, jsx_runtime_1.jsx)("p", { className: "settings-field-hint", children: "Windows: COM1, COM2, etc. | Linux: /dev/usb/lp0, /dev/usb/lp1, etc. | macOS: Leave empty for auto-detect" })] })), config.type === 'network' && ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Printer IP Address" }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: config.ip || '', onChange: (e) => setConfig({ ...config, ip: e.target.value }), placeholder: "192.168.1.100", className: "settings-input" })] }) }), (0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Port" }), (0, jsx_runtime_1.jsx)("input", { type: "number", value: config.port || 9100, onChange: (e) => setConfig({ ...config, port: parseInt(e.target.value) || 9100 }), placeholder: "9100", className: "settings-input" })] }) })] })), (0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-checkbox-label", children: [(0, jsx_runtime_1.jsx)("input", { type: "checkbox", checked: config.autoOpenCashDrawer, onChange: (e) => setConfig({ ...config, autoOpenCashDrawer: e.target.checked }), className: "settings-checkbox" }), (0, jsx_runtime_1.jsx)("span", { className: "settings-checkbox-text", children: "Auto-open cash drawer on cash payments" })] }) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card-header", children: [(0, jsx_runtime_1.jsx)("h3", { className: "settings-card-title", children: "Test Printer" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-card-description", children: "Test your printer configuration" })] }), (0, jsx_runtime_1.jsx)("div", { className: "settings-card-body", children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-actions-grid", children: [(0, jsx_runtime_1.jsxs)("button", { onClick: handleTestPrint, disabled: saving, className: "settings-action-btn settings-action-btn-secondary", children: [(0, jsx_runtime_1.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("polyline", { points: "6 9 6 2 18 2 18 9" }), (0, jsx_runtime_1.jsx)("path", { d: "M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" }), (0, jsx_runtime_1.jsx)("rect", { x: "6", y: "14", width: "12", height: "8" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Test Print" })] }), (0, jsx_runtime_1.jsxs)("button", { onClick: handleTestCashDrawer, disabled: saving, className: "settings-action-btn settings-action-btn-secondary", children: [(0, jsx_runtime_1.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("rect", { x: "2", y: "7", width: "20", height: "14", rx: "2", ry: "2" }), (0, jsx_runtime_1.jsx)("path", { d: "M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Test Cash Drawer" })] })] }) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-info-icon", children: (0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("circle", { cx: "12", cy: "12", r: "10" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "16", x2: "12", y2: "12" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "8", x2: "12.01", y2: "8" })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-info-content", children: [(0, jsx_runtime_1.jsx)("h4", { className: "settings-info-title", children: "Printer Setup Notes" }), (0, jsx_runtime_1.jsxs)("ul", { className: "settings-info-list", children: [(0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "USB Printers:" }), " Ensure printer is connected and drivers are installed"] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "Network Printers:" }), " Printer must be on the same network with port 9100 open"] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "File Mode:" }), " Receipts saved to Desktop/POS_Receipts folder"] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "Cash Drawer:" }), " Must be connected via RJ-11 or USB cable"] })] })] })] }), (0, jsx_runtime_1.jsx)("div", { className: "settings-footer", children: (0, jsx_runtime_1.jsx)("button", { onClick: handleSave, disabled: saving, className: "settings-save-btn", children: saving ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-btn-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Saving..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("path", { d: "M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" }), (0, jsx_runtime_1.jsx)("polyline", { points: "17 21 17 13 7 13 7 21" }), (0, jsx_runtime_1.jsx)("polyline", { points: "7 3 7 8 15 8" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Save Settings" })] })) }) })] })), activeTab === 'system' && ((0, jsx_runtime_1.jsx)("div", { className: "settings-tab-content", children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card-header", children: [(0, jsx_runtime_1.jsx)("h3", { className: "settings-card-title", children: "System Controls" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-card-description", children: "Manage system behavior and preferences" })] }), (0, jsx_runtime_1.jsx)("div", { className: "settings-card-body", children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-field", children: [(0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Sleep Mode" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-label-description", children: "Put the system into sleep mode. Move mouse or press any key to wake." })] }), (0, jsx_runtime_1.jsxs)("button", { className: "settings-sleep-btn", onClick: () => {
+                                                            onClose();
+                                                            setTimeout(() => {
+                                                                enterSleepMode();
+                                                            }, 100);
+                                                        }, children: [(0, jsx_runtime_1.jsx)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: (0, jsx_runtime_1.jsx)("path", { d: "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" }) }), (0, jsx_runtime_1.jsx)("span", { children: "Enter Sleep Mode" })] })] }) })] }) }))] })) })] }) }));
+};
+exports["default"] = Settings;
+
+
+/***/ }),
+
+/***/ "./src/renderer/components/SleepScreen.css":
+/*!*************************************************!*\
+  !*** ./src/renderer/components/SleepScreen.css ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_SleepScreen_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!./SleepScreen.css */ "./node_modules/css-loader/dist/cjs.js!./src/renderer/components/SleepScreen.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_SleepScreen_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_SleepScreen_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_SleepScreen_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_SleepScreen_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./src/renderer/components/SleepScreen.tsx":
+/*!*************************************************!*\
+  !*** ./src/renderer/components/SleepScreen.tsx ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./SleepScreen.css */ "./src/renderer/components/SleepScreen.css");
+// Background image path - served by webpack dev server from /images
+// In development, use full URL; in production, use relative path
+const backgroundImage =  true
+    ? 'http://localhost:3001/images/pexels-karola-g-4968635.jpg'
+    : 0;
+const SleepScreen = ({ onWake }) => {
+    const [currentTime, setCurrentTime] = (0, react_1.useState)(new Date());
+    const [mouseMoved, setMouseMoved] = (0, react_1.useState)(false);
+    // Debug: Log when sleep screen renders
+    (0, react_1.useEffect)(() => {
+        console.log('🌙 SleepScreen rendered');
+    }, []);
+    // Update time every second
+    (0, react_1.useEffect)(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
+    // Handle wake on any interaction
+    (0, react_1.useEffect)(() => {
+        let wakeTimeout;
+        const handleInteraction = (e) => {
+            // Ignore small mouse movements (might be accidental)
+            if (e.type === 'mousemove') {
+                const mouseEvent = e;
+                // Only wake on significant mouse movement (more than 10px)
+                if (Math.abs(mouseEvent.movementX) < 10 && Math.abs(mouseEvent.movementY) < 10) {
+                    return;
+                }
+            }
+            // Clear any pending wake
+            if (wakeTimeout) {
+                clearTimeout(wakeTimeout);
+            }
+            // Small delay to prevent accidental wake
+            wakeTimeout = setTimeout(() => {
+                if (onWake) {
+                    console.log('Waking from sleep mode');
+                    onWake();
+                }
+            }, 100);
+        };
+        // Listen for various user interactions
+        const events = ['mousedown', 'mousemove', 'keydown', 'touchstart', 'click', 'wheel'];
+        events.forEach(event => {
+            window.addEventListener(event, handleInteraction, { passive: true });
+        });
+        return () => {
+            if (wakeTimeout) {
+                clearTimeout(wakeTimeout);
+            }
+            events.forEach(event => {
+                window.removeEventListener(event, handleInteraction);
+            });
+        };
+    }, [onWake]);
+    // Format time
+    const formatTime = (date) => {
+        return date.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
+    };
+    const formatDate = (date) => {
+        return date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+    // Debug: Log the image path and test if it loads
+    react_1.default.useEffect(() => {
+        console.log('SleepScreen background image path:', backgroundImage);
+        // Test if image loads
+        const img = new Image();
+        img.onload = () => console.log('✅ SleepScreen background image loaded successfully');
+        img.onerror = () => console.error('❌ SleepScreen background image failed to load:', backgroundImage);
+        img.src = backgroundImage;
+    }, []);
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "sleep-screen", children: [(0, jsx_runtime_1.jsx)("div", { className: "sleep-background-image", style: {
+                    backgroundImage: `url(${backgroundImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                } }), (0, jsx_runtime_1.jsx)("div", { className: "sleep-gradient-overlay" }), (0, jsx_runtime_1.jsx)("div", { className: "sleep-particles", children: [...Array(30)].map((_, i) => ((0, jsx_runtime_1.jsx)("div", { className: "sleep-particle", style: {
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 5}s`,
+                        animationDuration: `${2 + Math.random() * 3}s`
+                    } }, i))) }), (0, jsx_runtime_1.jsxs)("div", { className: "sleep-shapes", children: [(0, jsx_runtime_1.jsx)("div", { className: "sleep-shape sleep-shape-1" }), (0, jsx_runtime_1.jsx)("div", { className: "sleep-shape sleep-shape-2" }), (0, jsx_runtime_1.jsx)("div", { className: "sleep-shape sleep-shape-3" })] }), (0, jsx_runtime_1.jsx)("div", { className: "sleep-content-wrapper", children: (0, jsx_runtime_1.jsxs)("div", { className: "sleep-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "sleep-logo-container", children: (0, jsx_runtime_1.jsxs)("div", { className: "sleep-logo-circle", children: [(0, jsx_runtime_1.jsxs)("svg", { className: "sleep-logo-icon", viewBox: "0 0 100 100", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [(0, jsx_runtime_1.jsx)("circle", { cx: "50", cy: "50", r: "45", stroke: "rgba(255,255,255,0.2)", strokeWidth: "2" }), (0, jsx_runtime_1.jsx)("path", { d: "M50 30 L50 50 L65 65", stroke: "url(#sleepGradient)", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", fill: "none" }), (0, jsx_runtime_1.jsx)("defs", { children: (0, jsx_runtime_1.jsxs)("linearGradient", { id: "sleepGradient", x1: "0%", y1: "0%", x2: "100%", y2: "100%", children: [(0, jsx_runtime_1.jsx)("stop", { offset: "0%", stopColor: "#ffffff" }), (0, jsx_runtime_1.jsx)("stop", { offset: "100%", stopColor: "#e0e7ff" })] }) })] }), (0, jsx_runtime_1.jsx)("div", { className: "sleep-logo-glow" })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "sleep-time-container", children: [(0, jsx_runtime_1.jsx)("div", { className: "sleep-time-main", children: formatTime(currentTime).split(':').map((part, index) => ((0, jsx_runtime_1.jsxs)("span", { className: "sleep-time-part", children: [part, index < 2 && (0, jsx_runtime_1.jsx)("span", { className: "sleep-time-separator", children: ":" })] }, index))) }), (0, jsx_runtime_1.jsx)("div", { className: "sleep-date", children: formatDate(currentTime) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "sleep-wake-message", children: [(0, jsx_runtime_1.jsx)("div", { className: "sleep-wake-icon", children: (0, jsx_runtime_1.jsxs)("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [(0, jsx_runtime_1.jsx)("path", { d: "M12 2L2 7L12 12L22 7L12 2Z", stroke: "rgba(255,255,255,0.6)", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }), (0, jsx_runtime_1.jsx)("path", { d: "M2 17L12 22L22 17", stroke: "rgba(255,255,255,0.6)", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }), (0, jsx_runtime_1.jsx)("path", { d: "M2 12L12 17L22 12", stroke: "rgba(255,255,255,0.6)", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" })] }) }), (0, jsx_runtime_1.jsx)("p", { className: "sleep-wake-text", children: "Move mouse or press any key to wake" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "sleep-pulse-rings", children: [(0, jsx_runtime_1.jsx)("div", { className: "sleep-pulse-ring ring-1" }), (0, jsx_runtime_1.jsx)("div", { className: "sleep-pulse-ring ring-2" }), (0, jsx_runtime_1.jsx)("div", { className: "sleep-pulse-ring ring-3" })] })] }) })] }));
+};
+exports["default"] = SleepScreen;
+
+
+/***/ }),
+
+/***/ "./src/renderer/components/SyncScreen.css":
+/*!************************************************!*\
+  !*** ./src/renderer/components/SyncScreen.css ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_SyncScreen_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js!./SyncScreen.css */ "./node_modules/css-loader/dist/cjs.js!./src/renderer/components/SyncScreen.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_SyncScreen_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_SyncScreen_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_SyncScreen_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_SyncScreen_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./src/renderer/components/SyncScreen.tsx":
+/*!************************************************!*\
+  !*** ./src/renderer/components/SyncScreen.tsx ***!
+  \************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./SyncScreen.css */ "./src/renderer/components/SyncScreen.css");
+// Background image path - served by webpack dev server from /images
+// In development, use full URL; in production, use relative path
+const backgroundImage =  true
+    ? 'http://localhost:3001/images/pexels-karola-g-4968635.jpg'
+    : 0;
+const SyncScreen = ({ progress, status, currentStep, totalSteps, completedSteps, }) => {
+    const [animatedProgress, setAnimatedProgress] = (0, react_1.useState)(0);
+    // Smooth animation for progress bar
+    (0, react_1.useEffect)(() => {
+        const duration = 300;
+        const startProgress = animatedProgress;
+        const progressDiff = progress - startProgress;
+        const startTime = Date.now();
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progressRatio = Math.min(elapsed / duration, 1);
+            const easeOutCubic = 1 - Math.pow(1 - progressRatio, 3);
+            const currentProgress = startProgress + progressDiff * easeOutCubic;
+            setAnimatedProgress(currentProgress);
+            if (progressRatio < 1) {
+                requestAnimationFrame(animate);
+            }
+            else {
+                setAnimatedProgress(progress);
+            }
+        };
+        if (progress !== animatedProgress) {
+            requestAnimationFrame(animate);
+        }
+    }, [progress]);
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "sync-screen", children: [(0, jsx_runtime_1.jsx)("div", { className: "sync-background-image", style: {
+                    backgroundImage: `url(${backgroundImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                } }), (0, jsx_runtime_1.jsx)("div", { className: "sync-content-wrapper", children: (0, jsx_runtime_1.jsx)("div", { className: "sync-content", children: (0, jsx_runtime_1.jsxs)("div", { className: "sync-progress-wrapper", children: [(0, jsx_runtime_1.jsxs)("div", { className: "sync-progress-bar-container", children: [(0, jsx_runtime_1.jsx)("div", { className: "sync-progress-bar", children: (0, jsx_runtime_1.jsxs)("div", { className: "sync-progress-fill", style: { width: `${Math.min(100, Math.max(0, animatedProgress))}%` }, children: [(0, jsx_runtime_1.jsx)("div", { className: "sync-progress-gradient" }), (0, jsx_runtime_1.jsx)("div", { className: "sync-progress-shine" })] }) }), (0, jsx_runtime_1.jsx)("div", { className: "sync-progress-indicators", children: (0, jsx_runtime_1.jsx)("div", { className: "sync-progress-dot", style: { left: `${Math.min(100, Math.max(0, animatedProgress))}%` } }) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "sync-progress-percentage", children: [Math.round(animatedProgress), (0, jsx_runtime_1.jsx)("span", { className: "sync-percent-symbol", children: "%" })] })] }) }) })] }));
+};
+exports["default"] = SyncScreen;
 
 
 /***/ }),
@@ -41320,6 +44354,7 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 __webpack_require__(/*! ./SyncStatus.css */ "./src/renderer/components/SyncStatus.css");
 const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
 const error_handler_1 = __webpack_require__(/*! ../utils/error-handler */ "./src/renderer/utils/error-handler.ts");
+const useSyncProgress_1 = __webpack_require__(/*! ../hooks/useSyncProgress */ "./src/renderer/hooks/useSyncProgress.ts");
 const SyncStatus = () => {
     const [syncStatus, setSyncStatus] = (0, react_1.useState)({ online: true, pendingSyncs: 0 });
     const [isSyncing, setIsSyncing] = (0, react_1.useState)(false);
@@ -41327,6 +44362,7 @@ const SyncStatus = () => {
     const autoSyncTimeoutRef = (0, react_1.useRef)(null);
     const hasAutoSyncedRef = (0, react_1.useRef)(false);
     const lastPendingCountRef = (0, react_1.useRef)(0);
+    const { startSync } = (0, useSyncProgress_1.useSyncProgress)();
     const handleSyncNow = (0, react_1.useCallback)(async (isAutoSync = false) => {
         // Get current status to check conditions
         const currentStatus = await window.electronAPI.getSyncStatus();
@@ -41334,6 +44370,10 @@ const SyncStatus = () => {
             return;
         }
         setIsSyncing(true);
+        // Start sync with progress screen
+        if (!isAutoSync) {
+            startSync();
+        }
         try {
             const response = await (0, error_handler_1.handleNetworkOperation)(() => window.electronAPI.syncOfflineSales(), {
                 operation: 'syncOfflineSales',
@@ -41457,6 +44497,10 @@ const SyncStatus = () => {
                                     pendingCount: response.pendingSyncs
                                 });
                                 hasAutoSyncedRef.current = true;
+                                // For auto-sync, also show the sync screen if there are many pending items
+                                if (response.pendingSyncs > 3) {
+                                    startSync();
+                                }
                                 handleSyncNow(true);
                             }
                         }, 1500);
@@ -41523,7 +44567,7 @@ const SyncStatus = () => {
                 clearTimeout(autoSyncTimeoutRef.current);
             }
         };
-    }, [handleSyncNow, updateSyncStatus, isSyncing]); // Include dependencies
+    }, [handleSyncNow, updateSyncStatus, isSyncing, startSync]); // Include dependencies
     const formatLastSync = (lastSync) => {
         if (!lastSync)
             return 'Never';
@@ -41713,11 +44757,19 @@ exports.useAuth = exports.AuthProvider = void 0;
 const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const AuthContext = (0, react_1.createContext)(undefined);
-const AuthProvider = ({ children }) => {
+const AuthProvider = ({ children, onInitialSyncComplete }) => {
     const [isAuthenticated, setIsAuthenticated] = react_1.default.useState(false);
     const [user, setUser] = react_1.default.useState(null);
     const [loading, setLoading] = react_1.default.useState(true);
+    const [initialSyncComplete, setInitialSyncComplete] = react_1.default.useState(false);
+    const handleInitialSyncComplete = react_1.default.useCallback(() => {
+        setInitialSyncComplete(true);
+        if (onInitialSyncComplete) {
+            onInitialSyncComplete();
+        }
+    }, [onInitialSyncComplete]);
     react_1.default.useEffect(() => {
+        // This will be called after initial sync completes
         // Check if user is already logged in (from local storage or previous session)
         const checkAuth = async () => {
             try {
@@ -41749,8 +44801,11 @@ const AuthProvider = ({ children }) => {
                 setLoading(false);
             }
         };
-        checkAuth();
-    }, []);
+        // Only check auth after initial sync is complete
+        if (initialSyncComplete) {
+            checkAuth();
+        }
+    }, [initialSyncComplete]);
     const login = async (credentials) => {
         try {
             setLoading(true);
@@ -41791,7 +44846,15 @@ const AuthProvider = ({ children }) => {
             setIsAuthenticated(false);
         }
     };
-    return ((0, jsx_runtime_1.jsx)(AuthContext.Provider, { value: { isAuthenticated, user, login, logout, loading }, children: children }));
+    return ((0, jsx_runtime_1.jsx)(AuthContext.Provider, { value: {
+            isAuthenticated,
+            user,
+            login,
+            logout,
+            loading,
+            initialSyncComplete,
+            onInitialSyncComplete: handleInitialSyncComplete,
+        }, children: children }));
 };
 exports.AuthProvider = AuthProvider;
 const useAuth = () => {
@@ -41802,6 +44865,77 @@ const useAuth = () => {
     return context;
 };
 exports.useAuth = useAuth;
+
+
+/***/ }),
+
+/***/ "./src/renderer/contexts/SleepModeContext.tsx":
+/*!****************************************************!*\
+  !*** ./src/renderer/contexts/SleepModeContext.tsx ***!
+  \****************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.useSleepMode = exports.SleepModeProvider = void 0;
+const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const SleepModeContext = (0, react_1.createContext)(undefined);
+const SleepModeProvider = ({ children }) => {
+    const [isSleepMode, setIsSleepMode] = (0, react_1.useState)(false);
+    const enterSleepMode = () => {
+        console.log('enterSleepMode called');
+        setIsSleepMode(true);
+        console.log('Sleep mode state set to true');
+    };
+    const exitSleepMode = () => {
+        console.log('exitSleepMode called');
+        setIsSleepMode(false);
+    };
+    return ((0, jsx_runtime_1.jsx)(SleepModeContext.Provider, { value: { isSleepMode, enterSleepMode, exitSleepMode }, children: children }));
+};
+exports.SleepModeProvider = SleepModeProvider;
+const useSleepMode = () => {
+    const context = (0, react_1.useContext)(SleepModeContext);
+    if (context === undefined) {
+        throw new Error('useSleepMode must be used within a SleepModeProvider');
+    }
+    return context;
+};
+exports.useSleepMode = useSleepMode;
 
 
 /***/ }),
@@ -42137,6 +45271,298 @@ exports.useBarcodeScanner = useBarcodeScanner;
 
 /***/ }),
 
+/***/ "./src/renderer/hooks/useIdleTimer.ts":
+/*!********************************************!*\
+  !*** ./src/renderer/hooks/useIdleTimer.ts ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.useIdleTimer = void 0;
+const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const useIdleTimer = ({ idleTime, onIdle, onActive, enabled = true, }) => {
+    const timeoutRef = (0, react_1.useRef)(null);
+    const lastActivityRef = (0, react_1.useRef)(Date.now());
+    const resetTimer = (0, react_1.useCallback)(() => {
+        // Clear existing timeout
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+        // Update last activity time
+        lastActivityRef.current = Date.now();
+        // Call onActive if provided
+        if (onActive) {
+            onActive();
+        }
+        // Set new timeout
+        if (enabled) {
+            timeoutRef.current = setTimeout(() => {
+                console.log('User idle for', idleTime / 1000, 'seconds. Activating sleep mode...');
+                onIdle();
+            }, idleTime);
+        }
+    }, [idleTime, onIdle, onActive, enabled]);
+    (0, react_1.useEffect)(() => {
+        if (!enabled) {
+            // Clear timeout if disabled
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+            }
+            return;
+        }
+        // Initial timer setup
+        resetTimer();
+        // Events that indicate user activity
+        const events = [
+            'mousedown',
+            'mousemove',
+            'keypress',
+            'keydown',
+            'scroll',
+            'touchstart',
+            'click',
+            'wheel',
+        ];
+        // Throttle mousemove to avoid too many resets
+        let mousemoveTimeout = null;
+        const handleMouseMove = () => {
+            if (mousemoveTimeout) {
+                return;
+            }
+            mousemoveTimeout = setTimeout(() => {
+                resetTimer();
+                mousemoveTimeout = null;
+            }, 1000); // Only reset timer once per second for mousemove
+        };
+        // Add event listeners
+        events.forEach((event) => {
+            if (event === 'mousemove') {
+                window.addEventListener(event, handleMouseMove, { passive: true });
+            }
+            else {
+                window.addEventListener(event, resetTimer, { passive: true });
+            }
+        });
+        // Cleanup
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+            if (mousemoveTimeout) {
+                clearTimeout(mousemoveTimeout);
+            }
+            events.forEach((event) => {
+                if (event === 'mousemove') {
+                    window.removeEventListener(event, handleMouseMove);
+                }
+                else {
+                    window.removeEventListener(event, resetTimer);
+                }
+            });
+        };
+    }, [resetTimer, enabled]);
+    // Return function to manually reset timer
+    return {
+        reset: resetTimer,
+        getLastActivity: () => lastActivityRef.current,
+    };
+};
+exports.useIdleTimer = useIdleTimer;
+
+
+/***/ }),
+
+/***/ "./src/renderer/hooks/useInitialSync.ts":
+/*!**********************************************!*\
+  !*** ./src/renderer/hooks/useInitialSync.ts ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.useInitialSync = void 0;
+const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const useInitialSync = () => {
+    const [syncProgress, setSyncProgress] = (0, react_1.useState)({
+        isSyncing: true, // Start as syncing
+        progress: 0,
+        status: 'Initializing...',
+        isComplete: false,
+    });
+    const progressIntervalRef = (0, react_1.useRef)(null);
+    const startTimeRef = (0, react_1.useRef)(null);
+    const estimatedDurationRef = (0, react_1.useRef)(3000);
+    const performInitialSync = (0, react_1.useCallback)(async () => {
+        startTimeRef.current = Date.now();
+        try {
+            // Phase 1: Checking for pending data (0-15%)
+            setSyncProgress({
+                isSyncing: true,
+                progress: 5,
+                status: 'Checking for pending data...',
+                currentStep: 'Connecting',
+                isComplete: false,
+            });
+            // Small delay for smooth transition
+            await new Promise(resolve => setTimeout(resolve, 300));
+            const syncStatus = await window.electronAPI.getSyncStatus();
+            const pendingCount = syncStatus.pendingSyncs || 0;
+            const isOnline = syncStatus.online || false;
+            if (!isOnline) {
+                setSyncProgress({
+                    isSyncing: false,
+                    progress: 100,
+                    status: 'Offline mode - No synchronization needed',
+                    currentStep: 'Complete',
+                    isComplete: true,
+                });
+                return;
+            }
+            if (pendingCount === 0) {
+                setSyncProgress({
+                    isSyncing: false,
+                    progress: 100,
+                    status: 'All data synchronized',
+                    currentStep: 'Complete',
+                    totalSteps: 0,
+                    completedSteps: 0,
+                    isComplete: true,
+                });
+                return;
+            }
+            // Estimate duration based on pending count
+            estimatedDurationRef.current = Math.max(2000, Math.min(20000, pendingCount * 1200));
+            // Phase 2: Preparing sync (15-25%)
+            setSyncProgress({
+                isSyncing: true,
+                progress: 20,
+                status: `Preparing to sync ${pendingCount} pending sale${pendingCount > 1 ? 's' : ''}...`,
+                currentStep: 'Preparing',
+                totalSteps: pendingCount,
+                completedSteps: 0,
+                isComplete: false,
+            });
+            await new Promise(resolve => setTimeout(resolve, 400));
+            // Phase 3: Starting sync (25-30%)
+            setSyncProgress({
+                isSyncing: true,
+                progress: 25,
+                status: 'Connecting to server...',
+                currentStep: 'Connecting to server',
+                totalSteps: pendingCount,
+                completedSteps: 0,
+                isComplete: false,
+            });
+            // Start progress simulation
+            let simulatedProgress = 25;
+            const progressStep = 70 / Math.max(10, Math.ceil(estimatedDurationRef.current / 200));
+            progressIntervalRef.current = setInterval(() => {
+                const elapsed = Date.now() - (startTimeRef.current || Date.now());
+                const timeBasedProgress = Math.min(95, 25 + (elapsed / estimatedDurationRef.current) * 70);
+                simulatedProgress = Math.min(95, simulatedProgress + progressStep);
+                setSyncProgress((prev) => {
+                    if (!prev.isSyncing) {
+                        return prev;
+                    }
+                    const currentProgress = Math.max(timeBasedProgress, simulatedProgress);
+                    let status = prev.status;
+                    let step = prev.currentStep;
+                    if (currentProgress < 40) {
+                        status = 'Connecting to server...';
+                        step = 'Establishing connection';
+                    }
+                    else if (currentProgress < 60) {
+                        status = `Syncing sale data...`;
+                        step = `Processing ${pendingCount} sale${pendingCount > 1 ? 's' : ''}`;
+                    }
+                    else if (currentProgress < 85) {
+                        status = 'Finalizing synchronization...';
+                        step = 'Completing sync';
+                    }
+                    else {
+                        status = 'Almost done...';
+                        step = 'Finalizing';
+                    }
+                    return {
+                        ...prev,
+                        progress: currentProgress,
+                        status,
+                        currentStep: step,
+                        totalSteps: pendingCount,
+                        completedSteps: Math.floor((currentProgress / 100) * pendingCount),
+                    };
+                });
+            }, 200);
+            // Perform actual sync
+            const response = await window.electronAPI.syncOfflineSales();
+            // Clear progress interval
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+                progressIntervalRef.current = null;
+            }
+            if (response.success) {
+                const syncedCount = response.syncedCount || 0;
+                const errorCount = response.errors?.length || 0;
+                setSyncProgress({
+                    isSyncing: false,
+                    progress: 100,
+                    status: errorCount > 0
+                        ? `Synchronized ${syncedCount} sale${syncedCount !== 1 ? 's' : ''} with ${errorCount} error${errorCount !== 1 ? 's' : ''}`
+                        : `Successfully synchronized ${syncedCount} sale${syncedCount !== 1 ? 's' : ''}`,
+                    currentStep: 'Complete',
+                    totalSteps: pendingCount,
+                    completedSteps: syncedCount,
+                    isComplete: true,
+                });
+            }
+            else {
+                setSyncProgress({
+                    isSyncing: false,
+                    progress: 100,
+                    status: `Synchronization completed with issues: ${response.error || 'Unknown error'}`,
+                    currentStep: 'Complete',
+                    totalSteps: pendingCount,
+                    completedSteps: 0,
+                    isComplete: true,
+                });
+            }
+        }
+        catch (error) {
+            // Clear progress interval on error
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+                progressIntervalRef.current = null;
+            }
+            setSyncProgress({
+                isSyncing: false,
+                progress: 100,
+                status: `Synchronization completed: ${error.message || 'Unknown error'}`,
+                currentStep: 'Complete',
+                isComplete: true,
+            });
+        }
+    }, []);
+    // Cleanup on unmount
+    (0, react_1.useEffect)(() => {
+        return () => {
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+            }
+        };
+    }, []);
+    return {
+        syncProgress,
+        performInitialSync,
+    };
+};
+exports.useInitialSync = useInitialSync;
+
+
+/***/ }),
+
 /***/ "./src/renderer/hooks/usePendingTransactions.ts":
 /*!******************************************************!*\
   !*** ./src/renderer/hooks/usePendingTransactions.ts ***!
@@ -42202,6 +45628,214 @@ const usePendingTransactions = () => {
     };
 };
 exports.usePendingTransactions = usePendingTransactions;
+
+
+/***/ }),
+
+/***/ "./src/renderer/hooks/useSyncProgress.ts":
+/*!***********************************************!*\
+  !*** ./src/renderer/hooks/useSyncProgress.ts ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.useSyncProgress = void 0;
+const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const useSyncProgress = () => {
+    const [syncProgress, setSyncProgress] = (0, react_1.useState)({
+        isSyncing: false,
+        progress: 0,
+        status: 'Ready',
+    });
+    const progressIntervalRef = (0, react_1.useRef)(null);
+    const startTimeRef = (0, react_1.useRef)(null);
+    const estimatedDurationRef = (0, react_1.useRef)(5000); // Default 5 seconds
+    const updateProgress = (0, react_1.useCallback)((phase, progressValue, step) => {
+        setSyncProgress((prev) => ({
+            ...prev,
+            progress: progressValue,
+            status: phase,
+            currentStep: step,
+        }));
+    }, []);
+    const startSync = (0, react_1.useCallback)(async () => {
+        // Clear any existing interval
+        if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current);
+        }
+        setSyncProgress({
+            isSyncing: true,
+            progress: 0,
+            status: 'Initializing synchronization...',
+            currentStep: undefined,
+            totalSteps: undefined,
+            completedSteps: undefined,
+        });
+        startTimeRef.current = Date.now();
+        try {
+            // Phase 1: Check sync status (0-10%)
+            updateProgress('Checking for pending data...', 5, 'Connecting');
+            const syncStatus = await window.electronAPI.getSyncStatus();
+            const pendingCount = syncStatus.pendingSyncs || 0;
+            if (pendingCount === 0) {
+                setSyncProgress({
+                    isSyncing: false,
+                    progress: 100,
+                    status: 'All data synchronized',
+                    currentStep: 'Complete',
+                    totalSteps: 0,
+                    completedSteps: 0,
+                });
+                return;
+            }
+            // Estimate duration based on pending count (roughly 1-2 seconds per sale)
+            estimatedDurationRef.current = Math.max(3000, Math.min(30000, pendingCount * 1500));
+            // Phase 2: Preparing sync (10-20%)
+            updateProgress(`Preparing to sync ${pendingCount} sale${pendingCount > 1 ? 's' : ''}...`, 15, 'Preparing');
+            await new Promise(resolve => setTimeout(resolve, 300));
+            // Phase 3: Starting sync (20-30%)
+            updateProgress(`Synchronizing with server...`, 25, 'Connecting to server');
+            // Start progress simulation
+            let simulatedProgress = 25;
+            const progressStep = 70 / Math.max(10, Math.ceil(estimatedDurationRef.current / 200)); // Distribute 70% over estimated time
+            progressIntervalRef.current = setInterval(() => {
+                const elapsed = Date.now() - (startTimeRef.current || Date.now());
+                const timeBasedProgress = Math.min(95, 25 + (elapsed / estimatedDurationRef.current) * 70);
+                simulatedProgress = Math.min(95, simulatedProgress + progressStep);
+                setSyncProgress((prev) => {
+                    if (!prev.isSyncing) {
+                        return prev;
+                    }
+                    // Use the higher of time-based or simulated progress
+                    const currentProgress = Math.max(timeBasedProgress, simulatedProgress);
+                    // Update status based on progress
+                    let status = prev.status;
+                    let step = prev.currentStep;
+                    if (currentProgress < 40) {
+                        status = 'Connecting to server...';
+                        step = 'Establishing connection';
+                    }
+                    else if (currentProgress < 60) {
+                        status = `Syncing sale data...`;
+                        step = `Processing ${pendingCount} sale${pendingCount > 1 ? 's' : ''}`;
+                    }
+                    else if (currentProgress < 85) {
+                        status = 'Finalizing synchronization...';
+                        step = 'Completing sync';
+                    }
+                    else {
+                        status = 'Almost done...';
+                        step = 'Finalizing';
+                    }
+                    return {
+                        ...prev,
+                        progress: currentProgress,
+                        status,
+                        currentStep: step,
+                        totalSteps: pendingCount,
+                        completedSteps: Math.floor((currentProgress / 100) * pendingCount),
+                    };
+                });
+            }, 200);
+            // Perform actual sync
+            const response = await window.electronAPI.syncOfflineSales();
+            // Clear progress interval
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+                progressIntervalRef.current = null;
+            }
+            if (response.success) {
+                const syncedCount = response.syncedCount || 0;
+                const errorCount = response.errors?.length || 0;
+                setSyncProgress({
+                    isSyncing: false,
+                    progress: 100,
+                    status: errorCount > 0
+                        ? `Synchronized ${syncedCount} sale${syncedCount !== 1 ? 's' : ''} with ${errorCount} error${errorCount !== 1 ? 's' : ''}`
+                        : `Successfully synchronized ${syncedCount} sale${syncedCount !== 1 ? 's' : ''}`,
+                    currentStep: 'Complete',
+                    totalSteps: pendingCount,
+                    completedSteps: syncedCount,
+                });
+                // Auto-hide after 2 seconds
+                setTimeout(() => {
+                    setSyncProgress({
+                        isSyncing: false,
+                        progress: 0,
+                        status: 'Ready',
+                    });
+                }, 2000);
+            }
+            else {
+                setSyncProgress({
+                    isSyncing: false,
+                    progress: 0,
+                    status: `Synchronization failed: ${response.error || 'Unknown error'}`,
+                    currentStep: 'Error',
+                    totalSteps: pendingCount,
+                    completedSteps: 0,
+                });
+                // Auto-hide after 3 seconds on error
+                setTimeout(() => {
+                    setSyncProgress({
+                        isSyncing: false,
+                        progress: 0,
+                        status: 'Ready',
+                    });
+                }, 3000);
+            }
+        }
+        catch (error) {
+            // Clear progress interval on error
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+                progressIntervalRef.current = null;
+            }
+            setSyncProgress({
+                isSyncing: false,
+                progress: 0,
+                status: `Synchronization error: ${error.message || 'Unknown error'}`,
+                currentStep: 'Error',
+                totalSteps: undefined,
+                completedSteps: undefined,
+            });
+            // Auto-hide after 3 seconds on error
+            setTimeout(() => {
+                setSyncProgress({
+                    isSyncing: false,
+                    progress: 0,
+                    status: 'Ready',
+                });
+            }, 3000);
+        }
+    }, [updateProgress]);
+    const stopSync = (0, react_1.useCallback)(() => {
+        if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current);
+            progressIntervalRef.current = null;
+        }
+        setSyncProgress({
+            isSyncing: false,
+            progress: 0,
+            status: 'Synchronization cancelled',
+        });
+    }, []);
+    // Cleanup on unmount
+    (0, react_1.useEffect)(() => {
+        return () => {
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+            }
+        };
+    }, []);
+    return {
+        syncProgress,
+        startSync,
+        stopSync,
+    };
+};
+exports.useSyncProgress = useSyncProgress;
 
 
 /***/ }),
@@ -42279,60 +45913,6 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_pending_transactions_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_pending_transactions_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_pending_transactions_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
-
-
-/***/ }),
-
-/***/ "./src/renderer/printer-settings.css":
-/*!*******************************************!*\
-  !*** ./src/renderer/printer-settings.css ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_printer_settings_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../node_modules/css-loader/dist/cjs.js!./printer-settings.css */ "./node_modules/css-loader/dist/cjs.js!./src/renderer/printer-settings.css");
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-var options = {};
-
-options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
-options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
-
-      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
-    
-options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
-options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
-
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_printer_settings_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
-
-
-
-
-       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_printer_settings_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_printer_settings_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_printer_settings_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

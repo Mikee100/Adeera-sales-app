@@ -59,10 +59,24 @@ const Login: React.FC = () => {
         localStorage.removeItem('rememberedEmail');
       }
     } catch (err: any) {
-      const errorMessage =
-        err?.response?.data?.message ||
-        err?.message ||
-        'We could not sign you in. Please check your details and try again.';
+      // Extract error message - handle both Electron IPC errors and direct errors
+      let errorMessage = 'We could not sign you in. Please check your details and try again.';
+      
+      if (err?.response?.data) {
+        // Axios error response
+        errorMessage = 
+          err.response.data.message || 
+          err.response.data.error ||
+          (Array.isArray(err.response.data.message) ? err.response.data.message[0] : null) ||
+          err.message ||
+          errorMessage;
+      } else if (err?.message) {
+        // Direct error message (from Electron IPC or Error object)
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        // String error
+        errorMessage = err;
+      }
 
       setFormError(errorMessage);
 

@@ -59,6 +59,7 @@ const Receipt: React.FC<ReceiptProps> = ({
   };
 
   const isCreditSale = receipt.paymentMethod === 'credit';
+  const isSplitPayment = receipt.isSplitPayment || (receipt.splitPayments && receipt.splitPayments.length > 0);
 
   return (
     <div className="receipt-page">
@@ -220,53 +221,111 @@ const Receipt: React.FC<ReceiptProps> = ({
           {/* Payment Card */}
           <div className="payment-card">
             <div className="section-title">Payment Information</div>
-            <div className="payment-method-badge" data-method={receipt.paymentMethod?.toLowerCase()}>
-              <span className="payment-icon">
-                {receipt.paymentMethod === 'cash' ? '💵' : 
-                 receipt.paymentMethod === 'mpesa' ? '📱' : 
-                 receipt.paymentMethod === 'credit' ? '💳' : '💰'}
-              </span>
-              <span className="payment-text">{receipt.paymentMethod?.toUpperCase() || 'PAYMENT'}</span>
-            </div>
-
-            {isCreditSale && (
-              <div className="credit-details">
-                <div className="credit-badge">
-                  <span className="credit-icon">💳</span>
-                  <span>Credit Sale</span>
+            
+            {isSplitPayment && receipt.splitPayments ? (
+              <div className="split-payment-display">
+                <div className="split-payment-header-badge">
+                  <span className="payment-icon">💳</span>
+                  <span className="payment-text">SPLIT PAYMENT</span>
                 </div>
-                {receipt.creditDueDate && (
-                  <div className="credit-info-row">
-                    <span className="credit-label">Due Date:</span>
-                    <span className="credit-value">{new Date(receipt.creditDueDate).toLocaleDateString('en-US', { 
-                      year: 'numeric', 
-                      month: 'short', 
-                      day: 'numeric' 
-                    })}</span>
-                  </div>
-                )}
-                {receipt.creditNotes && (
-                  <div className="credit-notes-section">
-                    <span className="credit-label">Notes:</span>
-                    <p className="credit-notes-text">{receipt.creditNotes}</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {receipt.amountReceived && receipt.paymentMethod !== 'credit' && (
-              <div className="payment-details">
-                <div className="payment-row">
-                  <span>Amount Received:</span>
-                  <span>{formatCurrency(receipt.amountReceived)}</span>
+                <div className="split-payments-list-receipt">
+                  {receipt.splitPayments.map((payment: any, index: number) => (
+                    <div key={index} className="split-payment-item-receipt">
+                      <div className="split-payment-method-receipt">
+                        <span className="split-payment-icon">
+                          {payment.method === 'cash' ? '💵' : 
+                           payment.method === 'mpesa' ? '📱' : 
+                           payment.method === 'credit' ? '💳' : '💰'}
+                        </span>
+                        <span className="split-payment-method-name">{payment.method.toUpperCase()}</span>
+                      </div>
+                      <div className="split-payment-amount-receipt">
+                        {formatCurrency(payment.amount)}
+                      </div>
+                      {payment.method === 'cash' && payment.amountReceived && payment.amountReceived > payment.amount && (
+                        <div className="split-payment-change">
+                          Change: {formatCurrency(payment.amountReceived - payment.amount)}
+                        </div>
+                      )}
+                      {payment.method === 'mpesa' && payment.mpesaTransactionId && (
+                        <div className="split-payment-mpesa-id">
+                          Transaction: {payment.mpesaTransactionId}
+                        </div>
+                      )}
+                      {payment.method === 'credit' && payment.creditDueDate && (
+                        <div className="split-payment-credit-due">
+                          Due: {new Date(payment.creditDueDate).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric' 
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="split-payment-total-receipt">
+                  <span>Total Paid:</span>
+                  <span className="split-total-amount">{formatCurrency(receipt.total || 0)}</span>
                 </div>
                 {receipt.change !== undefined && receipt.change > 0 && (
-                  <div className="payment-row change-row">
-                    <span>Change:</span>
+                  <div className="split-payment-change-total">
+                    <span>Total Change:</span>
                     <span className="change-amount">{formatCurrency(receipt.change)}</span>
                   </div>
                 )}
               </div>
+            ) : (
+              <>
+                <div className="payment-method-badge" data-method={receipt.paymentMethod?.toLowerCase()}>
+                  <span className="payment-icon">
+                    {receipt.paymentMethod === 'cash' ? '💵' : 
+                     receipt.paymentMethod === 'mpesa' ? '📱' : 
+                     receipt.paymentMethod === 'credit' ? '💳' : '💰'}
+                  </span>
+                  <span className="payment-text">{receipt.paymentMethod?.toUpperCase() || 'PAYMENT'}</span>
+                </div>
+
+                {isCreditSale && (
+                  <div className="credit-details">
+                    <div className="credit-badge">
+                      <span className="credit-icon">💳</span>
+                      <span>Credit Sale</span>
+                    </div>
+                    {receipt.creditDueDate && (
+                      <div className="credit-info-row">
+                        <span className="credit-label">Due Date:</span>
+                        <span className="credit-value">{new Date(receipt.creditDueDate).toLocaleDateString('en-US', { 
+                          year: 'numeric', 
+                          month: 'short', 
+                          day: 'numeric' 
+                        })}</span>
+                      </div>
+                    )}
+                    {receipt.creditNotes && (
+                      <div className="credit-notes-section">
+                        <span className="credit-label">Notes:</span>
+                        <p className="credit-notes-text">{receipt.creditNotes}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {receipt.amountReceived && receipt.paymentMethod !== 'credit' && (
+                  <div className="payment-details">
+                    <div className="payment-row">
+                      <span>Amount Received:</span>
+                      <span>{formatCurrency(receipt.amountReceived)}</span>
+                    </div>
+                    {receipt.change !== undefined && receipt.change > 0 && (
+                      <div className="payment-row change-row">
+                        <span>Change:</span>
+                        <span className="change-amount">{formatCurrency(receipt.change)}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
             )}
           </div>
 

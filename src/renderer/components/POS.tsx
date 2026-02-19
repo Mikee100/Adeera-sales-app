@@ -30,8 +30,18 @@ interface CartItem {
   quantity: number;
 }
 
+interface SplitPayment {
+  method: 'cash' | 'mpesa' | 'credit';
+  amount: number;
+  amountReceived?: number;
+  mpesaTransactionId?: string;
+  mpesaReceipt?: string;
+  creditDueDate?: string;
+  creditNotes?: string;
+}
+
 interface PaymentData {
-  paymentMethod: 'cash' | 'mpesa' | 'credit';
+  paymentMethod: 'cash' | 'mpesa' | 'credit' | 'split';
   amountReceived?: number;
   customerName?: string;
   customerPhone?: string;
@@ -39,6 +49,8 @@ interface PaymentData {
   creditDueDate?: string;
   creditNotes?: string;
   discountAmount?: number;
+  isSplitPayment?: boolean;
+  splitPayments?: SplitPayment[];
 }
 
 interface ProductsResponse {
@@ -511,34 +523,83 @@ const POS: React.FC = () => {
         cleanSaleData.discountAmount = Number(saleData.discountAmount);
       }
       
-      // Credit-specific fields - only include if payment method is credit
-      if (paymentData.paymentMethod === 'credit') {
-        const creditAmount = paymentData.creditAmount ?? getGrandTotal();
-        if (creditAmount != null) {
-          cleanSaleData.creditAmount = Number(creditAmount);
-        }
-        if (paymentData.creditDueDate) {
-          // Ensure date is in ISO format (YYYY-MM-DD) for backend validation
-          const dateStr = String(paymentData.creditDueDate);
-          // If it's already in YYYY-MM-DD format, use it; otherwise try to parse and format
-          if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-            cleanSaleData.creditDueDate = dateStr;
-          } else {
-            // Try to parse and format as ISO date string
-            try {
-              const date = new Date(dateStr);
-              if (!isNaN(date.getTime())) {
-                cleanSaleData.creditDueDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
-              } else {
-                cleanSaleData.creditDueDate = dateStr; // Fallback to original string
-              }
-            } catch {
-              cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+      // Split payment fields
+      if (paymentData.isSplitPayment && paymentData.splitPayments && paymentData.splitPayments.length > 0) {
+        cleanSaleData.isSplitPayment = true;
+        cleanSaleData.splitPayments = paymentData.splitPayments.map(payment => {
+          const splitPayment: any = {
+            method: payment.method,
+            amount: Number(payment.amount),
+          };
+          
+          if (payment.method === 'cash' && payment.amountReceived != null) {
+            splitPayment.amountReceived = Number(payment.amountReceived);
+          }
+          
+          if (payment.method === 'mpesa') {
+            if (payment.mpesaTransactionId) {
+              splitPayment.mpesaTransactionId = String(payment.mpesaTransactionId);
+            }
+            if (payment.mpesaReceipt) {
+              splitPayment.mpesaReceipt = String(payment.mpesaReceipt);
             }
           }
-        }
-        if (paymentData.creditNotes) {
-          cleanSaleData.creditNotes = String(paymentData.creditNotes);
+          
+          if (payment.method === 'credit') {
+            if (payment.creditDueDate) {
+              const dateStr = String(payment.creditDueDate);
+              if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                splitPayment.creditDueDate = dateStr;
+              } else {
+                try {
+                  const date = new Date(dateStr);
+                  if (!isNaN(date.getTime())) {
+                    splitPayment.creditDueDate = date.toISOString().split('T')[0];
+                  } else {
+                    splitPayment.creditDueDate = dateStr;
+                  }
+                } catch {
+                  splitPayment.creditDueDate = dateStr;
+                }
+              }
+            }
+            if (payment.creditNotes) {
+              splitPayment.creditNotes = String(payment.creditNotes);
+            }
+          }
+          
+          return splitPayment;
+        });
+      } else {
+        // Credit-specific fields - only include if payment method is credit
+        if (paymentData.paymentMethod === 'credit') {
+          const creditAmount = paymentData.creditAmount ?? getGrandTotal();
+          if (creditAmount != null) {
+            cleanSaleData.creditAmount = Number(creditAmount);
+          }
+          if (paymentData.creditDueDate) {
+            // Ensure date is in ISO format (YYYY-MM-DD) for backend validation
+            const dateStr = String(paymentData.creditDueDate);
+            // If it's already in YYYY-MM-DD format, use it; otherwise try to parse and format
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+              cleanSaleData.creditDueDate = dateStr;
+            } else {
+              // Try to parse and format as ISO date string
+              try {
+                const date = new Date(dateStr);
+                if (!isNaN(date.getTime())) {
+                  cleanSaleData.creditDueDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                } else {
+                  cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+                }
+              } catch {
+                cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+              }
+            }
+          }
+          if (paymentData.creditNotes) {
+            cleanSaleData.creditNotes = String(paymentData.creditNotes);
+          }
         }
       }
 

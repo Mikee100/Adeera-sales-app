@@ -38,6 +38,9 @@ let mainWindow: BrowserWindow | null;
 const BACKEND_BASE_URL =
   process.env.BACKEND_BASE_URL || API_BASE_URL;
 
+// Log backend URL on startup for debugging
+console.log(`🌐 Backend URL configured: ${BACKEND_BASE_URL}`);
+
 const BACKEND_HEALTH_URL =
   process.env.BACKEND_HEALTH_URL || `${BACKEND_BASE_URL.replace(/\/$/, '')}/health`;
 
@@ -147,8 +150,10 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
   if (online) {
     // Online mode: authenticate against backend API
     try {
-      logger.debug('Sending login request to backend', { component: 'auth' });
-      const response = await axios.post(`${BACKEND_BASE_URL}/auth/login`, credentials);
+      const loginUrl = `${BACKEND_BASE_URL}/auth/login`;
+      logger.debug('Sending login request to backend', { component: 'auth', url: loginUrl });
+      console.log(`🔐 Attempting login at: ${loginUrl}`);
+      const response = await axios.post(loginUrl, credentials);
       logger.debug('Backend response received', { component: 'auth', status: response.status });
 
       if (response.data.access_token && response.data.user) {
@@ -164,7 +169,23 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
       }
     } catch (error: any) {
       logger.error('Login error', { component: 'auth', status: error.response?.status, error: error.response?.data || error.message });
-      const errorMessage = error.response?.data?.message || error.message || 'Authentication error';
+      
+      // Extract error message from NestJS exception response
+      // NestJS formats errors as: { statusCode: 401, message: 'Invalid credentials', error: 'Unauthorized' }
+      let errorMessage = 'Authentication error';
+      
+      if (error.response?.data) {
+        // Try different possible error message locations
+        errorMessage = 
+          error.response.data.message || 
+          error.response.data.error || 
+          (Array.isArray(error.response.data.message) ? error.response.data.message[0] : null) ||
+          error.message ||
+          'Authentication error';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       return { success: false, error: errorMessage };
     }
   } else {

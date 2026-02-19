@@ -1,16 +1,87 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Login from './components/Login';
 import POS from './components/POS';
+import SyncScreen from './components/SyncScreen';
+import SleepScreen from './components/SleepScreen';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { SleepModeProvider, useSleepMode } from './contexts/SleepModeContext';
 import { ToastContainer, useToast } from './components/Toast';
 import ErrorBoundary from './components/ErrorBoundary';
+import { useInitialSync } from './hooks/useInitialSync';
+import { useIdleTimer } from './hooks/useIdleTimer';
 import './error-boundary.css';
 
 const AppContent: React.FC = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, initialSyncComplete, onInitialSyncComplete } = useAuth();
   const { toasts, removeToast } = useToast();
+  const { syncProgress, performInitialSync } = useInitialSync();
+  const { isSleepMode, exitSleepMode, enterSleepMode } = useSleepMode();
+  const idleTimerRef = useRef<{ reset: () => void } | null>(null);
 
+  // Debug: Log sleep mode state changes
+  useEffect(() => {
+    console.log('Sleep mode state changed:', isSleepMode);
+  }, [isSleepMode]);
+
+  // Idle timer - activate sleep mode after 5 minutes of inactivity
+  // Only enable when user is authenticated and not already in sleep mode
+  const idleTimer = useIdleTimer({
+    idleTime: 5 * 60 * 1000, // 5 minutes in milliseconds
+    onIdle: () => {
+      if (!isSleepMode && isAuthenticated) {
+        console.log('Auto-activating sleep mode due to inactivity');
+        enterSleepMode();
+      }
+    },
+    enabled: isAuthenticated && !isSleepMode && initialSyncComplete,
+  });
+
+  // Store timer reference
+  useEffect(() => {
+    idleTimerRef.current = idleTimer;
+  }, [idleTimer]);
+
+  // Reset idle timer when waking from sleep mode
+  useEffect(() => {
+    if (!isSleepMode && isAuthenticated && idleTimerRef.current) {
+      console.log('Resetting idle timer after waking from sleep mode');
+      idleTimerRef.current.reset();
+    }
+  }, [isSleepMode, isAuthenticated]);
+
+  // Perform initial sync on mount
+  useEffect(() => {
+    if (!initialSyncComplete) {
+      performInitialSync().then(() => {
+        // Wait a moment after sync completes before checking auth
+        setTimeout(() => {
+          onInitialSyncComplete();
+        }, 500);
+      });
+    }
+  }, [initialSyncComplete, performInitialSync, onInitialSyncComplete]);
+
+  // Show sleep screen if sleep mode is active (highest priority)
+  if (isSleepMode) {
+    console.log('Rendering SleepScreen - isSleepMode is true');
+    return <SleepScreen onWake={exitSleepMode} />;
+  }
+
+  // Show sync screen until initial sync is complete
+  if (!initialSyncComplete) {
+    return (
+      <SyncScreen
+        progress={syncProgress.progress}
+        status={syncProgress.status}
+        currentStep={syncProgress.currentStep}
+        totalSteps={syncProgress.totalSteps}
+        completedSteps={syncProgress.completedSteps}
+      />
+    );
+  }
+
+  // Show loading screen while checking auth (after sync completes)
   if (loading) {
     return (
       <div className="loading-screen">
@@ -34,7 +105,9 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <AppContent />
+        <SleepModeProvider>
+          <AppContent />
+        </SleepModeProvider>
       </AuthProvider>
     </ThemeProvider>
   );
