@@ -14,25 +14,40 @@ const Receipt: React.FC<ReceiptProps> = ({
   onNewSale,
   printing
 }) => {
-  const [businessInfo, setBusinessInfo] = useState<any>(receipt.businessInfo);
+  const [businessInfo, setBusinessInfo] = useState<any>(receipt?.businessInfo);
+  const [apiBaseUrl, setApiBaseUrl] = useState<string>('');
+
+  // Get API base URL from Electron main process
+  useEffect(() => {
+    const fetchApiUrl = async () => {
+      try {
+        const url = await (window as any).electronAPI.getApiBaseUrl();
+        setApiBaseUrl(url);
+      } catch (error) {
+        console.error('Failed to get API base URL:', error);
+        // Fallback to default
+        setApiBaseUrl('http://127.0.0.1:9000');
+      }
+    };
+    fetchApiUrl();
+  }, []);
 
   useEffect(() => {
-    // Try to get business info from user data if not in receipt
-    if (!businessInfo || !businessInfo.name || businessInfo.name === 'Business Name') {
+    setBusinessInfo(receipt?.businessInfo);
+    // When receipt has no/empty business name, try to fill from user data (keep KRA and other backend fields)
+    if (!receipt?.businessInfo?.name || receipt.businessInfo.name === 'Business Name' || receipt.businessInfo.name === 'Business') {
       const fetchBusinessInfo = async () => {
         try {
           const userData = await (window as any).electronAPI.getUserData();
           if (userData) {
             const businessName = userData.tenantName || userData.businessName || userData.companyName;
-            if (businessName) {
-              setBusinessInfo({
-                ...businessInfo,
-                name: businessName,
-                address: businessInfo?.address || userData.address,
-                phone: businessInfo?.phone || userData.phone,
-                email: businessInfo?.email || userData.email,
-              });
-            }
+            setBusinessInfo((prev: any) => ({
+              ...prev,
+              name: businessName || prev?.name || 'Business',
+              address: prev?.address || userData.address,
+              phone: prev?.phone || userData.phone,
+              email: prev?.email || userData.email,
+            }));
           }
         } catch (error) {
           console.error('Failed to fetch business info:', error);
@@ -120,7 +135,7 @@ const Receipt: React.FC<ReceiptProps> = ({
                 src={
                   receipt.businessInfo.receiptLogo.startsWith('http')
                     ? receipt.businessInfo.receiptLogo
-                    : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`
+                    : `${apiBaseUrl}${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`
                 }
                 alt="Business Logo"
                 className="receipt-logo"
@@ -143,6 +158,22 @@ const Receipt: React.FC<ReceiptProps> = ({
             {(businessInfo?.email || receipt.businessInfo?.email) && (
               <div className="business-email">
                 {businessInfo?.email || receipt.businessInfo?.email}
+              </div>
+            )}
+            {/* KRA – show when enabled or when any KRA data is present (defensive for POS) */}
+            {(receipt.businessInfo?.kraEnabled || receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && (receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && (
+              <div className="business-kra" style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(0,0,0,0.1)', fontSize: '12px', color: '#374151' }}>
+                {receipt.businessInfo?.kraPin && <div><strong>KRA PIN:</strong> {receipt.businessInfo.kraPin}</div>}
+                {receipt.businessInfo?.vatNumber && <div><strong>VAT No:</strong> {receipt.businessInfo.vatNumber}</div>}
+              </div>
+            )}
+            {(receipt.businessInfo?.kraEnabled || receipt.businessInfo?.etimsQrUrl) && receipt.businessInfo?.etimsQrUrl && (
+              <div className="business-etims" style={{ marginTop: '6px' }}>
+                <img
+                  src={receipt.businessInfo.etimsQrUrl.startsWith('http') ? receipt.businessInfo.etimsQrUrl : `${apiBaseUrl}${receipt.businessInfo.etimsQrUrl.startsWith('/') ? '' : '/'}${receipt.businessInfo.etimsQrUrl}`}
+                  alt="KRA eTIMS QR"
+                  style={{ height: '48px', width: 'auto', display: 'block' }}
+                />
               </div>
             )}
           </div>

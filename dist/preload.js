@@ -65,8 +65,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
     listPrinters: () => ipcRenderer.invoke('listPrinters'),
     getOfflineSales: () => ipcRenderer.invoke('getOfflineSales'),
     syncOfflineSales: () => ipcRenderer.invoke('syncOfflineSales'),
+    cancelSyncOfflineSales: () => ipcRenderer.invoke('cancelSyncOfflineSales'),
     getSyncStatus: () => ipcRenderer.invoke('getSyncStatus'),
+    onSyncProgress: (callback) => {
+        ipcRenderer.on('sync-progress', (_event, progress) => callback(progress));
+        return () => ipcRenderer.removeAllListeners('sync-progress');
+    },
+    syncProducts: () => ipcRenderer.invoke('syncProducts'),
+    getCatalogSyncStatus: () => ipcRenderer.invoke('getCatalogSyncStatus'),
+    getApiBaseUrl: () => ipcRenderer.invoke('getApiBaseUrl'),
     isOnline: () => navigator.onLine,
+    quitApp: () => ipcRenderer.invoke('quitApp'),
 });
 
 })();

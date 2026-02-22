@@ -12,6 +12,15 @@ interface PrinterConfig {
   autoOpenCashDrawer: boolean;
 }
 
+interface CatalogSyncStatus {
+  success: boolean;
+  hasCatalog: boolean;
+  lastSynced: string | null;
+  ageHours: number | null;
+  productCount: number;
+  isStale: boolean;
+}
+
 const Settings: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { enterSleepMode } = useSleepMode();
   const [activeTab, setActiveTab] = useState<'printer' | 'system'>('printer');
@@ -21,10 +30,16 @@ const Settings: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [catalogStatus, setCatalogStatus] = useState<CatalogSyncStatus | null>(null);
 
   useEffect(() => {
     loadConfig();
+    loadCatalogStatus();
+    // Refresh catalog status every 30 seconds
+    const statusInterval = setInterval(loadCatalogStatus, 30000);
+    return () => clearInterval(statusInterval);
   }, []);
 
   const loadConfig = async () => {
@@ -115,6 +130,37 @@ const Settings: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       setTimeout(() => setMessage(null), 5000);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const loadCatalogStatus = async () => {
+    try {
+      const status = await (window as any).electronAPI.getCatalogSyncStatus() as CatalogSyncStatus;
+      setCatalogStatus(status);
+    } catch (error) {
+      console.error('Failed to load catalog status:', error);
+    }
+  };
+
+  const handleSyncProducts = async () => {
+    setSyncing(true);
+    setMessage(null);
+    try {
+      const response = await (window as any).electronAPI.syncProducts();
+      if (response.success) {
+        setMessage({ type: 'success', text: `Products synced successfully! ${response.products?.length || 0} products loaded.` });
+        setTimeout(() => setMessage(null), 5000);
+        // Refresh catalog status
+        await loadCatalogStatus();
+      } else {
+        setMessage({ type: 'error', text: response.error || 'Failed to sync products' });
+        setTimeout(() => setMessage(null), 5000);
+      }
+    } catch (error: any) {
+      setMessage({ type: 'error', text: error.message || 'Failed to sync products' });
+      setTimeout(() => setMessage(null), 5000);
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -359,6 +405,89 @@ const Settings: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
               {activeTab === 'system' && (
                 <div className="settings-tab-content">
+                  {/* Product Catalog Sync */}
+                  <div className="settings-card">
+                    <div className="settings-card-header">
+                      <h3 className="settings-card-title">Product Catalog</h3>
+                      <p className="settings-card-description">Sync product catalog from backend</p>
+                    </div>
+                    <div className="settings-card-body">
+                      {catalogStatus && (
+                        <div className="settings-field" style={{ marginBottom: '16px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                            <span className="settings-label-text">Catalog Status</span>
+                            {catalogStatus.isStale && (
+                              <span style={{ 
+                                color: '#f59e0b', 
+                                fontSize: '12px', 
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px'
+                              }}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <circle cx="12" cy="12" r="10"></circle>
+                                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                Stale
+                              </span>
+                            )}
+                          </div>
+                          <div style={{ fontSize: '14px', color: '#6b7280', lineHeight: '1.6' }}>
+                            {catalogStatus.hasCatalog ? (
+                              <>
+                                <div><strong>{catalogStatus.productCount}</strong> products cached</div>
+                                {catalogStatus.lastSynced && (
+                                  <div>
+                                    Last synced: {catalogStatus.ageHours !== null 
+                                      ? catalogStatus.ageHours < 1 
+                                        ? `${Math.round(catalogStatus.ageHours * 60)} minutes ago`
+                                        : `${catalogStatus.ageHours.toFixed(1)} hours ago`
+                                      : 'Unknown'}
+                                  </div>
+                                )}
+                                {catalogStatus.isStale && (
+                                  <div style={{ color: '#f59e0b', marginTop: '8px', fontWeight: '500' }}>
+                                    ⚠️ Catalog is outdated. Please sync to get the latest products.
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                              <div style={{ color: '#ef4444' }}>No product catalog cached</div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      <button
+                        onClick={handleSyncProducts}
+                        disabled={syncing}
+                        className="settings-action-btn settings-action-btn-primary"
+                        style={{ width: '100%' }}
+                      >
+                        {syncing ? (
+                          <>
+                            <div className="settings-btn-spinner"></div>
+                            <span>Syncing...</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <polyline points="23 4 23 10 17 10"></polyline>
+                              <polyline points="1 20 1 14 7 14"></polyline>
+                              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            <span>Sync Products</span>
+                          </>
+                        )}
+                      </button>
+                      <p className="settings-field-hint" style={{ marginTop: '8px' }}>
+                        Products are automatically synced every 5 minutes. Use this button to sync manually.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* System Controls */}
                   <div className="settings-card">
                     <div className="settings-card-header">
                       <h3 className="settings-card-title">System Controls</h3>

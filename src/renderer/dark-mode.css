@@ -128,6 +128,16 @@
   background: #4a4a4a;
 }
 
+[data-theme="dark"] .icon-btn.exit-btn {
+  border-color: #6c757d;
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .icon-btn.exit-btn:hover {
+  background: #5a6268;
+  color: white;
+}
+
 /* Responsive Layout Improvements */
 @media (max-width: 1024px) {
   .pos-content {

@@ -32,11 +32,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onInitialS
 
   React.useEffect(() => {
     // This will be called after initial sync completes
-    // Check if user is already logged in (from local storage or previous session)
+    // Check if user is already logged in (from Electron secure storage)
     const checkAuth = async () => {
       try {
-        // Check for stored auth token
-        const token = localStorage.getItem('authToken');
+        // Get token from Electron main process (uses secure storage)
+        // Note: We no longer store tokens in localStorage for security
+        const token = await window.electronAPI.getAuthToken();
         if (token) {
           // Get user data from Electron main process
           const userData = await window.electronAPI.getUserData();
@@ -44,17 +45,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onInitialS
             console.log('🔐 Restored user session:', userData);
             setUser(userData);
             setIsAuthenticated(true);
+            // Store a flag in localStorage (not the token) for quick auth check
+            localStorage.setItem('isAuthenticated', 'true');
           } else {
             // Clear invalid token and logout
-            localStorage.removeItem('authToken');
+            localStorage.removeItem('isAuthenticated');
             await window.electronAPI.logout();
             console.log('🔐 No valid user session found, logged out');
           }
+        } else {
+          // No token found, clear auth flag
+          localStorage.removeItem('isAuthenticated');
         }
       } catch (error) {
         console.error('Auth check failed:', error);
         // Clear potentially corrupted data and logout
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('isAuthenticated');
         await window.electronAPI.logout();
       } finally {
         setLoading(false);
@@ -71,10 +77,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onInitialS
     try {
       setLoading(true);
       // Call Electron main process authenticate handler
+      // Token is stored securely in Electron main process (encrypted)
       const response = await window.electronAPI.authenticate(credentials);
       if (response.success && response.token && response.user) {
-        // Store token in localStorage for renderer context
-        localStorage.setItem('authToken', response.token);
+        // SECURE: Token is stored in Electron secure storage, not localStorage
+        // Only store a flag in localStorage for quick auth check
+        localStorage.setItem('isAuthenticated', 'true');
         setUser(response.user);
         setIsAuthenticated(true);
       } else {
@@ -89,17 +97,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onInitialS
 
   const logout = async () => {
     try {
-      // Call Electron logout to clear stored data
+      // Call Electron logout to clear stored data (including encrypted token)
       await window.electronAPI.logout();
       // Clear local state
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('isAuthenticated');
       setUser(null);
       setIsAuthenticated(false);
       console.log('🔐 User logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
       // Still clear local state even if Electron logout fails
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('isAuthenticated');
       setUser(null);
       setIsAuthenticated(false);
     }

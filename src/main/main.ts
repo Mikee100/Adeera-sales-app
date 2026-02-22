@@ -6,6 +6,36 @@ import { logger } from '../shared/logger';
 import { cacheService } from '../shared/cache-service';
 import { printerService } from './printer-service';
 import { API_BASE_URL } from '../shared/config';
+import { SecureTokenStorage } from './secure-token-storage';
+import { rateLimitedAxios, extractEndpoint, apiRateLimiter, authRateLimiter, syncRateLimiter } from '../shared/rate-limiter';
+import { parseAxiosError, getUserFriendlyMessage, enhanceErrorMessage } from '../shared/error-parser';
+import { detectStockConflict } from '../shared/stock-conflict-handler';
+
+// Helper function to get auth token (handles both encrypted and plain text)
+function getAuthToken(store: ElectronStore): string | null {
+  const { SecureTokenStorage } = require('./secure-token-storage');
+  
+  // Try to get encrypted token first
+  if (SecureTokenStorage.isAvailable()) {
+    const encryptedToken = SecureTokenStorage.getToken();
+    if (encryptedToken) {
+      return encryptedToken;
+    }
+  }
+  
+  // Fallback to plain text token (for migration or if encryption not available)
+  const plainToken = store.get('authToken', null) as string | null;
+  
+  // Migrate plain text token to encrypted storage if available
+  if (plainToken && SecureTokenStorage.isAvailable()) {
+    logger.info('Migrating plain text token to encrypted storage', { component: 'auth' });
+    SecureTokenStorage.migratePlainTextToken(plainToken);
+    // Delete plain text token after migration
+    store.delete('authToken');
+  }
+  
+  return plainToken;
+}
 
 interface Credentials {
   email: string;
@@ -88,6 +118,108 @@ const createWindow = (): void => {
   });
 };
 
+// Periodic product sync timer (runs every 5 minutes)
+let productSyncInterval: NodeJS.Timeout | null = null;
+
+function startPeriodicProductSync() {
+  // Clear existing interval if any
+  if (productSyncInterval) {
+    clearInterval(productSyncInterval);
+  }
+
+  // Sync products every 5 minutes (300000ms)
+  productSyncInterval = setInterval(async () => {
+    const store = new ElectronStore();
+    const token = getAuthToken(store);
+    
+    // Only sync if user is authenticated
+    if (token) {
+      logger.info('Running periodic product sync', { component: 'products' });
+      try {
+        // Use the syncProducts handler logic inline to avoid circular dependencies
+        let online = false;
+        try {
+          await axios.get(BACKEND_HEALTH_URL, { timeout: 5000 });
+          online = true;
+        } catch {
+          online = false;
+        }
+
+        if (online) {
+    const user = store.get('user') as { branchId?: string } | undefined;
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/products`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    
+    const response = await rateLimitedAxios(
+      () => axios.get(`${BACKEND_BASE_URL}/products?page=1&limit=1000&includeVariations=true`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          ...(user?.branchId && { 'x-branch-id': user.branchId }),
+        },
+        timeout: 10000,
+      }),
+      endpoint
+    );
+
+          const responseData = response.data;
+          let productsArray: any[] = [];
+          if (Array.isArray(responseData)) {
+            productsArray = responseData;
+          } else if (responseData && typeof responseData === 'object' && responseData.products) {
+            productsArray = Array.isArray(responseData.products) ? responseData.products : [];
+          }
+
+          if (Array.isArray(productsArray)) {
+            const products = productsArray.map((product: any) => {
+              const base: any = {
+                id: product.id,
+                name: product.name,
+                sku: product.sku,
+                price: parseFloat(product.price),
+                stock: parseInt(product.stock) || 0,
+                description: product.description || '',
+                cost: product.cost ? parseFloat(product.cost) : 0,
+                supplier: product.supplier ? product.supplier.name : null,
+                images: product.images || [],
+                branchId: product.branchId,
+                tenantId: product.tenantId,
+              };
+              if (product.variations && Array.isArray(product.variations) && product.variations.length > 0) {
+                base.hasVariations = true;
+                base.variations = product.variations.map((v: any) => ({
+                  id: v.id,
+                  sku: v.sku,
+                  price: v.price != null ? parseFloat(v.price) : null,
+                  stock: parseInt(v.stock) || 0,
+                  attributes: v.attributes || {},
+                }));
+              }
+              return base;
+            });
+
+            store.set('cachedProducts', products);
+            store.set('catalogLastSynced', new Date().toISOString());
+            logger.info(`Periodic sync completed: ${products.length} products`, { component: 'products' });
+          }
+        }
+      } catch (error: any) {
+        logger.warn('Periodic product sync failed', { component: 'products', error: error.message });
+      }
+    }
+  }, 5 * 60 * 1000); // 5 minutes
+
+  logger.info('Periodic product sync started (every 5 minutes)', { component: 'products' });
+}
+
+function stopPeriodicProductSync() {
+  if (productSyncInterval) {
+    clearInterval(productSyncInterval);
+    productSyncInterval = null;
+    logger.info('Periodic product sync stopped', { component: 'products' });
+  }
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -104,6 +236,14 @@ app.whenReady().then(() => {
     }
   }
   createWindow();
+  
+  // Start periodic product sync if user is already logged in (e.g., app restart)
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  if (token) {
+    logger.info('User session found on app start, starting periodic sync', { component: 'app' });
+    startPeriodicProductSync();
+  }
 });
 
 // Quit when all windows are closed.
@@ -129,6 +269,10 @@ const isOnline = (): boolean => {
 };
 
 // IPC Handlers for renderer communication
+ipcMain.handle('quitApp', () => {
+  app.quit();
+});
+
 ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Credentials) => {
   const store = new ElectronStore();
 
@@ -151,17 +295,60 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
     // Online mode: authenticate against backend API
     try {
       const loginUrl = `${BACKEND_BASE_URL}/auth/login`;
+      const endpoint = extractEndpoint(loginUrl);
+      
+      // Apply rate limiting for auth endpoints (stricter limits)
+      await authRateLimiter.waitIfNeeded(endpoint);
+      authRateLimiter.recordRequest(endpoint);
+      
       logger.debug('Sending login request to backend', { component: 'auth', url: loginUrl });
       console.log(`🔐 Attempting login at: ${loginUrl}`);
-      const response = await axios.post(loginUrl, credentials);
+      const response = await rateLimitedAxios(
+        () => axios.post(loginUrl, credentials),
+        endpoint,
+        authRateLimiter
+      );
       logger.debug('Backend response received', { component: 'auth', status: response.status });
 
       if (response.data.access_token && response.data.user) {
         logger.info('Login successful, caching data', { component: 'auth' });
-        // Cache token and user data locally
-        store.set('authToken', response.data.access_token);
+        
+        // SECURE: Store token using encrypted storage
+        const { SecureTokenStorage } = require('./secure-token-storage');
+        const tokenExpiry = response.data.expires_in 
+          ? Date.now() + (response.data.expires_in * 1000)
+          : undefined;
+        
+        const encryptionAvailable = SecureTokenStorage.isAvailable();
+        if (encryptionAvailable) {
+          const stored = SecureTokenStorage.setToken(response.data.access_token, tokenExpiry);
+          if (!stored) {
+            logger.warn('Failed to store token securely, falling back to plain storage', { component: 'auth' });
+            // Fallback to plain storage if encryption fails
+            store.set('authToken', response.data.access_token);
+          }
+        } else {
+          logger.warn('Encryption not available, storing token in plain text (less secure)', { component: 'auth' });
+          // Fallback: store in plain text if encryption not available
+          store.set('authToken', response.data.access_token);
+        }
+        
+        // Store refresh token if provided
+        if (response.data.refresh_token) {
+          if (encryptionAvailable) {
+            SecureTokenStorage.setRefreshToken(response.data.refresh_token);
+          } else {
+            store.set('refreshToken', response.data.refresh_token);
+          }
+        }
+        
+        // Store user data (not sensitive, can be plain)
         store.set('user', response.data.user);
-        logger.debug('Data cached successfully', { component: 'auth' });
+        logger.debug('Data cached successfully', { component: 'auth', encrypted: encryptionAvailable });
+        
+        // Start periodic product sync after successful login
+        startPeriodicProductSync();
+        
         return { success: true, token: response.data.access_token, user: response.data.user };
       } else {
         logger.warn('Login failed: Invalid response format', { component: 'auth' });
@@ -170,21 +357,9 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
     } catch (error: any) {
       logger.error('Login error', { component: 'auth', status: error.response?.status, error: error.response?.data || error.message });
       
-      // Extract error message from NestJS exception response
-      // NestJS formats errors as: { statusCode: 401, message: 'Invalid credentials', error: 'Unauthorized' }
-      let errorMessage = 'Authentication error';
-      
-      if (error.response?.data) {
-        // Try different possible error message locations
-        errorMessage = 
-          error.response.data.message || 
-          error.response.data.error || 
-          (Array.isArray(error.response.data.message) ? error.response.data.message[0] : null) ||
-          error.message ||
-          'Authentication error';
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
+      // IMPROVED: Use error parser for consistent error message extraction
+      const parsedError = enhanceErrorMessage(parseAxiosError(error));
+      const errorMessage = getUserFriendlyMessage(parsedError) || 'Authentication error';
       
       return { success: false, error: errorMessage };
     }
@@ -198,7 +373,10 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
       // Optionally, verify credentials match cached user email
       if (credentials.email === cachedUser.email) {
         logger.info('Offline login successful', { component: 'auth' });
+        // Start periodic sync even in offline mode (will sync when backend comes online)
+        startPeriodicProductSync();
         // Allow offline login without password verification
+        // Note: cachedToken might be plain text, will be migrated on next getAuthToken call
         return { success: true, token: cachedToken, user: cachedUser };
       } else {
         logger.warn('Offline login failed: email mismatch', { component: 'auth' });
@@ -212,8 +390,29 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
 });
 
 ipcMain.handle('getAuthToken', () => {
+  const { SecureTokenStorage } = require('./secure-token-storage');
+  
+  // Try to get encrypted token first
+  if (SecureTokenStorage.isAvailable()) {
+    const encryptedToken = SecureTokenStorage.getToken();
+    if (encryptedToken) {
+      return encryptedToken;
+    }
+  }
+  
+  // Fallback to plain text token (for migration or if encryption not available)
   const store = new ElectronStore();
-  return store.get('authToken', null);
+  const plainToken = store.get('authToken', null) as string | null;
+  
+  // Migrate plain text token to encrypted storage if available
+  if (plainToken && SecureTokenStorage.isAvailable()) {
+    logger.info('Migrating plain text token to encrypted storage', { component: 'auth' });
+    SecureTokenStorage.migratePlainTextToken(plainToken);
+    // Delete plain text token after migration
+    store.delete('authToken');
+  }
+  
+  return plainToken;
 });
 
 ipcMain.handle('getUserData', () => {
@@ -241,13 +440,19 @@ ipcMain.handle('getBranches', async () => {
     }
 
     if (online) {
-      const response = await axios.get(`${BACKEND_BASE_URL}/branches`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 10000,
-      });
+      const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/branches`);
+      await apiRateLimiter.waitIfNeeded(endpoint);
+      
+      const response = await rateLimitedAxios(
+        () => axios.get(`${BACKEND_BASE_URL}/branches`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          timeout: 10000,
+        }),
+        endpoint
+      );
       
       const branches = Array.isArray(response.data) ? response.data : [];
       logger.info(`Fetched ${branches.length} branches`, { component: 'branches' });
@@ -288,10 +493,22 @@ ipcMain.handle('getBranches', async () => {
 
 ipcMain.handle('logout', () => {
   const store = new ElectronStore();
+  
+  // SECURE: Delete encrypted token
+  const { SecureTokenStorage } = require('./secure-token-storage');
+  SecureTokenStorage.deleteToken();
+  
+  // Also delete plain text token (for migration/compatibility)
   store.delete('authToken');
+  store.delete('refreshToken');
   store.delete('user');
   store.delete('cachedProducts'); // Clear cached products on logout
   store.delete('cachedBranches'); // Clear cached branches on logout
+  store.delete('catalogLastSynced'); // Clear catalog sync timestamp
+  
+  // Stop periodic product sync on logout
+  stopPeriodicProductSync();
+  
   logger.info('User logged out, cleared all cached data', { component: 'auth' });
   return { success: true };
 });
@@ -300,8 +517,8 @@ ipcMain.handle('getProducts', async () => {
   const store = new ElectronStore();
 
   try {
-    // Get stored JWT token
-    const token = store.get('authToken') as string;
+    // Get stored JWT token (encrypted or plain text)
+    const token = getAuthToken(store);
     if (!token) {
       logger.warn('No authentication token found', { component: 'products' });
       // Return cached products if available
@@ -318,7 +535,7 @@ ipcMain.handle('getProducts', async () => {
 
     logger.info('Fetching products from backend', { component: 'products' });
 
-    // Check online status first
+    // Check online status first (health check doesn't need rate limiting)
     let online = false;
     try {
       await axios.get(BACKEND_HEALTH_URL, { timeout: 5000 });
@@ -332,14 +549,20 @@ ipcMain.handle('getProducts', async () => {
       try {
         // Fetch products with pagination and variations for POS (includeVariations needed for product variation selection)
         const user = store.get('user') as { branchId?: string } | undefined;
-        const response = await axios.get(`${BACKEND_BASE_URL}/products?page=1&limit=1000&includeVariations=true`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            ...(user?.branchId && { 'x-branch-id': user.branchId }),
-          },
-          timeout: 10000, // 10 second timeout
-        });
+        const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/products`);
+        await apiRateLimiter.waitIfNeeded(endpoint);
+        
+        const response = await rateLimitedAxios(
+          () => axios.get(`${BACKEND_BASE_URL}/products?page=1&limit=1000&includeVariations=true`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 10000, // 10 second timeout
+          }),
+          endpoint
+        );
 
         // Backend now returns { products: [...], pagination: {...} }
         const responseData = response.data;
@@ -392,9 +615,10 @@ ipcMain.handle('getProducts', async () => {
           return base;
         });
 
-        // Cache the products locally
+        // Cache the products locally with timestamp
         store.set('cachedProducts', products);
-        logger.debug('Products cached successfully', { component: 'products' });
+        store.set('catalogLastSynced', new Date().toISOString());
+        logger.debug('Products cached successfully', { component: 'products', productCount: products.length });
 
         return { success: true, products };
       } catch (error: any) {
@@ -438,24 +662,165 @@ ipcMain.handle('getProducts', async () => {
       store.delete('cachedProducts');
     }
 
-    const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch products';
+    // IMPROVED: Use error parser for consistent error message extraction
+    const parsedError = enhanceErrorMessage(parseAxiosError(error));
+    const errorMessage = getUserFriendlyMessage(parsedError) || 'Failed to fetch products';
     return { success: false, error: errorMessage };
   }
 });
 
+// Force sync products from backend (bypasses cache)
+ipcMain.handle('syncProducts', async () => {
+  const store = new ElectronStore();
+
+  try {
+    // Get stored JWT token (encrypted or plain text)
+    const token = getAuthToken(store);
+    if (!token) {
+      logger.warn('No authentication token found for product sync', { component: 'products' });
+      return { success: false, error: 'No authentication token found' };
+    }
+
+    logger.info('Force syncing products from backend', { component: 'products' });
+
+    // Check online status
+    let online = false;
+    try {
+      await axios.get(BACKEND_HEALTH_URL, { timeout: 5000 });
+      online = true;
+    } catch {
+      online = false;
+    }
+
+    if (!online) {
+      return { success: false, error: 'Backend is offline. Cannot sync products.' };
+    }
+
+    // Fetch products from backend (same logic as getProducts but always fetches fresh)
+    const user = store.get('user') as { branchId?: string } | undefined;
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/products`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    
+    const response = await rateLimitedAxios(
+      () => axios.get(`${BACKEND_BASE_URL}/products?page=1&limit=1000&includeVariations=true`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          ...(user?.branchId && { 'x-branch-id': user.branchId }),
+        },
+        timeout: 10000,
+      }),
+      endpoint
+    );
+
+    const responseData = response.data;
+    let productsArray: any[] = [];
+    if (Array.isArray(responseData)) {
+      productsArray = responseData;
+    } else if (responseData && typeof responseData === 'object' && responseData.products) {
+      productsArray = Array.isArray(responseData.products) ? responseData.products : [];
+    }
+
+    if (!Array.isArray(productsArray)) {
+      productsArray = [];
+    }
+
+    // Transform product data
+    const products = productsArray.map((product: any) => {
+      const base: any = {
+        id: product.id,
+        name: product.name,
+        sku: product.sku,
+        price: parseFloat(product.price),
+        stock: parseInt(product.stock) || 0,
+        description: product.description || '',
+        cost: product.cost ? parseFloat(product.cost) : 0,
+        supplier: product.supplier ? product.supplier.name : null,
+        images: product.images || [],
+        branchId: product.branchId,
+        tenantId: product.tenantId,
+      };
+      if (product.variations && Array.isArray(product.variations) && product.variations.length > 0) {
+        base.hasVariations = true;
+        base.variations = product.variations.map((v: any) => ({
+          id: v.id,
+          sku: v.sku,
+          price: v.price != null ? parseFloat(v.price) : null,
+          stock: parseInt(v.stock) || 0,
+          attributes: v.attributes || {},
+        }));
+      }
+      return base;
+    });
+
+    // Update cache with timestamp
+    store.set('cachedProducts', products);
+    store.set('catalogLastSynced', new Date().toISOString());
+    
+    logger.info(`Products synced successfully: ${products.length} products`, { component: 'products' });
+
+    return { success: true, products, syncedAt: new Date().toISOString() };
+  } catch (error: any) {
+    logger.error('Error syncing products', { component: 'products', error: error.message });
+    // IMPROVED: Use error parser for consistent error message extraction
+    const parsedError = enhanceErrorMessage(parseAxiosError(error));
+    const errorMessage = getUserFriendlyMessage(parsedError) || 'Failed to sync products';
+    return { success: false, error: errorMessage };
+  }
+});
+
+// Get catalog sync status (last sync time, age, etc.)
+ipcMain.handle('getCatalogSyncStatus', async () => {
+  const store = new ElectronStore();
+  const lastSynced = store.get('catalogLastSynced') as string | undefined;
+  const cachedProducts = store.get('cachedProducts') as any[] | undefined;
+
+  if (!lastSynced || !cachedProducts) {
+    return {
+      success: true,
+      hasCatalog: false,
+      lastSynced: null,
+      ageHours: null,
+      productCount: 0,
+      isStale: true,
+    };
+  }
+
+  const lastSyncedDate = new Date(lastSynced);
+  const now = new Date();
+  const ageMs = now.getTime() - lastSyncedDate.getTime();
+  const ageHours = ageMs / (1000 * 60 * 60);
+  const isStale = ageHours > 2; // Consider stale if older than 2 hours
+
+  return {
+    success: true,
+    hasCatalog: true,
+    lastSynced: lastSynced,
+    ageHours: Math.round(ageHours * 10) / 10, // Round to 1 decimal
+    productCount: cachedProducts.length,
+    isStale,
+  };
+});
+
 ipcMain.handle('getProductVariations', async (_event, productId: string) => {
   const store = new ElectronStore();
-  const token = store.get('authToken') as string;
+  const token = getAuthToken(store);
   if (!token) return { success: false, variations: [], error: 'Not authenticated', unauthorized: true };
   try {
-    const response = await axios.get(`${BACKEND_BASE_URL}/products/${productId}/variations`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'x-branch-id': (store.get('user') as any)?.branchId || '',
-      },
-      timeout: 10000,
-    });
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/products/${productId}/variations`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    
+    const response = await rateLimitedAxios(
+      () => axios.get(`${BACKEND_BASE_URL}/products/${productId}/variations`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'x-branch-id': (store.get('user') as any)?.branchId || '',
+        },
+        timeout: 10000,
+      }),
+      endpoint
+    );
     const variations = Array.isArray(response.data) ? response.data : [];
     return { success: true, variations };
   } catch (error: any) {
@@ -475,8 +840,8 @@ ipcMain.handle('createSale', async (event, saleData) => {
   const store = new ElectronStore();
 
   try {
-    // Get stored JWT token
-    const token = store.get('authToken') as string;
+    // Get stored JWT token (encrypted or plain text)
+    const token = getAuthToken(store);
     if (!token) {
       logger.warn('No authentication token found for sale creation', { component: 'sales' });
       return { success: false, error: 'No authentication token found' };
@@ -553,19 +918,80 @@ ipcMain.handle('createSale', async (event, saleData) => {
 
         logger.info('Sale created successfully', { component: 'sales', saleId: response.data.data.saleId });
 
-        // Update cached products after sale (reduce stock)
-        const cachedProducts = store.get('cachedProducts') as any[];
-        if (cachedProducts) {
-          const updatedProducts = cachedProducts.map((product: any) => {
-            const soldItem = saleData.items.find((item: any) => item.productId === product.id);
-            if (soldItem) {
-              return { ...product, stock: Math.max(0, product.stock - soldItem.quantity) };
+        // IMPORTANT: Do NOT update cache optimistically - wait for backend confirmation
+        // The backend has already updated stock in the database. We'll refresh products
+        // from backend to get accurate stock levels instead of calculating locally.
+        // This prevents race conditions where multiple users sell the same stock.
+        
+        // Refresh products from backend after successful sale to get accurate stock
+        // Do this asynchronously so it doesn't block the sale response
+        setTimeout(async () => {
+          try {
+            logger.info('Refreshing product catalog after successful sale', { component: 'sales' });
+            const user = store.get('user') as { branchId?: string } | undefined;
+            const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/products`);
+            await apiRateLimiter.waitIfNeeded(endpoint);
+            
+            const refreshResponse = await rateLimitedAxios(
+              () => axios.get(`${BACKEND_BASE_URL}/products?page=1&limit=1000&includeVariations=true`, {
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                  ...(user?.branchId && { 'x-branch-id': user.branchId }),
+                },
+                timeout: 10000,
+              }),
+              endpoint
+            );
+
+            const responseData = refreshResponse.data;
+            let productsArray: any[] = [];
+            if (Array.isArray(responseData)) {
+              productsArray = responseData;
+            } else if (responseData && typeof responseData === 'object' && responseData.products) {
+              productsArray = Array.isArray(responseData.products) ? responseData.products : [];
             }
-            return product;
-          });
-          store.set('cachedProducts', updatedProducts);
-          logger.debug('Product stock updated in cache', { component: 'sales' });
-        }
+
+            if (Array.isArray(productsArray)) {
+              const products = productsArray.map((product: any) => {
+                const base: any = {
+                  id: product.id,
+                  name: product.name,
+                  sku: product.sku,
+                  price: parseFloat(product.price),
+                  stock: parseInt(product.stock) || 0,
+                  description: product.description || '',
+                  cost: product.cost ? parseFloat(product.cost) : 0,
+                  supplier: product.supplier ? product.supplier.name : null,
+                  images: product.images || [],
+                  branchId: product.branchId,
+                  tenantId: product.tenantId,
+                };
+                if (product.variations && Array.isArray(product.variations) && product.variations.length > 0) {
+                  base.hasVariations = true;
+                  base.variations = product.variations.map((v: any) => ({
+                    id: v.id,
+                    sku: v.sku,
+                    price: v.price != null ? parseFloat(v.price) : null,
+                    stock: parseInt(v.stock) || 0,
+                    attributes: v.attributes || {},
+                  }));
+                }
+                return base;
+              });
+
+              store.set('cachedProducts', products);
+              store.set('catalogLastSynced', new Date().toISOString());
+              logger.info(`Product catalog refreshed after sale: ${products.length} products`, { component: 'sales' });
+            }
+          } catch (refreshError: any) {
+            logger.warn('Failed to refresh products after sale (non-critical)', { 
+              component: 'sales', 
+              error: refreshError.message 
+            });
+            // Don't fail the sale if refresh fails - cache will be updated on next sync
+          }
+        }, 500); // Small delay to not block sale response
 
         // Auto-open cash drawer if payment method is cash and auto-open is enabled
         if (saleData.paymentMethod === 'cash') {
@@ -633,85 +1059,70 @@ ipcMain.handle('createSale', async (event, saleData) => {
           return { success: false, error: 'Unauthorized - Please log in again' };
         }
         
-        let errorMessage = 'Failed to create sale';
+        // IMPROVED: Parse error using dedicated error parser utility
+        const parsedError = enhanceErrorMessage(parseAxiosError(error));
+        let errorMessage = getUserFriendlyMessage(parsedError);
         
-        // Extract error message from various possible formats (NestJS validation errors)
-        if (errorData) {
-          // Check for validation error array (common NestJS format)
-          if (Array.isArray(errorData)) {
-            errorMessage = errorData.map((err: any) => {
-              if (typeof err === 'string') return err;
-              if (err?.constraints) {
-                return Object.values(err.constraints).join(', ');
-              }
-              if (err?.property && err?.constraints) {
-                return `${err.property}: ${Object.values(err.constraints).join(', ')}`;
-              }
-              return JSON.stringify(err);
-            }).join('; ');
-          } else if (errorData.message) {
-            if (Array.isArray(errorData.message)) {
-              // NestJS validation errors come as array of constraint messages
-              errorMessage = errorData.message.map((msg: any) => {
-                if (typeof msg === 'string') return msg;
-                if (msg?.constraints) {
-                  const property = msg.property ? `${msg.property}: ` : '';
-                  return property + Object.values(msg.constraints).join(', ');
-                }
-                return JSON.stringify(msg);
-              }).join('; ');
+        // If we still have a generic "Bad Request", try to extract more details
+        if (errorMessage === 'Bad Request' || errorMessage === 'An error occurred' || (errorMessage.includes('Bad Request') && !parsedError.fieldErrors)) {
+          // Fallback to detailed extraction
+          if (errorData) {
+            const parsed = parseAxiosError(error);
+            if (parsed.message && parsed.message !== 'Bad Request') {
+              errorMessage = parsed.message;
             } else {
-              errorMessage = String(errorData.message);
+              // Provide context about the request
+              const requestSummary = `Items: ${saleData.items?.length || 0}, Payment: ${saleData.paymentMethod}, Branch: ${saleData.branchId ? 'set' : 'missing'}`;
+              errorMessage = `Validation failed. Please check: ${requestSummary}`;
             }
-          } else if (errorData.error) {
-            errorMessage = Array.isArray(errorData.error) ? errorData.error.join('; ') : String(errorData.error);
-          } else if (typeof errorData === 'string') {
-            errorMessage = errorData;
           } else {
-            // Try to extract any useful information from the error object
-            const errorKeys = Object.keys(errorData);
-            if (errorKeys.length > 0) {
-              const errorDetails = errorKeys
-                .map(key => {
-                  const value = errorData[key];
-                  if (key === 'message' || key === 'statusCode') return null;
-                  return `${key}: ${typeof value === 'object' ? JSON.stringify(value) : value}`;
-                })
-                .filter(Boolean)
-                .join(', ');
-              if (errorDetails) {
-                errorMessage = `Bad Request: ${errorDetails}`;
-              } else {
-                errorMessage = errorStatus === 400 ? `Bad Request: ${JSON.stringify(errorData)}` : JSON.stringify(errorData);
-              }
-            } else {
-              errorMessage = errorStatus === 400 ? `Bad Request: ${JSON.stringify(errorData)}` : JSON.stringify(errorData);
-            }
+            errorMessage = `Request failed with status ${errorStatus}. Please check your input and try again.`;
           }
-        } else if (errorStatus === 400) {
-          // For 400 errors, provide more context about what might be wrong
-          const requestSummary = `Items: ${saleData.items?.length || 0}, Payment: ${saleData.paymentMethod}, Branch: ${saleData.branchId ? 'set' : 'missing'}`;
-          if (errorData && typeof errorData === 'object') {
-            // Try to extract any additional error details
-            const errorDetails = Object.keys(errorData)
-              .filter(key => key !== 'message' && key !== 'statusCode')
-              .map(key => `${key}: ${JSON.stringify(errorData[key])}`)
-              .join(', ');
-            errorMessage = `Bad Request: ${errorDetails || errorStatusText || 'Invalid request data'}. Request: ${requestSummary}. Note: Backend validation errors are hidden in production. Check server logs for details.`;
-          } else {
-            errorMessage = `Bad Request: ${errorStatusText || 'Invalid request data'}. Request: ${requestSummary}. Note: Backend validation errors are hidden in production. Check server logs for details.`;
-          }
-        } else if (error.message) {
-          errorMessage = error.message;
-        } else if (error.code) {
-          errorMessage = `Network error: ${error.code}`;
         }
         
+        // Add field-specific errors if available
+        if (parsedError.fieldErrors && Object.keys(parsedError.fieldErrors).length > 0) {
+          const fieldMessages = Object.entries(parsedError.fieldErrors)
+            .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
+            .join('; ');
+          errorMessage = `${errorMessage}\n\nField errors:\n${fieldMessages}`;
+        }
+        
+        // Check for stock conflict errors
+        const stockConflict = detectStockConflict(error);
+        if (stockConflict.isStockConflict) {
+          logger.warn('Stock conflict detected during sale creation', { 
+            component: 'sales',
+            conflictingProducts: stockConflict.conflictingProducts,
+            errorMessage: stockConflict.message,
+            status: errorStatus,
+          });
+          
+          // Enhance error message with stock conflict details
+          if (stockConflict.conflictingProducts && stockConflict.conflictingProducts.length > 0) {
+            errorMessage = `Stock conflict: ${stockConflict.conflictingProducts.join(', ')}. Stock may have changed. Please refresh and try again.`;
+          } else {
+            errorMessage = 'Stock conflict detected. Stock may have changed. Please refresh products and try again.';
+          }
+        }
+        
+        // Log product-related errors for frontend to handle auto-sync
+        const errorMessageLower = errorMessage.toLowerCase();
+        if (errorMessageLower.includes('invalid product') || 
+            (errorMessageLower.includes('product') && errorMessageLower.includes('not found')) ||
+            (errorMessageLower.includes('product') && errorMessageLower.includes('deleted'))) {
+          logger.warn('Product not found error detected - frontend will trigger auto-sync', { component: 'sales' });
+        }
+        
+        // Log parsed error details for debugging
         logger.error('Extracted error message', { 
           component: 'sales', 
-          errorMessage, 
+          errorMessage,
+          parsedError,
+          stockConflict: stockConflict.isStockConflict ? stockConflict : null,
           rawData: errorData ? JSON.stringify(errorData) : null,
           status: errorStatus,
+          fieldErrors: parsedError.fieldErrors,
           requestSummary: {
             itemsCount: saleData.items?.length,
             paymentMethod: saleData.paymentMethod,
@@ -726,6 +1137,46 @@ ipcMain.handle('createSale', async (event, saleData) => {
       logger.info('Backend offline, queuing sale for later sync', { component: 'sales' });
 
       const offlineSales = store.get('offlineSales', []) as any[];
+      
+      // MAX QUEUE SIZE: Limit to 1000 sales to prevent memory issues
+      const MAX_QUEUE_SIZE = 1000;
+      const WARNING_THRESHOLD = 100;
+      
+      // Clean up old failed syncs (older than 7 days) before adding new sale
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const cleanedSales = offlineSales.filter((sale: any) => {
+        if (sale.status === 'failed' && sale.finalFailureAt) {
+          const failureDate = new Date(sale.finalFailureAt);
+          if (failureDate < sevenDaysAgo) {
+            logger.info(`Removing old failed sale from queue: ${sale.id} (failed ${failureDate.toISOString()})`, { component: 'sales' });
+            return false; // Remove old failed sales
+          }
+        }
+        return true; // Keep all other sales
+      });
+      
+      // Check if queue is at max capacity
+      if (cleanedSales.length >= MAX_QUEUE_SIZE) {
+        const errorMessage = `Offline sales queue is full (${MAX_QUEUE_SIZE} sales). Please sync existing sales before creating new ones.`;
+        logger.error(errorMessage, { component: 'sales', queueSize: cleanedSales.length });
+        return { 
+          success: false, 
+          error: errorMessage,
+          queueSize: cleanedSales.length,
+          maxQueueSize: MAX_QUEUE_SIZE
+        };
+      }
+      
+      // Warn if queue is getting large
+      if (cleanedSales.length >= WARNING_THRESHOLD) {
+        logger.warn(`Offline sales queue is large: ${cleanedSales.length} sales (warning threshold: ${WARNING_THRESHOLD})`, { 
+          component: 'sales',
+          queueSize: cleanedSales.length,
+          warningThreshold: WARNING_THRESHOLD
+        });
+      }
+      
       const offlineSale = {
         id: `offline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         saleData,
@@ -733,8 +1184,14 @@ ipcMain.handle('createSale', async (event, saleData) => {
         status: 'pending'
       };
 
-      offlineSales.push(offlineSale);
-      store.set('offlineSales', offlineSales);
+      cleanedSales.push(offlineSale);
+      store.set('offlineSales', cleanedSales);
+      
+      logger.info(`Sale queued for offline sync. Queue size: ${cleanedSales.length}/${MAX_QUEUE_SIZE}`, { 
+        component: 'sales',
+        queueSize: cleanedSales.length,
+        maxQueueSize: MAX_QUEUE_SIZE
+      });
 
       // Update cached products immediately (reduce stock)
       const cachedProducts = store.get('cachedProducts') as any[];
@@ -750,7 +1207,15 @@ ipcMain.handle('createSale', async (event, saleData) => {
         logger.debug('Product stock updated in cache for offline sale', { component: 'sales' });
       }
 
-      logger.info('Sale queued for offline sync', { component: 'sales' });
+      // Return success with queue info for frontend warnings
+      return {
+        success: true,
+        sale: offlineSale,
+        queueSize: cleanedSales.length,
+        maxQueueSize: MAX_QUEUE_SIZE,
+        warningThreshold: WARNING_THRESHOLD,
+        isWarning: cleanedSales.length >= WARNING_THRESHOLD
+      };
 
       // Auto-open cash drawer if payment method is cash and auto-open is enabled
       if (saleData.paymentMethod === 'cash') {
@@ -763,7 +1228,13 @@ ipcMain.handle('createSale', async (event, saleData) => {
         }
       }
 
-      // Return success with offline receipt
+      // Use stored user and cached branches for business and branch names
+      const userData = store.get('user') as { tenantName?: string; branchName?: string; branchId?: string } | undefined;
+      const cachedBranches = store.get('cachedBranches') as { id: string; name: string; address?: string }[] | undefined;
+      const branchForReceipt = saleData.branchId && Array.isArray(cachedBranches)
+        ? cachedBranches.find((b: { id: string }) => b.id === saleData.branchId)
+        : undefined;
+
       const offlineReceipt: any = {
         saleId: offlineSale.id,
         date: offlineSale.timestamp,
@@ -781,8 +1252,12 @@ ipcMain.handle('createSale', async (event, saleData) => {
         paymentMethod: saleData.paymentMethod,
         amountReceived: saleData.amountReceived,
         change: saleData.amountReceived ? saleData.amountReceived - (saleData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0) * 1.16) : undefined,
-        businessInfo: { name: 'Business Name' }, // Placeholder
-        branch: saleData.branchId ? { id: saleData.branchId, name: `Branch ${saleData.branchId}` } : undefined
+        businessInfo: { name: userData?.tenantName || 'Business' },
+        branch: saleData.branchId ? {
+          id: saleData.branchId,
+          name: branchForReceipt?.name || userData?.branchName || `Branch ${saleData.branchId}`,
+          address: branchForReceipt?.address,
+        } : undefined,
       };
 
       // Add credit information if payment method is credit
@@ -808,8 +1283,8 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
   const store = new ElectronStore();
 
   try {
-    // Get stored JWT token
-    const token = store.get('authToken') as string;
+    // Get stored JWT token (encrypted or plain text)
+    const token = getAuthToken(store);
     if (!token) {
       logger.warn('No authentication token found for receipt', { component: 'receipts' });
       return { success: false, error: 'No authentication token found' };
@@ -831,14 +1306,20 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
       return { success: false, error: 'Cannot fetch receipt while offline. Please check your internet connection.' };
     }
 
-    // Get receipt from backend API
-    const response = await axios.get(`${BACKEND_BASE_URL}/sales/${saleId}/receipt`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      timeout: 10000,
-    });
+    // Get receipt from backend API (with rate limiting)
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/sales/${saleId}/receipt`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    
+    const response = await rateLimitedAxios(
+      () => axios.get(`${BACKEND_BASE_URL}/sales/${saleId}/receipt`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000,
+      }),
+      endpoint
+    );
 
     logger.info('Receipt fetched successfully', { component: 'receipts', saleId });
 
@@ -849,7 +1330,9 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
 
   } catch (error: any) {
     logger.error('Error fetching receipt', { component: 'receipts', saleId, status: error.response?.status, error: error.response?.data || error.message });
-    const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch receipt';
+    // IMPROVED: Use error parser for consistent error message extraction
+    const parsedError = enhanceErrorMessage(parseAxiosError(error));
+    const errorMessage = getUserFriendlyMessage(parsedError) || 'Failed to fetch receipt';
     return { success: false, error: errorMessage };
   }
 });
@@ -929,16 +1412,78 @@ ipcMain.handle('listPrinters', async () => {
 // New IPC handlers for offline functionality
 ipcMain.handle('getOfflineSales', () => {
   const store = new ElectronStore();
-  const offlineSales = store.get('offlineSales', []) as any[];
+  let offlineSales = store.get('offlineSales', []) as any[];
+  
+  // Clean up old failed syncs (older than 7 days) when retrieving
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const initialCount = offlineSales.length;
+  
+  offlineSales = offlineSales.filter((sale: any) => {
+    if (sale.status === 'failed' && sale.finalFailureAt) {
+      const failureDate = new Date(sale.finalFailureAt);
+      if (failureDate < sevenDaysAgo) {
+        return false; // Remove old failed sales
+      }
+    }
+    return true; // Keep all other sales
+  });
+  
+  if (offlineSales.length !== initialCount) {
+    store.set('offlineSales', offlineSales); // Update store with cleaned list
+  }
+  
+  const MAX_QUEUE_SIZE = 1000;
+  const WARNING_THRESHOLD = 100;
+  
   logger.info(`Returning ${offlineSales.length} offline sales`, { component: 'offline' });
-  return { success: true, sales: offlineSales };
+  return { 
+    success: true, 
+    sales: offlineSales,
+    queueSize: offlineSales.length,
+    maxQueueSize: MAX_QUEUE_SIZE,
+    warningThreshold: WARNING_THRESHOLD,
+    isWarning: offlineSales.length >= WARNING_THRESHOLD
+  };
 });
 
-ipcMain.handle('syncOfflineSales', async () => {
+// Track sync cancellation state
+let syncCancelled = false;
+let currentSyncEvent: IpcMainInvokeEvent | null = null;
+
+ipcMain.handle('cancelSyncOfflineSales', async () => {
+  syncCancelled = true;
+  logger.info('Sync cancellation requested', { component: 'offline' });
+  return { success: true };
+});
+
+ipcMain.handle('syncOfflineSales', async (event: IpcMainInvokeEvent) => {
   const store = new ElectronStore();
+  syncCancelled = false;
+  currentSyncEvent = event;
 
   try {
-    const offlineSales = store.get('offlineSales', []) as any[];
+    let offlineSales = store.get('offlineSales', []) as any[];
+    
+    // Clean up old failed syncs (older than 7 days) before syncing
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const initialCount = offlineSales.length;
+    
+    offlineSales = offlineSales.filter((sale: any) => {
+      if (sale.status === 'failed' && sale.finalFailureAt) {
+        const failureDate = new Date(sale.finalFailureAt);
+        if (failureDate < sevenDaysAgo) {
+          return false; // Remove old failed sales
+        }
+      }
+      return true; // Keep all other sales
+    });
+    
+    if (offlineSales.length !== initialCount) {
+      store.set('offlineSales', offlineSales); // Update store with cleaned list
+    }
+    
     if (offlineSales.length === 0) {
       logger.info('No offline sales to sync', { component: 'offline' });
       return { success: true, syncedCount: 0, errors: [] };
@@ -946,20 +1491,80 @@ ipcMain.handle('syncOfflineSales', async () => {
 
     logger.info(`Starting batched sync of ${offlineSales.length} offline sales`, { component: 'offline' });
 
-    const token = store.get('authToken') as string;
+    const token = getAuthToken(store);
     if (!token) {
       return { success: false, error: 'No authentication token found' };
     }
 
-    // Batch sales for more efficient syncing (process in groups of 5)
-    const batchSize = 5;
+    // Process in smaller batches (5-10 sales) to prevent UI freezing
+    const batchSize = 8; // Optimal balance between efficiency and UI responsiveness
+    const totalBatches = Math.ceil(offlineSales.length / batchSize);
     let totalSyncedCount = 0;
     const allErrors: string[] = [];
+    const cleanedCount = initialCount - offlineSales.length; // Track cleaned count
     const remainingSales: any[] = [];
+    
+    // Send initial progress
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('sync-progress', {
+        total: offlineSales.length,
+        processed: 0,
+        synced: 0,
+        failed: 0,
+        currentBatch: 0,
+        totalBatches,
+        percentage: 0,
+      });
+    }
 
     for (let i = 0; i < offlineSales.length; i += batchSize) {
+      // Check for cancellation
+      if (syncCancelled) {
+        logger.info('Sync cancelled by user', { component: 'offline', processed: i, total: offlineSales.length });
+        // Update store with remaining sales
+        const remainingSales = offlineSales.slice(i).concat(remainingSales);
+        store.set('offlineSales', remainingSales);
+        
+        // Send cancellation progress
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('sync-progress', {
+            total: offlineSales.length,
+            processed: i,
+            synced: totalSyncedCount,
+            failed: allErrors.length,
+            currentBatch: Math.floor(i / batchSize),
+            totalBatches,
+            percentage: Math.round((i / offlineSales.length) * 100),
+            cancelled: true,
+          });
+        }
+        
+        return {
+          success: true,
+          syncedCount: totalSyncedCount,
+          errors: allErrors,
+          totalAttempted: i,
+          cancelled: true,
+          remainingQueueSize: remainingSales.length,
+        };
+      }
+
       const batch = offlineSales.slice(i, i + batchSize);
-      logger.info(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(offlineSales.length / batchSize)} (${batch.length} sales)`, { component: 'offline' });
+      const currentBatch = Math.floor(i / batchSize) + 1;
+      logger.info(`Processing batch ${currentBatch}/${totalBatches} (${batch.length} sales)`, { component: 'offline' });
+      
+      // Send batch start progress
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('sync-progress', {
+          total: offlineSales.length,
+          processed: i,
+          synced: totalSyncedCount,
+          failed: allErrors.length,
+          currentBatch,
+          totalBatches,
+          percentage: Math.round((i / offlineSales.length) * 100),
+        });
+      }
 
       // Process batch with parallel requests but controlled concurrency
       const batchPromises = batch.map(async (offlineSale) => {
@@ -1007,14 +1612,21 @@ ipcMain.handle('syncOfflineSales', async () => {
             // Calculate timeout with exponential backoff (15s, 30s, 60s)
             const timeout = 15000 * Math.pow(2, retryCount);
 
-            // Attempt to sync with backend
-            const response = await axios.post(`${BACKEND_BASE_URL}/sales`, offlineSale.saleData, {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-              timeout,
-            });
+            // Attempt to sync with backend (with rate limiting)
+            const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/sales`);
+            await syncRateLimiter.waitIfNeeded(endpoint);
+            
+            const response = await rateLimitedAxios(
+              () => axios.post(`${BACKEND_BASE_URL}/sales`, offlineSale.saleData, {
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                },
+                timeout,
+              }),
+              endpoint,
+              syncRateLimiter
+            );
 
             logger.info(`Synced offline sale ${offlineSale.id} -> ${response.data.data.saleId} (attempt ${retryCount + 1})`, { component: 'offline' });
 
@@ -1063,9 +1675,24 @@ ipcMain.handle('syncOfflineSales', async () => {
         }
       }
 
-      // Small delay between batches to prevent overwhelming the server
+      // Send batch completion progress
+      const processed = Math.min(i + batchSize, offlineSales.length);
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('sync-progress', {
+          total: offlineSales.length,
+          processed,
+          synced: totalSyncedCount,
+          failed: allErrors.length,
+          currentBatch: currentBatch,
+          totalBatches,
+          percentage: Math.round((processed / offlineSales.length) * 100),
+        });
+      }
+
+      // Delay between batches to prevent UI freezing and server overload
+      // Use requestAnimationFrame-like delay to keep UI responsive
       if (i + batchSize < offlineSales.length) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 200)); // Reduced delay, batches are smaller
       }
     }
 
@@ -1078,16 +1705,44 @@ ipcMain.handle('syncOfflineSales', async () => {
 
     logger.info(`Batched sync completed: ${totalSyncedCount} synced, ${allErrors.length} failed`, { component: 'offline' });
 
+    // Send final progress
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('sync-progress', {
+        total: offlineSales.length,
+        processed: offlineSales.length,
+        synced: totalSyncedCount,
+        failed: allErrors.length,
+        currentBatch: totalBatches,
+        totalBatches,
+        percentage: 100,
+        completed: true,
+      });
+    }
+
     return {
       success: true,
       syncedCount: totalSyncedCount,
       errors: allErrors,
-      totalAttempted: offlineSales.length
+      totalAttempted: offlineSales.length,
+      cleanedCount: cleanedCount || 0,
+      remainingQueueSize: remainingSales.length
     };
 
   } catch (error: any) {
     logger.error('Error in syncOfflineSales', { component: 'offline', error: error.message });
+    
+    // Send error progress
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('sync-progress', {
+        error: error.message || 'Failed to sync offline sales',
+        failed: true,
+      });
+    }
+    
     return { success: false, error: error.message || 'Failed to sync offline sales' };
+  } finally {
+    syncCancelled = false;
+    currentSyncEvent = null;
   }
 });
 
@@ -1196,15 +1851,51 @@ ipcMain.handle('getSyncStatus', async () => {
     online = false;
   }
 
-  const offlineSales = store.get('offlineSales', []) as any[];
+  let offlineSales = store.get('offlineSales', []) as any[];
+  
+  // Clean up old failed syncs (older than 7 days) when checking status
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const initialCount = offlineSales.length;
+  
+  offlineSales = offlineSales.filter((sale: any) => {
+    if (sale.status === 'failed' && sale.finalFailureAt) {
+      const failureDate = new Date(sale.finalFailureAt);
+      if (failureDate < sevenDaysAgo) {
+        return false; // Remove old failed sales
+      }
+    }
+    return true; // Keep all other sales
+  });
+  
+  if (offlineSales.length !== initialCount) {
+    store.set('offlineSales', offlineSales); // Update store with cleaned list
+  }
+  
   const pendingSyncs = offlineSales.filter((sale: any) => sale.status === 'pending').length;
   const lastSync = store.get('lastSync') as string | undefined;
+  
+  const MAX_QUEUE_SIZE = 1000;
+  const WARNING_THRESHOLD = 100;
+  const queueSize = offlineSales.length;
+  const isWarning = queueSize >= WARNING_THRESHOLD;
+  const isCritical = queueSize >= MAX_QUEUE_SIZE;
 
   return {
     online,
     pendingSyncs,
-    lastSync
+    lastSync,
+    queueSize,
+    maxQueueSize: MAX_QUEUE_SIZE,
+    warningThreshold: WARNING_THRESHOLD,
+    isWarning,
+    isCritical
   };
+});
+
+// Expose API base URL to renderer process
+ipcMain.handle('getApiBaseUrl', () => {
+  return BACKEND_BASE_URL;
 });
 
 // In this file you can include the rest of your app's specific main process

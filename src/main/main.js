@@ -69,6 +69,10 @@ app.on('activate', () => {
 });
 
 // IPC Handlers for renderer communication
+ipcMain.handle('quitApp', () => {
+  app.quit();
+});
+
 ipcMain.handle('authenticate', async (event, credentials) => {
   try {
     // Mock authentication - replace with actual API call to SaaS backend

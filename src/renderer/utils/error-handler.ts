@@ -4,6 +4,7 @@
 
 import { showToast } from '../components/Toast';
 import { auditLogger, AuditEventType } from './audit-logger';
+import { parseNestJSError, getUserFriendlyMessage, enhanceErrorMessage } from '../../shared/error-parser';
 
 export interface ErrorContext {
   operation: string;
@@ -75,6 +76,10 @@ const ERROR_MESSAGES: Record<string, { message: string; action?: string }> = {
     message: 'Not enough items in stock to complete this sale.',
     action: 'Please reduce the quantity or remove the item'
   },
+  'STOCK_CONFLICT': {
+    message: 'Stock conflict detected. Another sale may have changed the stock levels.',
+    action: 'Please refresh products and try again'
+  },
   'INVALID_PRICE': {
     message: 'The product price is invalid.',
     action: 'Please contact support'
@@ -140,15 +145,46 @@ const ERROR_MESSAGES: Record<string, { message: string; action?: string }> = {
 };
 
 /**
- * Get user-friendly error message
+ * Get user-friendly error message with improved parsing
  */
-export const getErrorMessage = (error: any, context?: ErrorContext): { message: string; action?: string } => {
+export const getErrorMessage = (error: any, context?: ErrorContext): { message: string; action?: string; fieldErrors?: Record<string, string[]> } => {
   // Check if it's an AppError
   if (error instanceof AppError) {
     const errorInfo = ERROR_MESSAGES[error.code] || ERROR_MESSAGES['UNKNOWN_ERROR'];
     return {
       message: error.message || errorInfo.message,
       action: errorInfo.action
+    };
+  }
+
+  // Try to parse as NestJS/backend error format
+  let parsedError;
+  try {
+    // Check if error has response.data (axios error)
+    if (error?.response?.data) {
+      parsedError = enhanceErrorMessage(parseNestJSError(error.response.data));
+    } else if (error?.data) {
+      // Direct error data
+      parsedError = enhanceErrorMessage(parseNestJSError(error.data));
+    } else if (error?.message && typeof error.message === 'object') {
+      // Error message might be an object
+      parsedError = enhanceErrorMessage(parseNestJSError(error.message));
+    } else {
+      // Try parsing the error itself
+      parsedError = enhanceErrorMessage(parseNestJSError(error));
+    }
+  } catch (parseError) {
+    // If parsing fails, fall back to original logic
+    parsedError = null;
+  }
+
+  // If we successfully parsed the error, use the parsed message
+  if (parsedError && parsedError.message && parsedError.message !== 'An error occurred') {
+    const errorInfo = ERROR_MESSAGES[parsedError.code || ''] || {};
+    return {
+      message: parsedError.message,
+      action: errorInfo.action || parsedError.details?.suggestedAction,
+      fieldErrors: parsedError.fieldErrors,
     };
   }
 
@@ -200,7 +236,7 @@ export const handleError = (
   const errorInfo = getErrorMessage(error, context);
   const severity = error instanceof AppError ? error.severity : 'medium';
 
-  // Log error for audit
+  // Log error for audit (include field errors if available)
   auditLogger.log(
     AuditEventType.DATA_VALIDATION_FAILED,
     {
@@ -208,16 +244,36 @@ export const handleError = (
       errorCode: error?.code || 'UNKNOWN_ERROR',
       context,
       stack: error?.stack,
+      fieldErrors: errorInfo.fieldErrors,
     },
     severity === 'critical' ? 'critical' : severity === 'high' ? 'high' : 'medium',
     context?.userId,
     context?.userName
   );
 
-  // Show user-friendly error message with optional retry action
-  const fullMessage = errorInfo.action
-    ? `${errorInfo.message}\n\n${errorInfo.action}`
-    : errorInfo.message;
+  // Build user-friendly error message
+  let fullMessage = errorInfo.message;
+  
+  // Add field-specific errors if available
+  if (errorInfo.fieldErrors && Object.keys(errorInfo.fieldErrors).length > 0) {
+    const fieldMessages = Object.entries(errorInfo.fieldErrors)
+      .map(([field, errors]) => {
+        // Format field name nicely (e.g., "customerName" -> "Customer Name")
+        const formattedField = field
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/^./, (str) => str.toUpperCase())
+          .trim();
+        return `${formattedField}: ${errors.join(', ')}`;
+      })
+      .join('\n');
+    
+    fullMessage = `${fullMessage}\n\n${fieldMessages}`;
+  }
+  
+  // Add suggested action if available
+  if (errorInfo.action) {
+    fullMessage = `${fullMessage}\n\n${errorInfo.action}`;
+  }
 
   // Add retry button if operation is retryable
   const toastAction = recovery?.retryable && recovery?.fallbackAction
@@ -227,7 +283,12 @@ export const handleError = (
       }
     : undefined;
 
-  showToast(fullMessage, 'error', severity === 'critical' ? 8000 : 5000, toastAction);
+  // Show toast with longer duration if there are field errors (more info to read)
+  const toastDuration = errorInfo.fieldErrors && Object.keys(errorInfo.fieldErrors).length > 0
+    ? 10000 // 10 seconds for field errors
+    : severity === 'critical' ? 8000 : 5000;
+
+  showToast(fullMessage, 'error', toastDuration, toastAction);
 
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
@@ -236,12 +297,13 @@ export const handleError = (
       context,
       errorInfo,
       recovery,
+      parsedError: error?.response?.data ? parseNestJSError(error.response.data) : null,
     });
   }
 };
 
 /**
- * Retry operation with exponential backoff
+ * Retry operation with exponential backoff and rate limiting
  */
 export const retryOperation = async <T>(
   operation: () => Promise<T>,
@@ -250,6 +312,7 @@ export const retryOperation = async <T>(
     retryDelay?: number;
     onRetry?: (attempt: number) => void;
     shouldRetry?: (error: any) => boolean;
+    endpoint?: string; // For rate limiting
   } = {}
 ): Promise<T> => {
   const {
@@ -257,12 +320,28 @@ export const retryOperation = async <T>(
     retryDelay = 1000,
     onRetry,
     shouldRetry = () => true,
+    endpoint,
   } = options;
+
+  // Import rate limiter (dynamic import to avoid circular dependencies)
+  let rateLimiter: any = null;
+  try {
+    const rateLimiterModule = await import('../../shared/rate-limiter');
+    rateLimiter = rateLimiterModule.apiRateLimiter;
+  } catch {
+    // Rate limiter not available, continue without it
+  }
 
   let lastError: any;
   
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
+      // Apply rate limiting before operation
+      if (rateLimiter && endpoint) {
+        await rateLimiter.waitIfNeeded(endpoint);
+        rateLimiter.recordRequest(endpoint);
+      }
+
       return await operation();
     } catch (error: any) {
       lastError = error;
@@ -278,13 +357,14 @@ export const retryOperation = async <T>(
       }
 
       // Calculate delay with exponential backoff
+      // Base delay increases exponentially: 1s, 2s, 4s, 8s...
       const delay = retryDelay * Math.pow(2, attempt);
       
       if (onRetry) {
         onRetry(attempt + 1);
       }
 
-      // Wait before retry
+      // Wait before retry (with rate limiting consideration)
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }

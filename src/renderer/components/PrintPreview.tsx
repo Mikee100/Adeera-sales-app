@@ -18,6 +18,22 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
   printing
 }) => {
   const [businessInfo, setBusinessInfo] = useState<any>(receipt.businessInfo);
+  const [apiBaseUrl, setApiBaseUrl] = useState<string>('');
+
+  // Get API base URL from Electron main process
+  useEffect(() => {
+    const fetchApiUrl = async () => {
+      try {
+        const url = await (window as any).electronAPI.getApiBaseUrl();
+        setApiBaseUrl(url);
+      } catch (error) {
+        console.error('Failed to get API base URL:', error);
+        // Fallback to default
+        setApiBaseUrl('http://127.0.0.1:9000');
+      }
+    };
+    fetchApiUrl();
+  }, []);
 
   useEffect(() => {
     // Try to get business info from user data if not in receipt
@@ -112,7 +128,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                 src={
                   receipt.businessInfo.receiptLogo.startsWith('http')
                     ? receipt.businessInfo.receiptLogo
-                    : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`
+                    : `${apiBaseUrl}${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`
                 }
                 alt="Business Logo"
                 className="print-logo"
@@ -134,6 +150,22 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
             {(businessInfo?.email || receipt.businessInfo?.email) && (
               <div className="print-business-email">
                 {businessInfo?.email || receipt.businessInfo?.email}
+              </div>
+            )}
+            {/* KRA (only when enabled for this tenant) */}
+            {(receipt.businessInfo?.kraEnabled || receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && (receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && (
+              <div className="print-kra" style={{ marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed #ccc', fontSize: '10px' }}>
+                {receipt.businessInfo?.kraPin && <div><strong>KRA PIN:</strong> {receipt.businessInfo.kraPin}</div>}
+                {receipt.businessInfo?.vatNumber && <div><strong>VAT No:</strong> {receipt.businessInfo.vatNumber}</div>}
+              </div>
+            )}
+            {(receipt.businessInfo?.kraEnabled || receipt.businessInfo?.etimsQrUrl) && receipt.businessInfo?.etimsQrUrl && (
+              <div className="print-etims" style={{ marginTop: '4px' }}>
+                <img
+                  src={receipt.businessInfo.etimsQrUrl.startsWith('http') ? receipt.businessInfo.etimsQrUrl : `${apiBaseUrl}${receipt.businessInfo.etimsQrUrl.startsWith('/') ? '' : '/'}${receipt.businessInfo.etimsQrUrl}`}
+                  alt="KRA eTIMS QR"
+                  style={{ height: '40px', width: 'auto', display: 'block' }}
+                />
               </div>
             )}
           </div>

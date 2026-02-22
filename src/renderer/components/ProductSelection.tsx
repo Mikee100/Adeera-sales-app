@@ -7,6 +7,7 @@ import { showToast } from './Toast';
 import { PendingTransaction } from '../hooks/usePendingTransactions';
 import { validateStock, validatePrice } from '../utils/validation';
 import { useBarcodeScanner } from '../hooks/useBarcodeScanner';
+import useDebounce from '../hooks/useDebounce';
 import '../pending-transactions.css';
 import '../barcode-scanner.css';
 
@@ -89,6 +90,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   const { theme, toggleTheme } = useTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 400);
   const [selectedBranch, setSelectedBranch] = useState<string>(propSelectedBranch);
 
   // Sync with prop when it changes
@@ -192,13 +194,13 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   // Get unique categories
   const categories = ['all', ...Array.from(new Set(products.map(p => p.category?.name).filter(Boolean)))];
 
-  // FIXED: Handle null/undefined product names and SKUs safely
+  // FIXED: Handle null/undefined product names and SKUs safely. Debounced search avoids filtering on every keystroke.
   const filteredProducts = products.filter(product => {
-    const nameMatch = product.name ? product.name.toLowerCase().includes(searchTerm.toLowerCase()) : false;
-    const skuMatch = product.sku ? product.sku.toLowerCase().includes(searchTerm.toLowerCase()) : false;
-    // Also search by barcode if available
-    const barcodeMatch = (product as any).barcode 
-      ? (product as any).barcode.toLowerCase().includes(searchTerm.toLowerCase())
+    const term = debouncedSearchTerm.toLowerCase();
+    const nameMatch = product.name ? product.name.toLowerCase().includes(term) : false;
+    const skuMatch = product.sku ? product.sku.toLowerCase().includes(term) : false;
+    const barcodeMatch = (product as any).barcode
+      ? (product as any).barcode.toLowerCase().includes(term)
       : false;
     const categoryMatch = selectedCategory === 'all' || product.category?.name === selectedCategory;
     return (nameMatch || skuMatch || barcodeMatch) && categoryMatch;
@@ -337,6 +339,16 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             ⚙️
           </button>
           <button className="icon-btn logout-btn" onClick={logout} title="Logout">🚪</button>
+          <button
+            className="icon-btn exit-btn"
+            onClick={() => {
+              if (cart.length > 0 && !window.confirm('Exit POS? Current sale will be lost.')) return;
+              window.electronAPI.quitApp();
+            }}
+            title="Exit / Quit"
+          >
+            ⏻
+          </button>
         </div>
       </div>
 

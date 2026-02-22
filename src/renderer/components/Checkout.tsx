@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '../checkout.css';
 import { validatePaymentAmount, validatePhoneNumber, validateCustomerName } from '../utils/validation';
 import { auditLogger, AuditEventType } from '../utils/audit-logger';
+import { sanitizeCustomerName, sanitizePhoneNumber, sanitizeNotes } from '../utils/sanitization';
+import MpesaPayment from './MpesaPayment';
 
 interface Product {
   id: string;
@@ -30,6 +32,7 @@ interface CheckoutProps {
   onCompleteSale: (paymentData: PaymentData) => void;
   onBackToProducts: () => void;
   loading: boolean;
+  queuedSalesCount?: number;
 }
 
 interface SplitPayment {
@@ -40,6 +43,7 @@ interface SplitPayment {
   mpesaReceipt?: string; // For M-Pesa payments
   creditDueDate?: string; // For credit payments
   creditNotes?: string; // For credit payments
+  status?: 'pending' | 'completed' | 'processing'; // Payment status
 }
 
 interface PaymentData {
@@ -65,7 +69,8 @@ const Checkout: React.FC<CheckoutProps> = ({
   total,
   onCompleteSale,
   onBackToProducts,
-  loading
+  loading,
+  queuedSalesCount = 0
 }) => {
   // Get user info for audit logging (if available)
   const getUserInfo = async () => {
@@ -90,6 +95,12 @@ const Checkout: React.FC<CheckoutProps> = ({
   // Split payment state
   const [isSplitPayment, setIsSplitPayment] = useState(false);
   const [splitPayments, setSplitPayments] = useState<SplitPayment[]>([]);
+  
+  // M-Pesa payment modal state
+  const [showMpesaModal, setShowMpesaModal] = useState(false);
+  const [mpesaTransactionId, setMpesaTransactionId] = useState<string | null>(null);
+  const [mpesaReceipt, setMpesaReceipt] = useState<string | null>(null);
+  const [currentMpesaPaymentIndex, setCurrentMpesaPaymentIndex] = useState<number | null>(null);
 
   // Computed totals after discount (discount applied to subtotal, then VAT on remainder)
   const subtotalAfterDiscount = Math.max(0, subtotal - discountAmount);
@@ -206,14 +217,42 @@ const Checkout: React.FC<CheckoutProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // If M-Pesa is selected and not in split payment mode, show M-Pesa modal
+    if (paymentMethod === 'mpesa' && !isSplitPayment) {
+      setShowMpesaModal(true);
+      return;
+    }
+
+    if (isSplitPayment) {
+      // Validate split payments
+      if (!areAllPaymentsCompleted()) {
+        setErrors({
+          ...errors,
+          splitPayments: 'Please complete all payments before closing the bill. M-Pesa payments must be processed, and cash payments must have received amount entered.',
+        });
+        return;
+      }
+
+      // Check if total matches
+      const totalSplit = splitPayments.reduce((sum, p) => sum + p.amount, 0);
+      if (Math.abs(totalSplit - totalAfterDiscount) > 0.01) {
+        setErrors({
+          ...errors,
+          splitPayments: `Total split payments (Ksh ${totalSplit.toFixed(2)}) must equal total amount (Ksh ${totalAfterDiscount.toFixed(2)})`,
+        });
+        return;
+      }
+    }
+
     if (!validateForm()) {
       return;
     }
 
+    // SECURITY: Sanitize all user inputs before creating payment data
     const paymentData: PaymentData = {
       paymentMethod: isSplitPayment ? 'split' : paymentMethod,
-      customerName: customerName.trim() || undefined,
-      customerPhone: customerPhone.trim() || undefined,
+      customerName: customerName ? sanitizeCustomerName(customerName) : undefined,
+      customerPhone: customerPhone ? sanitizePhoneNumber(customerPhone) : undefined,
       ...(discountAmount > 0 && { discountAmount }),
       isSplitPayment,
     };
@@ -238,10 +277,96 @@ const Checkout: React.FC<CheckoutProps> = ({
           paymentData.creditNotes = creditNotes.trim();
         }
       }
+
+      // Add M-Pesa transaction details if available
+      if (paymentMethod === 'mpesa' && mpesaTransactionId) {
+        // M-Pesa payment is handled via the modal, transaction details are set in handleMpesaSuccess
+      }
     }
 
     onCompleteSale(paymentData);
     setSuccess(true);
+  };
+
+  const handleMpesaSuccess = (transactionId: string, receipt?: string) => {
+    setShowMpesaModal(false);
+
+    if (currentMpesaPaymentIndex !== null && isSplitPayment) {
+      // Update the specific split payment with M-Pesa details
+      const updatedPayments = [...splitPayments];
+      updatedPayments[currentMpesaPaymentIndex] = {
+        ...updatedPayments[currentMpesaPaymentIndex],
+        mpesaTransactionId: transactionId,
+        mpesaReceipt: receipt,
+        status: 'completed',
+      };
+      setSplitPayments(updatedPayments);
+      setCurrentMpesaPaymentIndex(null);
+    } else {
+      // Single M-Pesa payment (non-split)
+      setMpesaTransactionId(transactionId);
+      setMpesaReceipt(receipt || null);
+
+      // Complete the sale with M-Pesa payment details
+      // SECURITY: Sanitize all user inputs
+      const paymentData: PaymentData = {
+        paymentMethod: 'mpesa',
+        customerName: customerName ? sanitizeCustomerName(customerName) : undefined,
+        customerPhone: customerPhone ? sanitizePhoneNumber(customerPhone) : undefined,
+        ...(discountAmount > 0 && { discountAmount }),
+      };
+
+      // Add M-Pesa transaction details to split payments format for consistency
+      paymentData.splitPayments = [{
+        method: 'mpesa',
+        amount: totalAfterDiscount,
+        mpesaTransactionId: transactionId,
+        mpesaReceipt: receipt,
+        status: 'completed',
+      }];
+      paymentData.isSplitPayment = false;
+
+      onCompleteSale(paymentData);
+      setSuccess(true);
+    }
+  };
+
+  const handleMpesaCancel = () => {
+    setShowMpesaModal(false);
+    if (currentMpesaPaymentIndex !== null && isSplitPayment) {
+      // Reset the processing status for the split payment
+      const updatedPayments = [...splitPayments];
+      updatedPayments[currentMpesaPaymentIndex] = {
+        ...updatedPayments[currentMpesaPaymentIndex],
+        status: 'pending',
+      };
+      setSplitPayments(updatedPayments);
+      setCurrentMpesaPaymentIndex(null);
+    } else {
+      setMpesaTransactionId(null);
+      setMpesaReceipt(null);
+    }
+  };
+
+  // Check if all split payments are completed
+  const areAllPaymentsCompleted = (): boolean => {
+    if (!isSplitPayment || splitPayments.length === 0) {
+      return false;
+    }
+
+    return splitPayments.every(payment => {
+      if (payment.method === 'cash') {
+        // Cash payment is complete if amountReceived >= amount
+        return payment.amountReceived !== undefined && payment.amountReceived >= payment.amount;
+      } else if (payment.method === 'mpesa') {
+        // M-Pesa payment is complete if status is 'completed' and has transaction ID
+        return payment.status === 'completed' && !!payment.mpesaTransactionId;
+      } else if (payment.method === 'credit') {
+        // Credit payment is always considered complete (no payment needed)
+        return true;
+      }
+      return false;
+    });
   };
 
   // Split payment handlers
@@ -253,6 +378,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         method: 'cash',
         amount: totalAfterDiscount,
         amountReceived: totalAfterDiscount,
+        status: 'pending',
       }]);
     } else {
       // Clear split payments when disabling
@@ -266,6 +392,7 @@ const Checkout: React.FC<CheckoutProps> = ({
       method: 'cash',
       amount: Math.max(0, remaining),
       amountReceived: Math.max(0, remaining),
+      status: 'pending',
     }]);
   };
 
@@ -275,8 +402,37 @@ const Checkout: React.FC<CheckoutProps> = ({
 
   const handleUpdateSplitPayment = (index: number, updates: Partial<SplitPayment>) => {
     const updated = [...splitPayments];
-    updated[index] = { ...updated[index], ...updates };
+    const currentPayment = updated[index];
+    updated[index] = { ...currentPayment, ...updates };
+    
+    // Auto-update status for cash payments
+    if (updates.method === 'cash' || (currentPayment.method === 'cash' && updates.amountReceived !== undefined)) {
+      const payment = updated[index];
+      if (payment.amountReceived !== undefined && payment.amountReceived >= payment.amount) {
+        updated[index].status = 'completed';
+      } else {
+        updated[index].status = 'pending';
+      }
+    }
+    
+    // Reset status when changing method
+    if (updates.method && updates.method !== currentPayment.method) {
+      updated[index].status = 'pending';
+      if (updates.method === 'cash') {
+        updated[index].amountReceived = updated[index].amount;
+      } else {
+        updated[index].amountReceived = undefined;
+      }
+    }
+    
     setSplitPayments(updated);
+    
+    // Clear errors when updating
+    if (errors.splitPayments) {
+      const newErrors = { ...errors };
+      delete newErrors.splitPayments;
+      setErrors(newErrors);
+    }
   };
 
   const getRemainingAmount = () => {
@@ -296,6 +452,17 @@ const Checkout: React.FC<CheckoutProps> = ({
         <div className="success-message">
           <span className="success-icon">✅</span>
           <span>Sale completed!</span>
+        </div>
+      )}
+
+      {/* Processing Sale Indicator */}
+      {loading && (
+        <div className="processing-sale-indicator">
+          <div className="processing-spinner"></div>
+          <span>Processing sale...</span>
+          {queuedSalesCount > 0 && (
+            <span className="queue-info">({queuedSalesCount} sale{queuedSalesCount !== 1 ? 's' : ''} waiting in queue)</span>
+          )}
         </div>
       )}
 
@@ -549,14 +716,58 @@ const Checkout: React.FC<CheckoutProps> = ({
                       {/* M-Pesa-specific fields */}
                       {payment.method === 'mpesa' && (
                         <div className="split-payment-details">
-                          <label>M-Pesa Transaction ID (Optional)</label>
-                          <input
-                            type="text"
-                            value={payment.mpesaTransactionId || ''}
-                            onChange={(e) => handleUpdateSplitPayment(index, { mpesaTransactionId: e.target.value })}
-                            className="text-input"
-                            placeholder="e.g., QHX123456789"
-                          />
+                          {payment.status === 'completed' ? (
+                            <div className="payment-status-completed">
+                              <div className="status-badge success">
+                                <span className="status-icon">✅</span>
+                                <span>Payment Completed</span>
+                              </div>
+                              {payment.mpesaTransactionId && (
+                                <div className="transaction-info">
+                                  <strong>Transaction ID:</strong> {payment.mpesaTransactionId}
+                                </div>
+                              )}
+                              {payment.mpesaReceipt && (
+                                <div className="transaction-info">
+                                  <strong>Receipt:</strong> {payment.mpesaReceipt}
+                                </div>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateSplitPayment(index, { status: 'pending', mpesaTransactionId: undefined, mpesaReceipt: undefined })}
+                                className="retry-payment-btn"
+                              >
+                                Retry Payment
+                              </button>
+                            </div>
+                          ) : payment.status === 'processing' ? (
+                            <div className="payment-status-processing">
+                              <div className="status-badge processing">
+                                <div className="loading-spinner-small"></div>
+                                <span>Processing Payment...</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="mpesa-payment-action">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  // Set status to processing
+                                  handleUpdateSplitPayment(index, { status: 'processing' });
+                                  setCurrentMpesaPaymentIndex(index);
+                                  setShowMpesaModal(true);
+                                }}
+                                className="initiate-mpesa-btn"
+                                disabled={payment.amount <= 0}
+                              >
+                                <span className="btn-icon">📱</span>
+                                Pay with M-Pesa
+                              </button>
+                              <span className="payment-hint">
+                                Click to initiate M-Pesa payment for Ksh {payment.amount.toFixed(2)}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       )}
 
@@ -743,24 +954,67 @@ const Checkout: React.FC<CheckoutProps> = ({
             </button>
             <button
               onClick={handleSubmit}
-              disabled={loading}
+              disabled={loading || (isSplitPayment && !areAllPaymentsCompleted())}
               className="primary-btn complete-sale-btn"
+              title={isSplitPayment && !areAllPaymentsCompleted() ? 'Please complete all payments before closing the bill' : ''}
             >
               {loading ? (
                 <>
                   <div className="loading-spinner"></div>
-                  <span>Processing Payment...</span>
+                  <span>Processing Sale...</span>
+                  {queuedSalesCount > 0 && (
+                    <span className="queue-indicator">({queuedSalesCount} in queue)</span>
+                  )}
                 </>
               ) : (
                 <>
-                  <span className="btn-icon">✅</span>
-                  <span>Complete Sale - ${total.toFixed(2)}</span>
+                  <span className="btn-icon">
+                    {paymentMethod === 'mpesa' && !isSplitPayment ? '📱' : '✅'}
+                  </span>
+                  <span>
+                    {isSplitPayment && !areAllPaymentsCompleted()
+                      ? `Complete All Payments - Ksh ${totalAfterDiscount.toFixed(2)}`
+                      : paymentMethod === 'mpesa' && !isSplitPayment
+                      ? `Pay with M-Pesa - Ksh ${totalAfterDiscount.toFixed(2)}`
+                      : `Complete Sale - Ksh ${totalAfterDiscount.toFixed(2)}`
+                    }
+                  </span>
                 </>
               )}
             </button>
           </div>
         </div>
       </div>
+
+      {/* M-Pesa Payment Modal */}
+      {showMpesaModal && (
+        <MpesaPayment
+          amount={
+            currentMpesaPaymentIndex !== null && isSplitPayment
+              ? splitPayments[currentMpesaPaymentIndex]?.amount || 0
+              : totalAfterDiscount
+          }
+          saleData={{
+            items: cart.map(item => ({
+              productId: item.product.id,
+              quantity: item.quantity,
+              price: item.product.price,
+            })),
+            subtotal: subtotalAfterDiscount,
+            vat: vatAfterDiscount,
+            total: currentMpesaPaymentIndex !== null && isSplitPayment
+              ? splitPayments[currentMpesaPaymentIndex]?.amount || 0
+              : totalAfterDiscount,
+            discountAmount,
+            customerName: customerName ? sanitizeCustomerName(customerName) : undefined,
+            customerPhone: customerPhone ? sanitizePhoneNumber(customerPhone) : undefined,
+            isSplitPayment: isSplitPayment && currentMpesaPaymentIndex !== null,
+            splitPaymentIndex: currentMpesaPaymentIndex,
+          }}
+          onSuccess={handleMpesaSuccess}
+          onCancel={handleMpesaCancel}
+        />
+      )}
     </div>
   );
 };

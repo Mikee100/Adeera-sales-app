@@ -44,6 +44,9 @@ interface ReceiptData {
     address?: string;
     phone?: string;
     email?: string;
+    kraEnabled?: boolean;
+    kraPin?: string;
+    vatNumber?: string;
   };
   branch?: {
     id: string;
@@ -198,6 +201,18 @@ class PrinterService {
     if (receiptData.businessInfo?.phone) {
       this.addText(commands, `Tel: ${receiptData.businessInfo.phone}`);
       commands.push(0x0A);
+    }
+
+    // KRA (when enabled for this tenant)
+    if (receiptData.businessInfo?.kraEnabled) {
+      if (receiptData.businessInfo.kraPin) {
+        this.addText(commands, `KRA PIN: ${receiptData.businessInfo.kraPin}`);
+        commands.push(0x0A);
+      }
+      if (receiptData.businessInfo.vatNumber) {
+        this.addText(commands, `VAT No: ${receiptData.businessInfo.vatNumber}`);
+        commands.push(0x0A);
+      }
     }
 
     // Branch info

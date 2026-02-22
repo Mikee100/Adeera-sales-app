@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { handleError, AppError } from '../utils/error-handler';
 import { showToast } from './Toast';
+import { parseNestJSError, getUserFriendlyMessage, enhanceErrorMessage } from '../../shared/error-parser';
 
 const Login: React.FC = () => {
   const { login, loading } = useAuth();
@@ -59,25 +60,26 @@ const Login: React.FC = () => {
         localStorage.removeItem('rememberedEmail');
       }
     } catch (err: any) {
-      // Extract error message - handle both Electron IPC errors and direct errors
-      let errorMessage = 'We could not sign you in. Please check your details and try again.';
+      // IMPROVED: Use error parser for consistent error message extraction
+      let parsedError;
       
-      if (err?.response?.data) {
-        // Axios error response
-        errorMessage = 
-          err.response.data.message || 
-          err.response.data.error ||
-          (Array.isArray(err.response.data.message) ? err.response.data.message[0] : null) ||
-          err.message ||
-          errorMessage;
-      } else if (err?.message) {
-        // Direct error message (from Electron IPC or Error object)
-        errorMessage = err.message;
-      } else if (typeof err === 'string') {
-        // String error
-        errorMessage = err;
+      try {
+        if (err?.response?.data) {
+          parsedError = enhanceErrorMessage(parseNestJSError(err.response.data));
+        } else if (err?.data) {
+          parsedError = enhanceErrorMessage(parseNestJSError(err.data));
+        } else if (err?.message) {
+          // For IPC errors, the message is already extracted
+          parsedError = { message: err.message };
+        } else {
+          parsedError = enhanceErrorMessage(parseNestJSError(err));
+        }
+      } catch {
+        // Fallback if parsing fails
+        parsedError = { message: err?.message || 'We could not sign you in. Please check your details and try again.' };
       }
-
+      
+      const errorMessage = getUserFriendlyMessage(parsedError) || 'We could not sign you in. Please check your details and try again.';
       setFormError(errorMessage);
 
       handleError(

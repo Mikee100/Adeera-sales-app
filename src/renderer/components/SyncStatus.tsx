@@ -8,16 +8,70 @@ interface SyncStatusData {
   online: boolean;
   pendingSyncs: number;
   lastSync?: string;
+  queueSize?: number;
+  maxQueueSize?: number;
+  warningThreshold?: number;
+  isWarning?: boolean;
+  isCritical?: boolean;
 }
 
 const SyncStatus: React.FC = () => {
   const [syncStatus, setSyncStatus] = useState<SyncStatusData>({ online: true, pendingSyncs: 0 });
   const [isSyncing, setIsSyncing] = useState(false);
+  const [syncProgress, setSyncProgress] = useState<{
+    total: number;
+    processed: number;
+    synced: number;
+    failed: number;
+    currentBatch: number;
+    totalBatches: number;
+    percentage: number;
+  } | null>(null);
   const wasOfflineRef = useRef(false);
   const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasAutoSyncedRef = useRef(false);
   const lastPendingCountRef = useRef(0);
   const { startSync } = useSyncProgress();
+
+  // Listen for sync progress updates
+  useEffect(() => {
+    const cleanup = window.electronAPI.onSyncProgress((progress) => {
+      setSyncProgress({
+        total: progress.total,
+        processed: progress.processed,
+        synced: progress.synced,
+        failed: progress.failed,
+        currentBatch: progress.currentBatch,
+        totalBatches: progress.totalBatches,
+        percentage: progress.percentage,
+      });
+
+      // Handle completion or cancellation
+      if (progress.completed || progress.cancelled) {
+        setIsSyncing(false);
+        setSyncProgress(null);
+      }
+
+      // Handle errors
+      if (progress.failed && progress.error) {
+        setIsSyncing(false);
+        setSyncProgress(null);
+      }
+    });
+
+    return cleanup;
+  }, []);
+
+  const handleCancelSync = useCallback(async () => {
+    try {
+      await window.electronAPI.cancelSyncOfflineSales();
+      setIsSyncing(false);
+      setSyncProgress(null);
+      showToast('Sync cancelled', 'info', 3000);
+    } catch (error) {
+      console.error('Failed to cancel sync:', error);
+    }
+  }, []);
 
   const handleSyncNow = useCallback(async (isAutoSync: boolean = false) => {
     // Get current status to check conditions
@@ -27,6 +81,7 @@ const SyncStatus: React.FC = () => {
     }
 
     setIsSyncing(true);
+    setSyncProgress(null); // Reset progress
     
     // Start sync with progress screen
     if (!isAutoSync) {
@@ -45,6 +100,14 @@ const SyncStatus: React.FC = () => {
           showRetryToast: !isAutoSync, // Don't show retry toast for auto-sync
         }
       );
+
+      // Handle cancellation
+      if (response.cancelled) {
+        showToast('Sync cancelled by user', 'info', 3000);
+        setIsSyncing(false);
+        setSyncProgress(null);
+        return;
+      }
 
       if (response.success) {
         console.log(`Synced ${response.syncedCount} sales${isAutoSync ? ' (auto-sync)' : ''}`);
@@ -289,7 +352,36 @@ const SyncStatus: React.FC = () => {
         <div className="pending-syncs">
           <span className="pending-count">{syncStatus.pendingSyncs} pending</span>
           {isSyncing && (
-            <span className="auto-sync-indicator">Syncing...</span>
+            <>
+              {syncProgress ? (
+                <div className="sync-progress-container">
+                  <div className="sync-progress-info">
+                    <span className="auto-sync-indicator">
+                      Syncing... {syncProgress.processed}/{syncProgress.total} 
+                      ({syncProgress.currentBatch}/{syncProgress.totalBatches} batches)
+                    </span>
+                    <div className="progress-bar-container">
+                      <div 
+                        className="progress-bar" 
+                        style={{ width: `${syncProgress.percentage}%` }}
+                      ></div>
+                    </div>
+                    <span className="progress-stats">
+                      ✓ {syncProgress.synced} synced | ✗ {syncProgress.failed} failed
+                    </span>
+                  </div>
+                  <button
+                    className="cancel-sync-button"
+                    onClick={handleCancelSync}
+                    title="Cancel sync"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <span className="auto-sync-indicator">Syncing...</span>
+              )}
+            </>
           )}
           {!isSyncing && syncStatus.online && (
             <button
@@ -299,6 +391,22 @@ const SyncStatus: React.FC = () => {
             >
               Sync
             </button>
+          )}
+        </div>
+      )}
+      
+      {/* Queue size warnings */}
+      {syncStatus.queueSize !== undefined && syncStatus.queueSize > 0 && (
+        <div className={`queue-warning ${syncStatus.isCritical ? 'critical' : syncStatus.isWarning ? 'warning' : ''}`}>
+          {syncStatus.isCritical && (
+            <span className="queue-alert">
+              ⚠️ Queue full ({syncStatus.queueSize}/{syncStatus.maxQueueSize}). Sync immediately!
+            </span>
+          )}
+          {syncStatus.isWarning && !syncStatus.isCritical && (
+            <span className="queue-alert">
+              ⚠️ Large queue ({syncStatus.queueSize} sales). Consider syncing soon.
+            </span>
           )}
         </div>
       )}

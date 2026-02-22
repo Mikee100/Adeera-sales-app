@@ -497,6 +497,17 @@ body {
   border-color: #ffc107;
 }
 
+.icon-btn.exit-btn {
+  border-color: #6c757d;
+  color: #495057;
+}
+
+.icon-btn.exit-btn:hover {
+  background: #5a6268;
+  border-color: #545b62;
+  color: white;
+}
+
 .pos-content {
   display: flex;
   flex: 1;

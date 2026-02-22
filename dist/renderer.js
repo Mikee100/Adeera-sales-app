@@ -425,6 +425,47 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Enhanced Checkout Page Styles - Com
   font-size: 14px;
 }
 
+/* Processing Sale Indicator */
+.processing-sale-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+  animation: slideIn 0.3s ease-out;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.processing-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.queue-info {
+  margin-left: 8px;
+  opacity: 0.9;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.queue-indicator {
+  margin-left: 6px;
+  opacity: 0.85;
+  font-size: 11px;
+  font-weight: 400;
+  font-style: italic;
+}
+
 @keyframes slideIn {
   from {
     transform: translateY(-20px);
@@ -1362,7 +1403,340 @@ textarea.text-input {
   color: #1e40af;
   font-weight: 500;
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/checkout.css"],"names":[],"mappings":"AAAA,mDAAmD;AACnD;EACE,aAAa;EACb,mBAAmB;EACnB,YAAY;EACZ,4DAA4D;EAC5D,aAAa;EACb,sBAAsB;EACtB,gBAAgB;AAClB;;AAEA,uBAAuB;AACvB;EACE,aAAa;EACb,uBAAuB;EACvB,mBAAmB;EACnB,SAAS;EACT,mBAAmB;EACnB,aAAa;EACb,mBAAmB;EACnB,kBAAkB;EAClB,yBAAyB;AAC3B;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,mBAAmB;EACnB,QAAQ;EACR,YAAY;EACZ,6BAA6B;AAC/B;;AAEA;EACE,UAAU;AACZ;;AAEA;EACE,WAAW;EACX,YAAY;EACZ,kBAAkB;EAClB,mBAAmB;EACnB,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,iBAAiB;EACjB,YAAY;EACZ,yBAAyB;EACzB,eAAe;AACjB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,eAAe;EACf,cAAc;EACd,gBAAgB;EAChB,kBAAkB;AACpB;;AAEA,oBAAoB;AACpB;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,6DAA6D;EAC7D,YAAY;EACZ,iBAAiB;EACjB,kBAAkB;EAClB,kBAAkB;EAClB,4CAA4C;EAC5C,gCAAgC;EAChC,eAAe;EACf,gBAAgB;EAChB,cAAc;AAChB;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE;IACE,4BAA4B;IAC5B,UAAU;EACZ;EACA;IACE,wBAAwB;IACxB,UAAU;EACZ;AACF;;AAEA;EACE,iBAAiB;EACjB,mBAAmB;EACnB,aAAa;EACb,mBAAmB;EACnB,wCAAwC;AAC1C;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,SAAS;AACX;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,mBAAmB;EACnB,yBAAyB;EACzB,kBAAkB;EAClB,kBAAkB;EAClB,cAAc;EACd,qBAAqB;EACrB,gBAAgB;EAChB,yBAAyB;AAC3B;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,YAAY;EACZ,mBAAmB;AACrB;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,SAAS;AACX;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,SAAS;EACT,WAAW;EACX,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,QAAQ;EACR,OAAO;EACP,aAAa;EACb,gBAAgB;AAClB;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,QAAQ;EACR,aAAa;EACb,gBAAgB;AAClB;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,QAAQ;EACR,aAAa;EACb,gBAAgB;AAClB;;AAEA;EACE,iBAAiB;EACjB,kBAAkB;EAClB,yCAAyC;EACzC,gBAAgB;EAChB,aAAa;EACb,sBAAsB;EACtB,aAAa;AACf;;AAEA;EACE,OAAO;EACP,aAAa;EACb,aAAa;EACb,sBAAsB;AACxB;;AAEA;EACE,OAAO;EACP,aAAa;EACb,aAAa;EACb,sBAAsB;AACxB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,mBAAmB;EACnB,iBAAiB;EACjB,mBAAmB;EACnB,gCAAgC;EAChC,cAAc;AAChB;;AAEA;EACE,SAAS;EACT,WAAW;EACX,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,gBAAgB;EAChB,mBAAmB;EACnB,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,iBAAiB;EACjB,OAAO;EACP,gBAAgB;EAChB,aAAa;AACf;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,mBAAmB;EACnB,cAAc;EACd,gCAAgC;AAClC;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,iBAAiB;EACjB,WAAW;EACX,eAAe;EACf,gBAAgB;EAChB,gBAAgB;AAClB;;AAEA;EACE,cAAc;EACd,eAAe;AACjB;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,cAAc;EACd,cAAc;EACd,eAAe;EACf,kBAAkB;AACpB;;AAEA;EACE,WAAW;EACX,gBAAgB;EAChB,eAAe;AACjB;;AAEA;EACE,iBAAiB;EACjB,mBAAmB;EACnB,6BAA6B;EAC7B,cAAc;AAChB;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,mBAAmB;EACnB,cAAc;EACd,eAAe;AACjB;;AAEA;EACE,6BAA6B;EAC7B,gBAAgB;EAChB,eAAe;EACf,eAAe;EACf,gBAAgB;EAChB,WAAW;AACb;;AAEA;EACE,cAAc;EACd,gBAAgB;EAChB,eAAe;AACjB;;AAEA;EACE,cAAc;EACd,gBAAgB;AAClB;;AAEA;EACE,iBAAiB;EACjB,6BAA6B;EAC7B,gBAAgB;EAChB,cAAc;AAChB;;AAEA;EACE,cAAc;EACd,eAAe;EACf,cAAc;EACd,eAAe;AACjB;;AAEA;EACE,iBAAiB;EACjB,OAAO;EACP,gBAAgB;EAChB,aAAa;AACf;;AAEA;EACE,cAAc;EACd,iBAAiB;EACjB,yBAAyB;EACzB,kBAAkB;EAClB,iBAAiB;EACjB,kBAAkB;EAClB,eAAe;EACf,yBAAyB;EACzB,kBAAkB;AACpB;;AAEA;EACE,qBAAqB;EACrB,4CAA4C;AAC9C;;AAEA;EACE,qBAAqB;EACrB,mBAAmB;AACrB;;AAEA;EACE,kBAAkB;EAClB,UAAU;EACV,QAAQ;EACR,SAAS;AACX;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,eAAe;EACf,WAAW;EACX,kBAAkB;EAClB,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,OAAO;AACT;;AAEA;EACE,cAAc;EACd,gBAAgB;EAChB,WAAW;EACX,kBAAkB;EAClB,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,cAAc;EACd,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,cAAc;EACd,eAAe;EACf,iBAAiB;EACjB,cAAc;AAChB;;AAEA;EACE,iBAAiB;EACjB,6BAA6B;EAC7B,cAAc;AAChB;;AAEA;EACE,iBAAiB;EACjB,6BAA6B;EAC7B,cAAc;AAChB;;AAEA;EACE,aAAa;EACb,uBAAuB;EACvB,QAAQ;EACR,mBAAmB;EACnB,yBAAyB;EACzB,kBAAkB;EAClB,gBAAgB;EAChB,kBAAkB;AACpB;;AAEA;EACE,eAAe;EACf,cAAc;AAChB;;AAEA;EACE,OAAO;AACT;;AAEA;EACE,cAAc;EACd,cAAc;EACd,eAAe;EACf,kBAAkB;EAClB,gBAAgB;AAClB;;AAEA;EACE,SAAS;EACT,cAAc;EACd,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,kBAAkB;AACpB;;AAEA;EACE,gBAAgB;AAClB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,gBAAgB;EAChB,WAAW;EACX,kBAAkB;EAClB,eAAe;AACjB;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,kBAAkB;AACpB;;AAEA;EACE,kBAAkB;EAClB,UAAU;EACV,QAAQ;EACR,2BAA2B;EAC3B,cAAc;EACd,gBAAgB;EAChB,UAAU;EACV,eAAe;AACjB;;AAEA;EACE,WAAW;EACX,yBAAyB;EACzB,2BAA2B;EAC3B,kBAAkB;EAClB,eAAe;EACf,gBAAgB;EAChB,WAAW;EACX,iBAAiB;EACjB,kCAAkC;AACpC;;AAEA;EACE,aAAa;EACb,qBAAqB;EACrB,4CAA4C;AAC9C;;AAEA;EACE,qBAAqB;EACrB,4CAA4C;AAC9C;;AAEA;EACE,cAAc;EACd,cAAc;EACd,cAAc;EACd,eAAe;AACjB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,mBAAmB;EACnB,yBAAyB;EACzB,kBAAkB;EAClB,gBAAgB;EAChB,eAAe;AACjB;;AAEA;EACE,eAAe;EACf,cAAc;EACd,cAAc;AAChB;;AAEA;EACE,OAAO;AACT;;AAEA;EACE,cAAc;EACd,cAAc;EACd,gBAAgB;EAChB,eAAe;AACjB;;AAEA;EACE,cAAc;EACd,gBAAgB;EAChB,eAAe;AACjB;;AAEA;EACE,kBAAkB;AACpB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,gBAAgB;EAChB,mBAAmB;EACnB,eAAe;EACf,gBAAgB;EAChB,yBAAyB;AAC3B;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,cAAc;EACd,gBAAgB;AAClB;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,WAAW;EACX,gBAAgB;EAChB,2BAA2B;EAC3B,kBAAkB;EAClB,eAAe;EACf,WAAW;EACX,iBAAiB;EACjB,kCAAkC;EAClC,oBAAoB;AACtB;;AAEA;EACE,gBAAgB;AAClB;;AAEA;EACE,gBAAgB;EAChB,gBAAgB;EAChB,gBAAgB;EAChB,gBAAgB;AAClB;;AAEA;EACE,aAAa;EACb,qBAAqB;EACrB,4CAA4C;AAC9C;;AAEA;EACE,qBAAqB;EACrB,4CAA4C;AAC9C;;AAEA;EACE,cAAc;AAChB;;AAEA,yBAAyB;AACzB;EACE,cAAc;EACd,eAAe;EACf,eAAe;EACf,cAAc;AAChB;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,aAAa;EACb,QAAQ;EACR,yBAAyB;EACzB,iBAAiB;EACjB,iBAAiB;EACjB,kBAAkB;EAClB,yCAAyC;EACzC,cAAc;EACd,gBAAgB;AAClB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,iBAAiB;EACjB,kBAAkB;EAClB,eAAe;EACf,gBAAgB;EAChB,eAAe;EACf,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,sCAAsC;AACxC;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,YAAY;EACZ,mBAAmB;AACrB;;AAEA;EACE,6DAA6D;EAC7D,YAAY;EACZ,YAAY;EACZ,iBAAiB;EACjB,kBAAkB;EAClB,eAAe;EACf,gBAAgB;EAChB,eAAe;EACf,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,yBAAyB;EACzB,4CAA4C;AAC9C;;AAEA;EACE,6DAA6D;EAC7D,2BAA2B;EAC3B,4CAA4C;AAC9C;;AAEA;EACE,YAAY;EACZ,mBAAmB;EACnB,eAAe;AACjB;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,WAAW;EACX,YAAY;EACZ,0CAA0C;EAC1C,2BAA2B;EAC3B,kBAAkB;EAClB,kCAAkC;AACpC;;AAEA;EACE,KAAK,uBAAuB,EAAE;EAC9B,OAAO,yBAAyB,EAAE;AACpC;;AAEA,wCAAwC;AACxC;;;;EAIE,UAAU;AACZ;;AAEA;;;;EAIE,mBAAmB;EACnB,kBAAkB;AACpB;;AAEA;;;;EAIE,mBAAmB;EACnB,kBAAkB;AACpB;;AAEA;;;;EAIE,mBAAmB;AACrB;;AAEA,sBAAsB;AACtB;EACE;IACE,YAAY;IACZ,iBAAiB;EACnB;;EAEA;IACE,0BAA0B;EAC5B;;EAEA;IACE,aAAa;EACf;;EAEA;IACE,sBAAsB;IACtB,SAAS;IACT,kBAAkB;EACpB;;EAEA;IACE,eAAe;EACjB;;EAEA;IACE,mBAAmB;EACrB;;EAEA;IACE,aAAa;EACf;;EAEA;;;;;IAKE,aAAa;EACf;;EAEA;IACE,sBAAsB;EACxB;;EAEA;;IAEE,WAAW;IACX,uBAAuB;EACzB;AACF;;AAEA,yBAAyB;AACzB;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,eAAe;EACf,eAAe;EACf,gBAAgB;EAChB,cAAc;EACd,iBAAiB;AACnB;;AAEA;EACE,WAAW;EACX,YAAY;EACZ,eAAe;EACf,qBAAqB;AACvB;;AAEA;EACE,iBAAiB;EACjB,OAAO;EACP,gBAAgB;EAChB,aAAa;EACb,aAAa;EACb,sBAAsB;AACxB;;AAEA;EACE,kBAAkB;EAClB,iBAAiB;EACjB,mBAAmB;EACnB,kBAAkB;EAClB,yBAAyB;EACzB,cAAc;AAChB;;AAEA;EACE,iBAAiB;EACjB,eAAe;EACf,cAAc;EACd,gBAAgB;AAClB;;AAEA;EACE,cAAc;EACd,gBAAgB;AAClB;;AAEA;EACE,eAAe;EACf,gBAAgB;EAChB,iBAAiB;EACjB,kBAAkB;EAClB,eAAe;EACf,cAAc;EACd,yBAAyB;AAC3B;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,SAAS;EACT,mBAAmB;AACrB;;AAEA;EACE,aAAa;EACb,iBAAiB;EACjB,yBAAyB;EACzB,mBAAmB;EACnB,yBAAyB;AAC3B;;AAEA;EACE,qBAAqB;EACrB,yCAAyC;AAC3C;;AAEA;EACE,aAAa;EACb,QAAQ;EACR,uBAAuB;EACvB,kBAAkB;AACpB;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,WAAW;EACX,gBAAgB;EAChB,2BAA2B;EAC3B,kBAAkB;EAClB,eAAe;EACf,iBAAiB;EACjB,cAAc;EACd,eAAe;EACf,kCAAkC;AACpC;;AAEA;EACE,aAAa;EACb,qBAAqB;EACrB,4CAA4C;AAC9C;;AAEA;EACE,OAAO;AACT;;AAEA;EACE,cAAc;EACd,eAAe;EACf,gBAAgB;EAChB,cAAc;EACd,kBAAkB;AACpB;;AAEA;EACE,gBAAgB;EAChB,iBAAiB;EACjB,6BAA6B;AAC/B;;AAEA;EACE,cAAc;EACd,eAAe;EACf,gBAAgB;EAChB,cAAc;EACd,kBAAkB;EAClB,gBAAgB;AAClB;;AAEA;EACE,aAAa;AACf;;AAEA;EACE,cAAc;EACd,WAAW;EACX,YAAY;EACZ,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,mBAAmB;EACnB,cAAc;EACd,yBAAyB;EACzB,kBAAkB;EAClB,eAAe;EACf,eAAe;EACf,iBAAiB;EACjB,yBAAyB;EACzB,gBAAgB;AAClB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;EACrB,sBAAsB;AACxB;;AAEA;EACE,sBAAsB;AACxB;;AAEA;EACE,WAAW;EACX,iBAAiB;EACjB,mBAAmB;EACnB,cAAc;EACd,4BAA4B;EAC5B,kBAAkB;EAClB,eAAe;EACf,gBAAgB;EAChB,eAAe;EACf,yBAAyB;EACzB,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,QAAQ;EACR,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,eAAe;EACf,gBAAgB;EAChB,mBAAmB;EACnB,yBAAyB;EACzB,kBAAkB;EAClB,eAAe;EACf,cAAc;EACd,gBAAgB;AAClB","sourcesContent":["/* Enhanced Checkout Page Styles - Compact Layout */\r\n.checkout-page {\r\n  height: 100vh;\r\n  background: #f5f7fa;\r\n  padding: 8px;\r\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\r\n  display: flex;\r\n  flex-direction: column;\r\n  overflow: hidden;\r\n}\r\n\r\n/* Progress Indicator */\r\n.progress-indicator {\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  gap: 40px;\r\n  margin-bottom: 20px;\r\n  padding: 16px;\r\n  background: #f8f9fa;\r\n  border-radius: 8px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.progress-step {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  gap: 8px;\r\n  opacity: 0.5;\r\n  transition: opacity 0.3s ease;\r\n}\r\n\r\n.progress-step.active {\r\n  opacity: 1;\r\n}\r\n\r\n.step-number {\r\n  width: 32px;\r\n  height: 32px;\r\n  border-radius: 50%;\r\n  background: #6c757d;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  color: white;\r\n  border: 2px solid #6c757d;\r\n  font-size: 14px;\r\n}\r\n\r\n.progress-step.active .step-number {\r\n  background: #007bff;\r\n  border-color: #007bff;\r\n}\r\n\r\n.step-label {\r\n  font-size: 12px;\r\n  color: #495057;\r\n  font-weight: 500;\r\n  text-align: center;\r\n}\r\n\r\n/* Success Message */\r\n.success-message {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  padding: 4px 10px;\r\n  border-radius: 5px;\r\n  margin-bottom: 8px;\r\n  box-shadow: 0 1px 3px rgba(40, 167, 69, 0.3);\r\n  animation: slideIn 0.3s ease-out;\r\n  font-size: 11px;\r\n  font-weight: 500;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.success-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n@keyframes slideIn {\r\n  from {\r\n    transform: translateY(-20px);\r\n    opacity: 0;\r\n  }\r\n  to {\r\n    transform: translateY(0);\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.checkout-header {\r\n  background: white;\r\n  border-radius: 12px;\r\n  padding: 20px;\r\n  margin-bottom: 20px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.header-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\r\n}\r\n\r\n.back-button {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #dee2e6;\r\n  border-radius: 8px;\r\n  padding: 12px 16px;\r\n  color: #495057;\r\n  text-decoration: none;\r\n  font-weight: 500;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.back-button:hover:not(:disabled) {\r\n  background: #e9ecef;\r\n  border-color: #adb5bd;\r\n}\r\n\r\n.back-button:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.back-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.checkout-title {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n}\r\n\r\n.title-icon {\r\n  font-size: 24px;\r\n}\r\n\r\n.checkout-title h1 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 24px;\r\n  font-weight: 600;\r\n}\r\n\r\n.checkout-main {\r\n  display: grid;\r\n  grid-template-columns: 1fr 1fr;\r\n  gap: 8px;\r\n  flex: 1;\r\n  min-height: 0;\r\n  overflow: hidden;\r\n}\r\n\r\n.checkout-left {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 8px;\r\n  min-height: 0;\r\n  overflow: hidden;\r\n}\r\n\r\n.checkout-right {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 8px;\r\n  min-height: 0;\r\n  overflow: hidden;\r\n}\r\n\r\n.checkout-card {\r\n  background: white;\r\n  border-radius: 6px;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\r\n  overflow: hidden;\r\n  display: flex;\r\n  flex-direction: column;\r\n  min-height: 0;\r\n}\r\n\r\n.order-summary-card {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.payment-card {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.customer-card {\r\n  flex-shrink: 0;\r\n}\r\n\r\n.card-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 8px 12px;\r\n  background: #f8f9fa;\r\n  border-bottom: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.card-header h2 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n}\r\n\r\n.item-count {\r\n  background: #007bff;\r\n  color: white;\r\n  padding: 3px 6px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 600;\r\n}\r\n\r\n.order-items {\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n}\r\n\r\n.order-item {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 6px 0;\r\n  border-bottom: 1px solid #f1f3f4;\r\n}\r\n\r\n.order-item:last-child {\r\n  border-bottom: none;\r\n}\r\n\r\n.item-details h4 {\r\n  margin: 0 0 2px 0;\r\n  color: #333;\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n  line-height: 1.3;\r\n}\r\n\r\n.item-sku {\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n}\r\n\r\n.item-meta {\r\n  text-align: right;\r\n}\r\n\r\n.item-quantity {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n  margin-bottom: 2px;\r\n}\r\n\r\n.item-price {\r\n  color: #333;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n}\r\n\r\n.order-totals {\r\n  padding: 8px 12px;\r\n  background: #f8f9fa;\r\n  border-top: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.total-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 3px 0;\r\n  font-size: 11px;\r\n}\r\n\r\n.total-row.grand-total {\r\n  border-top: 2px solid #dee2e6;\r\n  padding-top: 6px;\r\n  margin-top: 4px;\r\n  font-size: 13px;\r\n  font-weight: 700;\r\n  color: #333;\r\n}\r\n\r\n.total-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n  font-size: 14px;\r\n}\r\n\r\n.total-row.discount-row .discount-amount {\r\n  color: #dc3545;\r\n  font-weight: 600;\r\n}\r\n\r\n.discount-input-section {\r\n  padding: 8px 12px;\r\n  border-top: 1px solid #e9ecef;\r\n  background: #fff;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.discount-input-section .error-text {\r\n  display: block;\r\n  font-size: 11px;\r\n  color: #dc3545;\r\n  margin-top: 4px;\r\n}\r\n\r\n.payment-options {\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n}\r\n\r\n.payment-option {\r\n  display: block;\r\n  background: white;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 5px;\r\n  padding: 8px 10px;\r\n  margin-bottom: 6px;\r\n  cursor: pointer;\r\n  transition: all 0.2s ease;\r\n  position: relative;\r\n}\r\n\r\n.payment-option:hover {\r\n  border-color: #007bff;\r\n  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.payment-option.selected {\r\n  border-color: #007bff;\r\n  background: #f8f9ff;\r\n}\r\n\r\n.payment-option input[type=\"radio\"] {\r\n  position: absolute;\r\n  opacity: 0;\r\n  width: 0;\r\n  height: 0;\r\n}\r\n\r\n.payment-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.payment-icon {\r\n  font-size: 16px;\r\n  width: 28px;\r\n  text-align: center;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.cash-icon {\r\n  color: #28a745;\r\n}\r\n\r\n.mpesa-icon {\r\n  color: #007bff;\r\n}\r\n\r\n.credit-icon {\r\n  color: #ff9800;\r\n}\r\n\r\n.payment-info {\r\n  flex: 1;\r\n}\r\n\r\n.payment-name {\r\n  display: block;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 1px;\r\n  font-size: 12px;\r\n  line-height: 1.2;\r\n}\r\n\r\n.payment-desc {\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n  line-height: 1.2;\r\n}\r\n\r\n.payment-check {\r\n  color: #007bff;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.cash-payment-section {\r\n  padding: 8px 12px;\r\n  border-top: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.credit-payment-section {\r\n  padding: 8px 12px;\r\n  border-top: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.credit-info-banner {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 6px;\r\n  background: #fff3cd;\r\n  border: 1px solid #ffc107;\r\n  border-radius: 5px;\r\n  padding: 6px 8px;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.info-icon {\r\n  font-size: 16px;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.info-text {\r\n  flex: 1;\r\n}\r\n\r\n.info-text strong {\r\n  display: block;\r\n  color: #856404;\r\n  font-size: 11px;\r\n  margin-bottom: 2px;\r\n  font-weight: 600;\r\n}\r\n\r\n.info-text p {\r\n  margin: 0;\r\n  color: #856404;\r\n  font-size: 10px;\r\n  line-height: 1.3;\r\n}\r\n\r\n.input-group {\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.input-group:last-child {\r\n  margin-bottom: 0;\r\n}\r\n\r\n.input-label {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 4px;\r\n  font-size: 11px;\r\n}\r\n\r\n.label-icon {\r\n  font-size: 12px;\r\n}\r\n\r\n.input-wrapper {\r\n  position: relative;\r\n}\r\n\r\n.currency-symbol {\r\n  position: absolute;\r\n  left: 10px;\r\n  top: 50%;\r\n  transform: translateY(-50%);\r\n  color: #6c757d;\r\n  font-weight: 600;\r\n  z-index: 1;\r\n  font-size: 11px;\r\n}\r\n\r\n.currency-input {\r\n  width: 100%;\r\n  padding: 6px 8px 6px 26px;\r\n  border: 1.5px solid #e9ecef;\r\n  border-radius: 5px;\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.currency-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.currency-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.input-hint {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 9px;\r\n  margin-top: 2px;\r\n}\r\n\r\n.change-display {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  background: #d4edda;\r\n  border: 1px solid #c3e6cb;\r\n  border-radius: 5px;\r\n  padding: 6px 8px;\r\n  margin-top: 6px;\r\n}\r\n\r\n.change-icon {\r\n  font-size: 16px;\r\n  color: #155724;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.change-info {\r\n  flex: 1;\r\n}\r\n\r\n.change-label {\r\n  display: block;\r\n  color: #155724;\r\n  font-weight: 600;\r\n  font-size: 10px;\r\n}\r\n\r\n.change-amount {\r\n  color: #155724;\r\n  font-weight: 700;\r\n  font-size: 12px;\r\n}\r\n\r\n.customer-card .card-header {\r\n  position: relative;\r\n}\r\n\r\n.optional-badge {\r\n  background: #17a2b8;\r\n  color: white;\r\n  padding: 2px 8px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 500;\r\n  text-transform: uppercase;\r\n}\r\n\r\n.required-badge {\r\n  background: #dc3545;\r\n}\r\n\r\n.required-indicator {\r\n  color: #dc3545;\r\n  margin-left: 4px;\r\n}\r\n\r\n.customer-form {\r\n  padding: 8px 12px;\r\n}\r\n\r\n.text-input {\r\n  width: 100%;\r\n  padding: 6px 8px;\r\n  border: 1.5px solid #e9ecef;\r\n  border-radius: 5px;\r\n  font-size: 12px;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n  font-family: inherit;\r\n}\r\n\r\n.text-input[type=\"date\"] {\r\n  padding: 6px 8px;\r\n}\r\n\r\ntextarea.text-input {\r\n  resize: vertical;\r\n  min-height: 45px;\r\n  max-height: 70px;\r\n  line-height: 1.4;\r\n}\r\n\r\n.text-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.text-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.text-input::placeholder {\r\n  color: #adb5bd;\r\n}\r\n\r\n/* Error Message Styles */\r\n.error-message {\r\n  color: #dc3545;\r\n  font-size: 10px;\r\n  margin-top: 3px;\r\n  display: block;\r\n}\r\n\r\n.error-text {\r\n  font-size: 10px;\r\n}\r\n\r\n.checkout-actions {\r\n  display: flex;\r\n  gap: 8px;\r\n  justify-content: flex-end;\r\n  padding: 8px 12px;\r\n  background: white;\r\n  border-radius: 6px;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\r\n  flex-shrink: 0;\r\n  margin-top: auto;\r\n}\r\n\r\n.secondary-btn {\r\n  background: #6c757d;\r\n  color: white;\r\n  border: none;\r\n  padding: 8px 14px;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  transition: background-color 0.2s ease;\r\n}\r\n\r\n.secondary-btn:hover:not(:disabled) {\r\n  background: #5a6268;\r\n}\r\n\r\n.secondary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.primary-btn {\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  border: none;\r\n  padding: 8px 14px;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  transition: all 0.2s ease;\r\n  box-shadow: 0 1px 3px rgba(40, 167, 69, 0.2);\r\n}\r\n\r\n.primary-btn:hover:not(:disabled) {\r\n  background: linear-gradient(135deg, #218838 0%, #1aa085 100%);\r\n  transform: translateY(-1px);\r\n  box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);\r\n}\r\n\r\n.primary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n  transform: none;\r\n}\r\n\r\n.btn-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 16px;\r\n  height: 16px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 1s linear infinite;\r\n}\r\n\r\n@keyframes spin {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n/* Scrollbar styling for compact lists */\r\n.order-items::-webkit-scrollbar,\r\n.payment-options::-webkit-scrollbar,\r\n.split-payments-list::-webkit-scrollbar,\r\n.split-payment-section::-webkit-scrollbar {\r\n  width: 6px;\r\n}\r\n\r\n.order-items::-webkit-scrollbar-track,\r\n.payment-options::-webkit-scrollbar-track,\r\n.split-payments-list::-webkit-scrollbar-track,\r\n.split-payment-section::-webkit-scrollbar-track {\r\n  background: #f1f1f1;\r\n  border-radius: 3px;\r\n}\r\n\r\n.order-items::-webkit-scrollbar-thumb,\r\n.payment-options::-webkit-scrollbar-thumb,\r\n.split-payments-list::-webkit-scrollbar-thumb,\r\n.split-payment-section::-webkit-scrollbar-thumb {\r\n  background: #c1c1c1;\r\n  border-radius: 3px;\r\n}\r\n\r\n.order-items::-webkit-scrollbar-thumb:hover,\r\n.payment-options::-webkit-scrollbar-thumb:hover,\r\n.split-payments-list::-webkit-scrollbar-thumb:hover,\r\n.split-payment-section::-webkit-scrollbar-thumb:hover {\r\n  background: #a8a8a8;\r\n}\r\n\r\n/* Responsive Design */\r\n@media (max-width: 768px) {\r\n  .checkout-page {\r\n    height: auto;\r\n    min-height: 100vh;\r\n  }\r\n  \r\n  .checkout-main {\r\n    grid-template-columns: 1fr;\r\n  }\r\n\r\n  .checkout-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .header-content {\r\n    flex-direction: column;\r\n    gap: 16px;\r\n    text-align: center;\r\n  }\r\n\r\n  .checkout-title h1 {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .checkout-card {\r\n    margin-bottom: 16px;\r\n  }\r\n\r\n  .card-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .order-items,\r\n  .payment-options,\r\n  .cash-payment-section,\r\n  .customer-form,\r\n  .checkout-actions {\r\n    padding: 16px;\r\n  }\r\n\r\n  .checkout-actions {\r\n    flex-direction: column;\r\n  }\r\n\r\n  .secondary-btn,\r\n  .primary-btn {\r\n    width: 100%;\r\n    justify-content: center;\r\n  }\r\n}\r\n\r\n/* Split Payment Styles */\r\n.split-payment-toggle {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  cursor: pointer;\r\n  font-size: 11px;\r\n  font-weight: 500;\r\n  color: #495057;\r\n  user-select: none;\r\n}\r\n\r\n.split-payment-toggle input[type=\"checkbox\"] {\r\n  width: 16px;\r\n  height: 16px;\r\n  cursor: pointer;\r\n  accent-color: #007bff;\r\n}\r\n\r\n.split-payment-section {\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.split-payment-header {\r\n  margin-bottom: 8px;\r\n  padding: 8px 10px;\r\n  background: #f8f9fa;\r\n  border-radius: 5px;\r\n  border: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.split-payment-info {\r\n  margin: 0 0 6px 0;\r\n  font-size: 11px;\r\n  color: #6b7280;\r\n  line-height: 1.4;\r\n}\r\n\r\n.split-payment-info strong {\r\n  color: #111827;\r\n  font-weight: 600;\r\n}\r\n\r\n.remaining-amount {\r\n  margin-top: 6px;\r\n  padding: 6px 8px;\r\n  background: white;\r\n  border-radius: 5px;\r\n  font-size: 11px;\r\n  color: #374151;\r\n  border: 1px solid #d1d5db;\r\n}\r\n\r\n.remaining-amount strong.success {\r\n  color: #059669;\r\n}\r\n\r\n.remaining-amount strong.warning {\r\n  color: #d97706;\r\n}\r\n\r\n.remaining-amount strong.error {\r\n  color: #dc2626;\r\n}\r\n\r\n.split-payments-list {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 16px;\r\n  margin-bottom: 16px;\r\n}\r\n\r\n.split-payment-item {\r\n  padding: 16px;\r\n  background: white;\r\n  border: 2px solid #e5e7eb;\r\n  border-radius: 10px;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.split-payment-item:hover {\r\n  border-color: #d1d5db;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);\r\n}\r\n\r\n.split-payment-row {\r\n  display: flex;\r\n  gap: 8px;\r\n  align-items: flex-start;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.split-payment-method {\r\n  flex: 0 0 140px;\r\n}\r\n\r\n.split-method-select {\r\n  width: 100%;\r\n  padding: 6px 8px;\r\n  border: 1.5px solid #d1d5db;\r\n  border-radius: 5px;\r\n  font-size: 12px;\r\n  background: white;\r\n  color: #111827;\r\n  cursor: pointer;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.split-method-select:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.split-payment-amount {\r\n  flex: 1;\r\n}\r\n\r\n.split-payment-amount label {\r\n  display: block;\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n  color: #374151;\r\n  margin-bottom: 6px;\r\n}\r\n\r\n.split-payment-details {\r\n  margin-top: 12px;\r\n  padding-top: 12px;\r\n  border-top: 1px solid #e5e7eb;\r\n}\r\n\r\n.split-payment-details label {\r\n  display: block;\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n  color: #374151;\r\n  margin-bottom: 6px;\r\n  margin-top: 12px;\r\n}\r\n\r\n.split-payment-details label:first-child {\r\n  margin-top: 0;\r\n}\r\n\r\n.remove-split-btn {\r\n  flex: 0 0 28px;\r\n  width: 28px;\r\n  height: 28px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  background: #fee2e2;\r\n  color: #dc2626;\r\n  border: 1px solid #fecaca;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 14px;\r\n  font-weight: bold;\r\n  transition: all 0.2s ease;\r\n  margin-top: 20px;\r\n}\r\n\r\n.remove-split-btn:hover {\r\n  background: #fecaca;\r\n  border-color: #f87171;\r\n  transform: scale(1.05);\r\n}\r\n\r\n.remove-split-btn:active {\r\n  transform: scale(0.95);\r\n}\r\n\r\n.add-split-payment-btn {\r\n  width: 100%;\r\n  padding: 8px 12px;\r\n  background: #f3f4f6;\r\n  color: #374151;\r\n  border: 1.5px dashed #d1d5db;\r\n  border-radius: 5px;\r\n  font-size: 11px;\r\n  font-weight: 500;\r\n  cursor: pointer;\r\n  transition: all 0.2s ease;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  gap: 6px;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.add-split-payment-btn:hover {\r\n  background: #e5e7eb;\r\n  border-color: #9ca3af;\r\n  color: #111827;\r\n}\r\n\r\n.change-display-small {\r\n  margin-top: 4px;\r\n  padding: 4px 6px;\r\n  background: #eff6ff;\r\n  border: 1px solid #bfdbfe;\r\n  border-radius: 4px;\r\n  font-size: 10px;\r\n  color: #1e40af;\r\n  font-weight: 500;\r\n}\r\n"],"sourceRoot":""}]);
+
+/* M-Pesa Payment Modal Styles */
+.mpesa-payment-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mpesa-payment-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.mpesa-payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.mpesa-payment-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #212529;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.close-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+  color: #212529;
+}
+
+.close-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mpesa-payment-body {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.payment-amount-display {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  margin-bottom: 24px;
+  color: white;
+}
+
+.amount-label {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.amount-value {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.phone-input-section {
+  margin-bottom: 20px;
+}
+
+.payment-status-section {
+  text-align: center;
+  padding: 20px;
+}
+
+.status-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  animation: pulse 2s infinite;
+}
+
+.status-icon.pending {
+  animation: pulse 2s infinite;
+}
+
+.status-icon.success {
+  animation: none;
+}
+
+.status-icon.failed {
+  animation: none;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-message {
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 16px;
+}
+
+.payment-instructions {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  text-align: left;
+}
+
+.payment-instructions p {
+  margin: 8px 0;
+  color: #495057;
+  font-size: 14px;
+}
+
+.payment-instructions p:first-child {
+  margin-top: 0;
+}
+
+.payment-instructions p:last-child {
+  margin-bottom: 0;
+}
+
+.waiting-text {
+  font-weight: 600;
+  color: #007bff;
+  margin-top: 12px !important;
+}
+
+.mpesa-payment-footer {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid #e9ecef;
+  justify-content: flex-end;
+}
+
+.mpesa-payment-footer .secondary-btn,
+.mpesa-payment-footer .primary-btn {
+  min-width: 120px;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Split Payment Status Styles */
+.payment-status-completed {
+  padding: 12px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.payment-status-processing {
+  padding: 12px;
+  background: #fffbeb;
+  border: 1px solid #fde047;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.status-badge.success {
+  color: #166534;
+}
+
+.status-badge.processing {
+  color: #854d0e;
+}
+
+.status-icon {
+  font-size: 18px;
+}
+
+.transaction-info {
+  font-size: 12px;
+  color: #374151;
+  margin-top: 4px;
+}
+
+.transaction-info strong {
+  color: #111827;
+  margin-right: 4px;
+}
+
+.retry-payment-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.retry-payment-btn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.mpesa-payment-action {
+  margin-top: 8px;
+}
+
+.initiate-mpesa-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.initiate-mpesa-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.initiate-mpesa-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.payment-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.loading-spinner-small {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(133, 77, 14, 0.3);
+  border-top-color: #854d0e;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+.complete-sale-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #9ca3af;
+}
+`, "",{"version":3,"sources":["webpack://./src/renderer/checkout.css"],"names":[],"mappings":"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","sourcesContent":["/* Enhanced Checkout Page Styles - Compact Layout */\r\n.checkout-page {\r\n  height: 100vh;\r\n  background: #f5f7fa;\r\n  padding: 8px;\r\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\r\n  display: flex;\r\n  flex-direction: column;\r\n  overflow: hidden;\r\n}\r\n\r\n/* Progress Indicator */\r\n.progress-indicator {\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  gap: 40px;\r\n  margin-bottom: 20px;\r\n  padding: 16px;\r\n  background: #f8f9fa;\r\n  border-radius: 8px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.progress-step {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  gap: 8px;\r\n  opacity: 0.5;\r\n  transition: opacity 0.3s ease;\r\n}\r\n\r\n.progress-step.active {\r\n  opacity: 1;\r\n}\r\n\r\n.step-number {\r\n  width: 32px;\r\n  height: 32px;\r\n  border-radius: 50%;\r\n  background: #6c757d;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  font-weight: bold;\r\n  color: white;\r\n  border: 2px solid #6c757d;\r\n  font-size: 14px;\r\n}\r\n\r\n.progress-step.active .step-number {\r\n  background: #007bff;\r\n  border-color: #007bff;\r\n}\r\n\r\n.step-label {\r\n  font-size: 12px;\r\n  color: #495057;\r\n  font-weight: 500;\r\n  text-align: center;\r\n}\r\n\r\n/* Success Message */\r\n.success-message {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  padding: 4px 10px;\r\n  border-radius: 5px;\r\n  margin-bottom: 8px;\r\n  box-shadow: 0 1px 3px rgba(40, 167, 69, 0.3);\r\n  animation: slideIn 0.3s ease-out;\r\n  font-size: 11px;\r\n  font-weight: 500;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.success-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n/* Processing Sale Indicator */\r\n.processing-sale-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);\r\n  color: white;\r\n  padding: 8px 12px;\r\n  border-radius: 5px;\r\n  margin-bottom: 8px;\r\n  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);\r\n  animation: slideIn 0.3s ease-out;\r\n  font-size: 12px;\r\n  font-weight: 500;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.processing-spinner {\r\n  width: 16px;\r\n  height: 16px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 0.8s linear infinite;\r\n}\r\n\r\n.queue-info {\r\n  margin-left: 8px;\r\n  opacity: 0.9;\r\n  font-size: 11px;\r\n  font-weight: 400;\r\n}\r\n\r\n.queue-indicator {\r\n  margin-left: 6px;\r\n  opacity: 0.85;\r\n  font-size: 11px;\r\n  font-weight: 400;\r\n  font-style: italic;\r\n}\r\n\r\n@keyframes slideIn {\r\n  from {\r\n    transform: translateY(-20px);\r\n    opacity: 0;\r\n  }\r\n  to {\r\n    transform: translateY(0);\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.checkout-header {\r\n  background: white;\r\n  border-radius: 12px;\r\n  padding: 20px;\r\n  margin-bottom: 20px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.header-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\r\n}\r\n\r\n.back-button {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  background: #f8f9fa;\r\n  border: 1px solid #dee2e6;\r\n  border-radius: 8px;\r\n  padding: 12px 16px;\r\n  color: #495057;\r\n  text-decoration: none;\r\n  font-weight: 500;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.back-button:hover:not(:disabled) {\r\n  background: #e9ecef;\r\n  border-color: #adb5bd;\r\n}\r\n\r\n.back-button:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.back-icon {\r\n  font-size: 16px;\r\n}\r\n\r\n.checkout-title {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 12px;\r\n}\r\n\r\n.title-icon {\r\n  font-size: 24px;\r\n}\r\n\r\n.checkout-title h1 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 24px;\r\n  font-weight: 600;\r\n}\r\n\r\n.checkout-main {\r\n  display: grid;\r\n  grid-template-columns: 1fr 1fr;\r\n  gap: 8px;\r\n  flex: 1;\r\n  min-height: 0;\r\n  overflow: hidden;\r\n}\r\n\r\n.checkout-left {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 8px;\r\n  min-height: 0;\r\n  overflow: hidden;\r\n}\r\n\r\n.checkout-right {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 8px;\r\n  min-height: 0;\r\n  overflow: hidden;\r\n}\r\n\r\n.checkout-card {\r\n  background: white;\r\n  border-radius: 6px;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\r\n  overflow: hidden;\r\n  display: flex;\r\n  flex-direction: column;\r\n  min-height: 0;\r\n}\r\n\r\n.order-summary-card {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.payment-card {\r\n  flex: 1;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.customer-card {\r\n  flex-shrink: 0;\r\n}\r\n\r\n.card-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 8px 12px;\r\n  background: #f8f9fa;\r\n  border-bottom: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.card-header h2 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n}\r\n\r\n.item-count {\r\n  background: #007bff;\r\n  color: white;\r\n  padding: 3px 6px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 600;\r\n}\r\n\r\n.order-items {\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n}\r\n\r\n.order-item {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 6px 0;\r\n  border-bottom: 1px solid #f1f3f4;\r\n}\r\n\r\n.order-item:last-child {\r\n  border-bottom: none;\r\n}\r\n\r\n.item-details h4 {\r\n  margin: 0 0 2px 0;\r\n  color: #333;\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n  line-height: 1.3;\r\n}\r\n\r\n.item-sku {\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n}\r\n\r\n.item-meta {\r\n  text-align: right;\r\n}\r\n\r\n.item-quantity {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n  margin-bottom: 2px;\r\n}\r\n\r\n.item-price {\r\n  color: #333;\r\n  font-weight: 600;\r\n  font-size: 12px;\r\n}\r\n\r\n.order-totals {\r\n  padding: 8px 12px;\r\n  background: #f8f9fa;\r\n  border-top: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.total-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 3px 0;\r\n  font-size: 11px;\r\n}\r\n\r\n.total-row.grand-total {\r\n  border-top: 2px solid #dee2e6;\r\n  padding-top: 6px;\r\n  margin-top: 4px;\r\n  font-size: 13px;\r\n  font-weight: 700;\r\n  color: #333;\r\n}\r\n\r\n.total-amount {\r\n  color: #28a745;\r\n  font-weight: 700;\r\n  font-size: 14px;\r\n}\r\n\r\n.total-row.discount-row .discount-amount {\r\n  color: #dc3545;\r\n  font-weight: 600;\r\n}\r\n\r\n.discount-input-section {\r\n  padding: 8px 12px;\r\n  border-top: 1px solid #e9ecef;\r\n  background: #fff;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.discount-input-section .error-text {\r\n  display: block;\r\n  font-size: 11px;\r\n  color: #dc3545;\r\n  margin-top: 4px;\r\n}\r\n\r\n.payment-options {\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n}\r\n\r\n.payment-option {\r\n  display: block;\r\n  background: white;\r\n  border: 2px solid #e9ecef;\r\n  border-radius: 5px;\r\n  padding: 8px 10px;\r\n  margin-bottom: 6px;\r\n  cursor: pointer;\r\n  transition: all 0.2s ease;\r\n  position: relative;\r\n}\r\n\r\n.payment-option:hover {\r\n  border-color: #007bff;\r\n  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.payment-option.selected {\r\n  border-color: #007bff;\r\n  background: #f8f9ff;\r\n}\r\n\r\n.payment-option input[type=\"radio\"] {\r\n  position: absolute;\r\n  opacity: 0;\r\n  width: 0;\r\n  height: 0;\r\n}\r\n\r\n.payment-content {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.payment-icon {\r\n  font-size: 16px;\r\n  width: 28px;\r\n  text-align: center;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.cash-icon {\r\n  color: #28a745;\r\n}\r\n\r\n.mpesa-icon {\r\n  color: #007bff;\r\n}\r\n\r\n.credit-icon {\r\n  color: #ff9800;\r\n}\r\n\r\n.payment-info {\r\n  flex: 1;\r\n}\r\n\r\n.payment-name {\r\n  display: block;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 1px;\r\n  font-size: 12px;\r\n  line-height: 1.2;\r\n}\r\n\r\n.payment-desc {\r\n  color: #6c757d;\r\n  font-size: 10px;\r\n  line-height: 1.2;\r\n}\r\n\r\n.payment-check {\r\n  color: #007bff;\r\n  font-size: 16px;\r\n  font-weight: bold;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.cash-payment-section {\r\n  padding: 8px 12px;\r\n  border-top: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.credit-payment-section {\r\n  padding: 8px 12px;\r\n  border-top: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.credit-info-banner {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  gap: 6px;\r\n  background: #fff3cd;\r\n  border: 1px solid #ffc107;\r\n  border-radius: 5px;\r\n  padding: 6px 8px;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.info-icon {\r\n  font-size: 16px;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.info-text {\r\n  flex: 1;\r\n}\r\n\r\n.info-text strong {\r\n  display: block;\r\n  color: #856404;\r\n  font-size: 11px;\r\n  margin-bottom: 2px;\r\n  font-weight: 600;\r\n}\r\n\r\n.info-text p {\r\n  margin: 0;\r\n  color: #856404;\r\n  font-size: 10px;\r\n  line-height: 1.3;\r\n}\r\n\r\n.input-group {\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.input-group:last-child {\r\n  margin-bottom: 0;\r\n}\r\n\r\n.input-label {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  margin-bottom: 4px;\r\n  font-size: 11px;\r\n}\r\n\r\n.label-icon {\r\n  font-size: 12px;\r\n}\r\n\r\n.input-wrapper {\r\n  position: relative;\r\n}\r\n\r\n.currency-symbol {\r\n  position: absolute;\r\n  left: 10px;\r\n  top: 50%;\r\n  transform: translateY(-50%);\r\n  color: #6c757d;\r\n  font-weight: 600;\r\n  z-index: 1;\r\n  font-size: 11px;\r\n}\r\n\r\n.currency-input {\r\n  width: 100%;\r\n  padding: 6px 8px 6px 26px;\r\n  border: 1.5px solid #e9ecef;\r\n  border-radius: 5px;\r\n  font-size: 13px;\r\n  font-weight: 600;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.currency-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.currency-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.input-hint {\r\n  display: block;\r\n  color: #6c757d;\r\n  font-size: 9px;\r\n  margin-top: 2px;\r\n}\r\n\r\n.change-display {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  background: #d4edda;\r\n  border: 1px solid #c3e6cb;\r\n  border-radius: 5px;\r\n  padding: 6px 8px;\r\n  margin-top: 6px;\r\n}\r\n\r\n.change-icon {\r\n  font-size: 16px;\r\n  color: #155724;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.change-info {\r\n  flex: 1;\r\n}\r\n\r\n.change-label {\r\n  display: block;\r\n  color: #155724;\r\n  font-weight: 600;\r\n  font-size: 10px;\r\n}\r\n\r\n.change-amount {\r\n  color: #155724;\r\n  font-weight: 700;\r\n  font-size: 12px;\r\n}\r\n\r\n.customer-card .card-header {\r\n  position: relative;\r\n}\r\n\r\n.optional-badge {\r\n  background: #17a2b8;\r\n  color: white;\r\n  padding: 2px 8px;\r\n  border-radius: 10px;\r\n  font-size: 10px;\r\n  font-weight: 500;\r\n  text-transform: uppercase;\r\n}\r\n\r\n.required-badge {\r\n  background: #dc3545;\r\n}\r\n\r\n.required-indicator {\r\n  color: #dc3545;\r\n  margin-left: 4px;\r\n}\r\n\r\n.customer-form {\r\n  padding: 8px 12px;\r\n}\r\n\r\n.text-input {\r\n  width: 100%;\r\n  padding: 6px 8px;\r\n  border: 1.5px solid #e9ecef;\r\n  border-radius: 5px;\r\n  font-size: 12px;\r\n  color: #333;\r\n  background: white;\r\n  transition: border-color 0.2s ease;\r\n  font-family: inherit;\r\n}\r\n\r\n.text-input[type=\"date\"] {\r\n  padding: 6px 8px;\r\n}\r\n\r\ntextarea.text-input {\r\n  resize: vertical;\r\n  min-height: 45px;\r\n  max-height: 70px;\r\n  line-height: 1.4;\r\n}\r\n\r\n.text-input:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.text-input.error {\r\n  border-color: #dc3545;\r\n  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);\r\n}\r\n\r\n.text-input::placeholder {\r\n  color: #adb5bd;\r\n}\r\n\r\n/* Error Message Styles */\r\n.error-message {\r\n  color: #dc3545;\r\n  font-size: 10px;\r\n  margin-top: 3px;\r\n  display: block;\r\n}\r\n\r\n.error-text {\r\n  font-size: 10px;\r\n}\r\n\r\n.checkout-actions {\r\n  display: flex;\r\n  gap: 8px;\r\n  justify-content: flex-end;\r\n  padding: 8px 12px;\r\n  background: white;\r\n  border-radius: 6px;\r\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\r\n  flex-shrink: 0;\r\n  margin-top: auto;\r\n}\r\n\r\n.secondary-btn {\r\n  background: #6c757d;\r\n  color: white;\r\n  border: none;\r\n  padding: 8px 14px;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  transition: background-color 0.2s ease;\r\n}\r\n\r\n.secondary-btn:hover:not(:disabled) {\r\n  background: #5a6268;\r\n}\r\n\r\n.secondary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.primary-btn {\r\n  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);\r\n  color: white;\r\n  border: none;\r\n  padding: 8px 14px;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  font-size: 11px;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 5px;\r\n  transition: all 0.2s ease;\r\n  box-shadow: 0 1px 3px rgba(40, 167, 69, 0.2);\r\n}\r\n\r\n.primary-btn:hover:not(:disabled) {\r\n  background: linear-gradient(135deg, #218838 0%, #1aa085 100%);\r\n  transform: translateY(-1px);\r\n  box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);\r\n}\r\n\r\n.primary-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n  transform: none;\r\n}\r\n\r\n.btn-icon {\r\n  font-size: 14px;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 16px;\r\n  height: 16px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top: 2px solid white;\r\n  border-radius: 50%;\r\n  animation: spin 1s linear infinite;\r\n}\r\n\r\n@keyframes spin {\r\n  0% { transform: rotate(0deg); }\r\n  100% { transform: rotate(360deg); }\r\n}\r\n\r\n/* Scrollbar styling for compact lists */\r\n.order-items::-webkit-scrollbar,\r\n.payment-options::-webkit-scrollbar,\r\n.split-payments-list::-webkit-scrollbar,\r\n.split-payment-section::-webkit-scrollbar {\r\n  width: 6px;\r\n}\r\n\r\n.order-items::-webkit-scrollbar-track,\r\n.payment-options::-webkit-scrollbar-track,\r\n.split-payments-list::-webkit-scrollbar-track,\r\n.split-payment-section::-webkit-scrollbar-track {\r\n  background: #f1f1f1;\r\n  border-radius: 3px;\r\n}\r\n\r\n.order-items::-webkit-scrollbar-thumb,\r\n.payment-options::-webkit-scrollbar-thumb,\r\n.split-payments-list::-webkit-scrollbar-thumb,\r\n.split-payment-section::-webkit-scrollbar-thumb {\r\n  background: #c1c1c1;\r\n  border-radius: 3px;\r\n}\r\n\r\n.order-items::-webkit-scrollbar-thumb:hover,\r\n.payment-options::-webkit-scrollbar-thumb:hover,\r\n.split-payments-list::-webkit-scrollbar-thumb:hover,\r\n.split-payment-section::-webkit-scrollbar-thumb:hover {\r\n  background: #a8a8a8;\r\n}\r\n\r\n/* Responsive Design */\r\n@media (max-width: 768px) {\r\n  .checkout-page {\r\n    height: auto;\r\n    min-height: 100vh;\r\n  }\r\n  \r\n  .checkout-main {\r\n    grid-template-columns: 1fr;\r\n  }\r\n\r\n  .checkout-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .header-content {\r\n    flex-direction: column;\r\n    gap: 16px;\r\n    text-align: center;\r\n  }\r\n\r\n  .checkout-title h1 {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .checkout-card {\r\n    margin-bottom: 16px;\r\n  }\r\n\r\n  .card-header {\r\n    padding: 16px;\r\n  }\r\n\r\n  .order-items,\r\n  .payment-options,\r\n  .cash-payment-section,\r\n  .customer-form,\r\n  .checkout-actions {\r\n    padding: 16px;\r\n  }\r\n\r\n  .checkout-actions {\r\n    flex-direction: column;\r\n  }\r\n\r\n  .secondary-btn,\r\n  .primary-btn {\r\n    width: 100%;\r\n    justify-content: center;\r\n  }\r\n}\r\n\r\n/* Split Payment Styles */\r\n.split-payment-toggle {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 6px;\r\n  cursor: pointer;\r\n  font-size: 11px;\r\n  font-weight: 500;\r\n  color: #495057;\r\n  user-select: none;\r\n}\r\n\r\n.split-payment-toggle input[type=\"checkbox\"] {\r\n  width: 16px;\r\n  height: 16px;\r\n  cursor: pointer;\r\n  accent-color: #007bff;\r\n}\r\n\r\n.split-payment-section {\r\n  padding: 8px 12px;\r\n  flex: 1;\r\n  overflow-y: auto;\r\n  min-height: 0;\r\n  display: flex;\r\n  flex-direction: column;\r\n}\r\n\r\n.split-payment-header {\r\n  margin-bottom: 8px;\r\n  padding: 8px 10px;\r\n  background: #f8f9fa;\r\n  border-radius: 5px;\r\n  border: 1px solid #e9ecef;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.split-payment-info {\r\n  margin: 0 0 6px 0;\r\n  font-size: 11px;\r\n  color: #6b7280;\r\n  line-height: 1.4;\r\n}\r\n\r\n.split-payment-info strong {\r\n  color: #111827;\r\n  font-weight: 600;\r\n}\r\n\r\n.remaining-amount {\r\n  margin-top: 6px;\r\n  padding: 6px 8px;\r\n  background: white;\r\n  border-radius: 5px;\r\n  font-size: 11px;\r\n  color: #374151;\r\n  border: 1px solid #d1d5db;\r\n}\r\n\r\n.remaining-amount strong.success {\r\n  color: #059669;\r\n}\r\n\r\n.remaining-amount strong.warning {\r\n  color: #d97706;\r\n}\r\n\r\n.remaining-amount strong.error {\r\n  color: #dc2626;\r\n}\r\n\r\n.split-payments-list {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 16px;\r\n  margin-bottom: 16px;\r\n}\r\n\r\n.split-payment-item {\r\n  padding: 16px;\r\n  background: white;\r\n  border: 2px solid #e5e7eb;\r\n  border-radius: 10px;\r\n  transition: all 0.2s ease;\r\n}\r\n\r\n.split-payment-item:hover {\r\n  border-color: #d1d5db;\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);\r\n}\r\n\r\n.split-payment-row {\r\n  display: flex;\r\n  gap: 8px;\r\n  align-items: flex-start;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.split-payment-method {\r\n  flex: 0 0 140px;\r\n}\r\n\r\n.split-method-select {\r\n  width: 100%;\r\n  padding: 6px 8px;\r\n  border: 1.5px solid #d1d5db;\r\n  border-radius: 5px;\r\n  font-size: 12px;\r\n  background: white;\r\n  color: #111827;\r\n  cursor: pointer;\r\n  transition: border-color 0.2s ease;\r\n}\r\n\r\n.split-method-select:focus {\r\n  outline: none;\r\n  border-color: #007bff;\r\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);\r\n}\r\n\r\n.split-payment-amount {\r\n  flex: 1;\r\n}\r\n\r\n.split-payment-amount label {\r\n  display: block;\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n  color: #374151;\r\n  margin-bottom: 6px;\r\n}\r\n\r\n.split-payment-details {\r\n  margin-top: 12px;\r\n  padding-top: 12px;\r\n  border-top: 1px solid #e5e7eb;\r\n}\r\n\r\n.split-payment-details label {\r\n  display: block;\r\n  font-size: 12px;\r\n  font-weight: 600;\r\n  color: #374151;\r\n  margin-bottom: 6px;\r\n  margin-top: 12px;\r\n}\r\n\r\n.split-payment-details label:first-child {\r\n  margin-top: 0;\r\n}\r\n\r\n.remove-split-btn {\r\n  flex: 0 0 28px;\r\n  width: 28px;\r\n  height: 28px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  background: #fee2e2;\r\n  color: #dc2626;\r\n  border: 1px solid #fecaca;\r\n  border-radius: 5px;\r\n  cursor: pointer;\r\n  font-size: 14px;\r\n  font-weight: bold;\r\n  transition: all 0.2s ease;\r\n  margin-top: 20px;\r\n}\r\n\r\n.remove-split-btn:hover {\r\n  background: #fecaca;\r\n  border-color: #f87171;\r\n  transform: scale(1.05);\r\n}\r\n\r\n.remove-split-btn:active {\r\n  transform: scale(0.95);\r\n}\r\n\r\n.add-split-payment-btn {\r\n  width: 100%;\r\n  padding: 8px 12px;\r\n  background: #f3f4f6;\r\n  color: #374151;\r\n  border: 1.5px dashed #d1d5db;\r\n  border-radius: 5px;\r\n  font-size: 11px;\r\n  font-weight: 500;\r\n  cursor: pointer;\r\n  transition: all 0.2s ease;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  gap: 6px;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.add-split-payment-btn:hover {\r\n  background: #e5e7eb;\r\n  border-color: #9ca3af;\r\n  color: #111827;\r\n}\r\n\r\n.change-display-small {\r\n  margin-top: 4px;\r\n  padding: 4px 6px;\r\n  background: #eff6ff;\r\n  border: 1px solid #bfdbfe;\r\n  border-radius: 4px;\r\n  font-size: 10px;\r\n  color: #1e40af;\r\n  font-weight: 500;\r\n}\r\n\r\n/* M-Pesa Payment Modal Styles */\r\n.mpesa-payment-modal {\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  right: 0;\r\n  bottom: 0;\r\n  background: rgba(0, 0, 0, 0.6);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  z-index: 10000;\r\n  animation: fadeIn 0.2s ease-out;\r\n}\r\n\r\n@keyframes fadeIn {\r\n  from {\r\n    opacity: 0;\r\n  }\r\n  to {\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.mpesa-payment-content {\r\n  background: white;\r\n  border-radius: 12px;\r\n  width: 90%;\r\n  max-width: 500px;\r\n  max-height: 90vh;\r\n  display: flex;\r\n  flex-direction: column;\r\n  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);\r\n  animation: slideUp 0.3s ease-out;\r\n}\r\n\r\n@keyframes slideUp {\r\n  from {\r\n    transform: translateY(30px);\r\n    opacity: 0;\r\n  }\r\n  to {\r\n    transform: translateY(0);\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.mpesa-payment-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 20px;\r\n  border-bottom: 1px solid #e9ecef;\r\n}\r\n\r\n.mpesa-payment-header h2 {\r\n  margin: 0;\r\n  font-size: 20px;\r\n  color: #212529;\r\n}\r\n\r\n.close-btn {\r\n  background: none;\r\n  border: none;\r\n  font-size: 24px;\r\n  color: #6c757d;\r\n  cursor: pointer;\r\n  padding: 0;\r\n  width: 32px;\r\n  height: 32px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  border-radius: 4px;\r\n  transition: all 0.2s;\r\n}\r\n\r\n.close-btn:hover:not(:disabled) {\r\n  background: #f8f9fa;\r\n  color: #212529;\r\n}\r\n\r\n.close-btn:disabled {\r\n  opacity: 0.5;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.mpesa-payment-body {\r\n  padding: 24px;\r\n  flex: 1;\r\n  overflow-y: auto;\r\n}\r\n\r\n.payment-amount-display {\r\n  text-align: center;\r\n  padding: 20px;\r\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n  border-radius: 8px;\r\n  margin-bottom: 24px;\r\n  color: white;\r\n}\r\n\r\n.amount-label {\r\n  font-size: 14px;\r\n  opacity: 0.9;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.amount-value {\r\n  font-size: 32px;\r\n  font-weight: bold;\r\n}\r\n\r\n.phone-input-section {\r\n  margin-bottom: 20px;\r\n}\r\n\r\n.payment-status-section {\r\n  text-align: center;\r\n  padding: 20px;\r\n}\r\n\r\n.status-icon {\r\n  font-size: 64px;\r\n  margin-bottom: 16px;\r\n  animation: pulse 2s infinite;\r\n}\r\n\r\n.status-icon.pending {\r\n  animation: pulse 2s infinite;\r\n}\r\n\r\n.status-icon.success {\r\n  animation: none;\r\n}\r\n\r\n.status-icon.failed {\r\n  animation: none;\r\n}\r\n\r\n@keyframes pulse {\r\n  0%, 100% {\r\n    opacity: 1;\r\n  }\r\n  50% {\r\n    opacity: 0.5;\r\n  }\r\n}\r\n\r\n.status-message {\r\n  font-size: 18px;\r\n  font-weight: 600;\r\n  color: #212529;\r\n  margin-bottom: 16px;\r\n}\r\n\r\n.payment-instructions {\r\n  background: #f8f9fa;\r\n  border-radius: 8px;\r\n  padding: 16px;\r\n  margin-top: 16px;\r\n  text-align: left;\r\n}\r\n\r\n.payment-instructions p {\r\n  margin: 8px 0;\r\n  color: #495057;\r\n  font-size: 14px;\r\n}\r\n\r\n.payment-instructions p:first-child {\r\n  margin-top: 0;\r\n}\r\n\r\n.payment-instructions p:last-child {\r\n  margin-bottom: 0;\r\n}\r\n\r\n.waiting-text {\r\n  font-weight: 600;\r\n  color: #007bff;\r\n  margin-top: 12px !important;\r\n}\r\n\r\n.mpesa-payment-footer {\r\n  display: flex;\r\n  gap: 12px;\r\n  padding: 20px;\r\n  border-top: 1px solid #e9ecef;\r\n  justify-content: flex-end;\r\n}\r\n\r\n.mpesa-payment-footer .secondary-btn,\r\n.mpesa-payment-footer .primary-btn {\r\n  min-width: 120px;\r\n}\r\n\r\n.loading-spinner {\r\n  width: 16px;\r\n  height: 16px;\r\n  border: 2px solid rgba(255, 255, 255, 0.3);\r\n  border-top-color: white;\r\n  border-radius: 50%;\r\n  animation: spin 0.6s linear infinite;\r\n  display: inline-block;\r\n  margin-right: 8px;\r\n}\r\n\r\n@keyframes spin {\r\n  to {\r\n    transform: rotate(360deg);\r\n  }\r\n}\r\n\r\n/* Split Payment Status Styles */\r\n.payment-status-completed {\r\n  padding: 12px;\r\n  background: #f0fdf4;\r\n  border: 1px solid #86efac;\r\n  border-radius: 8px;\r\n  margin-top: 8px;\r\n}\r\n\r\n.payment-status-processing {\r\n  padding: 12px;\r\n  background: #fffbeb;\r\n  border: 1px solid #fde047;\r\n  border-radius: 8px;\r\n  margin-top: 8px;\r\n}\r\n\r\n.status-badge {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  font-weight: 600;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.status-badge.success {\r\n  color: #166534;\r\n}\r\n\r\n.status-badge.processing {\r\n  color: #854d0e;\r\n}\r\n\r\n.status-icon {\r\n  font-size: 18px;\r\n}\r\n\r\n.transaction-info {\r\n  font-size: 12px;\r\n  color: #374151;\r\n  margin-top: 4px;\r\n}\r\n\r\n.transaction-info strong {\r\n  color: #111827;\r\n  margin-right: 4px;\r\n}\r\n\r\n.retry-payment-btn {\r\n  margin-top: 8px;\r\n  padding: 6px 12px;\r\n  background: #f3f4f6;\r\n  border: 1px solid #d1d5db;\r\n  border-radius: 6px;\r\n  font-size: 12px;\r\n  cursor: pointer;\r\n  transition: all 0.2s;\r\n}\r\n\r\n.retry-payment-btn:hover {\r\n  background: #e5e7eb;\r\n  border-color: #9ca3af;\r\n}\r\n\r\n.mpesa-payment-action {\r\n  margin-top: 8px;\r\n}\r\n\r\n.initiate-mpesa-btn {\r\n  width: 100%;\r\n  padding: 10px 16px;\r\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n  color: white;\r\n  border: none;\r\n  border-radius: 8px;\r\n  font-weight: 600;\r\n  font-size: 14px;\r\n  cursor: pointer;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  gap: 8px;\r\n  transition: all 0.2s;\r\n}\r\n\r\n.initiate-mpesa-btn:hover:not(:disabled) {\r\n  transform: translateY(-1px);\r\n  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);\r\n}\r\n\r\n.initiate-mpesa-btn:disabled {\r\n  opacity: 0.5;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.payment-hint {\r\n  display: block;\r\n  margin-top: 6px;\r\n  font-size: 11px;\r\n  color: #6b7280;\r\n  text-align: center;\r\n}\r\n\r\n.loading-spinner-small {\r\n  width: 14px;\r\n  height: 14px;\r\n  border: 2px solid rgba(133, 77, 14, 0.3);\r\n  border-top-color: #854d0e;\r\n  border-radius: 50%;\r\n  animation: spin 0.6s linear infinite;\r\n  display: inline-block;\r\n}\r\n\r\n.complete-sale-btn:disabled {\r\n  opacity: 0.6;\r\n  cursor: not-allowed;\r\n  background: #9ca3af;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -3576,10 +3950,98 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.sync-status {
   white-space: nowrap;
 }
 
+.sync-progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+}
+
+.sync-progress-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 4px;
+  background: #e9ecef;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+.progress-stats {
+  font-size: 8px;
+  color: #6c757d;
+  display: flex;
+  gap: 8px;
+}
+
+.cancel-sync-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 9px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  align-self: flex-start;
+}
+
+.cancel-sync-button:hover {
+  background: #c82333;
+}
+
 .last-sync {
   color: #6c757d;
   font-size: 9px;
   white-space: nowrap;
+}
+
+.queue-warning {
+  margin-top: 4px;
+  padding: 4px 6px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.queue-warning.warning {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffc107;
+}
+
+.queue-warning.critical {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #dc3545;
+  animation: pulse-warning 1.5s infinite;
+}
+
+.queue-alert {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@keyframes pulse-warning {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* Responsive adjustments */
@@ -3594,7 +4056,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.sync-status {
     margin-left: 0;
   }
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/components/SyncStatus.css"],"names":[],"mappings":"AAAA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,gBAAgB;EAChB,mBAAmB;EACnB,kBAAkB;EAClB,eAAe;EACf,yBAAyB;AAC3B;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,UAAU;EACV,WAAW;EACX,kBAAkB;EAClB,4BAA4B;EAC5B,cAAc;AAChB;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE;IACE,UAAU;EACZ;EACA;IACE,YAAY;EACd;EACA;IACE,UAAU;EACZ;AACF;;AAEA;EACE,gBAAgB;EAChB,cAAc;EACd,eAAe;EACf,mBAAmB;AACrB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,cAAc;EACd,mBAAmB;EACnB,gBAAgB;EAChB,kBAAkB;EAClB,cAAc;EACd,gBAAgB;EAChB,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,gBAAgB;EAChB,kBAAkB;EAClB,cAAc;EACd,eAAe;EACf,iCAAiC;EACjC,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,mBAAmB;AACrB;;AAEA;EACE,cAAc;EACd,cAAc;EACd,gBAAgB;EAChB,kBAAkB;EAClB,mBAAmB;AACrB;;AAEA;EACE,cAAc;EACd,cAAc;EACd,mBAAmB;AACrB;;AAEA,2BAA2B;AAC3B;EACE;IACE,sBAAsB;IACtB,uBAAuB;IACvB,QAAQ;EACV;;EAEA;IACE,cAAc;EAChB;AACF","sourcesContent":[".sync-status {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 4px 8px;\r\n  background: #f8f9fa;\r\n  border-radius: 4px;\r\n  font-size: 10px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.sync-status-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 4px;\r\n}\r\n\r\n.status-dot {\r\n  width: 6px;\r\n  height: 6px;\r\n  border-radius: 50%;\r\n  animation: pulse 2s infinite;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.status-dot.online {\r\n  background-color: #28a745;\r\n}\r\n\r\n.status-dot.offline {\r\n  background-color: #dc3545;\r\n}\r\n\r\n@keyframes pulse {\r\n  0% {\r\n    opacity: 1;\r\n  }\r\n  50% {\r\n    opacity: 0.5;\r\n  }\r\n  100% {\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.status-text {\r\n  font-weight: 600;\r\n  color: #495057;\r\n  font-size: 10px;\r\n  white-space: nowrap;\r\n}\r\n\r\n.pending-syncs {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 4px;\r\n}\r\n\r\n.pending-count {\r\n  color: #856404;\r\n  background: #fff3cd;\r\n  padding: 2px 4px;\r\n  border-radius: 3px;\r\n  font-size: 9px;\r\n  font-weight: 600;\r\n  white-space: nowrap;\r\n}\r\n\r\n.sync-button {\r\n  background: #007bff;\r\n  color: white;\r\n  border: none;\r\n  padding: 3px 6px;\r\n  border-radius: 3px;\r\n  font-size: 9px;\r\n  cursor: pointer;\r\n  transition: background-color 0.2s;\r\n  white-space: nowrap;\r\n}\r\n\r\n.sync-button:hover:not(:disabled) {\r\n  background: #0056b3;\r\n}\r\n\r\n.sync-button:disabled {\r\n  background: #6c757d;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.auto-sync-indicator {\r\n  color: #667eea;\r\n  font-size: 9px;\r\n  font-weight: 600;\r\n  font-style: italic;\r\n  white-space: nowrap;\r\n}\r\n\r\n.last-sync {\r\n  color: #6c757d;\r\n  font-size: 9px;\r\n  white-space: nowrap;\r\n}\r\n\r\n/* Responsive adjustments */\r\n@media (max-width: 768px) {\r\n  .sync-status {\r\n    flex-direction: column;\r\n    align-items: flex-start;\r\n    gap: 6px;\r\n  }\r\n\r\n  .last-sync {\r\n    margin-left: 0;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/components/SyncStatus.css"],"names":[],"mappings":"AAAA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;EACR,gBAAgB;EAChB,mBAAmB;EACnB,kBAAkB;EAClB,eAAe;EACf,yBAAyB;AAC3B;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,UAAU;EACV,WAAW;EACX,kBAAkB;EAClB,4BAA4B;EAC5B,cAAc;AAChB;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE;IACE,UAAU;EACZ;EACA;IACE,YAAY;EACd;EACA;IACE,UAAU;EACZ;AACF;;AAEA;EACE,gBAAgB;EAChB,cAAc;EACd,eAAe;EACf,mBAAmB;AACrB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE,cAAc;EACd,mBAAmB;EACnB,gBAAgB;EAChB,kBAAkB;EAClB,cAAc;EACd,gBAAgB;EAChB,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,gBAAgB;EAChB,kBAAkB;EAClB,cAAc;EACd,eAAe;EACf,iCAAiC;EACjC,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,mBAAmB;AACrB;;AAEA;EACE,cAAc;EACd,cAAc;EACd,gBAAgB;EAChB,kBAAkB;EAClB,mBAAmB;AACrB;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,QAAQ;EACR,gBAAgB;AAClB;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,QAAQ;AACV;;AAEA;EACE,WAAW;EACX,WAAW;EACX,mBAAmB;EACnB,kBAAkB;EAClB,gBAAgB;AAClB;;AAEA;EACE,YAAY;EACZ,4DAA4D;EAC5D,2BAA2B;EAC3B,kBAAkB;AACpB;;AAEA;EACE,cAAc;EACd,cAAc;EACd,aAAa;EACb,QAAQ;AACV;;AAEA;EACE,mBAAmB;EACnB,YAAY;EACZ,YAAY;EACZ,gBAAgB;EAChB,kBAAkB;EAClB,cAAc;EACd,eAAe;EACf,iCAAiC;EACjC,sBAAsB;AACxB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,cAAc;EACd,cAAc;EACd,mBAAmB;AACrB;;AAEA;EACE,eAAe;EACf,gBAAgB;EAChB,kBAAkB;EAClB,cAAc;EACd,gBAAgB;EAChB,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,cAAc;EACd,yBAAyB;AAC3B;;AAEA;EACE,mBAAmB;EACnB,cAAc;EACd,yBAAyB;EACzB,sCAAsC;AACxC;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,QAAQ;AACV;;AAEA;EACE;IACE,UAAU;EACZ;EACA;IACE,YAAY;EACd;AACF;;AAEA,2BAA2B;AAC3B;EACE;IACE,sBAAsB;IACtB,uBAAuB;IACvB,QAAQ;EACV;;EAEA;IACE,cAAc;EAChB;AACF","sourcesContent":[".sync-status {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n  padding: 4px 8px;\r\n  background: #f8f9fa;\r\n  border-radius: 4px;\r\n  font-size: 10px;\r\n  border: 1px solid #e9ecef;\r\n}\r\n\r\n.sync-status-indicator {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 4px;\r\n}\r\n\r\n.status-dot {\r\n  width: 6px;\r\n  height: 6px;\r\n  border-radius: 50%;\r\n  animation: pulse 2s infinite;\r\n  flex-shrink: 0;\r\n}\r\n\r\n.status-dot.online {\r\n  background-color: #28a745;\r\n}\r\n\r\n.status-dot.offline {\r\n  background-color: #dc3545;\r\n}\r\n\r\n@keyframes pulse {\r\n  0% {\r\n    opacity: 1;\r\n  }\r\n  50% {\r\n    opacity: 0.5;\r\n  }\r\n  100% {\r\n    opacity: 1;\r\n  }\r\n}\r\n\r\n.status-text {\r\n  font-weight: 600;\r\n  color: #495057;\r\n  font-size: 10px;\r\n  white-space: nowrap;\r\n}\r\n\r\n.pending-syncs {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 4px;\r\n}\r\n\r\n.pending-count {\r\n  color: #856404;\r\n  background: #fff3cd;\r\n  padding: 2px 4px;\r\n  border-radius: 3px;\r\n  font-size: 9px;\r\n  font-weight: 600;\r\n  white-space: nowrap;\r\n}\r\n\r\n.sync-button {\r\n  background: #007bff;\r\n  color: white;\r\n  border: none;\r\n  padding: 3px 6px;\r\n  border-radius: 3px;\r\n  font-size: 9px;\r\n  cursor: pointer;\r\n  transition: background-color 0.2s;\r\n  white-space: nowrap;\r\n}\r\n\r\n.sync-button:hover:not(:disabled) {\r\n  background: #0056b3;\r\n}\r\n\r\n.sync-button:disabled {\r\n  background: #6c757d;\r\n  cursor: not-allowed;\r\n}\r\n\r\n.auto-sync-indicator {\r\n  color: #667eea;\r\n  font-size: 9px;\r\n  font-weight: 600;\r\n  font-style: italic;\r\n  white-space: nowrap;\r\n}\r\n\r\n.sync-progress-container {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 4px;\r\n  min-width: 200px;\r\n}\r\n\r\n.sync-progress-info {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 3px;\r\n}\r\n\r\n.progress-bar-container {\r\n  width: 100%;\r\n  height: 4px;\r\n  background: #e9ecef;\r\n  border-radius: 2px;\r\n  overflow: hidden;\r\n}\r\n\r\n.progress-bar {\r\n  height: 100%;\r\n  background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);\r\n  transition: width 0.3s ease;\r\n  border-radius: 2px;\r\n}\r\n\r\n.progress-stats {\r\n  font-size: 8px;\r\n  color: #6c757d;\r\n  display: flex;\r\n  gap: 8px;\r\n}\r\n\r\n.cancel-sync-button {\r\n  background: #dc3545;\r\n  color: white;\r\n  border: none;\r\n  padding: 3px 8px;\r\n  border-radius: 3px;\r\n  font-size: 9px;\r\n  cursor: pointer;\r\n  transition: background-color 0.2s;\r\n  align-self: flex-start;\r\n}\r\n\r\n.cancel-sync-button:hover {\r\n  background: #c82333;\r\n}\r\n\r\n.last-sync {\r\n  color: #6c757d;\r\n  font-size: 9px;\r\n  white-space: nowrap;\r\n}\r\n\r\n.queue-warning {\r\n  margin-top: 4px;\r\n  padding: 4px 6px;\r\n  border-radius: 3px;\r\n  font-size: 9px;\r\n  font-weight: 600;\r\n  white-space: nowrap;\r\n}\r\n\r\n.queue-warning.warning {\r\n  background: #fff3cd;\r\n  color: #856404;\r\n  border: 1px solid #ffc107;\r\n}\r\n\r\n.queue-warning.critical {\r\n  background: #f8d7da;\r\n  color: #721c24;\r\n  border: 1px solid #dc3545;\r\n  animation: pulse-warning 1.5s infinite;\r\n}\r\n\r\n.queue-alert {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 4px;\r\n}\r\n\r\n@keyframes pulse-warning {\r\n  0%, 100% {\r\n    opacity: 1;\r\n  }\r\n  50% {\r\n    opacity: 0.7;\r\n  }\r\n}\r\n\r\n/* Responsive adjustments */\r\n@media (max-width: 768px) {\r\n  .sync-status {\r\n    flex-direction: column;\r\n    align-items: flex-start;\r\n    gap: 6px;\r\n  }\r\n\r\n  .last-sync {\r\n    margin-left: 0;\r\n  }\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -3750,6 +4212,16 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Dark Mode Styles */
   background: #4a4a4a;
 }
 
+[data-theme="dark"] .icon-btn.exit-btn {
+  border-color: #6c757d;
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .icon-btn.exit-btn:hover {
+  background: #5a6268;
+  color: white;
+}
+
 /* Responsive Layout Improvements */
 @media (max-width: 1024px) {
   .pos-content {
@@ -3863,7 +4335,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Dark Mode Styles */
   }
 }
 
-`, "",{"version":3,"sources":["webpack://./src/renderer/dark-mode.css"],"names":[],"mappings":"AAAA,qBAAqB;AACrB;EACE,kBAAkB;AACpB;;AAEA;EACE,yBAAyB;EACzB,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,4BAA4B;AAC9B;;AAEA;EACE,cAAc;AAChB;;AAEA;;EAEE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,mBAAmB;EACnB,wCAAwC;AAC1C;;AAEA;EACE,cAAc;AAChB;;AAEA;;EAEE,cAAc;AAChB;;AAEA;;;EAGE,mBAAmB;EACnB,qBAAqB;EACrB,cAAc;AAChB;;AAEA;;;EAGE,qBAAqB;EACrB,mBAAmB;AACrB;;AAEA;EACE,4BAA4B;AAC9B;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;;EAEE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;;EAEE,mBAAmB;AACrB;;AAEA,mCAAmC;AACnC;EACE;IACE,sBAAsB;EACxB;;EAEA;;IAEE,YAAY;IACZ,UAAU;EACZ;;EAEA;IACE,4DAA4D;IAC5D,SAAS;EACX;AACF;;AAEA;EACE;IACE,sBAAsB;IACtB,SAAS;IACT,aAAa;EACf;;EAEA;IACE,eAAe;EACjB;;EAEA;IACE,WAAW;IACX,eAAe;EACjB;;EAEA;IACE,4DAA4D;IAC5D,QAAQ;EACV;;EAEA;IACE,aAAa;EACf;;EAEA;IACE,eAAe;IACf,QAAQ;EACV;;EAEA;IACE,WAAW;IACX,mBAAmB;IACnB,8BAA8B;IAC9B,eAAe;EACjB;;EAEA;IACE,WAAW;IACX,uBAAuB;EACzB;;EAEA;IACE,cAAc;EAChB;AACF;;AAEA;EACE;IACE,eAAe;EACjB;;EAEA;IACE,0BAA0B;EAC5B;;EAEA;IACE,WAAW;IACX,YAAY;EACd;;EAEA;IACE,eAAe;IACf,gBAAgB;IAChB,eAAe;IACf,gBAAgB;EAClB;;EAEA;IACE,WAAW;IACX,YAAY;IACZ,eAAe;EACjB;AACF;;AAEA,gCAAgC;AAChC;EACE;;;;;IAKE,gBAAgB;IAChB,eAAe;EACjB;;EAEA;IACE,aAAa;EACf;;EAEA;IACE,eAAe;EACjB;AACF","sourcesContent":["/* Dark Mode Styles */\n[data-theme=\"dark\"] {\n  color-scheme: dark;\n}\n\n[data-theme=\"dark\"] body {\n  background-color: #1a1a1a;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .pos-container {\n  background: #1a1a1a;\n}\n\n[data-theme=\"dark\"] .pos-header {\n  background: #2d2d2d;\n  border-bottom-color: #404040;\n}\n\n[data-theme=\"dark\"] .pos-header h1 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .products-section,\n[data-theme=\"dark\"] .cart-section {\n  background: #2d2d2d;\n  border-color: #404040;\n}\n\n[data-theme=\"dark\"] .product-card {\n  background: #333333;\n  border-color: #404040;\n}\n\n[data-theme=\"dark\"] .product-card:hover {\n  background: #3a3a3a;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);\n}\n\n[data-theme=\"dark\"] .product-info h3 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .product-info .sku,\n[data-theme=\"dark\"] .product-info .stock {\n  color: #b0b0b0;\n}\n\n[data-theme=\"dark\"] .search-input,\n[data-theme=\"dark\"] .category-select,\n[data-theme=\"dark\"] .branch-select {\n  background: #333333;\n  border-color: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .search-input:focus,\n[data-theme=\"dark\"] .category-select:focus,\n[data-theme=\"dark\"] .branch-select:focus {\n  border-color: #667eea;\n  background: #3a3a3a;\n}\n\n[data-theme=\"dark\"] .cart-item {\n  border-bottom-color: #404040;\n}\n\n[data-theme=\"dark\"] .item-info h4 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .item-info p {\n  color: #b0b0b0;\n}\n\n[data-theme=\"dark\"] .quantity-btn {\n  background: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .quantity-btn:hover {\n  background: #4a4a4a;\n}\n\n[data-theme=\"dark\"] .quick-qty-btn {\n  background: #333333;\n  border-color: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .quick-qty-btn:hover {\n  background: #404040;\n  border-color: #667eea;\n}\n\n[data-theme=\"dark\"] .cart-summary {\n  border-top-color: #404040;\n}\n\n[data-theme=\"dark\"] .summary-row {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .checkout-btn {\n  background: #667eea;\n}\n\n[data-theme=\"dark\"] .checkout-btn:hover:not(:disabled) {\n  background: #5568d3;\n}\n\n[data-theme=\"dark\"] .logout-btn {\n  background: #c82333;\n}\n\n[data-theme=\"dark\"] .logout-btn:hover {\n  background: #a01e2a;\n}\n\n[data-theme=\"dark\"] .settings-btn,\n[data-theme=\"dark\"] .theme-toggle-btn {\n  background: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .settings-btn:hover,\n[data-theme=\"dark\"] .theme-toggle-btn:hover {\n  background: #4a4a4a;\n}\n\n/* Responsive Layout Improvements */\n@media (max-width: 1024px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    margin: 12px;\n    flex: none;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));\n    gap: 12px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-header {\n    flex-direction: column;\n    gap: 12px;\n    padding: 12px;\n  }\n\n  .pos-header h1 {\n    font-size: 20px;\n  }\n\n  .header-controls {\n    width: 100%;\n    flex-wrap: wrap;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));\n    gap: 8px;\n  }\n\n  .product-card {\n    padding: 12px;\n  }\n\n  .cart-item {\n    flex-wrap: wrap;\n    gap: 8px;\n  }\n\n  .item-controls {\n    width: 100%;\n    flex-direction: row;\n    justify-content: space-between;\n    margin-right: 0;\n  }\n\n  .quick-quantity-buttons {\n    width: 100%;\n    justify-content: center;\n  }\n\n  .quantity-controls {\n    margin: 0 auto;\n  }\n}\n\n@media (max-width: 480px) {\n  .pos-header h1 {\n    font-size: 18px;\n  }\n\n  .products-grid {\n    grid-template-columns: 1fr;\n  }\n\n  .cart-item-image {\n    width: 50px;\n    height: 50px;\n  }\n\n  .quick-qty-btn {\n    min-width: 32px;\n    min-height: 32px;\n    font-size: 11px;\n    padding: 4px 8px;\n  }\n\n  .quantity-btn {\n    width: 36px;\n    height: 36px;\n    font-size: 16px;\n  }\n}\n\n/* Touch-friendly improvements */\n@media (hover: none) and (pointer: coarse) {\n  .add-to-cart-btn,\n  .checkout-btn,\n  .quantity-btn,\n  .quick-qty-btn,\n  .remove-btn {\n    min-height: 48px;\n    min-width: 48px;\n  }\n\n  .product-card {\n    padding: 20px;\n  }\n\n  .cart-item {\n    padding: 20px 0;\n  }\n}\n\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/dark-mode.css"],"names":[],"mappings":"AAAA,qBAAqB;AACrB;EACE,kBAAkB;AACpB;;AAEA;EACE,yBAAyB;EACzB,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,4BAA4B;AAC9B;;AAEA;EACE,cAAc;AAChB;;AAEA;;EAEE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,mBAAmB;EACnB,wCAAwC;AAC1C;;AAEA;EACE,cAAc;AAChB;;AAEA;;EAEE,cAAc;AAChB;;AAEA;;;EAGE,mBAAmB;EACnB,qBAAqB;EACrB,cAAc;AAChB;;AAEA;;;EAGE,qBAAqB;EACrB,mBAAmB;AACrB;;AAEA;EACE,4BAA4B;AAC9B;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;;EAEE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;;EAEE,mBAAmB;AACrB;;AAEA;EACE,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,YAAY;AACd;;AAEA,mCAAmC;AACnC;EACE;IACE,sBAAsB;EACxB;;EAEA;;IAEE,YAAY;IACZ,UAAU;EACZ;;EAEA;IACE,4DAA4D;IAC5D,SAAS;EACX;AACF;;AAEA;EACE;IACE,sBAAsB;IACtB,SAAS;IACT,aAAa;EACf;;EAEA;IACE,eAAe;EACjB;;EAEA;IACE,WAAW;IACX,eAAe;EACjB;;EAEA;IACE,4DAA4D;IAC5D,QAAQ;EACV;;EAEA;IACE,aAAa;EACf;;EAEA;IACE,eAAe;IACf,QAAQ;EACV;;EAEA;IACE,WAAW;IACX,mBAAmB;IACnB,8BAA8B;IAC9B,eAAe;EACjB;;EAEA;IACE,WAAW;IACX,uBAAuB;EACzB;;EAEA;IACE,cAAc;EAChB;AACF;;AAEA;EACE;IACE,eAAe;EACjB;;EAEA;IACE,0BAA0B;EAC5B;;EAEA;IACE,WAAW;IACX,YAAY;EACd;;EAEA;IACE,eAAe;IACf,gBAAgB;IAChB,eAAe;IACf,gBAAgB;EAClB;;EAEA;IACE,WAAW;IACX,YAAY;IACZ,eAAe;EACjB;AACF;;AAEA,gCAAgC;AAChC;EACE;;;;;IAKE,gBAAgB;IAChB,eAAe;EACjB;;EAEA;IACE,aAAa;EACf;;EAEA;IACE,eAAe;EACjB;AACF","sourcesContent":["/* Dark Mode Styles */\n[data-theme=\"dark\"] {\n  color-scheme: dark;\n}\n\n[data-theme=\"dark\"] body {\n  background-color: #1a1a1a;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .pos-container {\n  background: #1a1a1a;\n}\n\n[data-theme=\"dark\"] .pos-header {\n  background: #2d2d2d;\n  border-bottom-color: #404040;\n}\n\n[data-theme=\"dark\"] .pos-header h1 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .products-section,\n[data-theme=\"dark\"] .cart-section {\n  background: #2d2d2d;\n  border-color: #404040;\n}\n\n[data-theme=\"dark\"] .product-card {\n  background: #333333;\n  border-color: #404040;\n}\n\n[data-theme=\"dark\"] .product-card:hover {\n  background: #3a3a3a;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);\n}\n\n[data-theme=\"dark\"] .product-info h3 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .product-info .sku,\n[data-theme=\"dark\"] .product-info .stock {\n  color: #b0b0b0;\n}\n\n[data-theme=\"dark\"] .search-input,\n[data-theme=\"dark\"] .category-select,\n[data-theme=\"dark\"] .branch-select {\n  background: #333333;\n  border-color: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .search-input:focus,\n[data-theme=\"dark\"] .category-select:focus,\n[data-theme=\"dark\"] .branch-select:focus {\n  border-color: #667eea;\n  background: #3a3a3a;\n}\n\n[data-theme=\"dark\"] .cart-item {\n  border-bottom-color: #404040;\n}\n\n[data-theme=\"dark\"] .item-info h4 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .item-info p {\n  color: #b0b0b0;\n}\n\n[data-theme=\"dark\"] .quantity-btn {\n  background: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .quantity-btn:hover {\n  background: #4a4a4a;\n}\n\n[data-theme=\"dark\"] .quick-qty-btn {\n  background: #333333;\n  border-color: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .quick-qty-btn:hover {\n  background: #404040;\n  border-color: #667eea;\n}\n\n[data-theme=\"dark\"] .cart-summary {\n  border-top-color: #404040;\n}\n\n[data-theme=\"dark\"] .summary-row {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .checkout-btn {\n  background: #667eea;\n}\n\n[data-theme=\"dark\"] .checkout-btn:hover:not(:disabled) {\n  background: #5568d3;\n}\n\n[data-theme=\"dark\"] .logout-btn {\n  background: #c82333;\n}\n\n[data-theme=\"dark\"] .logout-btn:hover {\n  background: #a01e2a;\n}\n\n[data-theme=\"dark\"] .settings-btn,\n[data-theme=\"dark\"] .theme-toggle-btn {\n  background: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .settings-btn:hover,\n[data-theme=\"dark\"] .theme-toggle-btn:hover {\n  background: #4a4a4a;\n}\n\n[data-theme=\"dark\"] .icon-btn.exit-btn {\n  border-color: #6c757d;\n  color: #adb5bd;\n}\n\n[data-theme=\"dark\"] .icon-btn.exit-btn:hover {\n  background: #5a6268;\n  color: white;\n}\n\n/* Responsive Layout Improvements */\n@media (max-width: 1024px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    margin: 12px;\n    flex: none;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));\n    gap: 12px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-header {\n    flex-direction: column;\n    gap: 12px;\n    padding: 12px;\n  }\n\n  .pos-header h1 {\n    font-size: 20px;\n  }\n\n  .header-controls {\n    width: 100%;\n    flex-wrap: wrap;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));\n    gap: 8px;\n  }\n\n  .product-card {\n    padding: 12px;\n  }\n\n  .cart-item {\n    flex-wrap: wrap;\n    gap: 8px;\n  }\n\n  .item-controls {\n    width: 100%;\n    flex-direction: row;\n    justify-content: space-between;\n    margin-right: 0;\n  }\n\n  .quick-quantity-buttons {\n    width: 100%;\n    justify-content: center;\n  }\n\n  .quantity-controls {\n    margin: 0 auto;\n  }\n}\n\n@media (max-width: 480px) {\n  .pos-header h1 {\n    font-size: 18px;\n  }\n\n  .products-grid {\n    grid-template-columns: 1fr;\n  }\n\n  .cart-item-image {\n    width: 50px;\n    height: 50px;\n  }\n\n  .quick-qty-btn {\n    min-width: 32px;\n    min-height: 32px;\n    font-size: 11px;\n    padding: 4px 8px;\n  }\n\n  .quantity-btn {\n    width: 36px;\n    height: 36px;\n    font-size: 16px;\n  }\n}\n\n/* Touch-friendly improvements */\n@media (hover: none) and (pointer: coarse) {\n  .add-to-cart-btn,\n  .checkout-btn,\n  .quantity-btn,\n  .quick-qty-btn,\n  .remove-btn {\n    min-height: 48px;\n    min-width: 48px;\n  }\n\n  .product-card {\n    padding: 20px;\n  }\n\n  .cart-item {\n    padding: 20px 0;\n  }\n}\n\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -5449,6 +5921,17 @@ body {
   border-color: #ffc107;
 }
 
+.icon-btn.exit-btn {
+  border-color: #6c757d;
+  color: #495057;
+}
+
+.icon-btn.exit-btn:hover {
+  background: #5a6268;
+  border-color: #545b62;
+  color: white;
+}
+
 .pos-content {
   display: flex;
   flex: 1;
@@ -6228,7 +6711,7 @@ body {
     height: 160px;
   }
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/styles.css"],"names":[],"mappings":"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","sourcesContent":["/* Global Styles */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;\n  background-color: #f5f5f5;\n  color: #333;\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* Loading Screen */\n.loading-screen {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100vh;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n}\n\n.loading-spinner {\n  width: 50px;\n  height: 50px;\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top: 4px solid white;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n  margin-bottom: 20px;\n}\n\n@keyframes spin {\n  0% { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n/* Login Styles */\n.login-container {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n  padding: 32px 16px;\n  background: radial-gradient(circle at top left, #9f7aea 0, transparent 55%),\n    radial-gradient(circle at bottom right, #4299e1 0, transparent 55%),\n    linear-gradient(135deg, #0f172a 0%, #020617 100%);\n  color: #e5e7eb;\n}\n\n.login-shell {\n  display: grid;\n  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);\n  gap: 1px;\n  width: 100%;\n  max-width: 960px;\n  border-radius: 18px;\n  background: linear-gradient(135deg, rgba(148, 163, 184, 0.6), rgba(56, 189, 248, 0.6));\n  box-shadow:\n    0 22px 45px rgba(15, 23, 42, 0.6),\n    0 0 0 1px rgba(148, 163, 184, 0.35);\n  overflow: hidden;\n}\n\n.login-brand-panel {\n  position: relative;\n  padding: 32px 32px 28px;\n  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), transparent 55%),\n    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.22), transparent 55%),\n    linear-gradient(145deg, #020617 0%, #020617 40%, #020617 100%);\n  color: #e5e7eb;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n.login-brand-logo {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 18px;\n}\n\n.login-logo-mark {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 32px;\n  height: 32px;\n  border-radius: 11px;\n  background: radial-gradient(circle at 0 0, #22c55e 0, #16a34a 40%, #065f46 100%);\n  color: #ecfdf5;\n  font-weight: 700;\n  font-size: 18px;\n}\n\n.login-logo-text {\n  font-size: 20px;\n  font-weight: 600;\n  letter-spacing: 0.02em;\n}\n\n.login-brand-tagline {\n  font-size: 14px;\n  color: #9ca3af;\n  max-width: 320px;\n}\n\n.login-brand-highlights {\n  margin-top: 28px;\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n\n.login-highlight {\n  display: flex;\n  gap: 10px;\n  align-items: flex-start;\n}\n\n.login-highlight-dot {\n  margin-top: 4px;\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: linear-gradient(135deg, #22c55e, #a3e635);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);\n  flex-shrink: 0;\n}\n\n.login-highlight-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: #e5e7eb;\n}\n\n.login-highlight-subtitle {\n  font-size: 13px;\n  color: #9ca3af;\n}\n\n.login-environment-pill {\n  align-self: flex-start;\n  margin-top: 24px;\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 12px;\n  border-radius: 999px;\n  background: rgba(15, 23, 42, 0.9);\n  border: 1px solid rgba(148, 163, 184, 0.7);\n  font-size: 12px;\n  color: #e5e7eb;\n}\n\n.login-env-dot {\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: radial-gradient(circle at 30% 0, #22c55e 0, #16a34a 60%, #14532d 100%);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);\n}\n\n.login-card {\n  background: #f9fafb;\n  padding: 32px 32px 28px;\n  border-radius: 18px;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n}\n\n.login-header {\n  margin-bottom: 24px;\n}\n\n.login-header h1 {\n  color: #020617;\n  margin-bottom: 6px;\n  font-size: 24px;\n  font-weight: 600;\n}\n\n.login-header p {\n  color: #6b7280;\n  font-size: 14px;\n}\n\n.login-form {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n}\n\n.form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.form-group label {\n  font-size: 14px;\n  font-weight: 500;\n  color: #111827;\n}\n\n.form-input-wrapper {\n  position: relative;\n}\n\n.form-group input {\n  width: 100%;\n  padding: 11px 12px;\n  border-radius: 10px;\n  border: 1px solid #e5e7eb;\n  font-size: 14px;\n  background: #ffffff;\n  color: #111827;\n  outline: none;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background-color 0.15s ease;\n}\n\n.form-group input::placeholder {\n  color: #9ca3af;\n}\n\n.form-group input:focus {\n  border-color: #4f46e5;\n  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.65), 0 10px 18px rgba(15, 23, 42, 0.12);\n}\n\n.form-group.has-error input {\n  border-color: #f97316;\n  background-color: #fffbeb;\n}\n\n.form-group.has-error input:focus {\n  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.85), 0 10px 18px rgba(124, 45, 18, 0.25);\n}\n\n.login-form-meta {\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.checkbox-label {\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 13px;\n  color: #4b5563;\n}\n\n.checkbox-label input[type='checkbox'] {\n  width: 14px;\n  height: 14px;\n  border-radius: 4px;\n  border: 1px solid #d1d5db;\n  cursor: pointer;\n}\n\n.link-button {\n  border: none;\n  background: none;\n  padding: 0;\n  font-size: 13px;\n  color: #4f46e5;\n  cursor: pointer;\n  text-decoration: none;\n}\n\n.link-button:hover {\n  text-decoration: underline;\n}\n\n.login-button {\n  margin-top: 6px;\n  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #22c55e 120%);\n  color: white;\n  border: none;\n  padding: 12px 16px;\n  border-radius: 12px;\n  font-size: 15px;\n  font-weight: 600;\n  cursor: pointer;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  box-shadow:\n    0 12px 22px rgba(15, 23, 42, 0.35),\n    0 0 0 1px rgba(15, 23, 42, 0.75);\n  transition:\n    transform 0.12s ease,\n    box-shadow 0.12s ease,\n    filter 0.12s ease;\n}\n\n.login-button:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow:\n    0 16px 28px rgba(15, 23, 42, 0.45),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n  filter: brightness(1.03);\n}\n\n.login-button:active:not(:disabled) {\n  transform: translateY(0);\n  box-shadow:\n    0 8px 16px rgba(15, 23, 42, 0.4),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n}\n\n.login-button:disabled {\n  opacity: 0.7;\n  cursor: not-allowed;\n  filter: grayscale(0.1);\n}\n\n.error-message {\n  margin-bottom: 8px;\n  background: #fffbeb;\n  color: #92400e;\n  padding: 10px 12px;\n  border-radius: 10px;\n  border: 1px solid #fed7aa;\n  border-left-width: 4px;\n  border-left-color: #f97316;\n  font-size: 13px;\n  display: flex;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.error-message::before {\n  content: '⚠';\n  font-size: 14px;\n  line-height: 1.2;\n}\n\n.field-error {\n  font-size: 12px;\n  color: #c2410c;\n}\n\n.field-hint {\n  margin-top: 4px;\n  font-size: 12px;\n}\n\n.field-hint.warning {\n  color: #b45309;\n}\n\n.login-footer {\n  margin-top: 18px;\n  color: #6b7280;\n  font-size: 12px;\n}\n\n.login-footer p {\n  margin: 0;\n}\n\n@media (max-width: 800px) {\n  .login-shell {\n    grid-template-columns: minmax(0, 1fr);\n  }\n\n  .login-brand-panel {\n    display: none;\n  }\n\n  .login-card {\n    border-radius: 18px;\n  }\n}\n\n/* POS Styles */\n.pos-container {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n  background: #f5f7fa;\n  overflow: hidden;\n}\n\n.pos-header {\n  background: white;\n  padding: 6px 12px;\n  border-bottom: 1px solid #e1e5e9;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);\n  position: relative;\n  flex-shrink: 0;\n  gap: 12px;\n}\n\n.header-left {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  flex-shrink: 0;\n}\n\n.pos-header h1 {\n  color: #333;\n  font-size: 14px;\n  font-weight: 700;\n  margin: 0;\n  letter-spacing: -0.3px;\n}\n\n.header-center {\n  flex: 1;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 0;\n}\n\n.header-right {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  flex-shrink: 0;\n}\n\n.header-indicators {\n  display: flex;\n  gap: 6px;\n  align-items: center;\n  justify-content: center;\n}\n\n.branch-select {\n  padding: 5px 8px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 11px;\n  cursor: pointer;\n  min-width: 100px;\n}\n\n.icon-btn {\n  background: transparent;\n  border: 1px solid #e1e5e9;\n  padding: 5px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 14px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n}\n\n.icon-btn:hover {\n  background: #f8f9fa;\n  border-color: #adb5bd;\n}\n\n.icon-btn.logout-btn {\n  border-color: #dc3545;\n  color: #dc3545;\n}\n\n.icon-btn.logout-btn:hover {\n  background: #dc3545;\n  color: white;\n}\n\n.icon-btn.settings-btn:hover {\n  border-color: #667eea;\n  color: #667eea;\n}\n\n.icon-btn.theme-toggle-btn:hover {\n  border-color: #ffc107;\n}\n\n.pos-content {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n  gap: 12px;\n  padding: 12px;\n}\n\n.products-section {\n  flex: 2;\n  padding: 12px;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n}\n\n.search-bar {\n  margin-bottom: 12px;\n  display: flex;\n  gap: 8px;\n}\n\n.search-input-wrapper {\n  flex: 1;\n  position: relative;\n}\n\n.search-input {\n  width: 100%;\n  padding: 8px 12px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  font-size: 13px;\n}\n\n.search-input:focus {\n  outline: none;\n  border-color: #667eea;\n  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);\n}\n\n.category-select {\n  padding: 8px 10px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 12px;\n  cursor: pointer;\n  min-width: 140px;\n}\n\n.products-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, 140px);\n  gap: 10px;\n  overflow-y: auto;\n  flex: 1;\n  min-height: 0;\n  justify-content: start;\n}\n\n.product-card {\n  background: #f8f9fa;\n  border: 1px solid #e1e5e9;\n  border-radius: 6px;\n  padding: 8px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  transition: all 0.2s ease;\n  position: relative;\n  width: 140px;\n  height: 180px;\n  box-sizing: border-box;\n}\n\n.product-category {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  background: #667eea;\n  color: white;\n  padding: 2px 6px;\n  border-radius: 8px;\n  font-size: 9px;\n  font-weight: 600;\n  text-transform: uppercase;\n  z-index: 1;\n}\n\n.product-card:hover {\n  border-color: #667eea;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.product-image {\n  width: 100%;\n  height: 60px;\n  margin-bottom: 6px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: #e9ecef;\n  flex-shrink: 0;\n}\n\n.product-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.product-info {\n  flex: 1;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n\n.product-info h3 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 11px;\n  font-weight: 600;\n  line-height: 1.2;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  flex-shrink: 0;\n}\n\n.product-info .sku {\n  color: #666;\n  font-size: 9px;\n  margin-bottom: 2px;\n  flex-shrink: 0;\n}\n\n.product-info .barcode {\n  color: #667eea;\n  font-size: 8px;\n  margin-bottom: 2px;\n  font-weight: 500;\n  flex-shrink: 0;\n}\n\n.product-info .price {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 13px;\n  margin: 3px 0 2px 0;\n  flex-shrink: 0;\n}\n\n.product-info .stock {\n  color: #666;\n  font-size: 9px;\n  flex-shrink: 0;\n}\n\n.variations-selector {\n  margin: 4px 0;\n  flex-shrink: 0;\n}\n\n.variation-select {\n  width: 100%;\n  padding: 3px 5px;\n  border: 1px solid #e1e5e9;\n  border-radius: 3px;\n  font-size: 9px;\n  background: white;\n}\n\n.variations-hint {\n  font-size: 10px;\n  color: #666;\n  margin: 2px 0;\n}\n\n/* Variation selection modal */\n.variation-modal-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1100;\n  padding: 20px;\n}\n\n.variation-modal {\n  background: white;\n  border-radius: 10px;\n  max-width: 480px;\n  width: 100%;\n  max-height: 80vh;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);\n}\n\n.variation-modal-header {\n  padding: 16px 20px;\n  border-bottom: 1px solid #e9ecef;\n  position: relative;\n}\n\n.variation-modal-header h2 {\n  margin: 0;\n  font-size: 18px;\n  color: #333;\n}\n\n.variation-modal-product-name {\n  margin: 4px 0 0;\n  font-size: 13px;\n  color: #666;\n}\n\n.variation-modal-close {\n  position: absolute;\n  top: 12px;\n  right: 12px;\n  background: none;\n  border: none;\n  font-size: 24px;\n  color: #666;\n  cursor: pointer;\n  padding: 4px;\n  line-height: 1;\n}\n\n.variation-modal-close:hover {\n  color: #333;\n}\n\n.variation-modal-list {\n  padding: 12px;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.variation-modal-empty {\n  text-align: center;\n  padding: 24px;\n  color: #666;\n  font-size: 14px;\n}\n\n.variation-modal-empty .add-base-product-btn {\n  margin-top: 12px;\n  padding: 10px 20px;\n  background: #28a745;\n  color: white;\n  border: none;\n  border-radius: 6px;\n  font-weight: 600;\n  cursor: pointer;\n}\n\n.variation-modal-empty .add-base-product-btn:hover {\n  background: #218838;\n}\n\n.product-card-clickable {\n  cursor: pointer;\n}\n\n.product-card-clickable:hover {\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);\n}\n\n.variation-card {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 12px 16px;\n  border: 2px solid #e1e5e9;\n  border-radius: 8px;\n  background: white;\n  cursor: pointer;\n  text-align: left;\n  transition: border-color 0.2s, background 0.2s;\n}\n\n.variation-card:hover:not(:disabled) {\n  border-color: #28a745;\n  background: #f0fff4;\n}\n\n.variation-card-out-of-stock {\n  opacity: 0.6;\n  cursor: not-allowed;\n}\n\n.variation-card-main {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.variation-card-label {\n  font-weight: 600;\n  font-size: 14px;\n  color: #333;\n}\n\n.variation-card-sku {\n  font-size: 11px;\n  color: #666;\n}\n\n.variation-card-price {\n  font-weight: 700;\n  font-size: 15px;\n  color: #28a745;\n}\n\n.variation-card-stock {\n  font-size: 12px;\n  padding: 4px 8px;\n  border-radius: 4px;\n}\n\n.variation-card-stock.in-stock {\n  background: #d4edda;\n  color: #155724;\n}\n\n.variation-card-stock.out-of-stock {\n  background: #f8d7da;\n  color: #721c24;\n}\n\n.add-to-cart-btn {\n  background: #28a745;\n  color: white;\n  border: none;\n  padding: 6px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 10px;\n  margin-top: 6px;\n  transition: background-color 0.2s ease;\n  touch-action: manipulation;\n  width: 100%;\n  flex-shrink: 0;\n}\n\n.add-to-cart-btn:hover:not(:disabled) {\n  background: #218838;\n}\n\n.add-to-cart-btn:disabled {\n  background: #adb5bd;\n  cursor: not-allowed;\n}\n\n.cart-section {\n  flex: 1;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  padding: 12px;\n  min-width: 320px;\n  max-width: 400px;\n}\n\n.cart-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 12px;\n}\n\n.cart-section h2 {\n  margin: 0;\n  color: #333;\n  font-size: 14px;\n  font-weight: 600;\n}\n\n.hold-transaction-btn-header {\n  background: #ffc107;\n  color: #333;\n  border: none;\n  padding: 6px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 500;\n  font-size: 11px;\n  transition: all 0.2s ease;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n\n.hold-transaction-btn-header:hover {\n  background: #ffb300;\n  transform: translateY(-1px);\n}\n\n.cart-items {\n  flex: 1;\n  overflow-y: auto;\n  margin-bottom: 12px;\n  min-height: 0;\n}\n\n.empty-cart {\n  text-align: center;\n  color: #666;\n  font-style: italic;\n  padding: 20px 0;\n  font-size: 12px;\n}\n\n.cart-item {\n  display: flex;\n  gap: 10px;\n  padding: 10px;\n  border-bottom: 1px solid #e1e5e9;\n  background: #f8f9fa;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: all 0.2s ease;\n}\n\n.cart-item:hover {\n  background: #f0f0f0;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\n}\n\n.cart-item-image {\n  flex-shrink: 0;\n  width: 50px;\n  height: 50px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #e1e5e9;\n}\n\n.cart-item-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.cart-item-content {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n  min-width: 0;\n}\n\n.cart-item-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.item-info {\n  flex: 1;\n  min-width: 0;\n}\n\n.item-info h4 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 13px;\n  font-weight: 600;\n  line-height: 1.3;\n}\n\n.item-info .sku {\n  color: #6c757d;\n  font-size: 10px;\n  margin: 0;\n}\n\n.item-info .variation-info {\n  color: #667eea;\n  font-size: 9px;\n  margin: 2px 0 0 0;\n  font-style: italic;\n}\n\n.remove-btn {\n  background: #dc3545;\n  color: white;\n  border: none;\n  width: 22px;\n  height: 22px;\n  border-radius: 50%;\n  font-size: 16px;\n  line-height: 1;\n  transition: all 0.2s ease;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  padding: 0;\n  font-weight: bold;\n}\n\n.remove-btn:hover {\n  background: #c82333;\n  transform: scale(1.1);\n}\n\n.cart-item-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.price-info {\n  display: flex;\n  align-items: baseline;\n  gap: 4px;\n}\n\n.unit-price {\n  color: #28a745;\n  font-weight: 700;\n  font-size: 13px;\n}\n\n.unit-label {\n  color: #6c757d;\n  font-size: 9px;\n  text-transform: lowercase;\n}\n\n.quantity-section {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  align-items: center;\n}\n\n.quantity-controls {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: white;\n  border: 1px solid #dee2e6;\n  border-radius: 4px;\n  padding: 2px;\n}\n\n.quantity-btn {\n  background: transparent;\n  border: none;\n  width: 26px;\n  height: 26px;\n  border-radius: 3px;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: bold;\n  font-size: 16px;\n  color: #495057;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quantity-btn:hover {\n  background: #e9ecef;\n}\n\n.quantity-btn.decrease {\n  color: #dc3545;\n}\n\n.quantity-btn.increase {\n  color: #28a745;\n}\n\n.quantity {\n  min-width: 30px;\n  text-align: center;\n  font-weight: 700;\n  font-size: 13px;\n  color: #333;\n  padding: 0 4px;\n}\n\n.quick-quantity-buttons {\n  display: flex;\n  gap: 3px;\n  flex-wrap: wrap;\n  justify-content: center;\n}\n\n.quick-qty-btn {\n  background: white;\n  border: 1px solid #dee2e6;\n  padding: 3px 6px;\n  border-radius: 3px;\n  cursor: pointer;\n  font-size: 9px;\n  font-weight: 600;\n  color: #495057;\n  min-width: 24px;\n  min-height: 20px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quick-qty-btn:hover {\n  background: #667eea;\n  border-color: #667eea;\n  color: white;\n}\n\n.item-total {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 2px;\n  flex-shrink: 0;\n}\n\n.total-label {\n  font-size: 9px;\n  color: #6c757d;\n  text-transform: uppercase;\n  letter-spacing: 0.5px;\n}\n\n.total-amount {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 14px;\n}\n\n.cart-item:last-child {\n  border-bottom: none;\n  margin-bottom: 0;\n}\n\n.cart-summary {\n  border-top: 2px solid #e1e5e9;\n  padding-top: 10px;\n  margin-bottom: 12px;\n}\n\n.summary-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 6px;\n  font-size: 12px;\n  color: #495057;\n}\n\n.summary-row.total {\n  font-size: 14px;\n  font-weight: 700;\n  color: #333;\n  border-top: 1px solid #e1e5e9;\n  padding-top: 8px;\n  margin-top: 6px;\n}\n\n.checkout-section {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.shortcut-hint {\n  margin: 0;\n  font-size: 11px;\n  color: #6c757d;\n  text-align: center;\n}\n\n.checkout-btn {\n  width: 100%;\n  padding: 12px;\n  border: none;\n  border-radius: 4px;\n  font-size: 13px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.2s ease;\n}\n\n.checkout-btn:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.checkout-btn:active:not(:disabled) {\n  transform: translateY(0);\n}\n\n.checkout-btn:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n  transform: none;\n}\n\n.checkout-btn.proceed {\n  background: #007bff;\n  color: white;\n}\n\n.checkout-btn.proceed:hover:not(:disabled) {\n  background: #0056b3;\n}\n\n.loading {\n  text-align: center;\n  padding: 20px;\n  color: #666;\n  font-style: italic;\n  font-size: 12px;\n}\n\n/* Responsive Design */\n@media (max-width: 1200px) {\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 130px);\n  }\n  \n  .product-card {\n    width: 130px;\n    height: 170px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    flex: none;\n    height: 50vh;\n  }\n\n  .checkout-section {\n    flex-direction: column;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 120px);\n    gap: 8px;\n  }\n  \n  .product-card {\n    width: 120px;\n    height: 160px;\n  }\n}\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/styles.css"],"names":[],"mappings":"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","sourcesContent":["/* Global Styles */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;\n  background-color: #f5f5f5;\n  color: #333;\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* Loading Screen */\n.loading-screen {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100vh;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n}\n\n.loading-spinner {\n  width: 50px;\n  height: 50px;\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top: 4px solid white;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n  margin-bottom: 20px;\n}\n\n@keyframes spin {\n  0% { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n/* Login Styles */\n.login-container {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n  padding: 32px 16px;\n  background: radial-gradient(circle at top left, #9f7aea 0, transparent 55%),\n    radial-gradient(circle at bottom right, #4299e1 0, transparent 55%),\n    linear-gradient(135deg, #0f172a 0%, #020617 100%);\n  color: #e5e7eb;\n}\n\n.login-shell {\n  display: grid;\n  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);\n  gap: 1px;\n  width: 100%;\n  max-width: 960px;\n  border-radius: 18px;\n  background: linear-gradient(135deg, rgba(148, 163, 184, 0.6), rgba(56, 189, 248, 0.6));\n  box-shadow:\n    0 22px 45px rgba(15, 23, 42, 0.6),\n    0 0 0 1px rgba(148, 163, 184, 0.35);\n  overflow: hidden;\n}\n\n.login-brand-panel {\n  position: relative;\n  padding: 32px 32px 28px;\n  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), transparent 55%),\n    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.22), transparent 55%),\n    linear-gradient(145deg, #020617 0%, #020617 40%, #020617 100%);\n  color: #e5e7eb;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n.login-brand-logo {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 18px;\n}\n\n.login-logo-mark {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 32px;\n  height: 32px;\n  border-radius: 11px;\n  background: radial-gradient(circle at 0 0, #22c55e 0, #16a34a 40%, #065f46 100%);\n  color: #ecfdf5;\n  font-weight: 700;\n  font-size: 18px;\n}\n\n.login-logo-text {\n  font-size: 20px;\n  font-weight: 600;\n  letter-spacing: 0.02em;\n}\n\n.login-brand-tagline {\n  font-size: 14px;\n  color: #9ca3af;\n  max-width: 320px;\n}\n\n.login-brand-highlights {\n  margin-top: 28px;\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n\n.login-highlight {\n  display: flex;\n  gap: 10px;\n  align-items: flex-start;\n}\n\n.login-highlight-dot {\n  margin-top: 4px;\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: linear-gradient(135deg, #22c55e, #a3e635);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);\n  flex-shrink: 0;\n}\n\n.login-highlight-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: #e5e7eb;\n}\n\n.login-highlight-subtitle {\n  font-size: 13px;\n  color: #9ca3af;\n}\n\n.login-environment-pill {\n  align-self: flex-start;\n  margin-top: 24px;\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 12px;\n  border-radius: 999px;\n  background: rgba(15, 23, 42, 0.9);\n  border: 1px solid rgba(148, 163, 184, 0.7);\n  font-size: 12px;\n  color: #e5e7eb;\n}\n\n.login-env-dot {\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: radial-gradient(circle at 30% 0, #22c55e 0, #16a34a 60%, #14532d 100%);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);\n}\n\n.login-card {\n  background: #f9fafb;\n  padding: 32px 32px 28px;\n  border-radius: 18px;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n}\n\n.login-header {\n  margin-bottom: 24px;\n}\n\n.login-header h1 {\n  color: #020617;\n  margin-bottom: 6px;\n  font-size: 24px;\n  font-weight: 600;\n}\n\n.login-header p {\n  color: #6b7280;\n  font-size: 14px;\n}\n\n.login-form {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n}\n\n.form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.form-group label {\n  font-size: 14px;\n  font-weight: 500;\n  color: #111827;\n}\n\n.form-input-wrapper {\n  position: relative;\n}\n\n.form-group input {\n  width: 100%;\n  padding: 11px 12px;\n  border-radius: 10px;\n  border: 1px solid #e5e7eb;\n  font-size: 14px;\n  background: #ffffff;\n  color: #111827;\n  outline: none;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background-color 0.15s ease;\n}\n\n.form-group input::placeholder {\n  color: #9ca3af;\n}\n\n.form-group input:focus {\n  border-color: #4f46e5;\n  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.65), 0 10px 18px rgba(15, 23, 42, 0.12);\n}\n\n.form-group.has-error input {\n  border-color: #f97316;\n  background-color: #fffbeb;\n}\n\n.form-group.has-error input:focus {\n  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.85), 0 10px 18px rgba(124, 45, 18, 0.25);\n}\n\n.login-form-meta {\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.checkbox-label {\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 13px;\n  color: #4b5563;\n}\n\n.checkbox-label input[type='checkbox'] {\n  width: 14px;\n  height: 14px;\n  border-radius: 4px;\n  border: 1px solid #d1d5db;\n  cursor: pointer;\n}\n\n.link-button {\n  border: none;\n  background: none;\n  padding: 0;\n  font-size: 13px;\n  color: #4f46e5;\n  cursor: pointer;\n  text-decoration: none;\n}\n\n.link-button:hover {\n  text-decoration: underline;\n}\n\n.login-button {\n  margin-top: 6px;\n  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #22c55e 120%);\n  color: white;\n  border: none;\n  padding: 12px 16px;\n  border-radius: 12px;\n  font-size: 15px;\n  font-weight: 600;\n  cursor: pointer;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  box-shadow:\n    0 12px 22px rgba(15, 23, 42, 0.35),\n    0 0 0 1px rgba(15, 23, 42, 0.75);\n  transition:\n    transform 0.12s ease,\n    box-shadow 0.12s ease,\n    filter 0.12s ease;\n}\n\n.login-button:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow:\n    0 16px 28px rgba(15, 23, 42, 0.45),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n  filter: brightness(1.03);\n}\n\n.login-button:active:not(:disabled) {\n  transform: translateY(0);\n  box-shadow:\n    0 8px 16px rgba(15, 23, 42, 0.4),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n}\n\n.login-button:disabled {\n  opacity: 0.7;\n  cursor: not-allowed;\n  filter: grayscale(0.1);\n}\n\n.error-message {\n  margin-bottom: 8px;\n  background: #fffbeb;\n  color: #92400e;\n  padding: 10px 12px;\n  border-radius: 10px;\n  border: 1px solid #fed7aa;\n  border-left-width: 4px;\n  border-left-color: #f97316;\n  font-size: 13px;\n  display: flex;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.error-message::before {\n  content: '⚠';\n  font-size: 14px;\n  line-height: 1.2;\n}\n\n.field-error {\n  font-size: 12px;\n  color: #c2410c;\n}\n\n.field-hint {\n  margin-top: 4px;\n  font-size: 12px;\n}\n\n.field-hint.warning {\n  color: #b45309;\n}\n\n.login-footer {\n  margin-top: 18px;\n  color: #6b7280;\n  font-size: 12px;\n}\n\n.login-footer p {\n  margin: 0;\n}\n\n@media (max-width: 800px) {\n  .login-shell {\n    grid-template-columns: minmax(0, 1fr);\n  }\n\n  .login-brand-panel {\n    display: none;\n  }\n\n  .login-card {\n    border-radius: 18px;\n  }\n}\n\n/* POS Styles */\n.pos-container {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n  background: #f5f7fa;\n  overflow: hidden;\n}\n\n.pos-header {\n  background: white;\n  padding: 6px 12px;\n  border-bottom: 1px solid #e1e5e9;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);\n  position: relative;\n  flex-shrink: 0;\n  gap: 12px;\n}\n\n.header-left {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  flex-shrink: 0;\n}\n\n.pos-header h1 {\n  color: #333;\n  font-size: 14px;\n  font-weight: 700;\n  margin: 0;\n  letter-spacing: -0.3px;\n}\n\n.header-center {\n  flex: 1;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 0;\n}\n\n.header-right {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  flex-shrink: 0;\n}\n\n.header-indicators {\n  display: flex;\n  gap: 6px;\n  align-items: center;\n  justify-content: center;\n}\n\n.branch-select {\n  padding: 5px 8px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 11px;\n  cursor: pointer;\n  min-width: 100px;\n}\n\n.icon-btn {\n  background: transparent;\n  border: 1px solid #e1e5e9;\n  padding: 5px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 14px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n}\n\n.icon-btn:hover {\n  background: #f8f9fa;\n  border-color: #adb5bd;\n}\n\n.icon-btn.logout-btn {\n  border-color: #dc3545;\n  color: #dc3545;\n}\n\n.icon-btn.logout-btn:hover {\n  background: #dc3545;\n  color: white;\n}\n\n.icon-btn.settings-btn:hover {\n  border-color: #667eea;\n  color: #667eea;\n}\n\n.icon-btn.theme-toggle-btn:hover {\n  border-color: #ffc107;\n}\n\n.icon-btn.exit-btn {\n  border-color: #6c757d;\n  color: #495057;\n}\n\n.icon-btn.exit-btn:hover {\n  background: #5a6268;\n  border-color: #545b62;\n  color: white;\n}\n\n.pos-content {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n  gap: 12px;\n  padding: 12px;\n}\n\n.products-section {\n  flex: 2;\n  padding: 12px;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n}\n\n.search-bar {\n  margin-bottom: 12px;\n  display: flex;\n  gap: 8px;\n}\n\n.search-input-wrapper {\n  flex: 1;\n  position: relative;\n}\n\n.search-input {\n  width: 100%;\n  padding: 8px 12px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  font-size: 13px;\n}\n\n.search-input:focus {\n  outline: none;\n  border-color: #667eea;\n  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);\n}\n\n.category-select {\n  padding: 8px 10px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 12px;\n  cursor: pointer;\n  min-width: 140px;\n}\n\n.products-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, 140px);\n  gap: 10px;\n  overflow-y: auto;\n  flex: 1;\n  min-height: 0;\n  justify-content: start;\n}\n\n.product-card {\n  background: #f8f9fa;\n  border: 1px solid #e1e5e9;\n  border-radius: 6px;\n  padding: 8px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  transition: all 0.2s ease;\n  position: relative;\n  width: 140px;\n  height: 180px;\n  box-sizing: border-box;\n}\n\n.product-category {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  background: #667eea;\n  color: white;\n  padding: 2px 6px;\n  border-radius: 8px;\n  font-size: 9px;\n  font-weight: 600;\n  text-transform: uppercase;\n  z-index: 1;\n}\n\n.product-card:hover {\n  border-color: #667eea;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.product-image {\n  width: 100%;\n  height: 60px;\n  margin-bottom: 6px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: #e9ecef;\n  flex-shrink: 0;\n}\n\n.product-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.product-info {\n  flex: 1;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n\n.product-info h3 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 11px;\n  font-weight: 600;\n  line-height: 1.2;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  flex-shrink: 0;\n}\n\n.product-info .sku {\n  color: #666;\n  font-size: 9px;\n  margin-bottom: 2px;\n  flex-shrink: 0;\n}\n\n.product-info .barcode {\n  color: #667eea;\n  font-size: 8px;\n  margin-bottom: 2px;\n  font-weight: 500;\n  flex-shrink: 0;\n}\n\n.product-info .price {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 13px;\n  margin: 3px 0 2px 0;\n  flex-shrink: 0;\n}\n\n.product-info .stock {\n  color: #666;\n  font-size: 9px;\n  flex-shrink: 0;\n}\n\n.variations-selector {\n  margin: 4px 0;\n  flex-shrink: 0;\n}\n\n.variation-select {\n  width: 100%;\n  padding: 3px 5px;\n  border: 1px solid #e1e5e9;\n  border-radius: 3px;\n  font-size: 9px;\n  background: white;\n}\n\n.variations-hint {\n  font-size: 10px;\n  color: #666;\n  margin: 2px 0;\n}\n\n/* Variation selection modal */\n.variation-modal-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1100;\n  padding: 20px;\n}\n\n.variation-modal {\n  background: white;\n  border-radius: 10px;\n  max-width: 480px;\n  width: 100%;\n  max-height: 80vh;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);\n}\n\n.variation-modal-header {\n  padding: 16px 20px;\n  border-bottom: 1px solid #e9ecef;\n  position: relative;\n}\n\n.variation-modal-header h2 {\n  margin: 0;\n  font-size: 18px;\n  color: #333;\n}\n\n.variation-modal-product-name {\n  margin: 4px 0 0;\n  font-size: 13px;\n  color: #666;\n}\n\n.variation-modal-close {\n  position: absolute;\n  top: 12px;\n  right: 12px;\n  background: none;\n  border: none;\n  font-size: 24px;\n  color: #666;\n  cursor: pointer;\n  padding: 4px;\n  line-height: 1;\n}\n\n.variation-modal-close:hover {\n  color: #333;\n}\n\n.variation-modal-list {\n  padding: 12px;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.variation-modal-empty {\n  text-align: center;\n  padding: 24px;\n  color: #666;\n  font-size: 14px;\n}\n\n.variation-modal-empty .add-base-product-btn {\n  margin-top: 12px;\n  padding: 10px 20px;\n  background: #28a745;\n  color: white;\n  border: none;\n  border-radius: 6px;\n  font-weight: 600;\n  cursor: pointer;\n}\n\n.variation-modal-empty .add-base-product-btn:hover {\n  background: #218838;\n}\n\n.product-card-clickable {\n  cursor: pointer;\n}\n\n.product-card-clickable:hover {\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);\n}\n\n.variation-card {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 12px 16px;\n  border: 2px solid #e1e5e9;\n  border-radius: 8px;\n  background: white;\n  cursor: pointer;\n  text-align: left;\n  transition: border-color 0.2s, background 0.2s;\n}\n\n.variation-card:hover:not(:disabled) {\n  border-color: #28a745;\n  background: #f0fff4;\n}\n\n.variation-card-out-of-stock {\n  opacity: 0.6;\n  cursor: not-allowed;\n}\n\n.variation-card-main {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.variation-card-label {\n  font-weight: 600;\n  font-size: 14px;\n  color: #333;\n}\n\n.variation-card-sku {\n  font-size: 11px;\n  color: #666;\n}\n\n.variation-card-price {\n  font-weight: 700;\n  font-size: 15px;\n  color: #28a745;\n}\n\n.variation-card-stock {\n  font-size: 12px;\n  padding: 4px 8px;\n  border-radius: 4px;\n}\n\n.variation-card-stock.in-stock {\n  background: #d4edda;\n  color: #155724;\n}\n\n.variation-card-stock.out-of-stock {\n  background: #f8d7da;\n  color: #721c24;\n}\n\n.add-to-cart-btn {\n  background: #28a745;\n  color: white;\n  border: none;\n  padding: 6px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 10px;\n  margin-top: 6px;\n  transition: background-color 0.2s ease;\n  touch-action: manipulation;\n  width: 100%;\n  flex-shrink: 0;\n}\n\n.add-to-cart-btn:hover:not(:disabled) {\n  background: #218838;\n}\n\n.add-to-cart-btn:disabled {\n  background: #adb5bd;\n  cursor: not-allowed;\n}\n\n.cart-section {\n  flex: 1;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  padding: 12px;\n  min-width: 320px;\n  max-width: 400px;\n}\n\n.cart-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 12px;\n}\n\n.cart-section h2 {\n  margin: 0;\n  color: #333;\n  font-size: 14px;\n  font-weight: 600;\n}\n\n.hold-transaction-btn-header {\n  background: #ffc107;\n  color: #333;\n  border: none;\n  padding: 6px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 500;\n  font-size: 11px;\n  transition: all 0.2s ease;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n\n.hold-transaction-btn-header:hover {\n  background: #ffb300;\n  transform: translateY(-1px);\n}\n\n.cart-items {\n  flex: 1;\n  overflow-y: auto;\n  margin-bottom: 12px;\n  min-height: 0;\n}\n\n.empty-cart {\n  text-align: center;\n  color: #666;\n  font-style: italic;\n  padding: 20px 0;\n  font-size: 12px;\n}\n\n.cart-item {\n  display: flex;\n  gap: 10px;\n  padding: 10px;\n  border-bottom: 1px solid #e1e5e9;\n  background: #f8f9fa;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: all 0.2s ease;\n}\n\n.cart-item:hover {\n  background: #f0f0f0;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\n}\n\n.cart-item-image {\n  flex-shrink: 0;\n  width: 50px;\n  height: 50px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #e1e5e9;\n}\n\n.cart-item-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.cart-item-content {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n  min-width: 0;\n}\n\n.cart-item-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.item-info {\n  flex: 1;\n  min-width: 0;\n}\n\n.item-info h4 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 13px;\n  font-weight: 600;\n  line-height: 1.3;\n}\n\n.item-info .sku {\n  color: #6c757d;\n  font-size: 10px;\n  margin: 0;\n}\n\n.item-info .variation-info {\n  color: #667eea;\n  font-size: 9px;\n  margin: 2px 0 0 0;\n  font-style: italic;\n}\n\n.remove-btn {\n  background: #dc3545;\n  color: white;\n  border: none;\n  width: 22px;\n  height: 22px;\n  border-radius: 50%;\n  font-size: 16px;\n  line-height: 1;\n  transition: all 0.2s ease;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  padding: 0;\n  font-weight: bold;\n}\n\n.remove-btn:hover {\n  background: #c82333;\n  transform: scale(1.1);\n}\n\n.cart-item-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.price-info {\n  display: flex;\n  align-items: baseline;\n  gap: 4px;\n}\n\n.unit-price {\n  color: #28a745;\n  font-weight: 700;\n  font-size: 13px;\n}\n\n.unit-label {\n  color: #6c757d;\n  font-size: 9px;\n  text-transform: lowercase;\n}\n\n.quantity-section {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  align-items: center;\n}\n\n.quantity-controls {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: white;\n  border: 1px solid #dee2e6;\n  border-radius: 4px;\n  padding: 2px;\n}\n\n.quantity-btn {\n  background: transparent;\n  border: none;\n  width: 26px;\n  height: 26px;\n  border-radius: 3px;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: bold;\n  font-size: 16px;\n  color: #495057;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quantity-btn:hover {\n  background: #e9ecef;\n}\n\n.quantity-btn.decrease {\n  color: #dc3545;\n}\n\n.quantity-btn.increase {\n  color: #28a745;\n}\n\n.quantity {\n  min-width: 30px;\n  text-align: center;\n  font-weight: 700;\n  font-size: 13px;\n  color: #333;\n  padding: 0 4px;\n}\n\n.quick-quantity-buttons {\n  display: flex;\n  gap: 3px;\n  flex-wrap: wrap;\n  justify-content: center;\n}\n\n.quick-qty-btn {\n  background: white;\n  border: 1px solid #dee2e6;\n  padding: 3px 6px;\n  border-radius: 3px;\n  cursor: pointer;\n  font-size: 9px;\n  font-weight: 600;\n  color: #495057;\n  min-width: 24px;\n  min-height: 20px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quick-qty-btn:hover {\n  background: #667eea;\n  border-color: #667eea;\n  color: white;\n}\n\n.item-total {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 2px;\n  flex-shrink: 0;\n}\n\n.total-label {\n  font-size: 9px;\n  color: #6c757d;\n  text-transform: uppercase;\n  letter-spacing: 0.5px;\n}\n\n.total-amount {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 14px;\n}\n\n.cart-item:last-child {\n  border-bottom: none;\n  margin-bottom: 0;\n}\n\n.cart-summary {\n  border-top: 2px solid #e1e5e9;\n  padding-top: 10px;\n  margin-bottom: 12px;\n}\n\n.summary-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 6px;\n  font-size: 12px;\n  color: #495057;\n}\n\n.summary-row.total {\n  font-size: 14px;\n  font-weight: 700;\n  color: #333;\n  border-top: 1px solid #e1e5e9;\n  padding-top: 8px;\n  margin-top: 6px;\n}\n\n.checkout-section {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.shortcut-hint {\n  margin: 0;\n  font-size: 11px;\n  color: #6c757d;\n  text-align: center;\n}\n\n.checkout-btn {\n  width: 100%;\n  padding: 12px;\n  border: none;\n  border-radius: 4px;\n  font-size: 13px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.2s ease;\n}\n\n.checkout-btn:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.checkout-btn:active:not(:disabled) {\n  transform: translateY(0);\n}\n\n.checkout-btn:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n  transform: none;\n}\n\n.checkout-btn.proceed {\n  background: #007bff;\n  color: white;\n}\n\n.checkout-btn.proceed:hover:not(:disabled) {\n  background: #0056b3;\n}\n\n.loading {\n  text-align: center;\n  padding: 20px;\n  color: #666;\n  font-style: italic;\n  font-size: 12px;\n}\n\n/* Responsive Design */\n@media (max-width: 1200px) {\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 130px);\n  }\n  \n  .product-card {\n    width: 130px;\n    height: 170px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    flex: none;\n    height: 50vh;\n  }\n\n  .checkout-section {\n    flex-direction: column;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 120px);\n    gap: 8px;\n  }\n  \n  .product-card {\n    width: 120px;\n    height: 160px;\n  }\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -41867,13 +42350,18 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 __webpack_require__(/*! ../checkout.css */ "./src/renderer/checkout.css");
 const validation_1 = __webpack_require__(/*! ../utils/validation */ "./src/renderer/utils/validation.ts");
 const audit_logger_1 = __webpack_require__(/*! ../utils/audit-logger */ "./src/renderer/utils/audit-logger.ts");
-const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts, loading }) => {
+const sanitization_1 = __webpack_require__(/*! ../utils/sanitization */ "./src/renderer/utils/sanitization.ts");
+const MpesaPayment_1 = __importDefault(__webpack_require__(/*! ./MpesaPayment */ "./src/renderer/components/MpesaPayment.tsx"));
+const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts, loading, queuedSalesCount = 0 }) => {
     // Get user info for audit logging (if available)
     const getUserInfo = async () => {
         try {
@@ -41896,6 +42384,11 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
     // Split payment state
     const [isSplitPayment, setIsSplitPayment] = (0, react_1.useState)(false);
     const [splitPayments, setSplitPayments] = (0, react_1.useState)([]);
+    // M-Pesa payment modal state
+    const [showMpesaModal, setShowMpesaModal] = (0, react_1.useState)(false);
+    const [mpesaTransactionId, setMpesaTransactionId] = (0, react_1.useState)(null);
+    const [mpesaReceipt, setMpesaReceipt] = (0, react_1.useState)(null);
+    const [currentMpesaPaymentIndex, setCurrentMpesaPaymentIndex] = (0, react_1.useState)(null);
     // Computed totals after discount (discount applied to subtotal, then VAT on remainder)
     const subtotalAfterDiscount = Math.max(0, subtotal - discountAmount);
     const vatAfterDiscount = Math.round(subtotalAfterDiscount * 0.16 * 100) / 100;
@@ -41992,13 +42485,38 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
     };
     const handleSubmit = (e) => {
         e.preventDefault();
+        // If M-Pesa is selected and not in split payment mode, show M-Pesa modal
+        if (paymentMethod === 'mpesa' && !isSplitPayment) {
+            setShowMpesaModal(true);
+            return;
+        }
+        if (isSplitPayment) {
+            // Validate split payments
+            if (!areAllPaymentsCompleted()) {
+                setErrors({
+                    ...errors,
+                    splitPayments: 'Please complete all payments before closing the bill. M-Pesa payments must be processed, and cash payments must have received amount entered.',
+                });
+                return;
+            }
+            // Check if total matches
+            const totalSplit = splitPayments.reduce((sum, p) => sum + p.amount, 0);
+            if (Math.abs(totalSplit - totalAfterDiscount) > 0.01) {
+                setErrors({
+                    ...errors,
+                    splitPayments: `Total split payments (Ksh ${totalSplit.toFixed(2)}) must equal total amount (Ksh ${totalAfterDiscount.toFixed(2)})`,
+                });
+                return;
+            }
+        }
         if (!validateForm()) {
             return;
         }
+        // SECURITY: Sanitize all user inputs before creating payment data
         const paymentData = {
             paymentMethod: isSplitPayment ? 'split' : paymentMethod,
-            customerName: customerName.trim() || undefined,
-            customerPhone: customerPhone.trim() || undefined,
+            customerName: customerName ? (0, sanitization_1.sanitizeCustomerName)(customerName) : undefined,
+            customerPhone: customerPhone ? (0, sanitization_1.sanitizePhoneNumber)(customerPhone) : undefined,
             ...(discountAmount > 0 && { discountAmount }),
             isSplitPayment,
         };
@@ -42022,9 +42540,90 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
                     paymentData.creditNotes = creditNotes.trim();
                 }
             }
+            // Add M-Pesa transaction details if available
+            if (paymentMethod === 'mpesa' && mpesaTransactionId) {
+                // M-Pesa payment is handled via the modal, transaction details are set in handleMpesaSuccess
+            }
         }
         onCompleteSale(paymentData);
         setSuccess(true);
+    };
+    const handleMpesaSuccess = (transactionId, receipt) => {
+        setShowMpesaModal(false);
+        if (currentMpesaPaymentIndex !== null && isSplitPayment) {
+            // Update the specific split payment with M-Pesa details
+            const updatedPayments = [...splitPayments];
+            updatedPayments[currentMpesaPaymentIndex] = {
+                ...updatedPayments[currentMpesaPaymentIndex],
+                mpesaTransactionId: transactionId,
+                mpesaReceipt: receipt,
+                status: 'completed',
+            };
+            setSplitPayments(updatedPayments);
+            setCurrentMpesaPaymentIndex(null);
+        }
+        else {
+            // Single M-Pesa payment (non-split)
+            setMpesaTransactionId(transactionId);
+            setMpesaReceipt(receipt || null);
+            // Complete the sale with M-Pesa payment details
+            // SECURITY: Sanitize all user inputs
+            const paymentData = {
+                paymentMethod: 'mpesa',
+                customerName: customerName ? (0, sanitization_1.sanitizeCustomerName)(customerName) : undefined,
+                customerPhone: customerPhone ? (0, sanitization_1.sanitizePhoneNumber)(customerPhone) : undefined,
+                ...(discountAmount > 0 && { discountAmount }),
+            };
+            // Add M-Pesa transaction details to split payments format for consistency
+            paymentData.splitPayments = [{
+                    method: 'mpesa',
+                    amount: totalAfterDiscount,
+                    mpesaTransactionId: transactionId,
+                    mpesaReceipt: receipt,
+                    status: 'completed',
+                }];
+            paymentData.isSplitPayment = false;
+            onCompleteSale(paymentData);
+            setSuccess(true);
+        }
+    };
+    const handleMpesaCancel = () => {
+        setShowMpesaModal(false);
+        if (currentMpesaPaymentIndex !== null && isSplitPayment) {
+            // Reset the processing status for the split payment
+            const updatedPayments = [...splitPayments];
+            updatedPayments[currentMpesaPaymentIndex] = {
+                ...updatedPayments[currentMpesaPaymentIndex],
+                status: 'pending',
+            };
+            setSplitPayments(updatedPayments);
+            setCurrentMpesaPaymentIndex(null);
+        }
+        else {
+            setMpesaTransactionId(null);
+            setMpesaReceipt(null);
+        }
+    };
+    // Check if all split payments are completed
+    const areAllPaymentsCompleted = () => {
+        if (!isSplitPayment || splitPayments.length === 0) {
+            return false;
+        }
+        return splitPayments.every(payment => {
+            if (payment.method === 'cash') {
+                // Cash payment is complete if amountReceived >= amount
+                return payment.amountReceived !== undefined && payment.amountReceived >= payment.amount;
+            }
+            else if (payment.method === 'mpesa') {
+                // M-Pesa payment is complete if status is 'completed' and has transaction ID
+                return payment.status === 'completed' && !!payment.mpesaTransactionId;
+            }
+            else if (payment.method === 'credit') {
+                // Credit payment is always considered complete (no payment needed)
+                return true;
+            }
+            return false;
+        });
     };
     // Split payment handlers
     const handleToggleSplitPayment = () => {
@@ -42035,6 +42634,7 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
                     method: 'cash',
                     amount: totalAfterDiscount,
                     amountReceived: totalAfterDiscount,
+                    status: 'pending',
                 }]);
         }
         else {
@@ -42048,6 +42648,7 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
                 method: 'cash',
                 amount: Math.max(0, remaining),
                 amountReceived: Math.max(0, remaining),
+                status: 'pending',
             }]);
     };
     const handleRemoveSplitPayment = (index) => {
@@ -42055,8 +42656,35 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
     };
     const handleUpdateSplitPayment = (index, updates) => {
         const updated = [...splitPayments];
-        updated[index] = { ...updated[index], ...updates };
+        const currentPayment = updated[index];
+        updated[index] = { ...currentPayment, ...updates };
+        // Auto-update status for cash payments
+        if (updates.method === 'cash' || (currentPayment.method === 'cash' && updates.amountReceived !== undefined)) {
+            const payment = updated[index];
+            if (payment.amountReceived !== undefined && payment.amountReceived >= payment.amount) {
+                updated[index].status = 'completed';
+            }
+            else {
+                updated[index].status = 'pending';
+            }
+        }
+        // Reset status when changing method
+        if (updates.method && updates.method !== currentPayment.method) {
+            updated[index].status = 'pending';
+            if (updates.method === 'cash') {
+                updated[index].amountReceived = updated[index].amount;
+            }
+            else {
+                updated[index].amountReceived = undefined;
+            }
+        }
         setSplitPayments(updated);
+        // Clear errors when updating
+        if (errors.splitPayments) {
+            const newErrors = { ...errors };
+            delete newErrors.splitPayments;
+            setErrors(newErrors);
+        }
     };
     const getRemainingAmount = () => {
         const totalSplit = splitPayments.reduce((sum, p) => sum + p.amount, 0);
@@ -42065,7 +42693,7 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
     const change = paymentMethod === 'cash' && amountReceived
         ? parseFloat(amountReceived) - totalAfterDiscount
         : 0;
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "checkout-page", children: [success && ((0, jsx_runtime_1.jsxs)("div", { className: "success-message", children: [(0, jsx_runtime_1.jsx)("span", { className: "success-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Sale completed!" })] })), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-main", children: [(0, jsx_runtime_1.jsx)("div", { className: "checkout-left", children: (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card order-summary-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDED2 Order Summary" }), (0, jsx_runtime_1.jsxs)("span", { className: "item-count", children: [cart.length, " item", cart.length !== 1 ? 's' : ''] })] }), (0, jsx_runtime_1.jsx)("div", { className: "order-items", children: cart.map(item => ((0, jsx_runtime_1.jsxs)("div", { className: "order-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "item-details", children: [(0, jsx_runtime_1.jsx)("h4", { className: "item-name", children: item.product.name }), (0, jsx_runtime_1.jsxs)("span", { className: "item-sku", children: ["SKU: ", item.product.sku] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "item-meta", children: [(0, jsx_runtime_1.jsxs)("span", { className: "item-quantity", children: ["Qty: ", item.quantity] }), (0, jsx_runtime_1.jsxs)("span", { className: "item-price", children: ["$", (item.product.price * item.quantity).toFixed(2)] })] })] }, item.product.id))) }), (0, jsx_runtime_1.jsxs)("div", { className: "order-totals", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Subtotal" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", subtotal.toFixed(2)] })] }), discountAmount > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "total-row discount-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Discount" }), (0, jsx_runtime_1.jsxs)("span", { className: "discount-amount", children: ["\u2212$", discountAmount.toFixed(2)] })] })), (0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "VAT (16%)" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", vatAfterDiscount.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row grand-total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total Amount" }), (0, jsx_runtime_1.jsxs)("span", { className: "total-amount", children: ["$", totalAfterDiscount.toFixed(2)] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "discount-input-section", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83C\uDFF7\uFE0F" }), "Discount (optional)"] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "$" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: 0, max: subtotal, value: discountAmount === 0 ? '' : discountAmount, onChange: (e) => setDiscountAmount(Math.max(0, parseFloat(e.target.value) || 0)), placeholder: "0.00", className: `currency-input ${errors.discountAmount ? 'error' : ''}`, "aria-describedby": "discount-error" })] }), errors.discountAmount && ((0, jsx_runtime_1.jsx)("span", { id: "discount-error", className: "error-text", children: errors.discountAmount }))] })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-right", children: [(0, jsx_runtime_1.jsxs)("div", { className: "checkout-card payment-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDCB0 Payment Method" }), (0, jsx_runtime_1.jsxs)("label", { className: "split-payment-toggle", children: [(0, jsx_runtime_1.jsx)("input", { type: "checkbox", checked: isSplitPayment, onChange: handleToggleSplitPayment }), (0, jsx_runtime_1.jsx)("span", { children: "Split Payment" })] })] }), !isSplitPayment ? ((0, jsx_runtime_1.jsxs)("div", { className: "payment-options", children: [(0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'cash' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "cash", checked: paymentMethod === 'cash', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon cash-icon", children: "\uD83D\uDCB5" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Cash Payment" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay with physical cash" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'cash' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "mpesa", checked: paymentMethod === 'mpesa', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon mpesa-icon", children: "\uD83D\uDCF1" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "M-Pesa" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Mobile money payment" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'mpesa' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'credit' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "credit", checked: paymentMethod === 'credit', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon credit-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Credit" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay later / On account" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'credit' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] })] })) : ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-header", children: [(0, jsx_runtime_1.jsxs)("p", { className: "split-payment-info", children: ["Split the payment across multiple methods. Total must equal ", (0, jsx_runtime_1.jsxs)("strong", { children: ["Ksh ", totalAfterDiscount.toFixed(2)] })] }), errors.splitPayments && ((0, jsx_runtime_1.jsx)("span", { className: "error-message", children: errors.splitPayments })), (0, jsx_runtime_1.jsxs)("div", { className: "remaining-amount", children: ["Remaining: ", (0, jsx_runtime_1.jsxs)("strong", { className: getRemainingAmount() < 0 ? 'error' : getRemainingAmount() > 0.01 ? 'warning' : 'success', children: ["Ksh ", getRemainingAmount().toFixed(2)] })] })] }), (0, jsx_runtime_1.jsx)("div", { className: "split-payments-list", children: splitPayments.map((payment, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "split-payment-method", children: (0, jsx_runtime_1.jsxs)("select", { value: payment.method, onChange: (e) => handleUpdateSplitPayment(index, {
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "checkout-page", children: [success && ((0, jsx_runtime_1.jsxs)("div", { className: "success-message", children: [(0, jsx_runtime_1.jsx)("span", { className: "success-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Sale completed!" })] })), loading && ((0, jsx_runtime_1.jsxs)("div", { className: "processing-sale-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "processing-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Processing sale..." }), queuedSalesCount > 0 && ((0, jsx_runtime_1.jsxs)("span", { className: "queue-info", children: ["(", queuedSalesCount, " sale", queuedSalesCount !== 1 ? 's' : '', " waiting in queue)"] }))] })), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-main", children: [(0, jsx_runtime_1.jsx)("div", { className: "checkout-left", children: (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card order-summary-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDED2 Order Summary" }), (0, jsx_runtime_1.jsxs)("span", { className: "item-count", children: [cart.length, " item", cart.length !== 1 ? 's' : ''] })] }), (0, jsx_runtime_1.jsx)("div", { className: "order-items", children: cart.map(item => ((0, jsx_runtime_1.jsxs)("div", { className: "order-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "item-details", children: [(0, jsx_runtime_1.jsx)("h4", { className: "item-name", children: item.product.name }), (0, jsx_runtime_1.jsxs)("span", { className: "item-sku", children: ["SKU: ", item.product.sku] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "item-meta", children: [(0, jsx_runtime_1.jsxs)("span", { className: "item-quantity", children: ["Qty: ", item.quantity] }), (0, jsx_runtime_1.jsxs)("span", { className: "item-price", children: ["$", (item.product.price * item.quantity).toFixed(2)] })] })] }, item.product.id))) }), (0, jsx_runtime_1.jsxs)("div", { className: "order-totals", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Subtotal" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", subtotal.toFixed(2)] })] }), discountAmount > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "total-row discount-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Discount" }), (0, jsx_runtime_1.jsxs)("span", { className: "discount-amount", children: ["\u2212$", discountAmount.toFixed(2)] })] })), (0, jsx_runtime_1.jsxs)("div", { className: "total-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "VAT (16%)" }), (0, jsx_runtime_1.jsxs)("span", { children: ["$", vatAfterDiscount.toFixed(2)] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-row grand-total", children: [(0, jsx_runtime_1.jsx)("span", { children: "Total Amount" }), (0, jsx_runtime_1.jsxs)("span", { className: "total-amount", children: ["$", totalAfterDiscount.toFixed(2)] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "discount-input-section", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83C\uDFF7\uFE0F" }), "Discount (optional)"] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "$" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: 0, max: subtotal, value: discountAmount === 0 ? '' : discountAmount, onChange: (e) => setDiscountAmount(Math.max(0, parseFloat(e.target.value) || 0)), placeholder: "0.00", className: `currency-input ${errors.discountAmount ? 'error' : ''}`, "aria-describedby": "discount-error" })] }), errors.discountAmount && ((0, jsx_runtime_1.jsx)("span", { id: "discount-error", className: "error-text", children: errors.discountAmount }))] })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-right", children: [(0, jsx_runtime_1.jsxs)("div", { className: "checkout-card payment-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDCB0 Payment Method" }), (0, jsx_runtime_1.jsxs)("label", { className: "split-payment-toggle", children: [(0, jsx_runtime_1.jsx)("input", { type: "checkbox", checked: isSplitPayment, onChange: handleToggleSplitPayment }), (0, jsx_runtime_1.jsx)("span", { children: "Split Payment" })] })] }), !isSplitPayment ? ((0, jsx_runtime_1.jsxs)("div", { className: "payment-options", children: [(0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'cash' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "cash", checked: paymentMethod === 'cash', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon cash-icon", children: "\uD83D\uDCB5" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Cash Payment" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay with physical cash" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'cash' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "mpesa", checked: paymentMethod === 'mpesa', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon mpesa-icon", children: "\uD83D\uDCF1" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "M-Pesa" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Mobile money payment" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'mpesa' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] }), (0, jsx_runtime_1.jsxs)("label", { className: `payment-option ${paymentMethod === 'credit' ? 'selected' : ''}`, children: [(0, jsx_runtime_1.jsx)("input", { type: "radio", value: "credit", checked: paymentMethod === 'credit', onChange: (e) => setPaymentMethod(e.target.value) }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-content", children: [(0, jsx_runtime_1.jsx)("div", { className: "payment-icon credit-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-name", children: "Credit" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-desc", children: "Pay later / On account" })] }), (0, jsx_runtime_1.jsx)("div", { className: "payment-check", children: paymentMethod === 'credit' && (0, jsx_runtime_1.jsx)("span", { className: "check-icon", children: "\u2713" }) })] })] })] })) : ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-header", children: [(0, jsx_runtime_1.jsxs)("p", { className: "split-payment-info", children: ["Split the payment across multiple methods. Total must equal ", (0, jsx_runtime_1.jsxs)("strong", { children: ["Ksh ", totalAfterDiscount.toFixed(2)] })] }), errors.splitPayments && ((0, jsx_runtime_1.jsx)("span", { className: "error-message", children: errors.splitPayments })), (0, jsx_runtime_1.jsxs)("div", { className: "remaining-amount", children: ["Remaining: ", (0, jsx_runtime_1.jsxs)("strong", { className: getRemainingAmount() < 0 ? 'error' : getRemainingAmount() > 0.01 ? 'warning' : 'success', children: ["Ksh ", getRemainingAmount().toFixed(2)] })] })] }), (0, jsx_runtime_1.jsx)("div", { className: "split-payments-list", children: splitPayments.map((payment, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-item", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "split-payment-method", children: (0, jsx_runtime_1.jsxs)("select", { value: payment.method, onChange: (e) => handleUpdateSplitPayment(index, {
                                                                             method: e.target.value,
                                                                             amountReceived: e.target.value === 'cash' ? payment.amount : undefined,
                                                                         }), className: "split-method-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "cash", children: "Cash" }), (0, jsx_runtime_1.jsx)("option", { value: "mpesa", children: "M-Pesa" }), (0, jsx_runtime_1.jsx)("option", { value: "credit", children: "Credit" })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "split-payment-amount", children: [(0, jsx_runtime_1.jsx)("label", { children: "Amount" }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "Ksh" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: 0, max: totalAfterDiscount, value: payment.amount || '', onChange: (e) => {
@@ -42076,7 +42704,34 @@ const Checkout = ({ cart, subtotal, vat, total, onCompleteSale, onBackToProducts
                                                                                         });
                                                                                     }, className: `currency-input ${errors[`splitPayment_${index}_amount`] ? 'error' : ''}`, placeholder: "0.00" })] }), errors[`splitPayment_${index}_amount`] && ((0, jsx_runtime_1.jsx)("span", { className: "error-text", children: errors[`splitPayment_${index}_amount`] }))] }), splitPayments.length > 1 && ((0, jsx_runtime_1.jsx)("button", { type: "button", onClick: () => handleRemoveSplitPayment(index), className: "remove-split-btn", title: "Remove payment method", children: "\u2715" }))] }), payment.method === 'cash' && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-details", children: [(0, jsx_runtime_1.jsx)("label", { children: "Cash Received" }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "Ksh" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: payment.amount, value: payment.amountReceived || '', onChange: (e) => handleUpdateSplitPayment(index, {
                                                                                 amountReceived: parseFloat(e.target.value) || payment.amount
-                                                                            }), className: `currency-input ${errors[`splitPayment_${index}_cash`] ? 'error' : ''}`, placeholder: payment.amount.toFixed(2) })] }), errors[`splitPayment_${index}_cash`] && ((0, jsx_runtime_1.jsx)("span", { className: "error-text", children: errors[`splitPayment_${index}_cash`] })), payment.amountReceived && payment.amountReceived > payment.amount && ((0, jsx_runtime_1.jsxs)("div", { className: "change-display-small", children: ["Change: Ksh ", (payment.amountReceived - payment.amount).toFixed(2)] }))] })), payment.method === 'mpesa' && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-details", children: [(0, jsx_runtime_1.jsx)("label", { children: "M-Pesa Transaction ID (Optional)" }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: payment.mpesaTransactionId || '', onChange: (e) => handleUpdateSplitPayment(index, { mpesaTransactionId: e.target.value }), className: "text-input", placeholder: "e.g., QHX123456789" })] })), payment.method === 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-details", children: [(0, jsx_runtime_1.jsx)("label", { children: "Due Date (Optional)" }), (0, jsx_runtime_1.jsx)("input", { type: "date", value: payment.creditDueDate || '', onChange: (e) => handleUpdateSplitPayment(index, { creditDueDate: e.target.value }), className: "text-input", min: new Date().toISOString().split('T')[0] }), (0, jsx_runtime_1.jsx)("label", { children: "Notes (Optional)" }), (0, jsx_runtime_1.jsx)("textarea", { value: payment.creditNotes || '', onChange: (e) => handleUpdateSplitPayment(index, { creditNotes: e.target.value }), className: "text-input", placeholder: "Add notes about this credit payment...", rows: 2 })] }))] }, index))) }), getRemainingAmount() > 0.01 && ((0, jsx_runtime_1.jsx)("button", { type: "button", onClick: handleAddSplitPayment, className: "add-split-payment-btn", children: "+ Add Payment Method" }))] })), paymentMethod === 'cash' && ((0, jsx_runtime_1.jsxs)("div", { className: "cash-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCB0" }), "Amount Received"] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "Ksh" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: totalAfterDiscount.toFixed(2), value: amountReceived, onChange: (e) => setAmountReceived(e.target.value), placeholder: totalAfterDiscount.toFixed(2), required: true, className: `currency-input ${errors.amountReceived ? 'error' : ''}`, "aria-describedby": "amount-error" })] }), (0, jsx_runtime_1.jsxs)("span", { className: "input-hint", children: ["Minimum: $", total.toFixed(2)] }), errors.amountReceived && ((0, jsx_runtime_1.jsx)("span", { id: "amount-error", className: "error-message", children: errors.amountReceived }))] }), amountReceived && parseFloat(amountReceived) >= total && ((0, jsx_runtime_1.jsxs)("div", { className: "change-display", children: [(0, jsx_runtime_1.jsx)("div", { className: "change-icon", children: "\uD83D\uDD04" }), (0, jsx_runtime_1.jsxs)("div", { className: "change-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "change-label", children: "Change to return:" }), (0, jsx_runtime_1.jsxs)("span", { className: "change-amount", children: ["Ksh ", change.toFixed(2)] })] })] }))] })), paymentMethod === 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "credit-info-banner", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-icon", children: "\u2139\uFE0F" }), (0, jsx_runtime_1.jsxs)("div", { className: "info-text", children: [(0, jsx_runtime_1.jsx)("strong", { children: "Credit Sale" }), (0, jsx_runtime_1.jsxs)("p", { children: ["Total amount: Ksh ", total.toFixed(2), " will be added to customer's account"] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCC5" }), "Due Date (Optional)"] }), (0, jsx_runtime_1.jsx)("input", { type: "date", value: creditDueDate, onChange: (e) => setCreditDueDate(e.target.value), className: "text-input", min: new Date().toISOString().split('T')[0] }), (0, jsx_runtime_1.jsx)("span", { className: "input-hint", children: "When payment is expected" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDD" }), "Notes (Optional)"] }), (0, jsx_runtime_1.jsx)("textarea", { value: creditNotes, onChange: (e) => setCreditNotes(e.target.value), placeholder: "Add any notes about this credit sale...", className: "text-input", rows: 2 })] })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card customer-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDC64 Customer Details" }), (0, jsx_runtime_1.jsx)("span", { className: `optional-badge ${paymentMethod === 'credit' ? 'required-badge' : ''}`, children: paymentMethod === 'credit' ? 'Required' : 'Optional' })] }), (0, jsx_runtime_1.jsxs)("div", { className: "customer-form", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDC64" }), "Customer Name", paymentMethod === 'credit' && (0, jsx_runtime_1.jsx)("span", { className: "required-indicator", children: "*" })] }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: customerName, onChange: (e) => setCustomerName(e.target.value), placeholder: "Enter customer name", className: `text-input ${errors.customerName ? 'error' : ''}`, required: paymentMethod === 'credit', "aria-describedby": "name-error" }), errors.customerName && ((0, jsx_runtime_1.jsx)("span", { id: "name-error", className: "error-message", children: errors.customerName }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDE" }), "Phone Number"] }), (0, jsx_runtime_1.jsx)("input", { type: "tel", value: customerPhone, onChange: (e) => setCustomerPhone(e.target.value), placeholder: "Enter phone number", className: `text-input ${errors.customerPhone ? 'error' : ''}`, "aria-describedby": "phone-error" }), errors.customerPhone && ((0, jsx_runtime_1.jsx)("span", { id: "phone-error", className: "error-message", children: errors.customerPhone }))] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-actions", children: [(0, jsx_runtime_1.jsxs)("button", { type: "button", onClick: onBackToProducts, className: "secondary-btn", disabled: loading, children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u274C" }), "Cancel"] }), (0, jsx_runtime_1.jsx)("button", { onClick: handleSubmit, disabled: loading, className: "primary-btn complete-sale-btn", children: loading ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Processing Payment..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u2705" }), (0, jsx_runtime_1.jsxs)("span", { children: ["Complete Sale - $", total.toFixed(2)] })] })) })] })] })] })] }));
+                                                                            }), className: `currency-input ${errors[`splitPayment_${index}_cash`] ? 'error' : ''}`, placeholder: payment.amount.toFixed(2) })] }), errors[`splitPayment_${index}_cash`] && ((0, jsx_runtime_1.jsx)("span", { className: "error-text", children: errors[`splitPayment_${index}_cash`] })), payment.amountReceived && payment.amountReceived > payment.amount && ((0, jsx_runtime_1.jsxs)("div", { className: "change-display-small", children: ["Change: Ksh ", (payment.amountReceived - payment.amount).toFixed(2)] }))] })), payment.method === 'mpesa' && ((0, jsx_runtime_1.jsx)("div", { className: "split-payment-details", children: payment.status === 'completed' ? ((0, jsx_runtime_1.jsxs)("div", { className: "payment-status-completed", children: [(0, jsx_runtime_1.jsxs)("div", { className: "status-badge success", children: [(0, jsx_runtime_1.jsx)("span", { className: "status-icon", children: "\u2705" }), (0, jsx_runtime_1.jsx)("span", { children: "Payment Completed" })] }), payment.mpesaTransactionId && ((0, jsx_runtime_1.jsxs)("div", { className: "transaction-info", children: [(0, jsx_runtime_1.jsx)("strong", { children: "Transaction ID:" }), " ", payment.mpesaTransactionId] })), payment.mpesaReceipt && ((0, jsx_runtime_1.jsxs)("div", { className: "transaction-info", children: [(0, jsx_runtime_1.jsx)("strong", { children: "Receipt:" }), " ", payment.mpesaReceipt] })), (0, jsx_runtime_1.jsx)("button", { type: "button", onClick: () => handleUpdateSplitPayment(index, { status: 'pending', mpesaTransactionId: undefined, mpesaReceipt: undefined }), className: "retry-payment-btn", children: "Retry Payment" })] })) : payment.status === 'processing' ? ((0, jsx_runtime_1.jsx)("div", { className: "payment-status-processing", children: (0, jsx_runtime_1.jsxs)("div", { className: "status-badge processing", children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner-small" }), (0, jsx_runtime_1.jsx)("span", { children: "Processing Payment..." })] }) })) : ((0, jsx_runtime_1.jsxs)("div", { className: "mpesa-payment-action", children: [(0, jsx_runtime_1.jsxs)("button", { type: "button", onClick: () => {
+                                                                            // Set status to processing
+                                                                            handleUpdateSplitPayment(index, { status: 'processing' });
+                                                                            setCurrentMpesaPaymentIndex(index);
+                                                                            setShowMpesaModal(true);
+                                                                        }, className: "initiate-mpesa-btn", disabled: payment.amount <= 0, children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDCF1" }), "Pay with M-Pesa"] }), (0, jsx_runtime_1.jsxs)("span", { className: "payment-hint", children: ["Click to initiate M-Pesa payment for Ksh ", payment.amount.toFixed(2)] })] })) })), payment.method === 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-details", children: [(0, jsx_runtime_1.jsx)("label", { children: "Due Date (Optional)" }), (0, jsx_runtime_1.jsx)("input", { type: "date", value: payment.creditDueDate || '', onChange: (e) => handleUpdateSplitPayment(index, { creditDueDate: e.target.value }), className: "text-input", min: new Date().toISOString().split('T')[0] }), (0, jsx_runtime_1.jsx)("label", { children: "Notes (Optional)" }), (0, jsx_runtime_1.jsx)("textarea", { value: payment.creditNotes || '', onChange: (e) => handleUpdateSplitPayment(index, { creditNotes: e.target.value }), className: "text-input", placeholder: "Add notes about this credit payment...", rows: 2 })] }))] }, index))) }), getRemainingAmount() > 0.01 && ((0, jsx_runtime_1.jsx)("button", { type: "button", onClick: handleAddSplitPayment, className: "add-split-payment-btn", children: "+ Add Payment Method" }))] })), paymentMethod === 'cash' && ((0, jsx_runtime_1.jsxs)("div", { className: "cash-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCB0" }), "Amount Received"] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-wrapper", children: [(0, jsx_runtime_1.jsx)("span", { className: "currency-symbol", children: "Ksh" }), (0, jsx_runtime_1.jsx)("input", { type: "number", step: "0.01", min: totalAfterDiscount.toFixed(2), value: amountReceived, onChange: (e) => setAmountReceived(e.target.value), placeholder: totalAfterDiscount.toFixed(2), required: true, className: `currency-input ${errors.amountReceived ? 'error' : ''}`, "aria-describedby": "amount-error" })] }), (0, jsx_runtime_1.jsxs)("span", { className: "input-hint", children: ["Minimum: $", total.toFixed(2)] }), errors.amountReceived && ((0, jsx_runtime_1.jsx)("span", { id: "amount-error", className: "error-message", children: errors.amountReceived }))] }), amountReceived && parseFloat(amountReceived) >= total && ((0, jsx_runtime_1.jsxs)("div", { className: "change-display", children: [(0, jsx_runtime_1.jsx)("div", { className: "change-icon", children: "\uD83D\uDD04" }), (0, jsx_runtime_1.jsxs)("div", { className: "change-info", children: [(0, jsx_runtime_1.jsx)("span", { className: "change-label", children: "Change to return:" }), (0, jsx_runtime_1.jsxs)("span", { className: "change-amount", children: ["Ksh ", change.toFixed(2)] })] })] }))] })), paymentMethod === 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-payment-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: "credit-info-banner", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-icon", children: "\u2139\uFE0F" }), (0, jsx_runtime_1.jsxs)("div", { className: "info-text", children: [(0, jsx_runtime_1.jsx)("strong", { children: "Credit Sale" }), (0, jsx_runtime_1.jsxs)("p", { children: ["Total amount: Ksh ", total.toFixed(2), " will be added to customer's account"] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCC5" }), "Due Date (Optional)"] }), (0, jsx_runtime_1.jsx)("input", { type: "date", value: creditDueDate, onChange: (e) => setCreditDueDate(e.target.value), className: "text-input", min: new Date().toISOString().split('T')[0] }), (0, jsx_runtime_1.jsx)("span", { className: "input-hint", children: "When payment is expected" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDD" }), "Notes (Optional)"] }), (0, jsx_runtime_1.jsx)("textarea", { value: creditNotes, onChange: (e) => setCreditNotes(e.target.value), placeholder: "Add any notes about this credit sale...", className: "text-input", rows: 2 })] })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-card customer-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "card-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDC64 Customer Details" }), (0, jsx_runtime_1.jsx)("span", { className: `optional-badge ${paymentMethod === 'credit' ? 'required-badge' : ''}`, children: paymentMethod === 'credit' ? 'Required' : 'Optional' })] }), (0, jsx_runtime_1.jsxs)("div", { className: "customer-form", children: [(0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDC64" }), "Customer Name", paymentMethod === 'credit' && (0, jsx_runtime_1.jsx)("span", { className: "required-indicator", children: "*" })] }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: customerName, onChange: (e) => setCustomerName(e.target.value), placeholder: "Enter customer name", className: `text-input ${errors.customerName ? 'error' : ''}`, required: paymentMethod === 'credit', "aria-describedby": "name-error" }), errors.customerName && ((0, jsx_runtime_1.jsx)("span", { id: "name-error", className: "error-message", children: errors.customerName }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "input-group", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDE" }), "Phone Number"] }), (0, jsx_runtime_1.jsx)("input", { type: "tel", value: customerPhone, onChange: (e) => setCustomerPhone(e.target.value), placeholder: "Enter phone number", className: `text-input ${errors.customerPhone ? 'error' : ''}`, "aria-describedby": "phone-error" }), errors.customerPhone && ((0, jsx_runtime_1.jsx)("span", { id: "phone-error", className: "error-message", children: errors.customerPhone }))] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "checkout-actions", children: [(0, jsx_runtime_1.jsxs)("button", { type: "button", onClick: onBackToProducts, className: "secondary-btn", disabled: loading, children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u274C" }), "Cancel"] }), (0, jsx_runtime_1.jsx)("button", { onClick: handleSubmit, disabled: loading || (isSplitPayment && !areAllPaymentsCompleted()), className: "primary-btn complete-sale-btn", title: isSplitPayment && !areAllPaymentsCompleted() ? 'Please complete all payments before closing the bill' : '', children: loading ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Processing Sale..." }), queuedSalesCount > 0 && ((0, jsx_runtime_1.jsxs)("span", { className: "queue-indicator", children: ["(", queuedSalesCount, " in queue)"] }))] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: paymentMethod === 'mpesa' && !isSplitPayment ? '📱' : '✅' }), (0, jsx_runtime_1.jsx)("span", { children: isSplitPayment && !areAllPaymentsCompleted()
+                                                        ? `Complete All Payments - Ksh ${totalAfterDiscount.toFixed(2)}`
+                                                        : paymentMethod === 'mpesa' && !isSplitPayment
+                                                            ? `Pay with M-Pesa - Ksh ${totalAfterDiscount.toFixed(2)}`
+                                                            : `Complete Sale - Ksh ${totalAfterDiscount.toFixed(2)}` })] })) })] })] })] }), showMpesaModal && ((0, jsx_runtime_1.jsx)(MpesaPayment_1.default, { amount: currentMpesaPaymentIndex !== null && isSplitPayment
+                    ? splitPayments[currentMpesaPaymentIndex]?.amount || 0
+                    : totalAfterDiscount, saleData: {
+                    items: cart.map(item => ({
+                        productId: item.product.id,
+                        quantity: item.quantity,
+                        price: item.product.price,
+                    })),
+                    subtotal: subtotalAfterDiscount,
+                    vat: vatAfterDiscount,
+                    total: currentMpesaPaymentIndex !== null && isSplitPayment
+                        ? splitPayments[currentMpesaPaymentIndex]?.amount || 0
+                        : totalAfterDiscount,
+                    discountAmount,
+                    customerName: customerName ? (0, sanitization_1.sanitizeCustomerName)(customerName) : undefined,
+                    customerPhone: customerPhone ? (0, sanitization_1.sanitizePhoneNumber)(customerPhone) : undefined,
+                    isSplitPayment: isSplitPayment && currentMpesaPaymentIndex !== null,
+                    splitPaymentIndex: currentMpesaPaymentIndex,
+                }, onSuccess: handleMpesaSuccess, onCancel: handleMpesaCancel }))] }));
 };
 exports["default"] = Checkout;
 
@@ -42228,6 +42883,7 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const AuthContext_1 = __webpack_require__(/*! ../contexts/AuthContext */ "./src/renderer/contexts/AuthContext.tsx");
 const error_handler_1 = __webpack_require__(/*! ../utils/error-handler */ "./src/renderer/utils/error-handler.ts");
 const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
+const error_parser_1 = __webpack_require__(/*! ../../shared/error-parser */ "./src/shared/error-parser.ts");
 const Login = () => {
     const { login, loading } = (0, AuthContext_1.useAuth)();
     const [email, setEmail] = (0, react_1.useState)('');
@@ -42276,25 +42932,28 @@ const Login = () => {
             }
         }
         catch (err) {
-            // Extract error message - handle both Electron IPC errors and direct errors
-            let errorMessage = 'We could not sign you in. Please check your details and try again.';
-            if (err?.response?.data) {
-                // Axios error response
-                errorMessage =
-                    err.response.data.message ||
-                        err.response.data.error ||
-                        (Array.isArray(err.response.data.message) ? err.response.data.message[0] : null) ||
-                        err.message ||
-                        errorMessage;
+            // IMPROVED: Use error parser for consistent error message extraction
+            let parsedError;
+            try {
+                if (err?.response?.data) {
+                    parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseNestJSError)(err.response.data));
+                }
+                else if (err?.data) {
+                    parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseNestJSError)(err.data));
+                }
+                else if (err?.message) {
+                    // For IPC errors, the message is already extracted
+                    parsedError = { message: err.message };
+                }
+                else {
+                    parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseNestJSError)(err));
+                }
             }
-            else if (err?.message) {
-                // Direct error message (from Electron IPC or Error object)
-                errorMessage = err.message;
+            catch {
+                // Fallback if parsing fails
+                parsedError = { message: err?.message || 'We could not sign you in. Please check your details and try again.' };
             }
-            else if (typeof err === 'string') {
-                // String error
-                errorMessage = err;
-            }
+            const errorMessage = (0, error_parser_1.getUserFriendlyMessage)(parsedError) || 'We could not sign you in. Please check your details and try again.';
             setFormError(errorMessage);
             (0, error_handler_1.handleError)(new error_handler_1.AppError(errorMessage, 'UNAUTHORIZED', {
                 operation: 'login',
@@ -42333,6 +42992,296 @@ const Login = () => {
                                                 }, placeholder: "Enter your password", disabled: isSubmitting, autoComplete: "current-password", "aria-invalid": !!passwordError, "aria-describedby": passwordError ? 'password-error' : undefined, onKeyDown: handlePasswordKeyDown }) }), passwordError && ((0, jsx_runtime_1.jsx)("div", { id: "password-error", className: "field-error", children: passwordError })), capsLockOn && !passwordError && ((0, jsx_runtime_1.jsx)("div", { className: "field-hint warning", children: "Caps Lock is on \u2013 passwords are case sensitive." }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "login-form-meta", children: [(0, jsx_runtime_1.jsxs)("label", { className: "checkbox-label", children: [(0, jsx_runtime_1.jsx)("input", { type: "checkbox", checked: rememberMe, onChange: (e) => setRememberMe(e.target.checked), disabled: isSubmitting }), (0, jsx_runtime_1.jsx)("span", { children: "Remember this device" })] }), (0, jsx_runtime_1.jsx)("button", { type: "button", className: "link-button", onClick: () => (0, Toast_1.showToast)('Password reset is managed by your administrator.', 'info', 2500), children: "Forgot password?" })] }), (0, jsx_runtime_1.jsx)("button", { type: "submit", className: "login-button", disabled: isSubmitting, children: isSubmitting ? 'Signing you in…' : 'Sign in' })] }), (0, jsx_runtime_1.jsx)("div", { className: "login-footer", children: (0, jsx_runtime_1.jsx)("p", { children: "Having trouble? Contact your account administrator for access." }) })] })] }) }));
 };
 exports["default"] = Login;
+
+
+/***/ }),
+
+/***/ "./src/renderer/components/MpesaPayment.tsx":
+/*!**************************************************!*\
+  !*** ./src/renderer/components/MpesaPayment.tsx ***!
+  \**************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const sanitization_1 = __webpack_require__(/*! ../utils/sanitization */ "./src/renderer/utils/sanitization.ts");
+__webpack_require__(/*! ../checkout.css */ "./src/renderer/checkout.css");
+const MpesaPayment = ({ amount, saleData, onSuccess, onCancel }) => {
+    const [phoneNumber, setPhoneNumber] = (0, react_1.useState)('');
+    const [isProcessing, setIsProcessing] = (0, react_1.useState)(false);
+    const [currentTransaction, setCurrentTransaction] = (0, react_1.useState)(null);
+    const [error, setError] = (0, react_1.useState)(null);
+    const [statusMessage, setStatusMessage] = (0, react_1.useState)('');
+    // Status polling with exponential backoff
+    (0, react_1.useEffect)(() => {
+        let interval;
+        let attempt = 0;
+        const maxAttempts = 15;
+        const baseDelay = 3000;
+        let isMounted = true;
+        const checkPaymentStatus = async () => {
+            if (!currentTransaction?.checkoutRequestId || !isMounted) {
+                return;
+            }
+            try {
+                const token = await window.electronAPI.getAuthToken();
+                if (!token) {
+                    throw new Error('Authentication token not found');
+                }
+                // Use centralized API URL from Electron main process
+                const apiBaseUrl = await window.electronAPI.getApiBaseUrl();
+                const endpoint = `/mpesa/status/${currentTransaction.checkoutRequestId}`;
+                // Apply rate limiting
+                const { rateLimitedFetch, extractEndpoint: extractEndpointUtil } = await Promise.resolve().then(() => __importStar(__webpack_require__(/*! ../../shared/rate-limiter */ "./src/shared/rate-limiter.ts")));
+                const fullEndpoint = extractEndpointUtil(`${apiBaseUrl}${endpoint}`);
+                const response = await rateLimitedFetch(`${apiBaseUrl}${endpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const resp = data;
+                if (resp.success && resp.data) {
+                    const updatedTransaction = resp.data;
+                    if (currentTransaction.status !== updatedTransaction.status) {
+                        setCurrentTransaction(updatedTransaction);
+                    }
+                    switch (updatedTransaction.status) {
+                        case 'success':
+                            setStatusMessage('Payment successful! Processing your order...');
+                            if (interval)
+                                clearTimeout(interval);
+                            setTimeout(() => {
+                                if (isMounted) {
+                                    setStatusMessage('✅ Payment completed successfully!');
+                                    setTimeout(() => {
+                                        if (isMounted) {
+                                            onSuccess(updatedTransaction.id, updatedTransaction.mpesaReceipt);
+                                        }
+                                    }, 2000);
+                                }
+                            }, 1000);
+                            return;
+                        case 'failed':
+                            setError(updatedTransaction.message || 'Payment was not completed');
+                            setIsProcessing(false);
+                            return;
+                        case 'cancelled':
+                            setError('Payment was cancelled');
+                            setIsProcessing(false);
+                            return;
+                        case 'timeout':
+                            setError('Payment request timed out. Please try again.');
+                            setIsProcessing(false);
+                            return;
+                    }
+                    // Continue polling if still pending
+                    if (updatedTransaction.status === 'pending' && attempt < maxAttempts) {
+                        attempt++;
+                        const delay = baseDelay * Math.pow(2, Math.min(attempt - 1, 4)); // Exponential backoff, max 48s
+                        interval = setTimeout(checkPaymentStatus, delay);
+                    }
+                    else if (attempt >= maxAttempts) {
+                        setError('Payment status check timed out. Please verify payment manually.');
+                        setIsProcessing(false);
+                    }
+                }
+            }
+            catch (err) {
+                console.error('Error checking payment status:', err);
+                if (attempt < maxAttempts) {
+                    attempt++;
+                    const delay = baseDelay * Math.pow(2, Math.min(attempt - 1, 4));
+                    interval = setTimeout(checkPaymentStatus, delay);
+                }
+                else {
+                    setError('Failed to check payment status. Please verify payment manually.');
+                    setIsProcessing(false);
+                }
+            }
+        };
+        if (currentTransaction?.status === 'pending' && isMounted) {
+            checkPaymentStatus();
+        }
+        return () => {
+            isMounted = false;
+            if (interval)
+                clearTimeout(interval);
+        };
+    }, [currentTransaction, onSuccess]);
+    const validateMpesaPhoneNumber = (phone) => {
+        // Accepts:
+        // - 07XXXXXXXX (10 digits starting with 07)
+        // - 7XXXXXXXX (9 digits starting with 7)
+        // - 2547XXXXXXXX (12 digits starting with 254)
+        // - +2547XXXXXXXX (13 digits starting with +254)
+        const phoneRegex = /^(?:07\d{8}|7\d{8}|2547\d{8}|\+2547\d{8})$/;
+        return phoneRegex.test(phone.replace(/\D/g, ''));
+    };
+    const formatPhoneNumber = (phone) => {
+        // Remove all non-digit characters
+        const cleaned = phone.replace(/\D/g, '');
+        // Handle different formats
+        if (cleaned.startsWith('0')) {
+            // Convert 07... to 2547...
+            return '254' + cleaned.substring(1);
+        }
+        else if (cleaned.startsWith('254')) {
+            // Already in 254 format
+            return cleaned;
+        }
+        else if (cleaned.startsWith('7') && cleaned.length === 9) {
+            // Convert 7... to 2547...
+            return '254' + cleaned;
+        }
+        else if (cleaned.startsWith('+254')) {
+            // Convert +254... to 254...
+            return cleaned.substring(1);
+        }
+        // If we get here, the format isn't recognized, but we'll try to use it as is
+        return cleaned;
+    };
+    const handleInitiatePayment = async () => {
+        if (!phoneNumber.trim()) {
+            setError('Please enter a phone number');
+            return;
+        }
+        if (!validateMpesaPhoneNumber(phoneNumber)) {
+            setError('Please enter a valid phone number (07XXXXXXXX, 2547XXXXXXXX, or +2547XXXXXXXX)');
+            return;
+        }
+        if (amount < 10) {
+            setError('Minimum amount is 10 KES');
+            return;
+        }
+        setIsProcessing(true);
+        setError(null);
+        setStatusMessage('Initiating payment request...');
+        try {
+            const token = await window.electronAPI.getAuthToken();
+            if (!token) {
+                throw new Error('Authentication token not found');
+            }
+            const formattedPhone = formatPhoneNumber(phoneNumber);
+            const reference = `POS-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            // Get tenantId from user data
+            const userData = await window.electronAPI.getUserData();
+            const tenantId = userData?.tenantId || saleData?.tenantId;
+            if (!tenantId) {
+                throw new Error('Tenant ID not found');
+            }
+            // Use centralized API URL from Electron main process
+            const apiBaseUrl = await window.electronAPI.getApiBaseUrl();
+            const endpoint = '/mpesa/initiate';
+            // Apply rate limiting (via rate-limited fetch)
+            const { rateLimitedFetch, extractEndpoint: extractEndpointUtil } = await Promise.resolve().then(() => __importStar(__webpack_require__(/*! ../../shared/rate-limiter */ "./src/shared/rate-limiter.ts")));
+            const fullEndpoint = extractEndpointUtil(`${apiBaseUrl}${endpoint}`);
+            const response = await rateLimitedFetch(`${apiBaseUrl}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phoneNumber: formattedPhone, // Already sanitized by formatPhoneNumber
+                    amount: Math.ceil(amount),
+                    reference,
+                    tenantId,
+                    saleData: saleData ? {
+                        // Sanitize any string fields in saleData if present
+                        ...saleData,
+                        customerName: saleData.customerName ? (0, sanitization_1.sanitizeCustomerName)(saleData.customerName) : undefined,
+                        customerPhone: saleData.customerPhone ? (0, sanitization_1.sanitizePhoneNumber)(saleData.customerPhone) : undefined,
+                        creditNotes: saleData.creditNotes ? (0, sanitization_1.sanitizeNotes)(saleData.creditNotes) : undefined,
+                        reference,
+                        timestamp: new Date().toISOString(),
+                    } : {
+                        reference,
+                        timestamp: new Date().toISOString(),
+                    },
+                }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            const resp = data;
+            if (resp.success && resp.data) {
+                setStatusMessage('Payment request sent! Please check your phone and enter your M-Pesa PIN.');
+                setCurrentTransaction({
+                    id: resp.data.transactionId || resp.data.checkoutRequestId,
+                    phoneNumber: formattedPhone,
+                    amount: Math.ceil(amount),
+                    status: 'pending',
+                    checkoutRequestId: resp.data.checkoutRequestId,
+                    createdAt: new Date().toISOString(),
+                });
+            }
+            else {
+                throw new Error(resp.error || 'Failed to initiate payment');
+            }
+        }
+        catch (err) {
+            console.error('Error initiating payment:', err);
+            setError(err.message || 'Failed to initiate payment. Please try again.');
+            setIsProcessing(false);
+            setStatusMessage('');
+        }
+    };
+    return ((0, jsx_runtime_1.jsx)("div", { className: "mpesa-payment-modal", children: (0, jsx_runtime_1.jsxs)("div", { className: "mpesa-payment-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "mpesa-payment-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "\uD83D\uDCF1 M-Pesa Payment" }), (0, jsx_runtime_1.jsx)("button", { className: "close-btn", onClick: onCancel, disabled: isProcessing, children: "\u2715" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "mpesa-payment-body", children: [(0, jsx_runtime_1.jsxs)("div", { className: "payment-amount-display", children: [(0, jsx_runtime_1.jsx)("div", { className: "amount-label", children: "Amount to Pay" }), (0, jsx_runtime_1.jsxs)("div", { className: "amount-value", children: ["KES ", amount.toFixed(2)] })] }), !currentTransaction ? ((0, jsx_runtime_1.jsxs)("div", { className: "phone-input-section", children: [(0, jsx_runtime_1.jsxs)("label", { className: "input-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "label-icon", children: "\uD83D\uDCDE" }), "Phone Number"] }), (0, jsx_runtime_1.jsx)("input", { type: "tel", value: phoneNumber, onChange: (e) => {
+                                        setPhoneNumber(e.target.value);
+                                        setError(null);
+                                    }, placeholder: "07XXXXXXXX or 2547XXXXXXXX", className: `text-input ${error ? 'error' : ''}`, disabled: isProcessing, autoFocus: true }), (0, jsx_runtime_1.jsx)("span", { className: "input-hint", children: "Enter the M-Pesa registered phone number" }), error && (0, jsx_runtime_1.jsx)("div", { className: "error-message", children: error })] })) : ((0, jsx_runtime_1.jsxs)("div", { className: "payment-status-section", children: [(0, jsx_runtime_1.jsxs)("div", { className: `status-icon ${currentTransaction.status}`, children: [currentTransaction.status === 'pending' && '⏳', currentTransaction.status === 'success' && '✅', currentTransaction.status === 'failed' && '❌'] }), (0, jsx_runtime_1.jsx)("div", { className: "status-message", children: statusMessage || 'Processing payment...' }), currentTransaction.status === 'pending' && ((0, jsx_runtime_1.jsxs)("div", { className: "payment-instructions", children: [(0, jsx_runtime_1.jsx)("p", { children: "1. Check your phone for the M-Pesa prompt" }), (0, jsx_runtime_1.jsx)("p", { children: "2. Enter your M-Pesa PIN" }), (0, jsx_runtime_1.jsx)("p", { children: "3. Confirm the payment" }), (0, jsx_runtime_1.jsx)("p", { className: "waiting-text", children: "Waiting for payment confirmation..." })] })), error && (0, jsx_runtime_1.jsx)("div", { className: "error-message", children: error })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "mpesa-payment-footer", children: [!currentTransaction && ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("button", { type: "button", onClick: onCancel, className: "secondary-btn", disabled: isProcessing, children: "Cancel" }), (0, jsx_runtime_1.jsx)("button", { type: "button", onClick: handleInitiatePayment, className: "primary-btn", disabled: isProcessing || !phoneNumber.trim(), children: isProcessing ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), "Initiating..."] })) : ('Send Payment Request') })] })), currentTransaction && currentTransaction.status !== 'pending' && ((0, jsx_runtime_1.jsx)("button", { type: "button", onClick: () => {
+                                if (currentTransaction.status === 'success') {
+                                    onSuccess(currentTransaction.id, currentTransaction.mpesaReceipt);
+                                }
+                                else {
+                                    onCancel();
+                                }
+                            }, className: "primary-btn", children: currentTransaction.status === 'success' ? 'Continue' : 'Close' }))] })] }) }));
+};
+exports["default"] = MpesaPayment;
 
 
 /***/ }),
@@ -42393,6 +43342,9 @@ const usePendingTransactions_1 = __webpack_require__(/*! ../hooks/usePendingTran
 const validation_1 = __webpack_require__(/*! ../utils/validation */ "./src/renderer/utils/validation.ts");
 const audit_logger_1 = __webpack_require__(/*! ../utils/audit-logger */ "./src/renderer/utils/audit-logger.ts");
 const error_handler_1 = __webpack_require__(/*! ../utils/error-handler */ "./src/renderer/utils/error-handler.ts");
+const sanitization_1 = __webpack_require__(/*! ../utils/sanitization */ "./src/renderer/utils/sanitization.ts");
+const sale_mutex_1 = __webpack_require__(/*! ../utils/sale-mutex */ "./src/renderer/utils/sale-mutex.ts");
+const stock_conflict_handler_1 = __webpack_require__(/*! ../../shared/stock-conflict-handler */ "./src/shared/stock-conflict-handler.ts");
 const POS = () => {
     const { user } = (0, AuthContext_1.useAuth)();
     const { pendingTransactions, holdTransaction, resumeTransaction, deleteTransaction } = (0, usePendingTransactions_1.usePendingTransactions)();
@@ -42405,6 +43357,19 @@ const POS = () => {
     const [currentReceipt, setCurrentReceipt] = (0, react_1.useState)(null);
     const [processingSale, setProcessingSale] = (0, react_1.useState)(false);
     const [printing, setPrinting] = (0, react_1.useState)(false);
+    const [queuedSalesCount, setQueuedSalesCount] = (0, react_1.useState)(0);
+    // Update queue count periodically when processing or when queue exists
+    (0, react_1.useEffect)(() => {
+        const updateQueueCount = () => {
+            const status = sale_mutex_1.saleMutex.getStatus();
+            setQueuedSalesCount(status.queueSize);
+        };
+        // Update immediately
+        updateQueueCount();
+        // Update periodically if processing or queue exists
+        const interval = setInterval(updateQueueCount, 500); // Update every 500ms
+        return () => clearInterval(interval);
+    }, [processingSale]);
     // Load branches on mount and when user changes
     (0, react_1.useEffect)(() => {
         const loadBranches = async () => {
@@ -42432,6 +43397,24 @@ const POS = () => {
     (0, react_1.useEffect)(() => {
         loadProducts(0);
     }, [selectedBranch]);
+    // Check catalog sync status periodically and show warning if stale
+    (0, react_1.useEffect)(() => {
+        const checkCatalogStatus = async () => {
+            try {
+                const status = await window.electronAPI.getCatalogSyncStatus();
+                if (status.success && status.isStale && status.hasCatalog) {
+                    (0, Toast_1.showToast)(`Product catalog is outdated (${status.ageHours?.toFixed(1)} hours old). Please sync products from Settings.`, 'warning', 8000);
+                }
+            }
+            catch (error) {
+                // Silently fail - not critical
+            }
+        };
+        // Check immediately and then every 5 minutes
+        checkCatalogStatus();
+        const interval = setInterval(checkCatalogStatus, 5 * 60 * 1000);
+        return () => clearInterval(interval);
+    }, []);
     // Keyboard shortcuts (only when not typing in an input)
     (0, react_1.useEffect)(() => {
         const handleKeyDown = (e) => {
@@ -42586,10 +43569,10 @@ const POS = () => {
             }
             if (existing) {
                 return prevCart.map(item => item.product.id === product.id
-                    ? { ...item, quantity: item.quantity + 1 }
+                    ? { ...item, quantity: item.quantity + 1, reservedAt: item.reservedAt || Date.now() }
                     : item);
             }
-            return [...prevCart, { product, quantity: 1 }];
+            return [...prevCart, { product, quantity: 1, reservedAt: Date.now() }];
         });
     };
     const removeFromCart = (productId) => {
@@ -42612,7 +43595,7 @@ const POS = () => {
                 return prevCart; // Don't modify cart
             }
             return prevCart.map(cartItem => cartItem.product.id === productId
-                ? { ...cartItem, quantity }
+                ? { ...cartItem, quantity, reservedAt: cartItem.reservedAt || Date.now() }
                 : cartItem);
         });
     };
@@ -42632,342 +43615,689 @@ const POS = () => {
         setCurrentStep('products');
     };
     const handleCompleteSale = async (paymentData) => {
-        setProcessingSale(true);
+        // Use mutex to prevent concurrent sale processing
         try {
-            // Check if user is authenticated and has token
-            const token = await window.electronAPI.getAuthToken();
-            if (!token) {
-                (0, error_handler_1.handleError)(new error_handler_1.AppError('Authentication token not found', 'TOKEN_EXPIRED', {
-                    operation: 'completeSale',
-                    component: 'POS',
-                    userId: user?.id,
-                    userName: user?.name,
-                }), {
-                    operation: 'completeSale',
-                    component: 'POS',
-                    userId: user?.id,
-                    userName: user?.name,
-                }, {
-                    fallbackAction: error_handler_1.ErrorRecovery.redirectToLogin,
-                });
-                return;
-            }
-            // Debug logging for branch information
-            console.log('🔍 Branch Debug Info:');
-            console.log('  - User branchId:', user?.branchId);
-            console.log('  - User branchName:', user?.branchName);
-            console.log('  - Selected branch:', selectedBranch);
-            console.log('  - Available branches:', branches.length);
-            console.log('  - User object:', user);
-            // Prioritize selectedBranch over user.branchId (user explicitly selected a branch)
-            // Fallback to user.branchId if no branch is selected
-            const branchId = selectedBranch || user?.branchId;
-            console.log('  - Final branchId to use:', branchId);
-            if (!branchId) {
-                const errorMessage = branches.length === 0
-                    ? 'No branches available. Please contact your administrator.'
-                    : 'Please select a branch before completing the sale.';
-                (0, error_handler_1.handleError)(new error_handler_1.AppError(errorMessage, 'VALIDATION_ERROR', {
-                    operation: 'completeSale',
-                    component: 'POS',
-                    userId: user?.id,
-                    userName: user?.name,
-                    metadata: { branchId, userBranchId: user?.branchId, selectedBranch, branchesCount: branches.length },
-                }), {
-                    operation: 'completeSale',
-                    component: 'POS',
-                    userId: user?.id,
-                    userName: user?.name,
-                });
-                return;
-            }
-            // Validate all cart items before proceeding
-            for (const item of cart) {
-                const stockValidation = (0, validation_1.validateStock)(item.product, item.quantity, 0);
-                if (!stockValidation.isValid) {
-                    (0, error_handler_1.handleError)(new error_handler_1.AppError(stockValidation.error || 'Insufficient stock', 'INSUFFICIENT_STOCK', {
-                        operation: 'completeSale',
-                        component: 'POS',
-                        userId: user?.id,
-                        userName: user?.name,
-                        metadata: {
-                            productId: item.product.id,
-                            productName: item.product.name,
-                            requestedQuantity: item.quantity,
-                            availableStock: item.product.stock,
-                        },
-                    }), {
-                        operation: 'completeSale',
-                        component: 'POS',
-                        userId: user?.id,
-                        userName: user?.name,
-                    });
-                    return;
-                }
-                const priceValidation = (0, validation_1.validatePrice)(item.product.price);
-                if (!priceValidation.isValid) {
-                    (0, error_handler_1.handleError)(new error_handler_1.AppError(`${item.product.name}: ${priceValidation.error}`, 'INVALID_PRICE', {
-                        operation: 'completeSale',
-                        component: 'POS',
-                        userId: user?.id,
-                        userName: user?.name,
-                        metadata: {
-                            productId: item.product.id,
-                            productName: item.product.name,
-                            price: item.product.price,
-                        },
-                    }), {
-                        operation: 'completeSale',
-                        component: 'POS',
-                        userId: user?.id,
-                        userName: user?.name,
-                    });
-                    return;
-                }
-            }
-            // Prepare sale data (include discount so backend applies it before VAT)
-            // For variation items: productId = base product, variationId = variation
-            // Ensure all numeric fields are numbers for backend validation
-            const saleData = {
-                items: cart.map(item => {
-                    const productPrice = item.product.price;
-                    const priceValue = (productPrice != null && !isNaN(Number(productPrice)))
-                        ? Number(productPrice)
-                        : undefined;
-                    const base = {
-                        productId: item.product.baseProductId || item.product.id,
-                        quantity: Number(item.quantity) || 1,
-                    };
-                    // Only include price if it's a valid number (price is optional in DTO)
-                    if (priceValue != null && priceValue >= 0) {
-                        base.price = priceValue;
+            await sale_mutex_1.saleMutex.acquire(paymentData, async (queuedPaymentData) => {
+                setProcessingSale(true);
+                setQueuedSalesCount(sale_mutex_1.saleMutex.getQueueSize());
+                try {
+                    // Check if user is authenticated and has token
+                    const token = await window.electronAPI.getAuthToken();
+                    if (!token) {
+                        (0, error_handler_1.handleError)(new error_handler_1.AppError('Authentication token not found', 'TOKEN_EXPIRED', {
+                            operation: 'completeSale',
+                            component: 'POS',
+                            userId: user?.id,
+                            userName: user?.name,
+                        }), {
+                            operation: 'completeSale',
+                            component: 'POS',
+                            userId: user?.id,
+                            userName: user?.name,
+                        }, {
+                            fallbackAction: error_handler_1.ErrorRecovery.redirectToLogin,
+                        });
+                        return;
                     }
-                    if (item.product.variationId) {
-                        base.variationId = item.product.variationId;
+                    // Debug logging for branch information
+                    console.log('🔍 Branch Debug Info:');
+                    console.log('  - User branchId:', user?.branchId);
+                    console.log('  - User branchName:', user?.branchName);
+                    console.log('  - Selected branch:', selectedBranch);
+                    console.log('  - Available branches:', branches.length);
+                    console.log('  - User object:', user);
+                    // Prioritize selectedBranch over user.branchId (user explicitly selected a branch)
+                    // Fallback to user.branchId if no branch is selected
+                    const branchId = selectedBranch || user?.branchId;
+                    console.log('  - Final branchId to use:', branchId);
+                    if (!branchId) {
+                        const errorMessage = branches.length === 0
+                            ? 'No branches available. Please contact your administrator.'
+                            : 'Please select a branch before completing the sale.';
+                        (0, error_handler_1.handleError)(new error_handler_1.AppError(errorMessage, 'VALIDATION_ERROR', {
+                            operation: 'completeSale',
+                            component: 'POS',
+                            userId: user?.id,
+                            userName: user?.name,
+                            metadata: { branchId, userBranchId: user?.branchId, selectedBranch, branchesCount: branches.length },
+                        }), {
+                            operation: 'completeSale',
+                            component: 'POS',
+                            userId: user?.id,
+                            userName: user?.name,
+                        });
+                        return;
                     }
-                    return base;
-                }),
-                paymentMethod: String(paymentData.paymentMethod || 'cash'),
-                amountReceived: paymentData.amountReceived != null ? Number(paymentData.amountReceived) : undefined,
-                customerName: paymentData.customerName || undefined,
-                customerPhone: paymentData.customerPhone || undefined,
-                branchId: branchId || undefined,
-                idempotencyKey: `sale_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                ...(paymentData.discountAmount != null && paymentData.discountAmount > 0 && {
-                    discountAmount: Number(paymentData.discountAmount),
-                }),
-            };
-            // Remove undefined values to avoid sending them (backend ValidationPipe forbids non-whitelisted)
-            // Also ensure all types match backend DTO expectations
-            const cleanSaleData = {};
-            // Required fields
-            cleanSaleData.items = saleData.items;
-            cleanSaleData.paymentMethod = String(saleData.paymentMethod);
-            cleanSaleData.idempotencyKey = String(saleData.idempotencyKey);
-            // Optional fields - only include if they have values
-            if (saleData.branchId)
-                cleanSaleData.branchId = String(saleData.branchId);
-            if (saleData.customerName)
-                cleanSaleData.customerName = String(saleData.customerName);
-            if (saleData.customerPhone)
-                cleanSaleData.customerPhone = String(saleData.customerPhone);
-            if (saleData.amountReceived != null)
-                cleanSaleData.amountReceived = Number(saleData.amountReceived);
-            if (saleData.discountAmount != null && saleData.discountAmount > 0) {
-                cleanSaleData.discountAmount = Number(saleData.discountAmount);
-            }
-            // Split payment fields
-            if (paymentData.isSplitPayment && paymentData.splitPayments && paymentData.splitPayments.length > 0) {
-                cleanSaleData.isSplitPayment = true;
-                cleanSaleData.splitPayments = paymentData.splitPayments.map(payment => {
-                    const splitPayment = {
-                        method: payment.method,
-                        amount: Number(payment.amount),
-                    };
-                    if (payment.method === 'cash' && payment.amountReceived != null) {
-                        splitPayment.amountReceived = Number(payment.amountReceived);
-                    }
-                    if (payment.method === 'mpesa') {
-                        if (payment.mpesaTransactionId) {
-                            splitPayment.mpesaTransactionId = String(payment.mpesaTransactionId);
-                        }
-                        if (payment.mpesaReceipt) {
-                            splitPayment.mpesaReceipt = String(payment.mpesaReceipt);
-                        }
-                    }
-                    if (payment.method === 'credit') {
-                        if (payment.creditDueDate) {
-                            const dateStr = String(payment.creditDueDate);
-                            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-                                splitPayment.creditDueDate = dateStr;
-                            }
-                            else {
-                                try {
-                                    const date = new Date(dateStr);
-                                    if (!isNaN(date.getTime())) {
-                                        splitPayment.creditDueDate = date.toISOString().split('T')[0];
-                                    }
-                                    else {
-                                        splitPayment.creditDueDate = dateStr;
-                                    }
-                                }
-                                catch {
-                                    splitPayment.creditDueDate = dateStr;
-                                }
-                            }
-                        }
-                        if (payment.creditNotes) {
-                            splitPayment.creditNotes = String(payment.creditNotes);
-                        }
-                    }
-                    return splitPayment;
-                });
-            }
-            else {
-                // Credit-specific fields - only include if payment method is credit
-                if (paymentData.paymentMethod === 'credit') {
-                    const creditAmount = paymentData.creditAmount ?? getGrandTotal();
-                    if (creditAmount != null) {
-                        cleanSaleData.creditAmount = Number(creditAmount);
-                    }
-                    if (paymentData.creditDueDate) {
-                        // Ensure date is in ISO format (YYYY-MM-DD) for backend validation
-                        const dateStr = String(paymentData.creditDueDate);
-                        // If it's already in YYYY-MM-DD format, use it; otherwise try to parse and format
-                        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-                            cleanSaleData.creditDueDate = dateStr;
-                        }
-                        else {
-                            // Try to parse and format as ISO date string
-                            try {
-                                const date = new Date(dateStr);
-                                if (!isNaN(date.getTime())) {
-                                    cleanSaleData.creditDueDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                    // Validate all cart items before proceeding
+                    for (const item of cart) {
+                        // Check if this is a variation product and get correct stock
+                        const isVariation = !!item.product.baseProductId || !!item.product.variationId;
+                        let availableStock = item.product.stock || 0;
+                        if (isVariation) {
+                            // For variations, find the base product and then the variation
+                            const baseProductId = item.product.baseProductId;
+                            const variationId = item.product.variationId || item.product.id;
+                            const baseProduct = products.find(p => p.id === baseProductId);
+                            if (baseProduct) {
+                                const variation = baseProduct.variations?.find((v) => v.id === variationId);
+                                if (variation) {
+                                    availableStock = variation.stock || 0;
                                 }
                                 else {
-                                    cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+                                    (0, error_handler_1.handleError)(new error_handler_1.AppError(`${item.product.name} (variation) is no longer available`, 'INSUFFICIENT_STOCK', {
+                                        operation: 'completeSale',
+                                        component: 'POS',
+                                        userId: user?.id,
+                                        userName: user?.name,
+                                        metadata: {
+                                            productId: item.product.id,
+                                            baseProductId,
+                                            variationId,
+                                            productName: item.product.name,
+                                        },
+                                    }), {
+                                        operation: 'completeSale',
+                                        component: 'POS',
+                                        userId: user?.id,
+                                        userName: user?.name,
+                                    });
+                                    return;
                                 }
                             }
-                            catch {
-                                cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+                            else {
+                                (0, error_handler_1.handleError)(new error_handler_1.AppError(`${item.product.name} (base product) is no longer available`, 'INSUFFICIENT_STOCK', {
+                                    operation: 'completeSale',
+                                    component: 'POS',
+                                    userId: user?.id,
+                                    userName: user?.name,
+                                    metadata: {
+                                        productId: item.product.id,
+                                        baseProductId,
+                                        productName: item.product.name,
+                                    },
+                                }), {
+                                    operation: 'completeSale',
+                                    component: 'POS',
+                                    userId: user?.id,
+                                    userName: user?.name,
+                                });
+                                return;
+                            }
+                        }
+                        else {
+                            // For regular products, verify it still exists
+                            const currentProduct = products.find(p => p.id === item.product.id);
+                            if (!currentProduct) {
+                                (0, error_handler_1.handleError)(new error_handler_1.AppError(`${item.product.name} is no longer available`, 'INSUFFICIENT_STOCK', {
+                                    operation: 'completeSale',
+                                    component: 'POS',
+                                    userId: user?.id,
+                                    userName: user?.name,
+                                    metadata: {
+                                        productId: item.product.id,
+                                        productName: item.product.name,
+                                    },
+                                }), {
+                                    operation: 'completeSale',
+                                    component: 'POS',
+                                    userId: user?.id,
+                                    userName: user?.name,
+                                });
+                                return;
+                            }
+                            availableStock = currentProduct.stock || 0;
+                        }
+                        // Validate stock using the correct available stock
+                        if (availableStock < item.quantity) {
+                            (0, error_handler_1.handleError)(new error_handler_1.AppError(`${item.product.name}: Only ${availableStock} available, but ${item.quantity} requested`, 'INSUFFICIENT_STOCK', {
+                                operation: 'completeSale',
+                                component: 'POS',
+                                userId: user?.id,
+                                userName: user?.name,
+                                metadata: {
+                                    productId: item.product.id,
+                                    productName: item.product.name,
+                                    requestedQuantity: item.quantity,
+                                    availableStock,
+                                },
+                            }), {
+                                operation: 'completeSale',
+                                component: 'POS',
+                                userId: user?.id,
+                                userName: user?.name,
+                            });
+                            return;
+                        }
+                        const priceValidation = (0, validation_1.validatePrice)(item.product.price);
+                        if (!priceValidation.isValid) {
+                            (0, error_handler_1.handleError)(new error_handler_1.AppError(`${item.product.name}: ${priceValidation.error}`, 'INVALID_PRICE', {
+                                operation: 'completeSale',
+                                component: 'POS',
+                                userId: user?.id,
+                                userName: user?.name,
+                                metadata: {
+                                    productId: item.product.id,
+                                    productName: item.product.name,
+                                    price: item.product.price,
+                                },
+                            }), {
+                                operation: 'completeSale',
+                                component: 'POS',
+                                userId: user?.id,
+                                userName: user?.name,
+                            });
+                            return;
+                        }
+                    }
+                    // Prepare sale data (include discount so backend applies it before VAT)
+                    // For variation items: productId = base product, variationId = variation
+                    // Ensure all numeric fields are numbers for backend validation
+                    const saleData = {
+                        items: cart.map(item => {
+                            const productPrice = item.product.price;
+                            const priceValue = (productPrice != null && !isNaN(Number(productPrice)))
+                                ? Number(productPrice)
+                                : undefined;
+                            const base = {
+                                productId: item.product.baseProductId || item.product.id,
+                                quantity: Number(item.quantity) || 1,
+                            };
+                            // Only include price if it's a valid number (price is optional in DTO)
+                            if (priceValue != null && priceValue >= 0) {
+                                base.price = priceValue;
+                            }
+                            if (item.product.variationId) {
+                                base.variationId = item.product.variationId;
+                            }
+                            return base;
+                        }),
+                        paymentMethod: String(paymentData.paymentMethod || 'cash'),
+                        amountReceived: paymentData.amountReceived != null ? Number(paymentData.amountReceived) : undefined,
+                        customerName: paymentData.customerName || undefined,
+                        customerPhone: paymentData.customerPhone || undefined,
+                        branchId: branchId || undefined,
+                        idempotencyKey: `sale_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                        ...(paymentData.discountAmount != null && paymentData.discountAmount > 0 && {
+                            discountAmount: Number(paymentData.discountAmount),
+                        }),
+                    };
+                    // Remove undefined values to avoid sending them (backend ValidationPipe forbids non-whitelisted)
+                    // Also ensure all types match backend DTO expectations
+                    const cleanSaleData = {};
+                    // Required fields
+                    cleanSaleData.items = saleData.items;
+                    cleanSaleData.paymentMethod = String(saleData.paymentMethod);
+                    cleanSaleData.idempotencyKey = String(saleData.idempotencyKey);
+                    // Optional fields - only include if they have values
+                    // SECURITY: Sanitize all user inputs before sending to backend
+                    if (saleData.branchId)
+                        cleanSaleData.branchId = String(saleData.branchId);
+                    if (saleData.customerName)
+                        cleanSaleData.customerName = (0, sanitization_1.sanitizeCustomerName)(saleData.customerName);
+                    if (saleData.customerPhone)
+                        cleanSaleData.customerPhone = (0, sanitization_1.sanitizePhoneNumber)(saleData.customerPhone);
+                    if (saleData.amountReceived != null)
+                        cleanSaleData.amountReceived = Number(saleData.amountReceived);
+                    if (saleData.discountAmount != null && saleData.discountAmount > 0) {
+                        cleanSaleData.discountAmount = Number(saleData.discountAmount);
+                    }
+                    // Split payment fields
+                    if (paymentData.isSplitPayment && paymentData.splitPayments && paymentData.splitPayments.length > 0) {
+                        cleanSaleData.isSplitPayment = true;
+                        cleanSaleData.splitPayments = paymentData.splitPayments.map(payment => {
+                            const splitPayment = {
+                                method: payment.method,
+                                amount: Number(payment.amount),
+                            };
+                            if (payment.method === 'cash' && payment.amountReceived != null) {
+                                splitPayment.amountReceived = Number(payment.amountReceived);
+                            }
+                            if (payment.method === 'mpesa') {
+                                if (payment.mpesaTransactionId) {
+                                    splitPayment.mpesaTransactionId = String(payment.mpesaTransactionId);
+                                }
+                                if (payment.mpesaReceipt) {
+                                    splitPayment.mpesaReceipt = String(payment.mpesaReceipt);
+                                }
+                            }
+                            if (payment.method === 'credit') {
+                                if (payment.creditDueDate) {
+                                    const dateStr = String(payment.creditDueDate);
+                                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                                        splitPayment.creditDueDate = dateStr;
+                                    }
+                                    else {
+                                        try {
+                                            const date = new Date(dateStr);
+                                            if (!isNaN(date.getTime())) {
+                                                splitPayment.creditDueDate = date.toISOString().split('T')[0];
+                                            }
+                                            else {
+                                                splitPayment.creditDueDate = dateStr;
+                                            }
+                                        }
+                                        catch {
+                                            splitPayment.creditDueDate = dateStr;
+                                        }
+                                    }
+                                }
+                                if (payment.creditNotes) {
+                                    splitPayment.creditNotes = String(payment.creditNotes);
+                                }
+                            }
+                            return splitPayment;
+                        });
+                    }
+                    else {
+                        // Credit-specific fields - only include if payment method is credit
+                        if (paymentData.paymentMethod === 'credit') {
+                            const creditAmount = paymentData.creditAmount ?? getGrandTotal();
+                            if (creditAmount != null) {
+                                cleanSaleData.creditAmount = Number(creditAmount);
+                            }
+                            if (paymentData.creditDueDate) {
+                                // Ensure date is in ISO format (YYYY-MM-DD) for backend validation
+                                const dateStr = String(paymentData.creditDueDate);
+                                // If it's already in YYYY-MM-DD format, use it; otherwise try to parse and format
+                                if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                                    cleanSaleData.creditDueDate = dateStr;
+                                }
+                                else {
+                                    // Try to parse and format as ISO date string
+                                    try {
+                                        const date = new Date(dateStr);
+                                        if (!isNaN(date.getTime())) {
+                                            cleanSaleData.creditDueDate = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                                        }
+                                        else {
+                                            cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+                                        }
+                                    }
+                                    catch {
+                                        cleanSaleData.creditDueDate = dateStr; // Fallback to original string
+                                    }
+                                }
+                            }
+                            if (paymentData.creditNotes) {
+                                cleanSaleData.creditNotes = (0, sanitization_1.sanitizeNotes)(paymentData.creditNotes);
                             }
                         }
                     }
-                    if (paymentData.creditNotes) {
-                        cleanSaleData.creditNotes = String(paymentData.creditNotes);
+                    // Validate sale data integrity
+                    const saleValidation = (0, validation_1.validateSaleData)(cleanSaleData);
+                    if (!saleValidation.isValid) {
+                        (0, error_handler_1.handleError)(new error_handler_1.AppError(saleValidation.error || 'Sale data validation failed', 'VALIDATION_ERROR', {
+                            operation: 'completeSale',
+                            component: 'POS',
+                            userId: user?.id,
+                            userName: user?.name,
+                            metadata: { saleData: cleanSaleData },
+                        }), {
+                            operation: 'completeSale',
+                            component: 'POS',
+                            userId: user?.id,
+                            userName: user?.name,
+                        });
+                        return;
+                    }
+                    // Log sale creation attempt
+                    audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SALE_CREATED, {
+                        itemCount: cart.length,
+                        totalAmount: getGrandTotal(),
+                        paymentMethod: paymentData.paymentMethod,
+                        branchId,
+                    }, 'medium', user?.id, user?.name);
+                    console.log('Creating sale:', {
+                        items: cleanSaleData.items.map((item) => ({
+                            productId: item.productId,
+                            quantity: item.quantity,
+                            price: item.price,
+                            variationId: item.variationId,
+                        })),
+                        paymentMethod: cleanSaleData.paymentMethod,
+                        branchId: cleanSaleData.branchId,
+                        idempotencyKey: cleanSaleData.idempotencyKey,
+                        amountReceived: cleanSaleData.amountReceived,
+                        discountAmount: cleanSaleData.discountAmount,
+                        customerName: cleanSaleData.customerName,
+                        customerPhone: cleanSaleData.customerPhone,
+                        creditAmount: cleanSaleData.creditAmount,
+                        creditDueDate: cleanSaleData.creditDueDate,
+                        creditNotes: cleanSaleData.creditNotes,
+                    });
+                    // CRITICAL: Re-validate stock before completing sale to prevent race conditions
+                    // Stock may have changed since items were added to cart (pessimistic locking)
+                    const stockValidationErrors = [];
+                    const lowStockItems = [];
+                    for (const cartItem of cart) {
+                        // Check if this is a variation product
+                        const isVariation = !!cartItem.product.baseProductId || !!cartItem.product.variationId;
+                        const variationId = cartItem.product.variationId || cartItem.product.id;
+                        const baseProductId = cartItem.product.baseProductId || cartItem.product.id;
+                        let currentProduct;
+                        let availableStock = 0;
+                        if (isVariation) {
+                            // For variations, find the base product first
+                            const baseProduct = products.find(p => p.id === baseProductId);
+                            if (!baseProduct) {
+                                stockValidationErrors.push(`${cartItem.product.name} (base product) is no longer available`);
+                                continue;
+                            }
+                            // Find the specific variation within the base product
+                            const variation = baseProduct.variations?.find((v) => v.id === variationId);
+                            if (!variation) {
+                                stockValidationErrors.push(`${cartItem.product.name} (variation) is no longer available`);
+                                continue;
+                            }
+                            // Use variation's stock
+                            availableStock = variation.stock || 0;
+                            currentProduct = {
+                                ...baseProduct,
+                                id: variationId,
+                                stock: availableStock,
+                                price: variation.price ?? baseProduct.price,
+                            };
+                        }
+                        else {
+                            // For regular products, find by product ID
+                            currentProduct = products.find(p => p.id === cartItem.product.id);
+                            if (!currentProduct) {
+                                stockValidationErrors.push(`${cartItem.product.name} is no longer available`);
+                                continue;
+                            }
+                            availableStock = currentProduct.stock || 0;
+                        }
+                        // Check if stock is still sufficient (considering items already in cart)
+                        if (availableStock < cartItem.quantity) {
+                            stockValidationErrors.push(`${cartItem.product.name}: Only ${availableStock} available, but ${cartItem.quantity} requested`);
+                        }
+                        // Pessimistic locking: For low-stock items (≤5 units), be more strict
+                        // Refresh stock from backend if item is low-stock to prevent overselling
+                        if (availableStock <= 5 && cartItem.quantity > 0) {
+                            lowStockItems.push(cartItem.product.name);
+                        }
+                        // Check if item reservation is still valid (expires after 5 minutes)
+                        // For low-stock items, reservations expire faster (2 minutes)
+                        if (cartItem.reservedAt) {
+                            const reservationAge = Date.now() - cartItem.reservedAt;
+                            const reservationExpiry = availableStock <= 5
+                                ? 2 * 60 * 1000 // 2 minutes for low-stock items
+                                : 5 * 60 * 1000; // 5 minutes for normal items
+                            if (reservationAge > reservationExpiry) {
+                                stockValidationErrors.push(`${cartItem.product.name}: Reservation expired. Please refresh and try again.`);
+                            }
+                        }
+                    }
+                    // For low-stock items, refresh products from backend before completing sale
+                    // This implements pessimistic locking by ensuring we have the latest stock
+                    if (lowStockItems.length > 0) {
+                        console.log(`Refreshing products for low-stock items: ${lowStockItems.join(', ')}`);
+                        try {
+                            // Refresh products and wait for state update
+                            const refreshResponse = await window.electronAPI.getProducts();
+                            if (refreshResponse.success && refreshResponse.products) {
+                                setProducts(refreshResponse.products);
+                                // Re-check stock after refresh using refreshed products
+                                for (const cartItem of cart) {
+                                    const isVariation = !!cartItem.product.baseProductId || !!cartItem.product.variationId;
+                                    const variationId = cartItem.product.variationId || cartItem.product.id;
+                                    const baseProductId = cartItem.product.baseProductId || cartItem.product.id;
+                                    if (isVariation) {
+                                        // For variations, find base product and then the variation
+                                        const baseProduct = refreshResponse.products.find((p) => p.id === baseProductId);
+                                        if (baseProduct) {
+                                            const variation = baseProduct.variations?.find((v) => v.id === variationId);
+                                            if (variation && (variation.stock || 0) < cartItem.quantity) {
+                                                stockValidationErrors.push(`${cartItem.product.name}: Stock changed during checkout. Only ${variation.stock} available now.`);
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        // For regular products
+                                        const refreshedProduct = refreshResponse.products.find((p) => p.id === cartItem.product.id);
+                                        if (refreshedProduct && (refreshedProduct.stock || 0) < cartItem.quantity) {
+                                            stockValidationErrors.push(`${cartItem.product.name}: Stock changed during checkout. Only ${refreshedProduct.stock} available now.`);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (refreshError) {
+                            console.warn('Failed to refresh products before sale (non-critical)', refreshError);
+                            // Continue with sale - backend will validate stock
+                        }
+                    }
+                    if (stockValidationErrors.length > 0) {
+                        (0, Toast_1.showToast)(`Stock validation failed: ${stockValidationErrors.join('; ')}. Please refresh products and try again.`, 'error', 8000);
+                        // Refresh products to get latest stock
+                        await loadProducts(0);
+                        return;
+                    }
+                    // Use network operation handler with retry logic
+                    const response = await (0, error_handler_1.handleNetworkOperation)(() => window.electronAPI.createSale(cleanSaleData), {
+                        operation: 'createSale',
+                        component: 'POS',
+                        userId: user?.id,
+                        userName: user?.name,
+                        metadata: {
+                            itemCount: cart.length,
+                            totalAmount: getGrandTotal(),
+                            paymentMethod: paymentData.paymentMethod,
+                        },
+                    }, {
+                        maxRetries: 2,
+                        showRetryToast: true,
+                    });
+                    if (response.success) {
+                        console.log('Sale completed successfully:', response.sale);
+                        // Check for queue warnings if sale was queued offline
+                        if (response.queueSize !== undefined) {
+                            if (response.isCritical) {
+                                (0, Toast_1.showToast)(`⚠️ Offline sales queue is FULL (${response.queueSize}/${response.maxQueueSize}). Please sync immediately!`, 'error', 10000);
+                            }
+                            else if (response.isWarning) {
+                                (0, Toast_1.showToast)(`⚠️ Large offline sales queue: ${response.queueSize} sales. Consider syncing soon.`, 'warning', 6000);
+                            }
+                        }
+                        // CRITICAL: Refresh products from backend after successful sale to get accurate stock
+                        // The backend has already updated stock, so we need fresh data to prevent race conditions
+                        try {
+                            console.log('Refreshing products after successful sale');
+                            await loadProducts(0);
+                            (0, Toast_1.showToast)('Products refreshed with latest stock levels', 'success', 3000);
+                        }
+                        catch (error) {
+                            console.warn('Failed to refresh products after sale (non-critical)', error);
+                            // Don't fail the sale if refresh fails - will sync on next periodic sync
+                        }
+                        // Validate receipt number and transaction integrity
+                        if (response.receipt?.saleId) {
+                            const receiptNumberValidation = (0, validation_1.validateReceiptNumber)(response.receipt.saleId);
+                            if (!receiptNumberValidation.isValid) {
+                                (0, Toast_1.showToast)('Warning: Receipt number validation issue detected', 'warning');
+                                audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SECURITY_VIOLATION, { receiptId: response.receipt.saleId, reason: receiptNumberValidation.error }, 'high', user?.id, user?.name);
+                            }
+                            // Re-validate sale data for integrity check
+                            const integrityCheck = (0, validation_1.validateSaleData)(saleData);
+                            if (!integrityCheck.isValid) {
+                                (0, Toast_1.showToast)('Warning: Transaction integrity check failed', 'warning');
+                                audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SECURITY_VIOLATION, { receiptId: response.receipt.saleId, reason: integrityCheck.error }, 'high', user?.id, user?.name);
+                            }
+                        }
+                        // Log successful sale completion
+                        audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SALE_COMPLETED, {
+                            saleId: response.sale?.saleId || response.receipt?.saleId,
+                            itemCount: cart.length,
+                            totalAmount: getGrandTotal(),
+                            paymentMethod: paymentData.paymentMethod,
+                            branchId,
+                        }, 'medium', user?.id, user?.name);
+                        // Clear cart
+                        setCart([]);
+                        const branchFromList = branchId ? branches.find((b) => b.id === branchId) : undefined;
+                        const saleId = response.receipt?.saleId || response.sale?.saleId;
+                        // Prefer full receipt from GET /sales/:id/receipt so we always get businessInfo (name, KRA, etc.)
+                        let receiptToShow = response.receipt;
+                        try {
+                            const getReceiptResult = await window.electronAPI?.getReceipt?.(saleId);
+                            if (getReceiptResult?.success && getReceiptResult?.receipt) {
+                                receiptToShow = getReceiptResult.receipt;
+                            }
+                        }
+                        catch (_) {
+                            // Keep create-sale receipt if fetch fails
+                        }
+                        const backendBiz = receiptToShow?.businessInfo;
+                        const receiptWithBranch = {
+                            ...receiptToShow,
+                            amountReceived: response.receipt?.amountReceived ?? receiptToShow?.amountReceived,
+                            change: response.receipt?.change ?? receiptToShow?.change,
+                            businessInfo: {
+                                name: user?.tenantName || 'Business',
+                                address: user?.branchAddress,
+                                phone: user?.phone,
+                                email: user?.email,
+                                ...backendBiz,
+                                name: backendBiz?.name || user?.tenantName || 'Business',
+                                address: backendBiz?.address ?? user?.branchAddress,
+                                phone: backendBiz?.phone ?? user?.phone,
+                                email: backendBiz?.email ?? user?.email,
+                            },
+                            branch: receiptToShow?.branch || (branchId ? {
+                                id: branchId,
+                                name: branchFromList?.name || user?.branchName || `Branch ${branchId}`,
+                                address: branchFromList?.address || user?.branchAddress,
+                            } : undefined),
+                        };
+                        setCurrentReceipt(receiptWithBranch);
+                        setCurrentStep('receipt');
+                        // Reload products to update stock
+                        loadProducts(0);
+                    }
+                    else {
+                        console.error('Sale failed:', response.error);
+                        // Check if this is a stock conflict error
+                        const stockConflict = (0, stock_conflict_handler_1.detectStockConflict)({ message: response.error, data: response });
+                        if (stockConflict.isStockConflict) {
+                            console.warn('Stock conflict detected:', stockConflict);
+                            // Refresh products to get latest stock
+                            (0, Toast_1.showToast)(stockConflict.conflictingProducts && stockConflict.conflictingProducts.length > 0
+                                ? `Stock conflict: ${stockConflict.conflictingProducts.join(', ')}. Refreshing products...`
+                                : 'Stock conflict detected. Refreshing products...', 'warning', 5000);
+                            // Refresh products and retry if user wants
+                            try {
+                                await loadProducts(0);
+                                (0, Toast_1.showToast)('Products refreshed. Please review stock levels and try the sale again.', 'info', 6000);
+                            }
+                            catch (refreshError) {
+                                console.error('Failed to refresh products after stock conflict:', refreshError);
+                                (0, Toast_1.showToast)('Failed to refresh products. Please try manually.', 'error', 5000);
+                            }
+                            // Don't proceed with error handling - let user retry manually
+                            return;
+                        }
+                        // Auto-sync products if error is related to invalid/missing product
+                        const errorLower = (response.error || '').toLowerCase();
+                        if (errorLower.includes('invalid product') ||
+                            errorLower.includes('product') && errorLower.includes('not found') ||
+                            errorLower.includes('product') && errorLower.includes('deleted')) {
+                            (0, Toast_1.showToast)('Product catalog may be outdated. Syncing products...', 'warning', 4000);
+                            // Trigger product sync in background
+                            setTimeout(async () => {
+                                try {
+                                    const syncResult = await window.electronAPI.syncProducts();
+                                    if (syncResult.success) {
+                                        (0, Toast_1.showToast)(`Products synced! ${syncResult.products?.length || 0} products loaded.`, 'success', 5000);
+                                        // Reload products in UI
+                                        loadProducts(0);
+                                    }
+                                    else {
+                                        (0, Toast_1.showToast)('Failed to sync products. Please try manually from Settings.', 'error', 5000);
+                                    }
+                                }
+                                catch (syncError) {
+                                    console.error('Auto-sync failed:', syncError);
+                                }
+                            }, 500);
+                        }
+                        // Handle sale failure with recovery options
+                        if (response.error === 'Unauthorized' ||
+                            response.error?.includes('Unauthorized') ||
+                            response.error?.includes('token') ||
+                            response.error?.includes('auth') ||
+                            response.error?.includes('log in')) {
+                            (0, error_handler_1.handleError)(new error_handler_1.AppError('Session expired. Please log in again to complete the sale.', 'UNAUTHORIZED', {
+                                operation: 'createSale',
+                                component: 'POS',
+                                userId: user?.id,
+                                userName: user?.name,
+                            }), {
+                                operation: 'createSale',
+                                component: 'POS',
+                            }, {
+                                fallbackAction: error_handler_1.ErrorRecovery.redirectToLogin,
+                            });
+                        }
+                        else {
+                            (0, error_handler_1.handleError)(new error_handler_1.AppError(response.error || 'Sale failed', 'SALE_FAILED', {
+                                operation: 'createSale',
+                                component: 'POS',
+                                userId: user?.id,
+                                userName: user?.name,
+                                metadata: { saleData },
+                            }), {
+                                operation: 'createSale',
+                                component: 'POS',
+                                userId: user?.id,
+                                userName: user?.name,
+                            }, {
+                                retryable: true,
+                                maxRetries: 2,
+                                fallbackAction: () => {
+                                    // Hold transaction for later retry
+                                    handleHoldTransaction();
+                                    (0, Toast_1.showToast)('Sale held. You can retry later.', 'info', 4000);
+                                },
+                            });
+                        }
                     }
                 }
-            }
-            // Validate sale data integrity
-            const saleValidation = (0, validation_1.validateSaleData)(cleanSaleData);
-            if (!saleValidation.isValid) {
-                (0, error_handler_1.handleError)(new error_handler_1.AppError(saleValidation.error || 'Sale data validation failed', 'VALIDATION_ERROR', {
-                    operation: 'completeSale',
-                    component: 'POS',
-                    userId: user?.id,
-                    userName: user?.name,
-                    metadata: { saleData: cleanSaleData },
-                }), {
-                    operation: 'completeSale',
-                    component: 'POS',
-                    userId: user?.id,
-                    userName: user?.name,
-                });
-                return;
-            }
-            // Log sale creation attempt
-            audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SALE_CREATED, {
-                itemCount: cart.length,
-                totalAmount: getGrandTotal(),
-                paymentMethod: paymentData.paymentMethod,
-                branchId,
-            }, 'medium', user?.id, user?.name);
-            console.log('Creating sale:', {
-                items: cleanSaleData.items.map((item) => ({
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    price: item.price,
-                    variationId: item.variationId,
-                })),
-                paymentMethod: cleanSaleData.paymentMethod,
-                branchId: cleanSaleData.branchId,
-                idempotencyKey: cleanSaleData.idempotencyKey,
-                amountReceived: cleanSaleData.amountReceived,
-                discountAmount: cleanSaleData.discountAmount,
-                customerName: cleanSaleData.customerName,
-                customerPhone: cleanSaleData.customerPhone,
-                creditAmount: cleanSaleData.creditAmount,
-                creditDueDate: cleanSaleData.creditDueDate,
-                creditNotes: cleanSaleData.creditNotes,
-            });
-            // Use network operation handler with retry logic
-            const response = await (0, error_handler_1.handleNetworkOperation)(() => window.electronAPI.createSale(cleanSaleData), {
-                operation: 'createSale',
-                component: 'POS',
-                userId: user?.id,
-                userName: user?.name,
-                metadata: {
-                    itemCount: cart.length,
-                    totalAmount: getGrandTotal(),
-                    paymentMethod: paymentData.paymentMethod,
-                },
-            }, {
-                maxRetries: 2,
-                showRetryToast: true,
-            });
-            if (response.success) {
-                console.log('Sale completed successfully:', response.sale);
-                // Validate receipt number and transaction integrity
-                if (response.receipt?.saleId) {
-                    const receiptNumberValidation = (0, validation_1.validateReceiptNumber)(response.receipt.saleId);
-                    if (!receiptNumberValidation.isValid) {
-                        (0, Toast_1.showToast)('Warning: Receipt number validation issue detected', 'warning');
-                        audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SECURITY_VIOLATION, { receiptId: response.receipt.saleId, reason: receiptNumberValidation.error }, 'high', user?.id, user?.name);
-                    }
-                    // Re-validate sale data for integrity check
-                    const integrityCheck = (0, validation_1.validateSaleData)(saleData);
-                    if (!integrityCheck.isValid) {
-                        (0, Toast_1.showToast)('Warning: Transaction integrity check failed', 'warning');
-                        audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SECURITY_VIOLATION, { receiptId: response.receipt.saleId, reason: integrityCheck.error }, 'high', user?.id, user?.name);
-                    }
+                finally {
+                    setProcessingSale(false);
+                    setQueuedSalesCount(sale_mutex_1.saleMutex.getQueueSize());
                 }
-                // Log successful sale completion
-                audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SALE_COMPLETED, {
-                    saleId: response.sale?.saleId || response.receipt?.saleId,
-                    itemCount: cart.length,
-                    totalAmount: getGrandTotal(),
-                    paymentMethod: paymentData.paymentMethod,
-                    branchId,
-                }, 'medium', user?.id, user?.name);
-                // Clear cart
-                setCart([]);
-                // Set receipt data with branch information
-                const receiptWithBranch = {
-                    ...response.receipt,
-                    branch: user?.branchId ? {
-                        id: user.branchId,
-                        name: user.branchName || `Branch ${user.branchId}`,
-                        address: user.branchAddress
-                    } : selectedBranch ? {
-                        id: selectedBranch,
-                        name: `Branch ${selectedBranch}`,
-                        address: undefined
-                    } : undefined
-                };
-                setCurrentReceipt(receiptWithBranch);
-                setCurrentStep('receipt');
-                // Reload products to update stock
-                loadProducts(0);
+            });
+        }
+        catch (mutexError) {
+            // Handle mutex-specific errors (e.g., queue full)
+            if (mutexError instanceof Error && mutexError.message.includes('queue is full')) {
+                (0, Toast_1.showToast)(mutexError.message, 'error', 6000);
             }
             else {
-                console.error('Sale failed:', response.error);
-                // Handle sale failure with recovery options
-                if (response.error === 'Unauthorized' ||
-                    response.error?.includes('Unauthorized') ||
-                    response.error?.includes('token') ||
-                    response.error?.includes('auth') ||
-                    response.error?.includes('log in')) {
-                    (0, error_handler_1.handleError)(new error_handler_1.AppError('Session expired. Please log in again to complete the sale.', 'UNAUTHORIZED', {
+                console.error('Mutex error:', mutexError);
+                // Check for stock conflict errors
+                const stockConflict = (0, stock_conflict_handler_1.detectStockConflict)(mutexError);
+                if (stockConflict.isStockConflict) {
+                    console.warn('Stock conflict detected during sale:', stockConflict);
+                    // Refresh products to get latest stock
+                    (0, Toast_1.showToast)(stockConflict.conflictingProducts && stockConflict.conflictingProducts.length > 0
+                        ? `Stock conflict: ${stockConflict.conflictingProducts.join(', ')}. Refreshing products...`
+                        : 'Stock conflict detected. Refreshing products...', 'warning', 5000);
+                    // Refresh products
+                    try {
+                        await loadProducts(0);
+                        (0, Toast_1.showToast)('Products refreshed. Please review stock levels and try the sale again.', 'info', 6000);
+                    }
+                    catch (refreshError) {
+                        console.error('Failed to refresh products after stock conflict:', refreshError);
+                    }
+                    // Don't proceed with other error handling - let user retry manually
+                    setProcessingSale(false);
+                    return;
+                }
+                // Handle error with recovery options
+                if (mutexError instanceof Error && (mutexError.message.includes('Unauthorized') || mutexError.message.includes('token'))) {
+                    (0, error_handler_1.handleError)(new error_handler_1.AppError('Session expired during sale', 'UNAUTHORIZED', {
                         operation: 'createSale',
                         component: 'POS',
                         userId: user?.id,
@@ -42980,13 +44310,7 @@ const POS = () => {
                     });
                 }
                 else {
-                    (0, error_handler_1.handleError)(new error_handler_1.AppError(response.error || 'Sale failed', 'SALE_FAILED', {
-                        operation: 'createSale',
-                        component: 'POS',
-                        userId: user?.id,
-                        userName: user?.name,
-                        metadata: { saleData },
-                    }), {
+                    (0, error_handler_1.handleError)(mutexError, {
                         operation: 'createSale',
                         component: 'POS',
                         userId: user?.id,
@@ -42997,46 +44321,11 @@ const POS = () => {
                         fallbackAction: () => {
                             // Hold transaction for later retry
                             handleHoldTransaction();
-                            (0, Toast_1.showToast)('Sale held. You can retry later.', 'info', 4000);
+                            (0, Toast_1.showToast)('Sale held due to error. You can retry later.', 'info', 4000);
                         },
                     });
                 }
             }
-        }
-        catch (error) {
-            console.error('Error completing sale:', error);
-            // Handle error with recovery options
-            if (error instanceof Error && (error.message.includes('Unauthorized') || error.message.includes('token'))) {
-                (0, error_handler_1.handleError)(new error_handler_1.AppError('Session expired during sale', 'UNAUTHORIZED', {
-                    operation: 'createSale',
-                    component: 'POS',
-                    userId: user?.id,
-                    userName: user?.name,
-                }), {
-                    operation: 'createSale',
-                    component: 'POS',
-                }, {
-                    fallbackAction: error_handler_1.ErrorRecovery.redirectToLogin,
-                });
-            }
-            else {
-                (0, error_handler_1.handleError)(error, {
-                    operation: 'createSale',
-                    component: 'POS',
-                    userId: user?.id,
-                    userName: user?.name,
-                }, {
-                    retryable: true,
-                    maxRetries: 2,
-                    fallbackAction: () => {
-                        // Hold transaction for later retry
-                        handleHoldTransaction();
-                        (0, Toast_1.showToast)('Sale held due to error. You can retry later.', 'info', 4000);
-                    },
-                });
-            }
-        }
-        finally {
             setProcessingSale(false);
         }
     };
@@ -43149,7 +44438,7 @@ const POS = () => {
         deleteTransaction(transactionId);
         (0, Toast_1.showToast)('Pending transaction deleted.', 'info');
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-app", children: [currentStep === 'products' && ((0, jsx_runtime_1.jsx)(ProductSelection_1.default, { cart: cart, onAddToCart: addToCart, onUpdateQuantity: updateQuantity, onRemoveFromCart: removeFromCart, onProceedToCheckout: handleProceedToCheckout, onHoldTransaction: handleHoldTransaction, onResumeTransaction: handleResumeTransaction, onDeletePendingTransaction: handleDeletePendingTransaction, pendingTransactions: pendingTransactions, getTotal: getTotal, getVAT: getVAT, getGrandTotal: getGrandTotal, branches: branches, selectedBranch: selectedBranch, onBranchChange: setSelectedBranch })), currentStep === 'checkout' && ((0, jsx_runtime_1.jsx)(Checkout_1.default, { cart: cart, subtotal: getTotal(), vat: getVAT(), total: getGrandTotal(), onCompleteSale: handleCompleteSale, onBackToProducts: handleBackToProducts, loading: processingSale })), currentStep === 'receipt' && ((0, jsx_runtime_1.jsx)(Receipt_1.default, { receipt: currentReceipt, onPrint: handleShowPrintPreview, onNewSale: handleNewSale, printing: printing })), currentStep === 'print-preview' && ((0, jsx_runtime_1.jsx)(PrintPreview_1.default, { receipt: currentReceipt, onPrint: handlePrintReceipt, onBack: handleBackFromPrintPreview, onPrintViaBrowser: handlePrintViaBrowser, printing: printing }))] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-app", children: [currentStep === 'products' && ((0, jsx_runtime_1.jsx)(ProductSelection_1.default, { cart: cart, onAddToCart: addToCart, onUpdateQuantity: updateQuantity, onRemoveFromCart: removeFromCart, onProceedToCheckout: handleProceedToCheckout, onHoldTransaction: handleHoldTransaction, onResumeTransaction: handleResumeTransaction, onDeletePendingTransaction: handleDeletePendingTransaction, pendingTransactions: pendingTransactions, getTotal: getTotal, getVAT: getVAT, getGrandTotal: getGrandTotal, branches: branches, selectedBranch: selectedBranch, onBranchChange: setSelectedBranch })), currentStep === 'checkout' && ((0, jsx_runtime_1.jsx)(Checkout_1.default, { cart: cart, subtotal: getTotal(), vat: getVAT(), total: getGrandTotal(), onCompleteSale: handleCompleteSale, onBackToProducts: handleBackToProducts, loading: processingSale, queuedSalesCount: queuedSalesCount })), currentStep === 'receipt' && ((0, jsx_runtime_1.jsx)(Receipt_1.default, { receipt: currentReceipt, onPrint: handleShowPrintPreview, onNewSale: handleNewSale, printing: printing })), currentStep === 'print-preview' && ((0, jsx_runtime_1.jsx)(PrintPreview_1.default, { receipt: currentReceipt, onPrint: handlePrintReceipt, onBack: handleBackFromPrintPreview, onPrintViaBrowser: handlePrintViaBrowser, printing: printing }))] }));
 };
 exports["default"] = POS;
 
@@ -43257,6 +44546,22 @@ __webpack_require__(/*! ../receipt.css */ "./src/renderer/receipt.css");
 __webpack_require__(/*! ./PrintPreview.css */ "./src/renderer/components/PrintPreview.css");
 const PrintPreview = ({ receipt, onPrint, onBack, onPrintViaBrowser, printing }) => {
     const [businessInfo, setBusinessInfo] = (0, react_1.useState)(receipt.businessInfo);
+    const [apiBaseUrl, setApiBaseUrl] = (0, react_1.useState)('');
+    // Get API base URL from Electron main process
+    (0, react_1.useEffect)(() => {
+        const fetchApiUrl = async () => {
+            try {
+                const url = await window.electronAPI.getApiBaseUrl();
+                setApiBaseUrl(url);
+            }
+            catch (error) {
+                console.error('Failed to get API base URL:', error);
+                // Fallback to default
+                setApiBaseUrl('http://127.0.0.1:9000');
+            }
+        };
+        fetchApiUrl();
+    }, []);
     (0, react_1.useEffect)(() => {
         // Try to get business info from user data if not in receipt
         if (!businessInfo || !businessInfo.name || businessInfo.name === 'Business Name') {
@@ -43300,7 +44605,7 @@ const PrintPreview = ({ receipt, onPrint, onBack, onPrintViaBrowser, printing })
     const isCreditSale = receipt.paymentMethod === 'credit';
     return ((0, jsx_runtime_1.jsxs)("div", { className: "print-preview-page", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-controls-bar", children: [(0, jsx_runtime_1.jsx)("div", { className: "print-controls-left", children: (0, jsx_runtime_1.jsxs)("button", { onClick: onBack, className: "control-btn back-btn", children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\u2190" }), (0, jsx_runtime_1.jsx)("span", { children: "Back" })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "print-controls-right", children: [(0, jsx_runtime_1.jsxs)("button", { onClick: onPrintViaBrowser, className: "control-btn browser-print-btn", disabled: printing, children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDDA8\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Print via Browser" })] }), (0, jsx_runtime_1.jsx)("button", { onClick: onPrint, className: "control-btn electron-print-btn", disabled: printing, children: printing ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Printing..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDDA8\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Print Receipt" })] })) })] })] }), (0, jsx_runtime_1.jsx)("div", { className: "print-preview-content", children: (0, jsx_runtime_1.jsxs)("div", { className: "print-receipt", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-header", children: [receipt.businessInfo?.receiptLogo && ((0, jsx_runtime_1.jsx)("img", { src: receipt.businessInfo.receiptLogo.startsWith('http')
                                         ? receipt.businessInfo.receiptLogo
-                                        : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`, alt: "Business Logo", className: "print-logo" })), (0, jsx_runtime_1.jsx)("div", { className: "print-business-name", children: businessInfo?.name || receipt.businessInfo?.name || receipt.tenantName || receipt.businessName || 'BUSINESS NAME' }), (businessInfo?.address || receipt.businessInfo?.address) && ((0, jsx_runtime_1.jsx)("div", { className: "print-business-address", children: businessInfo?.address || receipt.businessInfo?.address })), (businessInfo?.phone || receipt.businessInfo?.phone) && ((0, jsx_runtime_1.jsxs)("div", { className: "print-business-contact", children: ["Tel: ", businessInfo?.phone || receipt.businessInfo?.phone] })), (businessInfo?.email || receipt.businessInfo?.email) && ((0, jsx_runtime_1.jsx)("div", { className: "print-business-email", children: businessInfo?.email || receipt.businessInfo?.email }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-receipt-info", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Receipt #:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: receipt.saleId })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Date:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: formatDate(receipt.date) })] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Branch:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: receipt.branch.name })] })), receipt.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Customer:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: receipt.customerName })] }))] }), (0, jsx_runtime_1.jsx)("div", { className: "print-divider" }), (0, jsx_runtime_1.jsxs)("div", { className: "print-items", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-items-header", children: [(0, jsx_runtime_1.jsx)("div", { className: "print-col-item", children: "Item" }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-qty", children: "Qty" }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-price", children: "Price" }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-total", children: "Total" })] }), (0, jsx_runtime_1.jsx)("div", { className: "print-items-body", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "print-item-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "print-col-item", children: (0, jsx_runtime_1.jsx)("span", { className: "print-item-name", children: item.name }) }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-qty", children: item.quantity }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-price", children: formatCurrency(item.price || 0) }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-total", children: formatCurrency((item.price || 0) * (item.quantity || 0)) })] }, index))) })] }), (0, jsx_runtime_1.jsx)("div", { className: "print-divider" }), (0, jsx_runtime_1.jsxs)("div", { className: "print-totals", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-total-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-total-label", children: "Subtotal:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-total-value", children: formatCurrency(receipt.subtotal || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-total-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-total-label", children: "VAT (16%):" }), (0, jsx_runtime_1.jsx)("span", { className: "print-total-value", children: formatCurrency(receipt.vatAmount || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-total-row print-grand-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-total-label", children: "Total:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-grand-total-value", children: formatCurrency(receipt.total || 0) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-payment", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-payment-method", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-payment-label", children: "Payment Method:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-payment-value", children: receipt.paymentMethod?.toUpperCase() || 'CASH' })] }), isCreditSale && ((0, jsx_runtime_1.jsxs)("div", { className: "print-credit-info", children: [receipt.creditDueDate && ((0, jsx_runtime_1.jsxs)("div", { className: "print-credit-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-credit-label", children: "Due Date:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-credit-value", children: new Date(receipt.creditDueDate).toLocaleDateString('en-US', {
+                                        : `${apiBaseUrl}${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`, alt: "Business Logo", className: "print-logo" })), (0, jsx_runtime_1.jsx)("div", { className: "print-business-name", children: businessInfo?.name || receipt.businessInfo?.name || receipt.tenantName || receipt.businessName || 'BUSINESS NAME' }), (businessInfo?.address || receipt.businessInfo?.address) && ((0, jsx_runtime_1.jsx)("div", { className: "print-business-address", children: businessInfo?.address || receipt.businessInfo?.address })), (businessInfo?.phone || receipt.businessInfo?.phone) && ((0, jsx_runtime_1.jsxs)("div", { className: "print-business-contact", children: ["Tel: ", businessInfo?.phone || receipt.businessInfo?.phone] })), (businessInfo?.email || receipt.businessInfo?.email) && ((0, jsx_runtime_1.jsx)("div", { className: "print-business-email", children: businessInfo?.email || receipt.businessInfo?.email })), (receipt.businessInfo?.kraEnabled || receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && (receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && ((0, jsx_runtime_1.jsxs)("div", { className: "print-kra", style: { marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed #ccc', fontSize: '10px' }, children: [receipt.businessInfo?.kraPin && (0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "KRA PIN:" }), " ", receipt.businessInfo.kraPin] }), receipt.businessInfo?.vatNumber && (0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "VAT No:" }), " ", receipt.businessInfo.vatNumber] })] })), (receipt.businessInfo?.kraEnabled || receipt.businessInfo?.etimsQrUrl) && receipt.businessInfo?.etimsQrUrl && ((0, jsx_runtime_1.jsx)("div", { className: "print-etims", style: { marginTop: '4px' }, children: (0, jsx_runtime_1.jsx)("img", { src: receipt.businessInfo.etimsQrUrl.startsWith('http') ? receipt.businessInfo.etimsQrUrl : `${apiBaseUrl}${receipt.businessInfo.etimsQrUrl.startsWith('/') ? '' : '/'}${receipt.businessInfo.etimsQrUrl}`, alt: "KRA eTIMS QR", style: { height: '40px', width: 'auto', display: 'block' } }) }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-receipt-info", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Receipt #:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: receipt.saleId })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Date:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: formatDate(receipt.date) })] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Branch:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: receipt.branch.name })] })), receipt.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "print-info-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-info-label", children: "Customer:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-info-value", children: receipt.customerName })] }))] }), (0, jsx_runtime_1.jsx)("div", { className: "print-divider" }), (0, jsx_runtime_1.jsxs)("div", { className: "print-items", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-items-header", children: [(0, jsx_runtime_1.jsx)("div", { className: "print-col-item", children: "Item" }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-qty", children: "Qty" }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-price", children: "Price" }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-total", children: "Total" })] }), (0, jsx_runtime_1.jsx)("div", { className: "print-items-body", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "print-item-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "print-col-item", children: (0, jsx_runtime_1.jsx)("span", { className: "print-item-name", children: item.name }) }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-qty", children: item.quantity }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-price", children: formatCurrency(item.price || 0) }), (0, jsx_runtime_1.jsx)("div", { className: "print-col-total", children: formatCurrency((item.price || 0) * (item.quantity || 0)) })] }, index))) })] }), (0, jsx_runtime_1.jsx)("div", { className: "print-divider" }), (0, jsx_runtime_1.jsxs)("div", { className: "print-totals", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-total-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-total-label", children: "Subtotal:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-total-value", children: formatCurrency(receipt.subtotal || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-total-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-total-label", children: "VAT (16%):" }), (0, jsx_runtime_1.jsx)("span", { className: "print-total-value", children: formatCurrency(receipt.vatAmount || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-total-row print-grand-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-total-label", children: "Total:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-grand-total-value", children: formatCurrency(receipt.total || 0) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "print-payment", children: [(0, jsx_runtime_1.jsxs)("div", { className: "print-payment-method", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-payment-label", children: "Payment Method:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-payment-value", children: receipt.paymentMethod?.toUpperCase() || 'CASH' })] }), isCreditSale && ((0, jsx_runtime_1.jsxs)("div", { className: "print-credit-info", children: [receipt.creditDueDate && ((0, jsx_runtime_1.jsxs)("div", { className: "print-credit-row", children: [(0, jsx_runtime_1.jsx)("span", { className: "print-credit-label", children: "Due Date:" }), (0, jsx_runtime_1.jsx)("span", { className: "print-credit-value", children: new Date(receipt.creditDueDate).toLocaleDateString('en-US', {
                                                         year: 'numeric',
                                                         month: 'short',
                                                         day: 'numeric'
@@ -43364,6 +44669,7 @@ const SyncStatus_1 = __importDefault(__webpack_require__(/*! ./SyncStatus */ "./
 const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
 const validation_1 = __webpack_require__(/*! ../utils/validation */ "./src/renderer/utils/validation.ts");
 const useBarcodeScanner_1 = __webpack_require__(/*! ../hooks/useBarcodeScanner */ "./src/renderer/hooks/useBarcodeScanner.ts");
+const useDebounce_1 = __importDefault(__webpack_require__(/*! ../hooks/useDebounce */ "./src/renderer/hooks/useDebounce.ts"));
 __webpack_require__(/*! ../pending-transactions.css */ "./src/renderer/pending-transactions.css");
 __webpack_require__(/*! ../barcode-scanner.css */ "./src/renderer/barcode-scanner.css");
 const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCart, onProceedToCheckout, onHoldTransaction, onResumeTransaction, onDeletePendingTransaction, pendingTransactions = [], getTotal, getVAT, getGrandTotal, branches = [], selectedBranch: propSelectedBranch = '', onBranchChange }) => {
@@ -43371,6 +44677,7 @@ const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCar
     const { theme, toggleTheme } = (0, ThemeContext_1.useTheme)();
     const [products, setProducts] = (0, react_1.useState)([]);
     const [searchTerm, setSearchTerm] = (0, react_1.useState)('');
+    const debouncedSearchTerm = (0, useDebounce_1.default)(searchTerm, 400);
     const [selectedBranch, setSelectedBranch] = (0, react_1.useState)(propSelectedBranch);
     // Sync with prop when it changes
     (0, react_1.useEffect)(() => {
@@ -43462,13 +44769,13 @@ const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCar
     };
     // Get unique categories
     const categories = ['all', ...Array.from(new Set(products.map(p => p.category?.name).filter(Boolean)))];
-    // FIXED: Handle null/undefined product names and SKUs safely
+    // FIXED: Handle null/undefined product names and SKUs safely. Debounced search avoids filtering on every keystroke.
     const filteredProducts = products.filter(product => {
-        const nameMatch = product.name ? product.name.toLowerCase().includes(searchTerm.toLowerCase()) : false;
-        const skuMatch = product.sku ? product.sku.toLowerCase().includes(searchTerm.toLowerCase()) : false;
-        // Also search by barcode if available
+        const term = debouncedSearchTerm.toLowerCase();
+        const nameMatch = product.name ? product.name.toLowerCase().includes(term) : false;
+        const skuMatch = product.sku ? product.sku.toLowerCase().includes(term) : false;
         const barcodeMatch = product.barcode
-            ? product.barcode.toLowerCase().includes(searchTerm.toLowerCase())
+            ? product.barcode.toLowerCase().includes(term)
             : false;
         const categoryMatch = selectedCategory === 'all' || product.category?.name === selectedCategory;
         return (nameMatch || skuMatch || barcodeMatch) && categoryMatch;
@@ -43552,7 +44859,11 @@ const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCar
         setShowVariationModal(false);
         setSelectedProductForVariation(null);
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pos-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "header-left", children: [(0, jsx_runtime_1.jsx)("h1", { children: "POS" }), (0, jsx_runtime_1.jsx)(SyncStatus_1.default, {})] }), (0, jsx_runtime_1.jsx)("div", { className: "header-center", children: (0, jsx_runtime_1.jsxs)("div", { className: "header-indicators", children: [isScanning && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanning-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "scanning-pulse" }), (0, jsx_runtime_1.jsx)("span", { children: "Scanning..." })] })), scannedBarcode && !isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanned-indicator", children: (0, jsx_runtime_1.jsxs)("span", { children: ["\u2713 ", scannedBarcode] }) }))] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "header-right", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedBranch, onChange: (e) => handleBranchChange(e.target.value), className: "branch-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "Select Branch" }), branches.map((branch) => ((0, jsx_runtime_1.jsx)("option", { value: branch.id, children: branch.name }, branch.id)))] }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn theme-toggle-btn", onClick: toggleTheme, title: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode', children: theme === 'dark' ? '☀️' : '🌙' }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn settings-btn", onClick: () => setShowSettings(true), title: "Settings", children: "\u2699\uFE0F" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn logout-btn", onClick: logout, title: "Logout", children: "\uD83D\uDEAA" })] })] }), showSettings && ((0, jsx_runtime_1.jsx)(Settings_1.default, { onClose: () => setShowSettings(false) })), showVariationModal && selectedProductForVariation && ((0, jsx_runtime_1.jsx)("div", { className: "variation-modal-overlay", onClick: () => { setShowVariationModal(false); setSelectedProductForVariation(null); }, children: (0, jsx_runtime_1.jsxs)("div", { className: "variation-modal", onClick: e => e.stopPropagation(), children: [(0, jsx_runtime_1.jsxs)("div", { className: "variation-modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Select Variation" }), (0, jsx_runtime_1.jsx)("p", { className: "variation-modal-product-name", children: selectedProductForVariation.name }), (0, jsx_runtime_1.jsx)("button", { className: "variation-modal-close", onClick: () => { setShowVariationModal(false); setSelectedProductForVariation(null); }, children: "\u00D7" })] }), (0, jsx_runtime_1.jsx)("div", { className: "variation-modal-list", children: loadingVariations ? ((0, jsx_runtime_1.jsx)("p", { className: "variation-modal-empty", children: "Loading variations..." })) : modalVariations.length === 0 ? ((0, jsx_runtime_1.jsxs)("div", { className: "variation-modal-empty", children: [(0, jsx_runtime_1.jsx)("p", { children: "No variations for this product." }), (0, jsx_runtime_1.jsx)("button", { type: "button", className: "add-base-product-btn", onClick: () => selectedProductForVariation && handleAddBaseProductToCart(selectedProductForVariation), children: "Add base product to cart" })] })) : modalVariations.map(variation => {
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pos-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "header-left", children: [(0, jsx_runtime_1.jsx)("h1", { children: "POS" }), (0, jsx_runtime_1.jsx)(SyncStatus_1.default, {})] }), (0, jsx_runtime_1.jsx)("div", { className: "header-center", children: (0, jsx_runtime_1.jsxs)("div", { className: "header-indicators", children: [isScanning && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanning-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "scanning-pulse" }), (0, jsx_runtime_1.jsx)("span", { children: "Scanning..." })] })), scannedBarcode && !isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanned-indicator", children: (0, jsx_runtime_1.jsxs)("span", { children: ["\u2713 ", scannedBarcode] }) }))] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "header-right", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedBranch, onChange: (e) => handleBranchChange(e.target.value), className: "branch-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "Select Branch" }), branches.map((branch) => ((0, jsx_runtime_1.jsx)("option", { value: branch.id, children: branch.name }, branch.id)))] }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn theme-toggle-btn", onClick: toggleTheme, title: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode', children: theme === 'dark' ? '☀️' : '🌙' }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn settings-btn", onClick: () => setShowSettings(true), title: "Settings", children: "\u2699\uFE0F" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn logout-btn", onClick: logout, title: "Logout", children: "\uD83D\uDEAA" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn exit-btn", onClick: () => {
+                                    if (cart.length > 0 && !window.confirm('Exit POS? Current sale will be lost.'))
+                                        return;
+                                    window.electronAPI.quitApp();
+                                }, title: "Exit / Quit", children: "\u23FB" })] })] }), showSettings && ((0, jsx_runtime_1.jsx)(Settings_1.default, { onClose: () => setShowSettings(false) })), showVariationModal && selectedProductForVariation && ((0, jsx_runtime_1.jsx)("div", { className: "variation-modal-overlay", onClick: () => { setShowVariationModal(false); setSelectedProductForVariation(null); }, children: (0, jsx_runtime_1.jsxs)("div", { className: "variation-modal", onClick: e => e.stopPropagation(), children: [(0, jsx_runtime_1.jsxs)("div", { className: "variation-modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Select Variation" }), (0, jsx_runtime_1.jsx)("p", { className: "variation-modal-product-name", children: selectedProductForVariation.name }), (0, jsx_runtime_1.jsx)("button", { className: "variation-modal-close", onClick: () => { setShowVariationModal(false); setSelectedProductForVariation(null); }, children: "\u00D7" })] }), (0, jsx_runtime_1.jsx)("div", { className: "variation-modal-list", children: loadingVariations ? ((0, jsx_runtime_1.jsx)("p", { className: "variation-modal-empty", children: "Loading variations..." })) : modalVariations.length === 0 ? ((0, jsx_runtime_1.jsxs)("div", { className: "variation-modal-empty", children: [(0, jsx_runtime_1.jsx)("p", { children: "No variations for this product." }), (0, jsx_runtime_1.jsx)("button", { type: "button", className: "add-base-product-btn", onClick: () => selectedProductForVariation && handleAddBaseProductToCart(selectedProductForVariation), children: "Add base product to cart" })] })) : modalVariations.map(variation => {
                                 const attrsLabel = variation.attributes && typeof variation.attributes === 'object'
                                     ? Object.entries(variation.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')
                                     : variation.sku;
@@ -43624,24 +44935,39 @@ const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modul
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 __webpack_require__(/*! ../receipt.css */ "./src/renderer/receipt.css");
 const Receipt = ({ receipt, onPrint, onNewSale, printing }) => {
-    const [businessInfo, setBusinessInfo] = (0, react_1.useState)(receipt.businessInfo);
+    const [businessInfo, setBusinessInfo] = (0, react_1.useState)(receipt?.businessInfo);
+    const [apiBaseUrl, setApiBaseUrl] = (0, react_1.useState)('');
+    // Get API base URL from Electron main process
     (0, react_1.useEffect)(() => {
-        // Try to get business info from user data if not in receipt
-        if (!businessInfo || !businessInfo.name || businessInfo.name === 'Business Name') {
+        const fetchApiUrl = async () => {
+            try {
+                const url = await window.electronAPI.getApiBaseUrl();
+                setApiBaseUrl(url);
+            }
+            catch (error) {
+                console.error('Failed to get API base URL:', error);
+                // Fallback to default
+                setApiBaseUrl('http://127.0.0.1:9000');
+            }
+        };
+        fetchApiUrl();
+    }, []);
+    (0, react_1.useEffect)(() => {
+        setBusinessInfo(receipt?.businessInfo);
+        // When receipt has no/empty business name, try to fill from user data (keep KRA and other backend fields)
+        if (!receipt?.businessInfo?.name || receipt.businessInfo.name === 'Business Name' || receipt.businessInfo.name === 'Business') {
             const fetchBusinessInfo = async () => {
                 try {
                     const userData = await window.electronAPI.getUserData();
                     if (userData) {
                         const businessName = userData.tenantName || userData.businessName || userData.companyName;
-                        if (businessName) {
-                            setBusinessInfo({
-                                ...businessInfo,
-                                name: businessName,
-                                address: businessInfo?.address || userData.address,
-                                phone: businessInfo?.phone || userData.phone,
-                                email: businessInfo?.email || userData.email,
-                            });
-                        }
+                        setBusinessInfo((prev) => ({
+                            ...prev,
+                            name: businessName || prev?.name || 'Business',
+                            address: prev?.address || userData.address,
+                            phone: prev?.phone || userData.phone,
+                            email: prev?.email || userData.email,
+                        }));
                     }
                 }
                 catch (error) {
@@ -43676,7 +45002,7 @@ const Receipt = ({ receipt, onPrint, onNewSale, printing }) => {
                                     }
                                 }, className: "action-btn-top secondary-btn", title: "Open Cash Drawer", children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDCB0" }), (0, jsx_runtime_1.jsx)("span", { children: "Open Drawer" })] }), (0, jsx_runtime_1.jsx)("button", { onClick: onPrint, disabled: printing, className: "action-btn-top print-btn", children: printing ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Printing..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("span", { className: "btn-icon", children: "\uD83D\uDDA8\uFE0F" }), (0, jsx_runtime_1.jsx)("span", { children: "Print Preview" })] })) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-main-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-left-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "receipt-header-card", children: [receipt.businessInfo?.receiptLogo && ((0, jsx_runtime_1.jsx)("img", { src: receipt.businessInfo.receiptLogo.startsWith('http')
                                             ? receipt.businessInfo.receiptLogo
-                                            : `http://127.0.0.1:9000${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`, alt: "Business Logo", className: "receipt-logo", style: { maxHeight: '48px', width: 'auto', marginBottom: '8px', display: 'block' } })), (0, jsx_runtime_1.jsx)("div", { className: "business-name", children: businessInfo?.name || receipt.businessInfo?.name || receipt.tenantName || receipt.businessName || 'BUSINESS NAME' }), (businessInfo?.address || receipt.businessInfo?.address) && ((0, jsx_runtime_1.jsx)("div", { className: "business-address", children: businessInfo?.address || receipt.businessInfo?.address })), (businessInfo?.phone || receipt.businessInfo?.phone) && ((0, jsx_runtime_1.jsxs)("div", { className: "business-contact", children: ["Tel: ", businessInfo?.phone || receipt.businessInfo?.phone] })), (businessInfo?.email || receipt.businessInfo?.email) && ((0, jsx_runtime_1.jsx)("div", { className: "business-email", children: businessInfo?.email || receipt.businessInfo?.email }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-info-grid", children: [(0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Sale ID" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.saleId })] }), (0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Date & Time" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: formatDate(receipt.date) })] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Branch" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.branch.name })] })), receipt.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Customer" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.customerName })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-items-section", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Items Purchased" }), (0, jsx_runtime_1.jsxs)("div", { className: "items-table", children: [(0, jsx_runtime_1.jsxs)("div", { className: "items-header", children: [(0, jsx_runtime_1.jsx)("div", { className: "header-col-item", children: "Item" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-qty", children: "Qty" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-price", children: "Price" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-total", children: "Total" })] }), (0, jsx_runtime_1.jsx)("div", { className: "items-body", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "item-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "col-item", children: (0, jsx_runtime_1.jsx)("span", { className: "item-name", children: item.name }) }), (0, jsx_runtime_1.jsx)("div", { className: "col-qty", children: item.quantity }), (0, jsx_runtime_1.jsx)("div", { className: "col-price", children: formatCurrency(item.price || 0) }), (0, jsx_runtime_1.jsx)("div", { className: "col-total", children: formatCurrency((item.price || 0) * (item.quantity || 0)) })] }, index))) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-right-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "totals-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Summary" }), (0, jsx_runtime_1.jsxs)("div", { className: "totals-list", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Subtotal" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.subtotal || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "VAT (16%)" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.vatAmount || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item grand-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Total Amount" }), (0, jsx_runtime_1.jsx)("span", { className: "total-amount", children: formatCurrency(receipt.total || 0) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Payment Information" }), isSplitPayment && receipt.splitPayments ? ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-display", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-header-badge", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-text", children: "SPLIT PAYMENT" })] }), (0, jsx_runtime_1.jsx)("div", { className: "split-payments-list-receipt", children: receipt.splitPayments.map((payment, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-item-receipt", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-method-receipt", children: [(0, jsx_runtime_1.jsx)("span", { className: "split-payment-icon", children: payment.method === 'cash' ? '💵' :
+                                            : `${apiBaseUrl}${receipt.businessInfo.receiptLogo.startsWith('/') ? '' : '/'}${receipt.businessInfo.receiptLogo}`, alt: "Business Logo", className: "receipt-logo", style: { maxHeight: '48px', width: 'auto', marginBottom: '8px', display: 'block' } })), (0, jsx_runtime_1.jsx)("div", { className: "business-name", children: businessInfo?.name || receipt.businessInfo?.name || receipt.tenantName || receipt.businessName || 'BUSINESS NAME' }), (businessInfo?.address || receipt.businessInfo?.address) && ((0, jsx_runtime_1.jsx)("div", { className: "business-address", children: businessInfo?.address || receipt.businessInfo?.address })), (businessInfo?.phone || receipt.businessInfo?.phone) && ((0, jsx_runtime_1.jsxs)("div", { className: "business-contact", children: ["Tel: ", businessInfo?.phone || receipt.businessInfo?.phone] })), (businessInfo?.email || receipt.businessInfo?.email) && ((0, jsx_runtime_1.jsx)("div", { className: "business-email", children: businessInfo?.email || receipt.businessInfo?.email })), (receipt.businessInfo?.kraEnabled || receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && (receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && ((0, jsx_runtime_1.jsxs)("div", { className: "business-kra", style: { marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(0,0,0,0.1)', fontSize: '12px', color: '#374151' }, children: [receipt.businessInfo?.kraPin && (0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "KRA PIN:" }), " ", receipt.businessInfo.kraPin] }), receipt.businessInfo?.vatNumber && (0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "VAT No:" }), " ", receipt.businessInfo.vatNumber] })] })), (receipt.businessInfo?.kraEnabled || receipt.businessInfo?.etimsQrUrl) && receipt.businessInfo?.etimsQrUrl && ((0, jsx_runtime_1.jsx)("div", { className: "business-etims", style: { marginTop: '6px' }, children: (0, jsx_runtime_1.jsx)("img", { src: receipt.businessInfo.etimsQrUrl.startsWith('http') ? receipt.businessInfo.etimsQrUrl : `${apiBaseUrl}${receipt.businessInfo.etimsQrUrl.startsWith('/') ? '' : '/'}${receipt.businessInfo.etimsQrUrl}`, alt: "KRA eTIMS QR", style: { height: '48px', width: 'auto', display: 'block' } }) }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-info-grid", children: [(0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Sale ID" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.saleId })] }), (0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Date & Time" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: formatDate(receipt.date) })] }), receipt.branch && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Branch" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.branch.name })] })), receipt.customerName && ((0, jsx_runtime_1.jsxs)("div", { className: "info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "info-label", children: "Customer" }), (0, jsx_runtime_1.jsx)("div", { className: "info-value", children: receipt.customerName })] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-items-section", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Items Purchased" }), (0, jsx_runtime_1.jsxs)("div", { className: "items-table", children: [(0, jsx_runtime_1.jsxs)("div", { className: "items-header", children: [(0, jsx_runtime_1.jsx)("div", { className: "header-col-item", children: "Item" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-qty", children: "Qty" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-price", children: "Price" }), (0, jsx_runtime_1.jsx)("div", { className: "header-col-total", children: "Total" })] }), (0, jsx_runtime_1.jsx)("div", { className: "items-body", children: receipt.items?.map((item, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "item-row", children: [(0, jsx_runtime_1.jsx)("div", { className: "col-item", children: (0, jsx_runtime_1.jsx)("span", { className: "item-name", children: item.name }) }), (0, jsx_runtime_1.jsx)("div", { className: "col-qty", children: item.quantity }), (0, jsx_runtime_1.jsx)("div", { className: "col-price", children: formatCurrency(item.price || 0) }), (0, jsx_runtime_1.jsx)("div", { className: "col-total", children: formatCurrency((item.price || 0) * (item.quantity || 0)) })] }, index))) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-right-column", children: [(0, jsx_runtime_1.jsxs)("div", { className: "totals-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Summary" }), (0, jsx_runtime_1.jsxs)("div", { className: "totals-list", children: [(0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Subtotal" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.subtotal || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "VAT (16%)" }), (0, jsx_runtime_1.jsx)("span", { className: "total-value", children: formatCurrency(receipt.vatAmount || 0) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "total-item grand-total", children: [(0, jsx_runtime_1.jsx)("span", { className: "total-label", children: "Total Amount" }), (0, jsx_runtime_1.jsx)("span", { className: "total-amount", children: formatCurrency(receipt.total || 0) })] })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "payment-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "section-title", children: "Payment Information" }), isSplitPayment && receipt.splitPayments ? ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-display", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-header-badge", children: [(0, jsx_runtime_1.jsx)("span", { className: "payment-icon", children: "\uD83D\uDCB3" }), (0, jsx_runtime_1.jsx)("span", { className: "payment-text", children: "SPLIT PAYMENT" })] }), (0, jsx_runtime_1.jsx)("div", { className: "split-payments-list-receipt", children: receipt.splitPayments.map((payment, index) => ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-item-receipt", children: [(0, jsx_runtime_1.jsxs)("div", { className: "split-payment-method-receipt", children: [(0, jsx_runtime_1.jsx)("span", { className: "split-payment-icon", children: payment.method === 'cash' ? '💵' :
                                                                         payment.method === 'mpesa' ? '📱' :
                                                                             payment.method === 'credit' ? '💳' : '💰' }), (0, jsx_runtime_1.jsx)("span", { className: "split-payment-method-name", children: payment.method.toUpperCase() })] }), (0, jsx_runtime_1.jsx)("div", { className: "split-payment-amount-receipt", children: formatCurrency(payment.amount) }), payment.method === 'cash' && payment.amountReceived && payment.amountReceived > payment.amount && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-change", children: ["Change: ", formatCurrency(payment.amountReceived - payment.amount)] })), payment.method === 'mpesa' && payment.mpesaTransactionId && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-mpesa-id", children: ["Transaction: ", payment.mpesaTransactionId] })), payment.method === 'credit' && payment.creditDueDate && ((0, jsx_runtime_1.jsxs)("div", { className: "split-payment-credit-due", children: ["Due: ", new Date(payment.creditDueDate).toLocaleDateString('en-US', {
                                                                     year: 'numeric',
@@ -43803,9 +45129,15 @@ const Settings = ({ onClose }) => {
     });
     const [loading, setLoading] = (0, react_1.useState)(false);
     const [saving, setSaving] = (0, react_1.useState)(false);
+    const [syncing, setSyncing] = (0, react_1.useState)(false);
     const [message, setMessage] = (0, react_1.useState)(null);
+    const [catalogStatus, setCatalogStatus] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {
         loadConfig();
+        loadCatalogStatus();
+        // Refresh catalog status every 30 seconds
+        const statusInterval = setInterval(loadCatalogStatus, 30000);
+        return () => clearInterval(statusInterval);
     }, []);
     const loadConfig = async () => {
         setLoading(true);
@@ -43904,12 +45236,56 @@ const Settings = ({ onClose }) => {
             setSaving(false);
         }
     };
-    return ((0, jsx_runtime_1.jsx)("div", { className: "settings-modal-overlay", onClick: onClose, children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-modal", onClick: (e) => e.stopPropagation(), children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-header-content", children: [(0, jsx_runtime_1.jsx)("h1", { className: "settings-title", children: "Settings" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-subtitle", children: "Configure your POS system preferences" })] }), (0, jsx_runtime_1.jsx)("button", { className: "settings-close-btn", onClick: onClose, "aria-label": "Close settings", children: (0, jsx_runtime_1.jsxs)("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("line", { x1: "18", y1: "6", x2: "6", y2: "18" }), (0, jsx_runtime_1.jsx)("line", { x1: "6", y1: "6", x2: "18", y2: "18" })] }) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-tabs-nav", children: [(0, jsx_runtime_1.jsxs)("button", { className: `settings-tab ${activeTab === 'printer' ? 'active' : ''}`, onClick: () => setActiveTab('printer'), children: [(0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("polyline", { points: "6 9 6 2 18 2 18 9" }), (0, jsx_runtime_1.jsx)("path", { d: "M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" }), (0, jsx_runtime_1.jsx)("rect", { x: "6", y: "14", width: "12", height: "8" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Printer" })] }), (0, jsx_runtime_1.jsxs)("button", { className: `settings-tab ${activeTab === 'system' ? 'active' : ''}`, onClick: () => setActiveTab('system'), children: [(0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("rect", { x: "2", y: "3", width: "20", height: "14", rx: "2", ry: "2" }), (0, jsx_runtime_1.jsx)("line", { x1: "8", y1: "21", x2: "16", y2: "21" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "17", x2: "12", y2: "21" })] }), (0, jsx_runtime_1.jsx)("span", { children: "System" })] })] }), message && ((0, jsx_runtime_1.jsxs)("div", { className: `settings-alert ${message.type}`, children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-alert-icon", children: message.type === 'success' ? ((0, jsx_runtime_1.jsx)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: (0, jsx_runtime_1.jsx)("polyline", { points: "20 6 9 17 4 12" }) })) : ((0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("circle", { cx: "12", cy: "12", r: "10" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "8", x2: "12", y2: "12" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "16", x2: "12.01", y2: "16" })] })) }), (0, jsx_runtime_1.jsx)("span", { className: "settings-alert-text", children: message.text })] })), (0, jsx_runtime_1.jsx)("div", { className: "settings-content", children: loading ? ((0, jsx_runtime_1.jsxs)("div", { className: "settings-loading", children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-spinner" }), (0, jsx_runtime_1.jsx)("p", { children: "Loading settings..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [activeTab === 'printer' && ((0, jsx_runtime_1.jsxs)("div", { className: "settings-tab-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card-header", children: [(0, jsx_runtime_1.jsx)("h3", { className: "settings-card-title", children: "Printer Configuration" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-card-description", children: "Select your printer type and configure connection settings" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-card-body", children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Printer Type" }), (0, jsx_runtime_1.jsxs)("select", { value: config.type, onChange: (e) => setConfig({ ...config, type: e.target.value }), className: "settings-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "usb", children: "USB Printer" }), (0, jsx_runtime_1.jsx)("option", { value: "network", children: "Network Printer" }), (0, jsx_runtime_1.jsx)("option", { value: "file", children: "Save to File" })] })] }) }), config.type === 'usb' && ((0, jsx_runtime_1.jsxs)("div", { className: "settings-field", children: [(0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Device Path" }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: config.path || '', onChange: (e) => setConfig({ ...config, path: e.target.value }), placeholder: "COM1 (Windows) or /dev/usb/lp0 (Linux)", className: "settings-input" })] }), (0, jsx_runtime_1.jsx)("p", { className: "settings-field-hint", children: "Windows: COM1, COM2, etc. | Linux: /dev/usb/lp0, /dev/usb/lp1, etc. | macOS: Leave empty for auto-detect" })] })), config.type === 'network' && ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Printer IP Address" }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: config.ip || '', onChange: (e) => setConfig({ ...config, ip: e.target.value }), placeholder: "192.168.1.100", className: "settings-input" })] }) }), (0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Port" }), (0, jsx_runtime_1.jsx)("input", { type: "number", value: config.port || 9100, onChange: (e) => setConfig({ ...config, port: parseInt(e.target.value) || 9100 }), placeholder: "9100", className: "settings-input" })] }) })] })), (0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-checkbox-label", children: [(0, jsx_runtime_1.jsx)("input", { type: "checkbox", checked: config.autoOpenCashDrawer, onChange: (e) => setConfig({ ...config, autoOpenCashDrawer: e.target.checked }), className: "settings-checkbox" }), (0, jsx_runtime_1.jsx)("span", { className: "settings-checkbox-text", children: "Auto-open cash drawer on cash payments" })] }) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card-header", children: [(0, jsx_runtime_1.jsx)("h3", { className: "settings-card-title", children: "Test Printer" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-card-description", children: "Test your printer configuration" })] }), (0, jsx_runtime_1.jsx)("div", { className: "settings-card-body", children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-actions-grid", children: [(0, jsx_runtime_1.jsxs)("button", { onClick: handleTestPrint, disabled: saving, className: "settings-action-btn settings-action-btn-secondary", children: [(0, jsx_runtime_1.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("polyline", { points: "6 9 6 2 18 2 18 9" }), (0, jsx_runtime_1.jsx)("path", { d: "M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" }), (0, jsx_runtime_1.jsx)("rect", { x: "6", y: "14", width: "12", height: "8" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Test Print" })] }), (0, jsx_runtime_1.jsxs)("button", { onClick: handleTestCashDrawer, disabled: saving, className: "settings-action-btn settings-action-btn-secondary", children: [(0, jsx_runtime_1.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("rect", { x: "2", y: "7", width: "20", height: "14", rx: "2", ry: "2" }), (0, jsx_runtime_1.jsx)("path", { d: "M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Test Cash Drawer" })] })] }) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-info-icon", children: (0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("circle", { cx: "12", cy: "12", r: "10" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "16", x2: "12", y2: "12" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "8", x2: "12.01", y2: "8" })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-info-content", children: [(0, jsx_runtime_1.jsx)("h4", { className: "settings-info-title", children: "Printer Setup Notes" }), (0, jsx_runtime_1.jsxs)("ul", { className: "settings-info-list", children: [(0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "USB Printers:" }), " Ensure printer is connected and drivers are installed"] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "Network Printers:" }), " Printer must be on the same network with port 9100 open"] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "File Mode:" }), " Receipts saved to Desktop/POS_Receipts folder"] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "Cash Drawer:" }), " Must be connected via RJ-11 or USB cable"] })] })] })] }), (0, jsx_runtime_1.jsx)("div", { className: "settings-footer", children: (0, jsx_runtime_1.jsx)("button", { onClick: handleSave, disabled: saving, className: "settings-save-btn", children: saving ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-btn-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Saving..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("path", { d: "M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" }), (0, jsx_runtime_1.jsx)("polyline", { points: "17 21 17 13 7 13 7 21" }), (0, jsx_runtime_1.jsx)("polyline", { points: "7 3 7 8 15 8" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Save Settings" })] })) }) })] })), activeTab === 'system' && ((0, jsx_runtime_1.jsx)("div", { className: "settings-tab-content", children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card-header", children: [(0, jsx_runtime_1.jsx)("h3", { className: "settings-card-title", children: "System Controls" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-card-description", children: "Manage system behavior and preferences" })] }), (0, jsx_runtime_1.jsx)("div", { className: "settings-card-body", children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-field", children: [(0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Sleep Mode" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-label-description", children: "Put the system into sleep mode. Move mouse or press any key to wake." })] }), (0, jsx_runtime_1.jsxs)("button", { className: "settings-sleep-btn", onClick: () => {
-                                                            onClose();
-                                                            setTimeout(() => {
-                                                                enterSleepMode();
-                                                            }, 100);
-                                                        }, children: [(0, jsx_runtime_1.jsx)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: (0, jsx_runtime_1.jsx)("path", { d: "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" }) }), (0, jsx_runtime_1.jsx)("span", { children: "Enter Sleep Mode" })] })] }) })] }) }))] })) })] }) }));
+    const loadCatalogStatus = async () => {
+        try {
+            const status = await window.electronAPI.getCatalogSyncStatus();
+            setCatalogStatus(status);
+        }
+        catch (error) {
+            console.error('Failed to load catalog status:', error);
+        }
+    };
+    const handleSyncProducts = async () => {
+        setSyncing(true);
+        setMessage(null);
+        try {
+            const response = await window.electronAPI.syncProducts();
+            if (response.success) {
+                setMessage({ type: 'success', text: `Products synced successfully! ${response.products?.length || 0} products loaded.` });
+                setTimeout(() => setMessage(null), 5000);
+                // Refresh catalog status
+                await loadCatalogStatus();
+            }
+            else {
+                setMessage({ type: 'error', text: response.error || 'Failed to sync products' });
+                setTimeout(() => setMessage(null), 5000);
+            }
+        }
+        catch (error) {
+            setMessage({ type: 'error', text: error.message || 'Failed to sync products' });
+            setTimeout(() => setMessage(null), 5000);
+        }
+        finally {
+            setSyncing(false);
+        }
+    };
+    return ((0, jsx_runtime_1.jsx)("div", { className: "settings-modal-overlay", onClick: onClose, children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-modal", onClick: (e) => e.stopPropagation(), children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-header-content", children: [(0, jsx_runtime_1.jsx)("h1", { className: "settings-title", children: "Settings" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-subtitle", children: "Configure your POS system preferences" })] }), (0, jsx_runtime_1.jsx)("button", { className: "settings-close-btn", onClick: onClose, "aria-label": "Close settings", children: (0, jsx_runtime_1.jsxs)("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("line", { x1: "18", y1: "6", x2: "6", y2: "18" }), (0, jsx_runtime_1.jsx)("line", { x1: "6", y1: "6", x2: "18", y2: "18" })] }) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-tabs-nav", children: [(0, jsx_runtime_1.jsxs)("button", { className: `settings-tab ${activeTab === 'printer' ? 'active' : ''}`, onClick: () => setActiveTab('printer'), children: [(0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("polyline", { points: "6 9 6 2 18 2 18 9" }), (0, jsx_runtime_1.jsx)("path", { d: "M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" }), (0, jsx_runtime_1.jsx)("rect", { x: "6", y: "14", width: "12", height: "8" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Printer" })] }), (0, jsx_runtime_1.jsxs)("button", { className: `settings-tab ${activeTab === 'system' ? 'active' : ''}`, onClick: () => setActiveTab('system'), children: [(0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("rect", { x: "2", y: "3", width: "20", height: "14", rx: "2", ry: "2" }), (0, jsx_runtime_1.jsx)("line", { x1: "8", y1: "21", x2: "16", y2: "21" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "17", x2: "12", y2: "21" })] }), (0, jsx_runtime_1.jsx)("span", { children: "System" })] })] }), message && ((0, jsx_runtime_1.jsxs)("div", { className: `settings-alert ${message.type}`, children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-alert-icon", children: message.type === 'success' ? ((0, jsx_runtime_1.jsx)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: (0, jsx_runtime_1.jsx)("polyline", { points: "20 6 9 17 4 12" }) })) : ((0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("circle", { cx: "12", cy: "12", r: "10" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "8", x2: "12", y2: "12" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "16", x2: "12.01", y2: "16" })] })) }), (0, jsx_runtime_1.jsx)("span", { className: "settings-alert-text", children: message.text })] })), (0, jsx_runtime_1.jsx)("div", { className: "settings-content", children: loading ? ((0, jsx_runtime_1.jsxs)("div", { className: "settings-loading", children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-spinner" }), (0, jsx_runtime_1.jsx)("p", { children: "Loading settings..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [activeTab === 'printer' && ((0, jsx_runtime_1.jsxs)("div", { className: "settings-tab-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card-header", children: [(0, jsx_runtime_1.jsx)("h3", { className: "settings-card-title", children: "Printer Configuration" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-card-description", children: "Select your printer type and configure connection settings" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-card-body", children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Printer Type" }), (0, jsx_runtime_1.jsxs)("select", { value: config.type, onChange: (e) => setConfig({ ...config, type: e.target.value }), className: "settings-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "usb", children: "USB Printer" }), (0, jsx_runtime_1.jsx)("option", { value: "network", children: "Network Printer" }), (0, jsx_runtime_1.jsx)("option", { value: "file", children: "Save to File" })] })] }) }), config.type === 'usb' && ((0, jsx_runtime_1.jsxs)("div", { className: "settings-field", children: [(0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Device Path" }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: config.path || '', onChange: (e) => setConfig({ ...config, path: e.target.value }), placeholder: "COM1 (Windows) or /dev/usb/lp0 (Linux)", className: "settings-input" })] }), (0, jsx_runtime_1.jsx)("p", { className: "settings-field-hint", children: "Windows: COM1, COM2, etc. | Linux: /dev/usb/lp0, /dev/usb/lp1, etc. | macOS: Leave empty for auto-detect" })] })), config.type === 'network' && ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Printer IP Address" }), (0, jsx_runtime_1.jsx)("input", { type: "text", value: config.ip || '', onChange: (e) => setConfig({ ...config, ip: e.target.value }), placeholder: "192.168.1.100", className: "settings-input" })] }) }), (0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Port" }), (0, jsx_runtime_1.jsx)("input", { type: "number", value: config.port || 9100, onChange: (e) => setConfig({ ...config, port: parseInt(e.target.value) || 9100 }), placeholder: "9100", className: "settings-input" })] }) })] })), (0, jsx_runtime_1.jsx)("div", { className: "settings-field", children: (0, jsx_runtime_1.jsxs)("label", { className: "settings-checkbox-label", children: [(0, jsx_runtime_1.jsx)("input", { type: "checkbox", checked: config.autoOpenCashDrawer, onChange: (e) => setConfig({ ...config, autoOpenCashDrawer: e.target.checked }), className: "settings-checkbox" }), (0, jsx_runtime_1.jsx)("span", { className: "settings-checkbox-text", children: "Auto-open cash drawer on cash payments" })] }) })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card-header", children: [(0, jsx_runtime_1.jsx)("h3", { className: "settings-card-title", children: "Test Printer" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-card-description", children: "Test your printer configuration" })] }), (0, jsx_runtime_1.jsx)("div", { className: "settings-card-body", children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-actions-grid", children: [(0, jsx_runtime_1.jsxs)("button", { onClick: handleTestPrint, disabled: saving, className: "settings-action-btn settings-action-btn-secondary", children: [(0, jsx_runtime_1.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("polyline", { points: "6 9 6 2 18 2 18 9" }), (0, jsx_runtime_1.jsx)("path", { d: "M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" }), (0, jsx_runtime_1.jsx)("rect", { x: "6", y: "14", width: "12", height: "8" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Test Print" })] }), (0, jsx_runtime_1.jsxs)("button", { onClick: handleTestCashDrawer, disabled: saving, className: "settings-action-btn settings-action-btn-secondary", children: [(0, jsx_runtime_1.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("rect", { x: "2", y: "7", width: "20", height: "14", rx: "2", ry: "2" }), (0, jsx_runtime_1.jsx)("path", { d: "M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Test Cash Drawer" })] })] }) })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-info-card", children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-info-icon", children: (0, jsx_runtime_1.jsxs)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("circle", { cx: "12", cy: "12", r: "10" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "16", x2: "12", y2: "12" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "8", x2: "12.01", y2: "8" })] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-info-content", children: [(0, jsx_runtime_1.jsx)("h4", { className: "settings-info-title", children: "Printer Setup Notes" }), (0, jsx_runtime_1.jsxs)("ul", { className: "settings-info-list", children: [(0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "USB Printers:" }), " Ensure printer is connected and drivers are installed"] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "Network Printers:" }), " Printer must be on the same network with port 9100 open"] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "File Mode:" }), " Receipts saved to Desktop/POS_Receipts folder"] }), (0, jsx_runtime_1.jsxs)("li", { children: [(0, jsx_runtime_1.jsx)("strong", { children: "Cash Drawer:" }), " Must be connected via RJ-11 or USB cable"] })] })] })] }), (0, jsx_runtime_1.jsx)("div", { className: "settings-footer", children: (0, jsx_runtime_1.jsx)("button", { onClick: handleSave, disabled: saving, className: "settings-save-btn", children: saving ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-btn-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Saving..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("path", { d: "M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" }), (0, jsx_runtime_1.jsx)("polyline", { points: "17 21 17 13 7 13 7 21" }), (0, jsx_runtime_1.jsx)("polyline", { points: "7 3 7 8 15 8" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Save Settings" })] })) }) })] })), activeTab === 'system' && ((0, jsx_runtime_1.jsxs)("div", { className: "settings-tab-content", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card-header", children: [(0, jsx_runtime_1.jsx)("h3", { className: "settings-card-title", children: "Product Catalog" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-card-description", children: "Sync product catalog from backend" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-card-body", children: [catalogStatus && ((0, jsx_runtime_1.jsxs)("div", { className: "settings-field", style: { marginBottom: '16px' }, children: [(0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }, children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Catalog Status" }), catalogStatus.isStale && ((0, jsx_runtime_1.jsxs)("span", { style: {
+                                                                            color: '#f59e0b',
+                                                                            fontSize: '12px',
+                                                                            fontWeight: '600',
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            gap: '4px'
+                                                                        }, children: [(0, jsx_runtime_1.jsxs)("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("circle", { cx: "12", cy: "12", r: "10" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "8", x2: "12", y2: "12" }), (0, jsx_runtime_1.jsx)("line", { x1: "12", y1: "16", x2: "12.01", y2: "16" })] }), "Stale"] }))] }), (0, jsx_runtime_1.jsx)("div", { style: { fontSize: '14px', color: '#6b7280', lineHeight: '1.6' }, children: catalogStatus.hasCatalog ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsx)("strong", { children: catalogStatus.productCount }), " products cached"] }), catalogStatus.lastSynced && ((0, jsx_runtime_1.jsxs)("div", { children: ["Last synced: ", catalogStatus.ageHours !== null
+                                                                                    ? catalogStatus.ageHours < 1
+                                                                                        ? `${Math.round(catalogStatus.ageHours * 60)} minutes ago`
+                                                                                        : `${catalogStatus.ageHours.toFixed(1)} hours ago`
+                                                                                    : 'Unknown'] })), catalogStatus.isStale && ((0, jsx_runtime_1.jsx)("div", { style: { color: '#f59e0b', marginTop: '8px', fontWeight: '500' }, children: "\u26A0\uFE0F Catalog is outdated. Please sync to get the latest products." }))] })) : ((0, jsx_runtime_1.jsx)("div", { style: { color: '#ef4444' }, children: "No product catalog cached" })) })] })), (0, jsx_runtime_1.jsx)("button", { onClick: handleSyncProducts, disabled: syncing, className: "settings-action-btn settings-action-btn-primary", style: { width: '100%' }, children: syncing ? ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("div", { className: "settings-btn-spinner" }), (0, jsx_runtime_1.jsx)("span", { children: "Syncing..." })] })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [(0, jsx_runtime_1.jsx)("polyline", { points: "23 4 23 10 17 10" }), (0, jsx_runtime_1.jsx)("polyline", { points: "1 20 1 14 7 14" }), (0, jsx_runtime_1.jsx)("path", { d: "M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" })] }), (0, jsx_runtime_1.jsx)("span", { children: "Sync Products" })] })) }), (0, jsx_runtime_1.jsx)("p", { className: "settings-field-hint", style: { marginTop: '8px' }, children: "Products are automatically synced every 5 minutes. Use this button to sync manually." })] })] }), (0, jsx_runtime_1.jsxs)("div", { className: "settings-card", children: [(0, jsx_runtime_1.jsxs)("div", { className: "settings-card-header", children: [(0, jsx_runtime_1.jsx)("h3", { className: "settings-card-title", children: "System Controls" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-card-description", children: "Manage system behavior and preferences" })] }), (0, jsx_runtime_1.jsx)("div", { className: "settings-card-body", children: (0, jsx_runtime_1.jsxs)("div", { className: "settings-field", children: [(0, jsx_runtime_1.jsxs)("label", { className: "settings-label", children: [(0, jsx_runtime_1.jsx)("span", { className: "settings-label-text", children: "Sleep Mode" }), (0, jsx_runtime_1.jsx)("p", { className: "settings-label-description", children: "Put the system into sleep mode. Move mouse or press any key to wake." })] }), (0, jsx_runtime_1.jsxs)("button", { className: "settings-sleep-btn", onClick: () => {
+                                                                onClose();
+                                                                setTimeout(() => {
+                                                                    enterSleepMode();
+                                                                }, 100);
+                                                            }, children: [(0, jsx_runtime_1.jsx)("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: (0, jsx_runtime_1.jsx)("path", { d: "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" }) }), (0, jsx_runtime_1.jsx)("span", { children: "Enter Sleep Mode" })] })] }) })] })] }))] })) })] }) }));
 };
 exports["default"] = Settings;
 
@@ -44358,11 +45734,48 @@ const useSyncProgress_1 = __webpack_require__(/*! ../hooks/useSyncProgress */ ".
 const SyncStatus = () => {
     const [syncStatus, setSyncStatus] = (0, react_1.useState)({ online: true, pendingSyncs: 0 });
     const [isSyncing, setIsSyncing] = (0, react_1.useState)(false);
+    const [syncProgress, setSyncProgress] = (0, react_1.useState)(null);
     const wasOfflineRef = (0, react_1.useRef)(false);
     const autoSyncTimeoutRef = (0, react_1.useRef)(null);
     const hasAutoSyncedRef = (0, react_1.useRef)(false);
     const lastPendingCountRef = (0, react_1.useRef)(0);
     const { startSync } = (0, useSyncProgress_1.useSyncProgress)();
+    // Listen for sync progress updates
+    (0, react_1.useEffect)(() => {
+        const cleanup = window.electronAPI.onSyncProgress((progress) => {
+            setSyncProgress({
+                total: progress.total,
+                processed: progress.processed,
+                synced: progress.synced,
+                failed: progress.failed,
+                currentBatch: progress.currentBatch,
+                totalBatches: progress.totalBatches,
+                percentage: progress.percentage,
+            });
+            // Handle completion or cancellation
+            if (progress.completed || progress.cancelled) {
+                setIsSyncing(false);
+                setSyncProgress(null);
+            }
+            // Handle errors
+            if (progress.failed && progress.error) {
+                setIsSyncing(false);
+                setSyncProgress(null);
+            }
+        });
+        return cleanup;
+    }, []);
+    const handleCancelSync = (0, react_1.useCallback)(async () => {
+        try {
+            await window.electronAPI.cancelSyncOfflineSales();
+            setIsSyncing(false);
+            setSyncProgress(null);
+            (0, Toast_1.showToast)('Sync cancelled', 'info', 3000);
+        }
+        catch (error) {
+            console.error('Failed to cancel sync:', error);
+        }
+    }, []);
     const handleSyncNow = (0, react_1.useCallback)(async (isAutoSync = false) => {
         // Get current status to check conditions
         const currentStatus = await window.electronAPI.getSyncStatus();
@@ -44370,6 +45783,7 @@ const SyncStatus = () => {
             return;
         }
         setIsSyncing(true);
+        setSyncProgress(null); // Reset progress
         // Start sync with progress screen
         if (!isAutoSync) {
             startSync();
@@ -44382,6 +45796,13 @@ const SyncStatus = () => {
                 maxRetries: 2,
                 showRetryToast: !isAutoSync, // Don't show retry toast for auto-sync
             });
+            // Handle cancellation
+            if (response.cancelled) {
+                (0, Toast_1.showToast)('Sync cancelled by user', 'info', 3000);
+                setIsSyncing(false);
+                setSyncProgress(null);
+                return;
+            }
             if (response.success) {
                 console.log(`Synced ${response.syncedCount} sales${isAutoSync ? ' (auto-sync)' : ''}`);
                 if (response.errors && response.errors.length > 0) {
@@ -44584,7 +46005,7 @@ const SyncStatus = () => {
             return `${diffHours}h ago`;
         return date.toLocaleDateString();
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "sync-status", children: [(0, jsx_runtime_1.jsxs)("div", { className: "sync-status-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: `status-dot ${syncStatus.online ? 'online' : 'offline'}` }), (0, jsx_runtime_1.jsx)("span", { className: "status-text", children: syncStatus.online ? 'Online' : 'Offline' })] }), syncStatus.pendingSyncs > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "pending-syncs", children: [(0, jsx_runtime_1.jsxs)("span", { className: "pending-count", children: [syncStatus.pendingSyncs, " pending"] }), isSyncing && ((0, jsx_runtime_1.jsx)("span", { className: "auto-sync-indicator", children: "Syncing..." })), !isSyncing && syncStatus.online && ((0, jsx_runtime_1.jsx)("button", { className: "sync-button", onClick: () => handleSyncNow(false), title: "Manually sync now", children: "Sync" }))] })), (0, jsx_runtime_1.jsxs)("div", { className: "last-sync", children: ["Last sync: ", formatLastSync(syncStatus.lastSync)] })] }));
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "sync-status", children: [(0, jsx_runtime_1.jsxs)("div", { className: "sync-status-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: `status-dot ${syncStatus.online ? 'online' : 'offline'}` }), (0, jsx_runtime_1.jsx)("span", { className: "status-text", children: syncStatus.online ? 'Online' : 'Offline' })] }), syncStatus.pendingSyncs > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "pending-syncs", children: [(0, jsx_runtime_1.jsxs)("span", { className: "pending-count", children: [syncStatus.pendingSyncs, " pending"] }), isSyncing && ((0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: syncProgress ? ((0, jsx_runtime_1.jsxs)("div", { className: "sync-progress-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "sync-progress-info", children: [(0, jsx_runtime_1.jsxs)("span", { className: "auto-sync-indicator", children: ["Syncing... ", syncProgress.processed, "/", syncProgress.total, "(", syncProgress.currentBatch, "/", syncProgress.totalBatches, " batches)"] }), (0, jsx_runtime_1.jsx)("div", { className: "progress-bar-container", children: (0, jsx_runtime_1.jsx)("div", { className: "progress-bar", style: { width: `${syncProgress.percentage}%` } }) }), (0, jsx_runtime_1.jsxs)("span", { className: "progress-stats", children: ["\u2713 ", syncProgress.synced, " synced | \u2717 ", syncProgress.failed, " failed"] })] }), (0, jsx_runtime_1.jsx)("button", { className: "cancel-sync-button", onClick: handleCancelSync, title: "Cancel sync", children: "Cancel" })] })) : ((0, jsx_runtime_1.jsx)("span", { className: "auto-sync-indicator", children: "Syncing..." })) })), !isSyncing && syncStatus.online && ((0, jsx_runtime_1.jsx)("button", { className: "sync-button", onClick: () => handleSyncNow(false), title: "Manually sync now", children: "Sync" }))] })), syncStatus.queueSize !== undefined && syncStatus.queueSize > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: `queue-warning ${syncStatus.isCritical ? 'critical' : syncStatus.isWarning ? 'warning' : ''}`, children: [syncStatus.isCritical && ((0, jsx_runtime_1.jsxs)("span", { className: "queue-alert", children: ["\u26A0\uFE0F Queue full (", syncStatus.queueSize, "/", syncStatus.maxQueueSize, "). Sync immediately!"] })), syncStatus.isWarning && !syncStatus.isCritical && ((0, jsx_runtime_1.jsxs)("span", { className: "queue-alert", children: ["\u26A0\uFE0F Large queue (", syncStatus.queueSize, " sales). Consider syncing soon."] }))] })), (0, jsx_runtime_1.jsxs)("div", { className: "last-sync", children: ["Last sync: ", formatLastSync(syncStatus.lastSync)] })] }));
 };
 exports["default"] = SyncStatus;
 
@@ -44770,11 +46191,12 @@ const AuthProvider = ({ children, onInitialSyncComplete }) => {
     }, [onInitialSyncComplete]);
     react_1.default.useEffect(() => {
         // This will be called after initial sync completes
-        // Check if user is already logged in (from local storage or previous session)
+        // Check if user is already logged in (from Electron secure storage)
         const checkAuth = async () => {
             try {
-                // Check for stored auth token
-                const token = localStorage.getItem('authToken');
+                // Get token from Electron main process (uses secure storage)
+                // Note: We no longer store tokens in localStorage for security
+                const token = await window.electronAPI.getAuthToken();
                 if (token) {
                     // Get user data from Electron main process
                     const userData = await window.electronAPI.getUserData();
@@ -44782,19 +46204,25 @@ const AuthProvider = ({ children, onInitialSyncComplete }) => {
                         console.log('🔐 Restored user session:', userData);
                         setUser(userData);
                         setIsAuthenticated(true);
+                        // Store a flag in localStorage (not the token) for quick auth check
+                        localStorage.setItem('isAuthenticated', 'true');
                     }
                     else {
                         // Clear invalid token and logout
-                        localStorage.removeItem('authToken');
+                        localStorage.removeItem('isAuthenticated');
                         await window.electronAPI.logout();
                         console.log('🔐 No valid user session found, logged out');
                     }
+                }
+                else {
+                    // No token found, clear auth flag
+                    localStorage.removeItem('isAuthenticated');
                 }
             }
             catch (error) {
                 console.error('Auth check failed:', error);
                 // Clear potentially corrupted data and logout
-                localStorage.removeItem('authToken');
+                localStorage.removeItem('isAuthenticated');
                 await window.electronAPI.logout();
             }
             finally {
@@ -44810,10 +46238,12 @@ const AuthProvider = ({ children, onInitialSyncComplete }) => {
         try {
             setLoading(true);
             // Call Electron main process authenticate handler
+            // Token is stored securely in Electron main process (encrypted)
             const response = await window.electronAPI.authenticate(credentials);
             if (response.success && response.token && response.user) {
-                // Store token in localStorage for renderer context
-                localStorage.setItem('authToken', response.token);
+                // SECURE: Token is stored in Electron secure storage, not localStorage
+                // Only store a flag in localStorage for quick auth check
+                localStorage.setItem('isAuthenticated', 'true');
                 setUser(response.user);
                 setIsAuthenticated(true);
             }
@@ -44830,10 +46260,10 @@ const AuthProvider = ({ children, onInitialSyncComplete }) => {
     };
     const logout = async () => {
         try {
-            // Call Electron logout to clear stored data
+            // Call Electron logout to clear stored data (including encrypted token)
             await window.electronAPI.logout();
             // Clear local state
-            localStorage.removeItem('authToken');
+            localStorage.removeItem('isAuthenticated');
             setUser(null);
             setIsAuthenticated(false);
             console.log('🔐 User logged out successfully');
@@ -44841,7 +46271,7 @@ const AuthProvider = ({ children, onInitialSyncComplete }) => {
         catch (error) {
             console.error('Logout error:', error);
             // Still clear local state even if Electron logout fails
-            localStorage.removeItem('authToken');
+            localStorage.removeItem('isAuthenticated');
             setUser(null);
             setIsAuthenticated(false);
         }
@@ -45267,6 +46697,32 @@ const useBarcodeScanner = (options) => {
     };
 };
 exports.useBarcodeScanner = useBarcodeScanner;
+
+
+/***/ }),
+
+/***/ "./src/renderer/hooks/useDebounce.ts":
+/*!*******************************************!*\
+  !*** ./src/renderer/hooks/useDebounce.ts ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+function useDebounce(value, delay) {
+    const [debouncedValue, setDebouncedValue] = (0, react_1.useState)(value);
+    (0, react_1.useEffect)(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+    return debouncedValue;
+}
+exports["default"] = useDebounce;
 
 
 /***/ }),
@@ -46216,16 +47672,50 @@ exports.auditLogger = new AuditLogger();
 /*!*********************************************!*\
   !*** ./src/renderer/utils/error-handler.ts ***!
   \*********************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
 /**
  * Enhanced error handling utility with recovery mechanisms
  */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ErrorRecovery = exports.safeAsync = exports.handleNetworkOperation = exports.retryOperation = exports.handleError = exports.getErrorMessage = exports.AppError = void 0;
 const Toast_1 = __webpack_require__(/*! ../components/Toast */ "./src/renderer/components/Toast.tsx");
 const audit_logger_1 = __webpack_require__(/*! ./audit-logger */ "./src/renderer/utils/audit-logger.ts");
+const error_parser_1 = __webpack_require__(/*! ../../shared/error-parser */ "./src/shared/error-parser.ts");
 class AppError extends Error {
     constructor(message, code, context, recovery, severity = 'medium') {
         super(message);
@@ -46275,6 +47765,10 @@ const ERROR_MESSAGES = {
     'INSUFFICIENT_STOCK': {
         message: 'Not enough items in stock to complete this sale.',
         action: 'Please reduce the quantity or remove the item'
+    },
+    'STOCK_CONFLICT': {
+        message: 'Stock conflict detected. Another sale may have changed the stock levels.',
+        action: 'Please refresh products and try again'
     },
     'INVALID_PRICE': {
         message: 'The product price is invalid.',
@@ -46335,7 +47829,7 @@ const ERROR_MESSAGES = {
     }
 };
 /**
- * Get user-friendly error message
+ * Get user-friendly error message with improved parsing
  */
 const getErrorMessage = (error, context) => {
     // Check if it's an AppError
@@ -46344,6 +47838,39 @@ const getErrorMessage = (error, context) => {
         return {
             message: error.message || errorInfo.message,
             action: errorInfo.action
+        };
+    }
+    // Try to parse as NestJS/backend error format
+    let parsedError;
+    try {
+        // Check if error has response.data (axios error)
+        if (error?.response?.data) {
+            parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseNestJSError)(error.response.data));
+        }
+        else if (error?.data) {
+            // Direct error data
+            parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseNestJSError)(error.data));
+        }
+        else if (error?.message && typeof error.message === 'object') {
+            // Error message might be an object
+            parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseNestJSError)(error.message));
+        }
+        else {
+            // Try parsing the error itself
+            parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseNestJSError)(error));
+        }
+    }
+    catch (parseError) {
+        // If parsing fails, fall back to original logic
+        parsedError = null;
+    }
+    // If we successfully parsed the error, use the parsed message
+    if (parsedError && parsedError.message && parsedError.message !== 'An error occurred') {
+        const errorInfo = ERROR_MESSAGES[parsedError.code || ''] || {};
+        return {
+            message: parsedError.message,
+            action: errorInfo.action || parsedError.details?.suggestedAction,
+            fieldErrors: parsedError.fieldErrors,
         };
     }
     // Check error code
@@ -46386,17 +47913,34 @@ exports.getErrorMessage = getErrorMessage;
 const handleError = (error, context, recovery) => {
     const errorInfo = (0, exports.getErrorMessage)(error, context);
     const severity = error instanceof AppError ? error.severity : 'medium';
-    // Log error for audit
+    // Log error for audit (include field errors if available)
     audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.DATA_VALIDATION_FAILED, {
         error: error?.message || String(error),
         errorCode: error?.code || 'UNKNOWN_ERROR',
         context,
         stack: error?.stack,
+        fieldErrors: errorInfo.fieldErrors,
     }, severity === 'critical' ? 'critical' : severity === 'high' ? 'high' : 'medium', context?.userId, context?.userName);
-    // Show user-friendly error message with optional retry action
-    const fullMessage = errorInfo.action
-        ? `${errorInfo.message}\n\n${errorInfo.action}`
-        : errorInfo.message;
+    // Build user-friendly error message
+    let fullMessage = errorInfo.message;
+    // Add field-specific errors if available
+    if (errorInfo.fieldErrors && Object.keys(errorInfo.fieldErrors).length > 0) {
+        const fieldMessages = Object.entries(errorInfo.fieldErrors)
+            .map(([field, errors]) => {
+            // Format field name nicely (e.g., "customerName" -> "Customer Name")
+            const formattedField = field
+                .replace(/([A-Z])/g, ' $1')
+                .replace(/^./, (str) => str.toUpperCase())
+                .trim();
+            return `${formattedField}: ${errors.join(', ')}`;
+        })
+            .join('\n');
+        fullMessage = `${fullMessage}\n\n${fieldMessages}`;
+    }
+    // Add suggested action if available
+    if (errorInfo.action) {
+        fullMessage = `${fullMessage}\n\n${errorInfo.action}`;
+    }
     // Add retry button if operation is retryable
     const toastAction = recovery?.retryable && recovery?.fallbackAction
         ? {
@@ -46404,7 +47948,11 @@ const handleError = (error, context, recovery) => {
             onClick: recovery.fallbackAction,
         }
         : undefined;
-    (0, Toast_1.showToast)(fullMessage, 'error', severity === 'critical' ? 8000 : 5000, toastAction);
+    // Show toast with longer duration if there are field errors (more info to read)
+    const toastDuration = errorInfo.fieldErrors && Object.keys(errorInfo.fieldErrors).length > 0
+        ? 10000 // 10 seconds for field errors
+        : severity === 'critical' ? 8000 : 5000;
+    (0, Toast_1.showToast)(fullMessage, 'error', toastDuration, toastAction);
     // Log to console in development
     if (true) {
         console.error('[Error Handler]', {
@@ -46412,18 +47960,33 @@ const handleError = (error, context, recovery) => {
             context,
             errorInfo,
             recovery,
+            parsedError: error?.response?.data ? (0, error_parser_1.parseNestJSError)(error.response.data) : null,
         });
     }
 };
 exports.handleError = handleError;
 /**
- * Retry operation with exponential backoff
+ * Retry operation with exponential backoff and rate limiting
  */
 const retryOperation = async (operation, options = {}) => {
-    const { maxRetries = 3, retryDelay = 1000, onRetry, shouldRetry = () => true, } = options;
+    const { maxRetries = 3, retryDelay = 1000, onRetry, shouldRetry = () => true, endpoint, } = options;
+    // Import rate limiter (dynamic import to avoid circular dependencies)
+    let rateLimiter = null;
+    try {
+        const rateLimiterModule = await Promise.resolve().then(() => __importStar(__webpack_require__(/*! ../../shared/rate-limiter */ "./src/shared/rate-limiter.ts")));
+        rateLimiter = rateLimiterModule.apiRateLimiter;
+    }
+    catch {
+        // Rate limiter not available, continue without it
+    }
     let lastError;
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
+            // Apply rate limiting before operation
+            if (rateLimiter && endpoint) {
+                await rateLimiter.waitIfNeeded(endpoint);
+                rateLimiter.recordRequest(endpoint);
+            }
             return await operation();
         }
         catch (error) {
@@ -46437,11 +48000,12 @@ const retryOperation = async (operation, options = {}) => {
                 break;
             }
             // Calculate delay with exponential backoff
+            // Base delay increases exponentially: 1s, 2s, 4s, 8s...
             const delay = retryDelay * Math.pow(2, attempt);
             if (onRetry) {
                 onRetry(attempt + 1);
             }
-            // Wait before retry
+            // Wait before retry (with rate limiting consideration)
             await new Promise(resolve => setTimeout(resolve, delay));
         }
     }
@@ -46538,6 +48102,283 @@ exports.ErrorRecovery = {
         setTimeout(callback, 1000);
     },
 };
+
+
+/***/ }),
+
+/***/ "./src/renderer/utils/sale-mutex.ts":
+/*!******************************************!*\
+  !*** ./src/renderer/utils/sale-mutex.ts ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+/**
+ * Mutex/Lock utility for sale processing
+ * Prevents concurrent sale processing to avoid stock overselling and duplicate transactions
+ */
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.saleMutex = void 0;
+class SaleMutex {
+    constructor() {
+        this.isProcessing = false;
+        this.queue = [];
+        this.maxQueueSize = 10; // Maximum number of queued sales
+    }
+    /**
+     * Acquire the mutex and process the sale
+     * If a sale is already processing, queue this sale
+     */
+    async acquire(paymentData, saleProcessor) {
+        // If mutex is free, acquire it immediately
+        if (!this.isProcessing) {
+            return this.processSale(paymentData, saleProcessor);
+        }
+        // Otherwise, queue the sale
+        if (this.queue.length >= this.maxQueueSize) {
+            throw new Error(`Sale queue is full (${this.maxQueueSize} sales). Please wait for current sale to complete.`);
+        }
+        // Queue the sale
+        return new Promise((resolve, reject) => {
+            this.queue.push({
+                paymentData,
+                resolve,
+                reject,
+                timestamp: Date.now(),
+            });
+        });
+    }
+    /**
+     * Process a sale while holding the mutex
+     */
+    async processSale(paymentData, saleProcessor) {
+        this.isProcessing = true;
+        try {
+            const result = await saleProcessor(paymentData);
+            return result;
+        }
+        finally {
+            // Release mutex
+            this.isProcessing = false;
+            // Process next queued sale if any
+            if (this.queue.length > 0) {
+                const nextSale = this.queue.shift();
+                // Process next sale asynchronously (don't await to avoid blocking)
+                this.processSale(nextSale.paymentData, saleProcessor)
+                    .then(nextSale.resolve)
+                    .catch(nextSale.reject);
+            }
+        }
+    }
+    /**
+     * Check if a sale is currently being processed
+     */
+    isLocked() {
+        return this.isProcessing;
+    }
+    /**
+     * Get the number of queued sales
+     */
+    getQueueSize() {
+        return this.queue.length;
+    }
+    /**
+     * Clear the queue (useful for error recovery)
+     */
+    clearQueue() {
+        // Reject all queued sales
+        this.queue.forEach((sale) => {
+            sale.reject(new Error('Sale queue was cleared. Please try again.'));
+        });
+        this.queue = [];
+    }
+    /**
+     * Get queue status
+     */
+    getStatus() {
+        return {
+            isProcessing: this.isProcessing,
+            queueSize: this.queue.length,
+            maxQueueSize: this.maxQueueSize,
+        };
+    }
+}
+// Singleton instance
+exports.saleMutex = new SaleMutex();
+
+
+/***/ }),
+
+/***/ "./src/renderer/utils/sanitization.ts":
+/*!********************************************!*\
+  !*** ./src/renderer/utils/sanitization.ts ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+/**
+ * Input sanitization utilities to prevent XSS and injection attacks
+ */
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.sanitizeText = sanitizeText;
+exports.sanitizeCustomerName = sanitizeCustomerName;
+exports.sanitizePhoneNumber = sanitizePhoneNumber;
+exports.sanitizeNotes = sanitizeNotes;
+exports.sanitizeObject = sanitizeObject;
+/**
+ * Escapes HTML special characters to prevent XSS attacks
+ */
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#x27;',
+        '/': '&#x2F;',
+    };
+    return text.replace(/[&<>"'/]/g, (char) => map[char] || char);
+}
+/**
+ * Removes or escapes potentially dangerous script tags and event handlers
+ */
+function removeScriptTags(text) {
+    return text
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+        .replace(/on\w+\s*=\s*[^\s>]*/gi, '')
+        .replace(/javascript:/gi, '')
+        .replace(/data:text\/html/gi, '');
+}
+/**
+ * Removes SQL injection patterns (basic protection)
+ */
+function removeSqlInjection(text) {
+    // Remove common SQL injection patterns
+    const sqlPatterns = [
+        /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE|UNION|SCRIPT)\b)/gi,
+        /('|(\\')|(;)|(--)|(\/\*)|(\*\/)|(\+)|(\%))/g,
+    ];
+    let sanitized = text;
+    for (const pattern of sqlPatterns) {
+        sanitized = sanitized.replace(pattern, '');
+    }
+    return sanitized;
+}
+/**
+ * Sanitizes text input for safe storage and display
+ * Removes XSS vectors, script tags, and dangerous patterns
+ */
+function sanitizeText(input, maxLength = 1000) {
+    if (!input || typeof input !== 'string') {
+        return '';
+    }
+    // Trim whitespace
+    let sanitized = input.trim();
+    // Limit length
+    if (sanitized.length > maxLength) {
+        sanitized = sanitized.substring(0, maxLength);
+    }
+    // Remove script tags and event handlers
+    sanitized = removeScriptTags(sanitized);
+    // Remove SQL injection patterns
+    sanitized = removeSqlInjection(sanitized);
+    // Escape HTML entities
+    sanitized = escapeHtml(sanitized);
+    return sanitized;
+}
+/**
+ * Sanitizes customer name (more restrictive)
+ */
+function sanitizeCustomerName(input) {
+    if (!input || typeof input !== 'string') {
+        return '';
+    }
+    // Trim and limit length
+    let sanitized = input.trim();
+    if (sanitized.length > 100) {
+        sanitized = sanitized.substring(0, 100);
+    }
+    // Remove script tags
+    sanitized = removeScriptTags(sanitized);
+    // Remove SQL injection patterns
+    sanitized = removeSqlInjection(sanitized);
+    // Escape HTML but allow common punctuation
+    sanitized = sanitized.replace(/[<>]/g, ''); // Remove < and > but keep other chars
+    return sanitized;
+}
+/**
+ * Sanitizes phone number (removes non-numeric characters except +)
+ */
+function sanitizePhoneNumber(input) {
+    if (!input || typeof input !== 'string') {
+        return '';
+    }
+    // Remove all characters except digits, +, spaces, hyphens, and parentheses
+    let sanitized = input.replace(/[^\d+\s\-()]/g, '');
+    // Trim whitespace
+    sanitized = sanitized.trim();
+    // Limit length (international phone numbers can be up to 15 digits)
+    if (sanitized.length > 20) {
+        sanitized = sanitized.substring(0, 20);
+    }
+    return sanitized;
+}
+/**
+ * Sanitizes notes/description fields (allows more characters but still safe)
+ */
+function sanitizeNotes(input, maxLength = 2000) {
+    if (!input || typeof input !== 'string') {
+        return '';
+    }
+    // Trim whitespace
+    let sanitized = input.trim();
+    // Limit length
+    if (sanitized.length > maxLength) {
+        sanitized = sanitized.substring(0, maxLength);
+    }
+    // Remove script tags and event handlers
+    sanitized = removeScriptTags(sanitized);
+    // Remove SQL injection patterns
+    sanitized = removeSqlInjection(sanitized);
+    // Escape HTML entities but preserve line breaks
+    sanitized = sanitized
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+    return sanitized;
+}
+/**
+ * Sanitizes an object's string properties recursively
+ */
+function sanitizeObject(obj, fieldSanitizers = {}) {
+    const sanitized = { ...obj };
+    for (const key in sanitized) {
+        if (sanitized.hasOwnProperty(key)) {
+            const value = sanitized[key];
+            if (typeof value === 'string') {
+                // Use custom sanitizer if provided, otherwise use default
+                if (fieldSanitizers[key]) {
+                    sanitized[key] = fieldSanitizers[key](value);
+                }
+                else {
+                    sanitized[key] = sanitizeText(value);
+                }
+            }
+            else if (Array.isArray(value)) {
+                // Recursively sanitize array items
+                sanitized[key] = value.map((item) => typeof item === 'string' ? sanitizeText(item) : item);
+            }
+            else if (value && typeof value === 'object') {
+                // Recursively sanitize nested objects
+                sanitized[key] = sanitizeObject(value, fieldSanitizers);
+            }
+        }
+    }
+    return sanitized;
+}
 
 
 /***/ }),
@@ -46736,6 +48577,431 @@ const validateCustomerName = (name) => {
     return { isValid: true };
 };
 exports.validateCustomerName = validateCustomerName;
+
+
+/***/ }),
+
+/***/ "./src/shared/error-parser.ts":
+/*!************************************!*\
+  !*** ./src/shared/error-parser.ts ***!
+  \************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+/**
+ * Error parsing utility to extract detailed error messages from backend responses
+ * Handles NestJS validation errors and other common error formats
+ */
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.parseNestJSError = parseNestJSError;
+exports.parseAxiosError = parseAxiosError;
+exports.getUserFriendlyMessage = getUserFriendlyMessage;
+exports.enhanceErrorMessage = enhanceErrorMessage;
+/**
+ * Parse NestJS validation error response
+ * NestJS returns errors in format:
+ * {
+ *   statusCode: 400,
+ *   message: ['field1 should not be empty', 'field2 must be a number'],
+ *   error: 'Bad Request'
+ * }
+ * OR
+ * {
+ *   statusCode: 400,
+ *   message: [
+ *     {
+ *       property: 'field1',
+ *       constraints: { isNotEmpty: 'field1 should not be empty' }
+ *     }
+ *   ]
+ * }
+ */
+function parseNestJSError(errorData) {
+    const result = {
+        message: 'An error occurred',
+        fieldErrors: {},
+    };
+    if (!errorData) {
+        return result;
+    }
+    // Extract status code
+    if (errorData.statusCode) {
+        result.statusCode = errorData.statusCode;
+    }
+    // Extract error code
+    if (errorData.code) {
+        result.code = errorData.code;
+    }
+    // Handle array of validation errors (NestJS format)
+    if (Array.isArray(errorData)) {
+        const messages = [];
+        const fieldErrors = {};
+        errorData.forEach((err) => {
+            if (typeof err === 'string') {
+                messages.push(err);
+            }
+            else if (err?.property && err?.constraints) {
+                // Field-specific validation error
+                const fieldName = err.property;
+                const constraints = Object.values(err.constraints);
+                fieldErrors[fieldName] = constraints;
+                messages.push(`${fieldName}: ${constraints.join(', ')}`);
+            }
+            else if (err?.constraints) {
+                // Constraints without property name
+                const constraints = Object.values(err.constraints);
+                messages.push(constraints.join(', '));
+            }
+            else if (err?.message) {
+                messages.push(String(err.message));
+            }
+        });
+        result.message = messages.length > 0 ? messages.join('; ') : 'Validation failed';
+        if (Object.keys(fieldErrors).length > 0) {
+            result.fieldErrors = fieldErrors;
+        }
+        return result;
+    }
+    // Handle message property (can be string or array)
+    if (errorData.message) {
+        if (Array.isArray(errorData.message)) {
+            const messages = [];
+            const fieldErrors = {};
+            errorData.message.forEach((msg) => {
+                if (typeof msg === 'string') {
+                    messages.push(msg);
+                }
+                else if (msg?.property && msg?.constraints) {
+                    // Field-specific validation error
+                    const fieldName = msg.property;
+                    const constraints = Object.values(msg.constraints);
+                    fieldErrors[fieldName] = constraints;
+                    messages.push(`${fieldName}: ${constraints.join(', ')}`);
+                }
+                else if (msg?.constraints) {
+                    const constraints = Object.values(msg.constraints);
+                    messages.push(constraints.join(', '));
+                }
+                else {
+                    messages.push(String(msg));
+                }
+            });
+            result.message = messages.length > 0 ? messages.join('; ') : 'Validation failed';
+            if (Object.keys(fieldErrors).length > 0) {
+                result.fieldErrors = fieldErrors;
+            }
+        }
+        else {
+            result.message = String(errorData.message);
+        }
+    }
+    // Handle error property (fallback)
+    if (!result.message || result.message === 'Bad Request' || result.message === 'An error occurred') {
+        if (errorData.error) {
+            if (Array.isArray(errorData.error)) {
+                result.message = errorData.error.join('; ');
+            }
+            else {
+                result.message = String(errorData.error);
+            }
+        }
+    }
+    // Extract field errors from nested structure
+    if (errorData.errors && typeof errorData.errors === 'object') {
+        const fieldErrors = {};
+        for (const [field, errors] of Object.entries(errorData.errors)) {
+            if (Array.isArray(errors)) {
+                fieldErrors[field] = errors.map((e) => String(e));
+            }
+            else {
+                fieldErrors[field] = [String(errors)];
+            }
+        }
+        if (Object.keys(fieldErrors).length > 0) {
+            result.fieldErrors = fieldErrors;
+        }
+    }
+    // Store additional details
+    if (errorData.details) {
+        result.details = errorData.details;
+    }
+    return result;
+}
+/**
+ * Parse axios error response
+ */
+function parseAxiosError(error) {
+    const errorResponse = error?.response;
+    const errorData = errorResponse?.data;
+    if (errorData) {
+        return parseNestJSError(errorData);
+    }
+    // Fallback to error message
+    return {
+        message: error?.message || 'Network error occurred',
+        code: error?.code,
+        statusCode: errorResponse?.status,
+    };
+}
+/**
+ * Get user-friendly error message from parsed error
+ */
+function getUserFriendlyMessage(parsedError) {
+    // If we have field errors, format them nicely
+    if (parsedError.fieldErrors && Object.keys(parsedError.fieldErrors).length > 0) {
+        const fieldMessages = Object.entries(parsedError.fieldErrors)
+            .map(([field, errors]) => {
+            const fieldName = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
+            return `${fieldName}: ${errors.join(', ')}`;
+        })
+            .join('\n');
+        return `${parsedError.message}\n\n${fieldMessages}`;
+    }
+    return parsedError.message;
+}
+/**
+ * Map common error codes to user-friendly messages
+ */
+const ERROR_CODE_MAP = {
+    'PRODUCT_NOT_FOUND': {
+        message: 'Product not found. Please sync your product catalog.',
+        action: 'Go to Settings → System → Sync Products',
+    },
+    'INSUFFICIENT_STOCK': {
+        message: 'Insufficient stock for one or more items.',
+        action: 'Please reduce quantities or remove items from cart',
+    },
+    'INVALID_PAYMENT_METHOD': {
+        message: 'Invalid payment method selected.',
+        action: 'Please select a valid payment method',
+    },
+    'BRANCH_NOT_FOUND': {
+        message: 'Branch not found. Please select a valid branch.',
+        action: 'Please select a branch from the dropdown',
+    },
+    'VALIDATION_FAILED': {
+        message: 'Please check your input and try again.',
+        action: 'Review the highlighted fields',
+    },
+    'UNAUTHORIZED': {
+        message: 'Your session has expired.',
+        action: 'Please log in again',
+    },
+    'FORBIDDEN': {
+        message: 'You do not have permission to perform this action.',
+        action: 'Contact your administrator',
+    },
+};
+/**
+ * Enhance error message with code mapping
+ */
+function enhanceErrorMessage(parsedError) {
+    if (parsedError.code && ERROR_CODE_MAP[parsedError.code]) {
+        const mapped = ERROR_CODE_MAP[parsedError.code];
+        return {
+            ...parsedError,
+            message: mapped.message,
+            details: {
+                ...parsedError.details,
+                suggestedAction: mapped.action,
+            },
+        };
+    }
+    return parsedError;
+}
+
+
+/***/ }),
+
+/***/ "./src/shared/rate-limiter.ts":
+/*!************************************!*\
+  !*** ./src/shared/rate-limiter.ts ***!
+  \************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+/**
+ * Rate limiting utility to prevent DoS attacks and API spam
+ * Tracks requests per endpoint and enforces throttling
+ */
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.syncRateLimiter = exports.authRateLimiter = exports.apiRateLimiter = void 0;
+exports.extractEndpoint = extractEndpoint;
+exports.rateLimitedFetch = rateLimitedFetch;
+exports.rateLimitedAxios = rateLimitedAxios;
+class RateLimiter {
+    constructor(maxRequests = 30, timeWindowMs = 60000) {
+        this.requestHistory = [];
+        this.cleanupInterval = 60000; // Clean up old records every minute
+        this.maxRequests = maxRequests; // Default: 30 requests per minute
+        this.timeWindow = timeWindowMs;
+        // Clean up old records periodically
+        setInterval(() => this.cleanup(), this.cleanupInterval);
+    }
+    /**
+     * Check if a request is allowed based on rate limits
+     */
+    isAllowed(endpoint) {
+        const now = Date.now();
+        const windowStart = now - this.timeWindow;
+        // Clean up old requests outside the time window
+        this.requestHistory = this.requestHistory.filter((record) => record.timestamp > windowStart);
+        // Count requests for this endpoint in the current window
+        const endpointRequests = this.requestHistory.filter((record) => record.endpoint === endpoint && record.timestamp > windowStart).length;
+        if (endpointRequests >= this.maxRequests) {
+            // Calculate wait time until oldest request expires
+            const oldestRequest = this.requestHistory
+                .filter((record) => record.endpoint === endpoint)
+                .sort((a, b) => a.timestamp - b.timestamp)[0];
+            if (oldestRequest) {
+                const waitTime = oldestRequest.timestamp + this.timeWindow - now;
+                return { allowed: false, waitTime: Math.max(0, waitTime) };
+            }
+            return { allowed: false, waitTime: this.timeWindow };
+        }
+        return { allowed: true };
+    }
+    /**
+     * Record a request
+     */
+    recordRequest(endpoint) {
+        this.requestHistory.push({
+            timestamp: Date.now(),
+            endpoint,
+        });
+    }
+    /**
+     * Wait if rate limit is exceeded
+     */
+    async waitIfNeeded(endpoint) {
+        const check = this.isAllowed(endpoint);
+        if (!check.allowed && check.waitTime) {
+            const waitTime = Math.min(check.waitTime, 5000); // Cap wait at 5 seconds
+            await new Promise((resolve) => setTimeout(resolve, waitTime));
+        }
+    }
+    /**
+     * Clean up old request records
+     */
+    cleanup() {
+        const now = Date.now();
+        const cutoff = now - this.timeWindow * 2; // Keep records for 2x time window
+        this.requestHistory = this.requestHistory.filter((record) => record.timestamp > cutoff);
+    }
+    /**
+     * Get current request count for an endpoint
+     */
+    getRequestCount(endpoint) {
+        const now = Date.now();
+        const windowStart = now - this.timeWindow;
+        return this.requestHistory.filter((record) => record.endpoint === endpoint && record.timestamp > windowStart).length;
+    }
+    /**
+     * Reset rate limiter (useful for testing or manual reset)
+     */
+    reset() {
+        this.requestHistory = [];
+    }
+}
+// Create singleton instances for different rate limit configurations
+exports.apiRateLimiter = new RateLimiter(30, 60000); // 30 requests per minute
+exports.authRateLimiter = new RateLimiter(5, 60000); // 5 auth requests per minute (stricter)
+exports.syncRateLimiter = new RateLimiter(10, 60000); // 10 sync requests per minute
+/**
+ * Extract endpoint from URL for rate limiting
+ */
+function extractEndpoint(url) {
+    try {
+        const urlObj = new URL(url);
+        // Use pathname as endpoint identifier (e.g., /sales, /products, /auth/login)
+        return urlObj.pathname;
+    }
+    catch {
+        // If URL parsing fails, use the full URL
+        return url;
+    }
+}
+/**
+ * Rate-limited fetch wrapper
+ */
+async function rateLimitedFetch(url, options = {}, limiter = exports.apiRateLimiter) {
+    const endpoint = extractEndpoint(url);
+    // Wait if rate limit is exceeded
+    await limiter.waitIfNeeded(endpoint);
+    // Record the request
+    limiter.recordRequest(endpoint);
+    // Make the actual request
+    return fetch(url, options);
+}
+/**
+ * Rate-limited axios wrapper (for main process)
+ */
+async function rateLimitedAxios(axiosCall, endpoint, limiter = exports.apiRateLimiter) {
+    // Wait if rate limit is exceeded
+    await limiter.waitIfNeeded(endpoint);
+    // Record the request
+    limiter.recordRequest(endpoint);
+    // Make the actual request
+    return axiosCall();
+}
+
+
+/***/ }),
+
+/***/ "./src/shared/stock-conflict-handler.ts":
+/*!**********************************************!*\
+  !*** ./src/shared/stock-conflict-handler.ts ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+/**
+ * Stock conflict detection utility (shared between main and renderer)
+ * Handles race conditions when multiple users try to sell the same product simultaneously
+ */
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.detectStockConflict = detectStockConflict;
+/**
+ * Detect if an error is a stock conflict error
+ */
+function detectStockConflict(error) {
+    const errorMessage = String(error?.message || error?.error || '').toLowerCase();
+    const errorData = error?.response?.data || error?.data || {};
+    const errorDataString = JSON.stringify(errorData).toLowerCase();
+    // Check for common stock conflict indicators
+    const stockConflictKeywords = [
+        'insufficient stock',
+        'stock conflict',
+        'concurrent modification',
+        'optimistic locking',
+        'version conflict',
+        'stock has changed',
+        'stock was modified',
+        'out of stock',
+        'not enough stock',
+        'stock unavailable',
+        'negative stock',
+        'stock quantity',
+    ];
+    const hasStockConflictKeyword = stockConflictKeywords.some(keyword => errorMessage.includes(keyword) || errorDataString.includes(keyword));
+    // Check HTTP status codes that might indicate conflicts
+    const conflictStatusCodes = [409, 422]; // 409 Conflict, 422 Unprocessable Entity
+    const hasConflictStatus = error?.response?.status && conflictStatusCodes.includes(error.response.status);
+    // Extract conflicting product IDs/names if available
+    const conflictingProducts = [];
+    if (errorData?.conflictingProducts && Array.isArray(errorData.conflictingProducts)) {
+        conflictingProducts.push(...errorData.conflictingProducts);
+    }
+    if (errorData?.products && Array.isArray(errorData.products)) {
+        conflictingProducts.push(...errorData.products);
+    }
+    const isStockConflict = hasStockConflictKeyword || hasConflictStatus;
+    return {
+        isStockConflict,
+        conflictingProducts: conflictingProducts.length > 0 ? conflictingProducts : undefined,
+        message: error?.message || error?.error || 'Stock conflict detected',
+    };
+}
 
 
 /***/ })
