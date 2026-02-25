@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../receipt.css';
+import { showToast } from './Toast';
 
 interface ReceiptProps {
   receipt: any;
@@ -16,6 +17,9 @@ const Receipt: React.FC<ReceiptProps> = ({
 }) => {
   const [businessInfo, setBusinessInfo] = useState<any>(receipt?.businessInfo);
   const [apiBaseUrl, setApiBaseUrl] = useState<string>('');
+  const [isReturnMode, setIsReturnMode] = useState(false);
+  const [returnQuantities, setReturnQuantities] = useState<number[]>([]);
+  const [returnSubmitting, setReturnSubmitting] = useState(false);
 
   // Get API base URL from Electron main process
   useEffect(() => {
@@ -55,6 +59,15 @@ const Receipt: React.FC<ReceiptProps> = ({
       };
       fetchBusinessInfo();
     }
+
+    // Reset return state whenever we load a new receipt
+    if (receipt?.items && Array.isArray(receipt.items)) {
+      setReturnQuantities(receipt.items.map((item: any) => item.quantity || 0));
+    } else {
+      setReturnQuantities([]);
+    }
+    setIsReturnMode(false);
+    setReturnSubmitting(false);
   }, [receipt]);
 
   if (!receipt) return null;
@@ -76,6 +89,92 @@ const Receipt: React.FC<ReceiptProps> = ({
   const isCreditSale = receipt.paymentMethod === 'credit';
   const isSplitPayment = receipt.isSplitPayment || (receipt.splitPayments && receipt.splitPayments.length > 0);
 
+  const returnSubtotal =
+    isReturnMode && receipt.items && Array.isArray(receipt.items)
+      ? receipt.items.reduce((sum: number, item: any, index: number) => {
+          const qty = returnQuantities[index] || 0;
+          const price = item.price || 0;
+          const max = item.quantity || 0;
+          const safeQty = Math.max(0, Math.min(qty, max));
+          return sum + price * safeQty;
+        }, 0)
+      : 0;
+
+  const handleToggleReturnMode = () => {
+    if (!receipt.items || !receipt.items.length) {
+      showToast('This receipt has no items to return.', 'warning', 3000);
+      return;
+    }
+    if (!isReturnMode) {
+      setReturnQuantities(
+        receipt.items.map((item: any) => item.quantity || 0)
+      );
+      setIsReturnMode(true);
+    } else {
+      setIsReturnMode(false);
+    }
+  };
+
+  const handleChangeReturnQty = (index: number, value: number) => {
+    if (!receipt.items || !receipt.items[index]) return;
+    const max = receipt.items[index].quantity || 0;
+    const safe = Math.max(0, Math.min(max, isNaN(value) ? 0 : value));
+    setReturnQuantities(prev => {
+      const next = [...prev];
+      next[index] = safe;
+      return next;
+    });
+  };
+
+  const handleSubmitReturn = async () => {
+    if (!receipt?.saleId || !receipt.items || !receipt.items.length) {
+      showToast('Cannot process return: missing receipt details.', 'error', 5000);
+      return;
+    }
+
+    const itemsToReturn =
+      receipt.items
+        .map((item: any, index: number) => {
+          const qty = returnQuantities[index] || 0;
+          if (!qty) return null;
+          return {
+            productId: item.productId || item.id,
+            quantity: qty,
+            unitPrice: item.price || 0,
+          };
+        })
+        .filter(Boolean) as { productId: string; quantity: number; unitPrice: number }[];
+
+    if (!itemsToReturn.length) {
+      showToast('Set at least one item quantity to return.', 'warning', 4000);
+      return;
+    }
+
+    setReturnSubmitting(true);
+    try {
+      const payload = {
+        saleId: receipt.saleId,
+        items: itemsToReturn,
+      };
+      const response = await (window as any).electronAPI.createReturn(payload);
+      if (response?.success) {
+        showToast('Return recorded successfully.', 'success', 4000);
+        setIsReturnMode(false);
+      } else {
+        showToast(
+          response?.error || 'Failed to record return. Please check backend API.',
+          'error',
+          6000
+        );
+      }
+    } catch (error) {
+      console.error('Return error', error);
+      showToast('Error while sending return to backend.', 'error', 6000);
+    } finally {
+      setReturnSubmitting(false);
+    }
+  };
+
   return (
     <div className="receipt-page">
       {/* Top Bar */}
@@ -93,6 +192,14 @@ const Receipt: React.FC<ReceiptProps> = ({
           <button onClick={onNewSale} className="action-btn-top primary-btn" title="New Sale (F3)">
             <span className="btn-icon">🛒</span>
             <span>New Sale</span>
+          </button>
+          <button
+            onClick={handleToggleReturnMode}
+            className="action-btn-top"
+            title="Start a return from this receipt"
+          >
+            <span className="btn-icon">↩️</span>
+            <span>{isReturnMode ? 'Cancel Return' : 'Return Items'}</span>
           </button>
           <button 
             onClick={async () => {
@@ -217,6 +324,24 @@ const Receipt: React.FC<ReceiptProps> = ({
                   <div key={index} className="item-row">
                     <div className="col-item">
                       <span className="item-name">{item.name}</span>
+                      {isReturnMode && (
+                        <div className="return-qty-row">
+                          <span className="return-qty-label">Return</span>
+                          <input
+                            type="number"
+                            min={0}
+                            max={item.quantity || 0}
+                            value={returnQuantities[index] ?? item.quantity ?? 0}
+                            onChange={(e) =>
+                              handleChangeReturnQty(index, Number(e.target.value))
+                            }
+                            className="return-qty-input"
+                          />
+                          <span className="return-qty-max">
+                            of {item.quantity || 0}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div className="col-qty">{item.quantity}</div>
                     <div className="col-price">{formatCurrency(item.price || 0)}</div>
@@ -228,8 +353,50 @@ const Receipt: React.FC<ReceiptProps> = ({
           </div>
         </div>
 
-        {/* Right Column - Summary & Payment */}
+        {/* Right Column - Summary, Returns & Payment */}
         <div className="receipt-right-column">
+          {isReturnMode && (
+            <div className="totals-card return-summary-card">
+              <div className="section-title">Return Summary</div>
+              <div className="totals-list">
+                <div className="total-item">
+                  <span className="total-label">Return Subtotal</span>
+                  <span className="total-value">
+                    {formatCurrency(returnSubtotal || 0)}
+                  </span>
+                </div>
+              </div>
+              <div className="return-actions-row">
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={handleToggleReturnMode}
+                  disabled={returnSubmitting}
+                >
+                  <span className="btn-icon">✖</span>
+                  <span>Cancel</span>
+                </button>
+                <button
+                  type="button"
+                  className="primary-btn"
+                  onClick={handleSubmitReturn}
+                  disabled={returnSubmitting || !returnSubtotal}
+                >
+                  {returnSubmitting ? (
+                    <>
+                      <div className="loading-spinner" />
+                      <span>Processing Return...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="btn-icon">✅</span>
+                      <span>Confirm Return</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
           {/* Totals Card */}
           <div className="totals-card">
             <div className="section-title">Summary</div>

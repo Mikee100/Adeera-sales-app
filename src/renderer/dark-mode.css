@@ -46,6 +46,16 @@
   color: #b0b0b0;
 }
 
+[data-theme="dark"] .variation-chip {
+  background: #1e293b;
+  color: #e5e7eb;
+}
+
+[data-theme="dark"] .variation-chip-disabled {
+  background: #334155;
+  color: #9ca3af;
+}
+
 [data-theme="dark"] .search-input,
 [data-theme="dark"] .category-select,
 [data-theme="dark"] .branch-select {
@@ -118,13 +128,17 @@
 }
 
 [data-theme="dark"] .settings-btn,
-[data-theme="dark"] .theme-toggle-btn {
+[data-theme="dark"] .theme-toggle-btn,
+[data-theme="dark"] .find-receipt-btn,
+[data-theme="dark"] .sales-history-btn {
   background: #404040;
   color: #e0e0e0;
 }
 
 [data-theme="dark"] .settings-btn:hover,
-[data-theme="dark"] .theme-toggle-btn:hover {
+[data-theme="dark"] .theme-toggle-btn:hover,
+[data-theme="dark"] .find-receipt-btn:hover,
+[data-theme="dark"] .sales-history-btn:hover {
   background: #4a4a4a;
 }
 

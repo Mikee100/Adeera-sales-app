@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import Settings from './Settings';
@@ -67,6 +67,8 @@ interface ProductSelectionProps {
   branches?: Branch[];
   selectedBranch?: string;
   onBranchChange?: (branchId: string) => void;
+  onFindReceiptClick?: () => void;
+  onSalesHistoryClick?: () => void;
 }
 
 const ProductSelection: React.FC<ProductSelectionProps> = ({
@@ -84,7 +86,9 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   getGrandTotal,
   branches = [],
   selectedBranch: propSelectedBranch = '',
-  onBranchChange
+  onBranchChange,
+  onFindReceiptClick,
+  onSalesHistoryClick
 }) => {
   const { logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -115,6 +119,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   const [showSettings, setShowSettings] = useState(false);
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
   const [showBarcodeHelp, setShowBarcodeHelp] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   // Barcode scanner hook
   const { isScanning, lastScannedCode, clearScan } = useBarcodeScanner({
@@ -130,6 +135,21 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   useEffect(() => {
     loadProducts();
   }, [selectedBranch]);
+
+  // Keyboard shortcut: Ctrl/Cmd + K focuses the search box for faster checkout
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      // Don't override when user is already typing in another input
+      if (target.closest('input, textarea, select')) return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Handle barcode scan
   const handleBarcodeScan = (barcode: string) => {
@@ -194,16 +214,30 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   // Get unique categories
   const categories = ['all', ...Array.from(new Set(products.map(p => p.category?.name).filter(Boolean)))];
 
-  // FIXED: Handle null/undefined product names and SKUs safely. Debounced search avoids filtering on every keystroke.
+  // Faster, more forgiving search:
+  // - token-based (supports "blue large" etc.)
+  // - searches name, SKU, barcode, and category
+  // - still works with debounced input for performance
   const filteredProducts = products.filter(product => {
-    const term = debouncedSearchTerm.toLowerCase();
-    const nameMatch = product.name ? product.name.toLowerCase().includes(term) : false;
-    const skuMatch = product.sku ? product.sku.toLowerCase().includes(term) : false;
-    const barcodeMatch = (product as any).barcode
-      ? (product as any).barcode.toLowerCase().includes(term)
-      : false;
-    const categoryMatch = selectedCategory === 'all' || product.category?.name === selectedCategory;
-    return (nameMatch || skuMatch || barcodeMatch) && categoryMatch;
+    const term = debouncedSearchTerm.trim().toLowerCase();
+    const tokens = term.split(/\s+/).filter(Boolean);
+
+    const haystackParts = [
+      product.name || '',
+      product.sku || '',
+      (product as any).barcode || '',
+      product.category?.name || '',
+    ];
+    const haystack = haystackParts.join(' ').toLowerCase();
+
+    const textMatch = tokens.length === 0
+      ? true
+      : tokens.every(token => haystack.includes(token));
+
+    const categoryMatch =
+      selectedCategory === 'all' || product.category?.name === selectedCategory;
+
+    return textMatch && categoryMatch;
   });
 
   type Variation = { id: string; sku: string; price?: number | null; stock: number; attributes?: Record<string, string> };
@@ -217,6 +251,15 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   });
 
   const handleProductClick = async (product: Product) => {
+    const hasAnyVariations =
+      product.hasVariations || (product.variations && product.variations.length > 0);
+
+    // Fast path: products without variations go straight to cart (no modal)
+    if (!hasAnyVariations) {
+      handleAddBaseProductToCart(product);
+      return;
+    }
+
     setSelectedProductForVariation(product);
     setShowVariationModal(true);
     // Use product.variations immediately if available (from products list with includeVariations)
@@ -312,6 +355,16 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
           </div>
         </div>
         <div className="header-right">
+          {onFindReceiptClick && (
+            <button type="button" className="icon-btn find-receipt-btn" onClick={onFindReceiptClick} title="Find Receipt">
+              Find Receipt
+            </button>
+          )}
+          {onSalesHistoryClick && (
+            <button type="button" className="icon-btn sales-history-btn" onClick={onSalesHistoryClick} title="Sales History">
+              Sales History
+            </button>
+          )}
           <select
             value={selectedBranch}
             onChange={(e) => handleBranchChange(e.target.value)}
@@ -353,7 +406,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
       </div>
 
       {showSettings && (
-        <Settings onClose={() => setShowSettings(false)} />
+        <Settings onClose={() => setShowSettings(false)} onUnauthorized={logout} />
       )}
 
       {showVariationModal && selectedProductForVariation && (
@@ -413,6 +466,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
           <div className="search-bar">
             <div className="search-input-wrapper">
               <input
+              ref={searchInputRef}
                 type="text"
                 placeholder="🔍 Search products or scan barcode..."
                 value={searchTerm}
@@ -498,41 +552,80 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             ) : filteredProducts.length === 0 ? (
               <div className="loading">No products found</div>
             ) : (
-              filteredProducts.map(product => (
-                <div
-                  key={product.id}
-                  className="product-card product-card-clickable"
-                  onClick={() => handleProductClick(product)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleProductClick(product); }}
-                >
-                  {product.category && (
-                    <div className="product-category">
-                      {product.category.name}
-                    </div>
-                  )}
-                  {product.images && product.images.length > 0 && (
-                    <div className="product-image">
-                      <img
-                        src={product.images[0]}
-                        alt={product.name || 'Product'}
-                        style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '4px' }}
-                      />
-                    </div>
-                  )}
-                  <div className="product-info">
-                    <h3>{product.name || 'Unnamed Product'}</h3>
-                    <p className="sku">SKU: {product.sku || 'N/A'}</p>
-                    {(product as any).barcode && (
-                      <p className="barcode">Barcode: {(product as any).barcode}</p>
+              filteredProducts.map(product => {
+                const inlineVariations =
+                  (product.variations || []).map(mapVariation).slice(0, 3);
+                const showInlineVariations =
+                  inlineVariations.length > 0 && inlineVariations.length <= 3;
+
+                return (
+                  <div
+                    key={product.id}
+                    className="product-card product-card-clickable"
+                    onClick={() => handleProductClick(product)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleProductClick(product); }}
+                  >
+                    {product.category && (
+                      <div className="product-category">
+                        {product.category.name}
+                      </div>
                     )}
-                    <p className="price">${product.price?.toFixed(2) || '0.00'}</p>
-                    <p className="stock">Stock: {product.stock || 0}</p>
-                    <p className="variations-hint">Tap to add to cart</p>
+                    {product.images && product.images.length > 0 && (
+                      <div className="product-image">
+                        <img
+                          src={product.images[0]}
+                          alt={product.name || 'Product'}
+                          style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '4px' }}
+                        />
+                      </div>
+                    )}
+                    <div className="product-info">
+                      <h3>{product.name || 'Unnamed Product'}</h3>
+                      <p className="sku">SKU: {product.sku || 'N/A'}</p>
+                      {(product as any).barcode && (
+                        <p className="barcode">Barcode: {(product as any).barcode}</p>
+                      )}
+                      <p className="price">${product.price?.toFixed(2) || '0.00'}</p>
+                      <p className="stock">Stock: {product.stock || 0}</p>
+
+                      {showInlineVariations && (
+                        <div className="variation-chips">
+                          {inlineVariations.map(variation => {
+                            const hasStock = variation.stock > 0;
+                            const label =
+                              variation.attributes && Object.keys(variation.attributes).length > 0
+                                ? Object.values(variation.attributes).join(' / ')
+                                : variation.sku;
+                            return (
+                              <button
+                                key={variation.id}
+                                type="button"
+                                className={`variation-chip ${hasStock ? '' : 'variation-chip-disabled'}`}
+                                disabled={!hasStock}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddVariationToCart(product, variation);
+                                }}
+                                title={hasStock ? `Add ${label}` : 'Out of stock'}
+                              >
+                                {label} · {hasStock ? `${variation.stock} in stock` : 'Out of stock'}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      <p className="variations-hint">
+                        {showInlineVariations
+                          ? 'Tap a variant below, or open details'
+                          : 'Tap to add / choose variant'}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>

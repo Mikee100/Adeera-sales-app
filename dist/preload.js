@@ -57,6 +57,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getProducts: () => ipcRenderer.invoke('getProducts'),
     getProductVariations: (productId) => ipcRenderer.invoke('getProductVariations', productId),
     createSale: (saleData) => ipcRenderer.invoke('createSale', saleData),
+    createReturn: (payload) => ipcRenderer.invoke('createReturn', payload),
     getReceipt: (saleId) => ipcRenderer.invoke('getReceipt', saleId),
     printReceipt: (receiptData) => ipcRenderer.invoke('printReceipt', receiptData),
     openCashDrawer: () => ipcRenderer.invoke('openCashDrawer'),

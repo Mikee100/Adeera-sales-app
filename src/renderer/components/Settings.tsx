@@ -21,7 +21,7 @@ interface CatalogSyncStatus {
   isStale: boolean;
 }
 
-const Settings: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> = ({ onClose, onUnauthorized }) => {
   const { enterSleepMode } = useSleepMode();
   const [activeTab, setActiveTab] = useState<'printer' | 'system'>('printer');
   const [config, setConfig] = useState<PrinterConfig>({
@@ -153,12 +153,25 @@ const Settings: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         // Refresh catalog status
         await loadCatalogStatus();
       } else {
-        setMessage({ type: 'error', text: response.error || 'Failed to sync products' });
-        setTimeout(() => setMessage(null), 5000);
+        const isUnauthorized = response.unauthorized ||
+          (response.error && (response.error.includes('Unauthorized') || response.error.includes('log in again')));
+        setMessage({
+          type: 'error',
+          text: isUnauthorized
+            ? 'Session expired. Please log in again to sync the catalog.'
+            : (response.error || 'Failed to sync products'),
+        });
+        setTimeout(() => setMessage(null), 8000);
       }
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Failed to sync products' });
-      setTimeout(() => setMessage(null), 5000);
+      const isUnauthorized = error?.message?.includes('Unauthorized') || error?.message?.includes('log in again');
+      setMessage({
+        type: 'error',
+        text: isUnauthorized
+          ? 'Session expired. Please log in again to sync the catalog.'
+          : (error.message || 'Failed to sync products'),
+      });
+      setTimeout(() => setMessage(null), 8000);
     } finally {
       setSyncing(false);
     }
@@ -223,7 +236,21 @@ const Settings: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </svg>
               )}
             </div>
-            <span className="settings-alert-text">{message.text}</span>
+            <div className="settings-alert-body">
+              <span className="settings-alert-text">{message.text}</span>
+              {message.type === 'error' && message.text.includes('log in again') && onUnauthorized && (
+                <button
+                  type="button"
+                  className="settings-alert-action-btn"
+                  onClick={() => {
+                    onUnauthorized();
+                    onClose();
+                  }}
+                >
+                  Log in again
+                </button>
+              )}
+            </div>
           </div>
         )}
 

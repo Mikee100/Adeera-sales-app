@@ -63,13 +63,31 @@ interface AuthResponse {
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null;
 
-// Backend configuration: prefer explicit environment variables when present.
-// The shared API_BASE_URL already handles dev vs production defaults.
-const BACKEND_BASE_URL =
-  process.env.BACKEND_BASE_URL || API_BASE_URL;
+// Global ElectronStore instance for reading configuration values such as backendBaseUrl.
+const globalStore = new ElectronStore();
+
+// Backend configuration: prefer a value set in local config (ElectronStore) when present,
+// then explicit environment variables, and finally the shared API_BASE_URL default.
+// This allows IT to change the backend API URL on an installed machine without rebuilding,
+// by setting "backendBaseUrl" in the app's ElectronStore config.
+const BACKEND_BASE_URL = (() => {
+  const fromStore = globalStore.get('backendBaseUrl') as string | undefined;
+  if (typeof fromStore === 'string' && fromStore.trim().length > 0) {
+    console.log(`Backend URL configured from local store: ${fromStore}`);
+    return fromStore.trim();
+  }
+
+  if (typeof process.env.BACKEND_BASE_URL === 'string' && process.env.BACKEND_BASE_URL.trim().length > 0) {
+    console.log(`Backend URL configured from BACKEND_BASE_URL env: ${process.env.BACKEND_BASE_URL}`);
+    return process.env.BACKEND_BASE_URL.trim();
+  }
+
+  console.log(`Backend URL falling back to API_BASE_URL from shared config: ${API_BASE_URL}`);
+  return API_BASE_URL;
+})();
 
 // Log backend URL on startup for debugging
-console.log(`🌐 Backend URL configured: ${BACKEND_BASE_URL}`);
+console.log(`Backend URL resolved at startup: ${BACKEND_BASE_URL}`);
 
 const BACKEND_HEALTH_URL =
   process.env.BACKEND_HEALTH_URL || `${BACKEND_BASE_URL.replace(/\/$/, '')}/health`;
@@ -220,6 +238,67 @@ function stopPeriodicProductSync() {
   }
 }
 
+// Optional auto-update wiring. This uses electron-updater when available,
+// but fails gracefully (logs a warning) if the module is not installed or
+// no update server is configured yet. This lets you keep installers manual
+// today and plug in a real update channel later without code changes.
+function setupAutoUpdater() {
+  if (!app.isPackaged) {
+    // Do not run auto-updates in development mode.
+    return;
+  }
+
+  let autoUpdater: any;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const updaterModule = require('electron-updater');
+    autoUpdater = updaterModule.autoUpdater;
+  } catch (error: any) {
+    logger.warn('Auto-update module not available; skipping update checks', {
+      component: 'autoUpdater',
+      errorMessage: error?.message,
+    });
+    return;
+  }
+
+  try {
+    autoUpdater.logger = logger;
+  } catch {
+    // Ignore if logger cannot be attached
+  }
+
+  autoUpdater.on('error', (error: Error) => {
+    logger.warn('Auto-update error', {
+      component: 'autoUpdater',
+      errorMessage: error.message,
+    });
+  });
+
+  autoUpdater.on('update-available', () => {
+    logger.info('Update available', { component: 'autoUpdater' });
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('update-available');
+    }
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    logger.info('Update downloaded', { component: 'autoUpdater' });
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('update-downloaded');
+    }
+  });
+
+  // Initial check; will download and notify when configured with a publish target.
+  try {
+    autoUpdater.checkForUpdatesAndNotify();
+  } catch (error: any) {
+    logger.warn('Failed to check for updates', {
+      component: 'autoUpdater',
+      errorMessage: error?.message,
+    });
+  }
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -236,6 +315,7 @@ app.whenReady().then(() => {
     }
   }
   createWindow();
+  setupAutoUpdater();
   
   // Start periodic product sync if user is already logged in (e.g., app restart)
   const store = new ElectronStore();
@@ -761,6 +841,12 @@ ipcMain.handle('syncProducts', async () => {
 
     return { success: true, products, syncedAt: new Date().toISOString() };
   } catch (error: any) {
+    const status = error.response?.status;
+    if (status === 401 || status === 403) {
+      logger.warn('Authentication failed during product sync, clearing token', { component: 'products' });
+      store.delete('authToken');
+      return { success: false, error: 'Unauthorized - Please log in again', unauthorized: true };
+    }
     logger.error('Error syncing products', { component: 'products', error: error.message });
     // IMPROVED: Use error parser for consistent error message extraction
     const parsedError = enhanceErrorMessage(parseAxiosError(error));
@@ -1337,6 +1423,50 @@ ipcMain.handle('getReceipt', async (event, saleId) => {
   }
 });
 
+ipcMain.handle('getRecentSales', async () => {
+  const store = new ElectronStore();
+
+  try {
+    const token = getAuthToken(store);
+    if (!token) {
+      logger.warn('No authentication token for recent sales', { component: 'sales' });
+      return { success: false, error: 'Not authenticated', sales: [] };
+    }
+
+    let online = false;
+    try {
+      await axios.get(BACKEND_HEALTH_URL, { timeout: 5000 });
+      online = true;
+    } catch {
+      online = false;
+    }
+
+    if (!online) {
+      return { success: false, error: 'Offline', sales: [] };
+    }
+
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/sales/recent`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+
+    const response = await rateLimitedAxios(
+      () => axios.get(`${BACKEND_BASE_URL}/sales/recent`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000,
+      }),
+      endpoint
+    );
+
+    return { success: true, sales: response.data ?? [] };
+  } catch (error: any) {
+    logger.error('Error fetching recent sales', { component: 'sales', error: error.message });
+    const parsedError = enhanceErrorMessage(parseAxiosError(error));
+    return { success: false, error: parsedError?.message || 'Failed to fetch recent sales', sales: [] };
+  }
+});
+
 ipcMain.handle('printReceipt', async (event, receiptData) => {
   try {
     logger.info('Printing receipt for sale', { component: 'receipts', saleId: receiptData.saleId });
@@ -1355,6 +1485,68 @@ ipcMain.handle('printReceipt', async (event, receiptData) => {
   } catch (error: any) {
     logger.error('Error printing receipt', { component: 'receipts', saleId: receiptData.saleId, error: error.message });
     return { success: false, error: error.message || 'Failed to print receipt' };
+  }
+});
+
+// Create a return for an existing sale
+ipcMain.handle('createReturn', async (_event, payload: { saleId: string; items: any[]; reason?: string }) => {
+  const store = new ElectronStore();
+
+  try {
+    const token = getAuthToken(store);
+    if (!token) {
+      logger.warn('No authentication token found for return creation', { component: 'returns' });
+      return { success: false, error: 'No authentication token found' };
+    }
+
+    if (!payload?.saleId || !Array.isArray(payload.items) || payload.items.length === 0) {
+      return { success: false, error: 'Return must include a saleId and at least one item' };
+    }
+
+    logger.info('Creating return for sale', {
+      component: 'returns',
+      saleId: payload.saleId,
+      items: payload.items.length,
+    });
+
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/sales/${payload.saleId}/returns`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+
+    const response = await rateLimitedAxios(
+      () =>
+        axios.post(
+          `${BACKEND_BASE_URL}/sales/${payload.saleId}/returns`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            timeout: 15000,
+          }
+        ),
+      endpoint
+    );
+
+    logger.info('Return created successfully', {
+      component: 'returns',
+      saleId: payload.saleId,
+      returnId: response.data?.id || response.data?.returnId,
+    });
+
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    logger.error('Error creating return', {
+      component: 'returns',
+      saleId: payload?.saleId,
+      status: error.response?.status,
+      error: error.response?.data || error.message,
+    });
+
+    const parsedError = enhanceErrorMessage(parseAxiosError(error));
+    const errorMessage = getUserFriendlyMessage(parsedError) || 'Failed to create return';
+
+    return { success: false, error: errorMessage };
   }
 });
 

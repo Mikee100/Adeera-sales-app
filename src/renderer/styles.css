@@ -564,8 +564,8 @@ body {
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 140px);
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
@@ -575,15 +575,13 @@ body {
 .product-card {
   background: #f8f9fa;
   border: 1px solid #e1e5e9;
-  border-radius: 6px;
-  padding: 8px;
+  border-radius: 10px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
   position: relative;
-  width: 140px;
-  height: 180px;
   box-sizing: border-box;
 }
 
@@ -689,7 +687,41 @@ body {
 .variations-hint {
   font-size: 10px;
   color: #666;
-  margin: 2px 0;
+  margin: 4px 0 0;
+}
+
+.variation-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.variation-chip {
+  border: none;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 10px;
+  background: #e7f5ff;
+  color: #0b7285;
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.variation-chip:hover:not(:disabled) {
+  background: #d0ebff;
+}
+
+.variation-chip-disabled {
+  background: #f1f3f5;
+  color: #868e96;
+  cursor: not-allowed;
 }
 
 /* Variation selection modal */

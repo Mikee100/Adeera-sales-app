@@ -118,6 +118,71 @@ const Checkout: React.FC<CheckoutProps> = ({
     }
   }, [success]);
 
+  // Quick preset helpers for common split scenarios
+  const applySplitPreset = (preset: 'cash-mpesa' | 'cash-credit') => {
+    const half = Math.round((totalAfterDiscount / 2) * 100) / 100;
+    const rest = Math.round((totalAfterDiscount - half) * 100) / 100;
+
+    if (preset === 'cash-mpesa') {
+      setSplitPayments([
+        {
+          method: 'cash',
+          amount: half,
+          amountReceived: half,
+          status: 'pending',
+        },
+        {
+          method: 'mpesa',
+          amount: rest,
+          status: 'pending',
+        },
+      ]);
+    } else {
+      setSplitPayments([
+        {
+          method: 'cash',
+          amount: half,
+          amountReceived: half,
+          status: 'pending',
+        },
+        {
+          method: 'credit',
+          amount: rest,
+          status: 'pending',
+        },
+      ]);
+    }
+
+    // Clear any previous split errors when applying a preset
+    setErrors(prev => {
+      const { splitPayments, ...restErrors } = prev;
+      return restErrors;
+    });
+  };
+
+  // Keyboard shortcut: Ctrl/Cmd + D cycles a quick discount on the current sale
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      // Don't interfere while user is typing in a field
+      if (target.closest('input, textarea, select')) return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        // Cycle between 0%, 5%, and 10% discount (currency-based)
+        const current = discountAmount;
+        const next =
+          current === 0
+            ? subtotal * 0.05
+            : Math.abs(current - subtotal * 0.05) < 0.01
+            ? subtotal * 0.1
+            : 0;
+        setDiscountAmount(Math.round(next * 100) / 100);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [discountAmount, subtotal]);
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -371,15 +436,11 @@ const Checkout: React.FC<CheckoutProps> = ({
 
   // Split payment handlers
   const handleToggleSplitPayment = () => {
-    setIsSplitPayment(!isSplitPayment);
-    if (!isSplitPayment) {
-      // Initialize with one payment method
-      setSplitPayments([{
-        method: 'cash',
-        amount: totalAfterDiscount,
-        amountReceived: totalAfterDiscount,
-        status: 'pending',
-      }]);
+    const next = !isSplitPayment;
+    setIsSplitPayment(next);
+    if (next) {
+      // Default to a simple Cash + M-Pesa split preset
+      applySplitPreset('cash-mpesa');
     } else {
       // Clear split payments when disabling
       setSplitPayments([]);
@@ -619,6 +680,23 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <p className="split-payment-info">
                     Split the payment across multiple methods. Total must equal <strong>Ksh {totalAfterDiscount.toFixed(2)}</strong>
                   </p>
+                  <div className="split-preset-row">
+                    <span className="split-preset-label">Quick layouts:</span>
+                    <button
+                      type="button"
+                      className="split-preset-btn"
+                      onClick={() => applySplitPreset('cash-mpesa')}
+                    >
+                      Cash + M-Pesa
+                    </button>
+                    <button
+                      type="button"
+                      className="split-preset-btn"
+                      onClick={() => applySplitPreset('cash-credit')}
+                    >
+                      Cash + Credit
+                    </button>
+                  </div>
                   {errors.splitPayments && (
                     <span className="error-message">{errors.splitPayments}</span>
                   )}

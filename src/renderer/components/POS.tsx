@@ -3,6 +3,8 @@ import ProductSelection from './ProductSelection';
 import Checkout from './Checkout';
 import Receipt from './Receipt';
 import PrintPreview from './PrintPreview';
+import FindReceiptModal from './FindReceiptModal';
+import SalesHistoryModal from './SalesHistoryModal';
 import SyncStatus from './SyncStatus';
 import { useAuth } from '../contexts/AuthContext';
 import { showToast } from './Toast';
@@ -93,6 +95,8 @@ const POS: React.FC = () => {
   const [processingSale, setProcessingSale] = useState(false);
   const [printing, setPrinting] = useState(false);
   const [queuedSalesCount, setQueuedSalesCount] = useState(0);
+  const [showFindReceiptModal, setShowFindReceiptModal] = useState(false);
+  const [showSalesHistoryModal, setShowSalesHistoryModal] = useState(false);
 
   // Update queue count periodically when processing or when queue exists
   useEffect(() => {
@@ -1420,8 +1424,28 @@ const POS: React.FC = () => {
     showToast('Pending transaction deleted.', 'info');
   };
 
+  const handleReceiptFromLookup = (receipt: any) => {
+    setCurrentReceipt(receipt);
+    setCurrentStep('receipt');
+    setShowFindReceiptModal(false);
+    setShowSalesHistoryModal(false);
+  };
+
   return (
     <div className="pos-app">
+
+      {showFindReceiptModal && (
+        <FindReceiptModal
+          onClose={() => setShowFindReceiptModal(false)}
+          onReceiptFound={handleReceiptFromLookup}
+        />
+      )}
+      {showSalesHistoryModal && (
+        <SalesHistoryModal
+          onClose={() => setShowSalesHistoryModal(false)}
+          onReceiptFound={handleReceiptFromLookup}
+        />
+      )}
 
       {currentStep === 'products' && (
         <ProductSelection
@@ -1440,6 +1464,8 @@ const POS: React.FC = () => {
           branches={branches}
           selectedBranch={selectedBranch}
           onBranchChange={setSelectedBranch}
+          onFindReceiptClick={() => setShowFindReceiptModal(true)}
+          onSalesHistoryClick={() => setShowSalesHistoryModal(true)}
         />
       )}
 

@@ -18,7 +18,7 @@ interface ElectronAPI {
   cancelSyncOfflineSales: () => Promise<{ success: boolean }>;
   onSyncProgress: (callback: (progress: SyncProgress) => void) => () => void;
   getSyncStatus: () => Promise<{ online: boolean; pendingSyncs: number; lastSync?: string; queueSize?: number; maxQueueSize?: number; warningThreshold?: number; isWarning?: boolean; isCritical?: boolean }>;
-  syncProducts: () => Promise<{ success: boolean; products?: any[]; syncedAt?: string; error?: string }>;
+  syncProducts: () => Promise<{ success: boolean; products?: any[]; syncedAt?: string; error?: string; unauthorized?: boolean }>;
   getCatalogSyncStatus: () => Promise<{ success: boolean; hasCatalog: boolean; lastSynced: string | null; ageHours: number | null; productCount: number; isStale: boolean }>;
   getApiBaseUrl: () => Promise<string>;
   isOnline: () => boolean;

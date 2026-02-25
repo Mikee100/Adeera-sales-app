@@ -918,6 +918,35 @@ textarea.text-input {
   color: #dc2626;
 }
 
+.split-preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+}
+
+.split-preset-label {
+  font-size: 10px;
+  color: #6b7280;
+}
+
+.split-preset-btn {
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 10px;
+  background: #f3f4f6;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.split-preset-btn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
 .split-payments-list {
   display: flex;
   flex-direction: column;

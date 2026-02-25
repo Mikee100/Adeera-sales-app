@@ -46127,11 +46127,27 @@ function getAuthToken(store) {
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
-// Backend configuration: prefer explicit environment variables when present.
-// The shared API_BASE_URL already handles dev vs production defaults.
-const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL || config_1.API_BASE_URL;
+// Global ElectronStore instance for reading configuration values such as backendBaseUrl.
+const globalStore = new electron_store_1.default();
+// Backend configuration: prefer a value set in local config (ElectronStore) when present,
+// then explicit environment variables, and finally the shared API_BASE_URL default.
+// This allows IT to change the backend API URL on an installed machine without rebuilding,
+// by setting "backendBaseUrl" in the app's ElectronStore config.
+const BACKEND_BASE_URL = (() => {
+    const fromStore = globalStore.get('backendBaseUrl');
+    if (typeof fromStore === 'string' && fromStore.trim().length > 0) {
+        console.log(`Backend URL configured from local store: ${fromStore}`);
+        return fromStore.trim();
+    }
+    if (typeof process.env.BACKEND_BASE_URL === 'string' && process.env.BACKEND_BASE_URL.trim().length > 0) {
+        console.log(`Backend URL configured from BACKEND_BASE_URL env: ${process.env.BACKEND_BASE_URL}`);
+        return process.env.BACKEND_BASE_URL.trim();
+    }
+    console.log(`Backend URL falling back to API_BASE_URL from shared config: ${config_1.API_BASE_URL}`);
+    return config_1.API_BASE_URL;
+})();
 // Log backend URL on startup for debugging
-console.log(`🌐 Backend URL configured: ${BACKEND_BASE_URL}`);
+console.log(`Backend URL resolved at startup: ${BACKEND_BASE_URL}`);
 const BACKEND_HEALTH_URL = process.env.BACKEND_HEALTH_URL || `${BACKEND_BASE_URL.replace(/\/$/, '')}/health`;
 const createWindow = () => {
     // Create the browser window – fullscreen like games and POS systems
@@ -46263,6 +46279,63 @@ function stopPeriodicProductSync() {
         logger_1.logger.info('Periodic product sync stopped', { component: 'products' });
     }
 }
+// Optional auto-update wiring. This uses electron-updater when available,
+// but fails gracefully (logs a warning) if the module is not installed or
+// no update server is configured yet. This lets you keep installers manual
+// today and plug in a real update channel later without code changes.
+function setupAutoUpdater() {
+    if (!electron_1.app.isPackaged) {
+        // Do not run auto-updates in development mode.
+        return;
+    }
+    let autoUpdater;
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const updaterModule = __webpack_require__(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'electron-updater'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+        autoUpdater = updaterModule.autoUpdater;
+    }
+    catch (error) {
+        logger_1.logger.warn('Auto-update module not available; skipping update checks', {
+            component: 'autoUpdater',
+            errorMessage: error?.message,
+        });
+        return;
+    }
+    try {
+        autoUpdater.logger = logger_1.logger;
+    }
+    catch {
+        // Ignore if logger cannot be attached
+    }
+    autoUpdater.on('error', (error) => {
+        logger_1.logger.warn('Auto-update error', {
+            component: 'autoUpdater',
+            errorMessage: error.message,
+        });
+    });
+    autoUpdater.on('update-available', () => {
+        logger_1.logger.info('Update available', { component: 'autoUpdater' });
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('update-available');
+        }
+    });
+    autoUpdater.on('update-downloaded', () => {
+        logger_1.logger.info('Update downloaded', { component: 'autoUpdater' });
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('update-downloaded');
+        }
+    });
+    // Initial check; will download and notify when configured with a publish target.
+    try {
+        autoUpdater.checkForUpdatesAndNotify();
+    }
+    catch (error) {
+        logger_1.logger.warn('Failed to check for updates', {
+            component: 'autoUpdater',
+            errorMessage: error?.message,
+        });
+    }
+}
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -46280,6 +46353,7 @@ electron_1.app.whenReady().then(() => {
         }
     }
     createWindow();
+    setupAutoUpdater();
     // Start periodic product sync if user is already logged in (e.g., app restart)
     const store = new electron_store_1.default();
     const token = getAuthToken(store);
@@ -46747,6 +46821,12 @@ electron_1.ipcMain.handle('syncProducts', async () => {
         return { success: true, products, syncedAt: new Date().toISOString() };
     }
     catch (error) {
+        const status = error.response?.status;
+        if (status === 401 || status === 403) {
+            logger_1.logger.warn('Authentication failed during product sync, clearing token', { component: 'products' });
+            store.delete('authToken');
+            return { success: false, error: 'Unauthorized - Please log in again', unauthorized: true };
+        }
         logger_1.logger.error('Error syncing products', { component: 'products', error: error.message });
         // IMPROVED: Use error parser for consistent error message extraction
         const parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseAxiosError)(error));
@@ -47249,6 +47329,51 @@ electron_1.ipcMain.handle('printReceipt', async (event, receiptData) => {
     catch (error) {
         logger_1.logger.error('Error printing receipt', { component: 'receipts', saleId: receiptData.saleId, error: error.message });
         return { success: false, error: error.message || 'Failed to print receipt' };
+    }
+});
+// Create a return for an existing sale
+electron_1.ipcMain.handle('createReturn', async (_event, payload) => {
+    const store = new electron_store_1.default();
+    try {
+        const token = getAuthToken(store);
+        if (!token) {
+            logger_1.logger.warn('No authentication token found for return creation', { component: 'returns' });
+            return { success: false, error: 'No authentication token found' };
+        }
+        if (!payload?.saleId || !Array.isArray(payload.items) || payload.items.length === 0) {
+            return { success: false, error: 'Return must include a saleId and at least one item' };
+        }
+        logger_1.logger.info('Creating return for sale', {
+            component: 'returns',
+            saleId: payload.saleId,
+            items: payload.items.length,
+        });
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/sales/${payload.saleId}/returns`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.post(`${BACKEND_BASE_URL}/sales/${payload.saleId}/returns`, payload, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            timeout: 15000,
+        }), endpoint);
+        logger_1.logger.info('Return created successfully', {
+            component: 'returns',
+            saleId: payload.saleId,
+            returnId: response.data?.id || response.data?.returnId,
+        });
+        return { success: true, data: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Error creating return', {
+            component: 'returns',
+            saleId: payload?.saleId,
+            status: error.response?.status,
+            error: error.response?.data || error.message,
+        });
+        const parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseAxiosError)(error));
+        const errorMessage = (0, error_parser_1.getUserFriendlyMessage)(parsedError) || 'Failed to create return';
+        return { success: false, error: errorMessage };
     }
 });
 // Cash drawer handlers
