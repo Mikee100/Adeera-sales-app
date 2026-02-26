@@ -119,7 +119,22 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   const [showSettings, setShowSettings] = useState(false);
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
   const [showBarcodeHelp, setShowBarcodeHelp] = useState(false);
+  const [showReceiptsMenu, setShowReceiptsMenu] = useState(false);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const receiptsMenuRef = useRef<HTMLDivElement | null>(null);
+
+  // Close receipts dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (receiptsMenuRef.current && !receiptsMenuRef.current.contains(event.target as Node)) {
+        setShowReceiptsMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Barcode scanner hook
   const { isScanning, lastScannedCode, clearScan } = useBarcodeScanner({
@@ -355,15 +370,48 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
           </div>
         </div>
         <div className="header-right">
-          {onFindReceiptClick && (
-            <button type="button" className="icon-btn find-receipt-btn" onClick={onFindReceiptClick} title="Find Receipt">
-              Find Receipt
-            </button>
-          )}
-          {onSalesHistoryClick && (
-            <button type="button" className="icon-btn sales-history-btn" onClick={onSalesHistoryClick} title="Sales History">
-              Sales History
-            </button>
+          {(onFindReceiptClick || onSalesHistoryClick) && (
+            <div className="receipts-menu" ref={receiptsMenuRef}>
+              <button
+                type="button"
+                className="icon-btn receipts-btn"
+                onClick={() => setShowReceiptsMenu(prev => !prev)}
+                title="Receipts"
+                aria-label="Receipts menu"
+              >
+                🧾
+                <span className="receipts-menu-label">Receipts</span>
+                <span className="receipts-menu-caret">▾</span>
+              </button>
+              {showReceiptsMenu && (
+                <div className="receipts-menu-dropdown">
+                  {onFindReceiptClick && (
+                    <button
+                      type="button"
+                      className="receipts-menu-item"
+                      onClick={() => {
+                        setShowReceiptsMenu(false);
+                        onFindReceiptClick();
+                      }}
+                    >
+                      Find by ID
+                    </button>
+                  )}
+                  {onSalesHistoryClick && (
+                    <button
+                      type="button"
+                      className="receipts-menu-item"
+                      onClick={() => {
+                        setShowReceiptsMenu(false);
+                        onSalesHistoryClick();
+                      }}
+                    >
+                      Sales History
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           )}
           <select
             value={selectedBranch}

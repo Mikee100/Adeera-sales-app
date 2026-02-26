@@ -4267,14 +4267,29 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Dark Mode Styles */
 }
 
 [data-theme="dark"] .settings-btn,
-[data-theme="dark"] .theme-toggle-btn {
+[data-theme="dark"] .theme-toggle-btn,
+[data-theme="dark"] .receipts-btn {
   background: #404040;
   color: #e0e0e0;
 }
 
 [data-theme="dark"] .settings-btn:hover,
-[data-theme="dark"] .theme-toggle-btn:hover {
+[data-theme="dark"] .theme-toggle-btn:hover,
+[data-theme="dark"] .receipts-btn:hover {
   background: #4a4a4a;
+}
+
+[data-theme="dark"] .receipts-menu-dropdown {
+  background: #252525;
+  border-color: #444;
+}
+
+[data-theme="dark"] .receipts-menu-item {
+  color: #f1f3f5;
+}
+
+[data-theme="dark"] .receipts-menu-item:hover {
+  background: #333333;
 }
 
 [data-theme="dark"] .icon-btn.exit-btn {
@@ -4400,7 +4415,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/* Dark Mode Styles */
   }
 }
 
-`, "",{"version":3,"sources":["webpack://./src/renderer/dark-mode.css"],"names":[],"mappings":"AAAA,qBAAqB;AACrB;EACE,kBAAkB;AACpB;;AAEA;EACE,yBAAyB;EACzB,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,4BAA4B;AAC9B;;AAEA;EACE,cAAc;AAChB;;AAEA;;EAEE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,mBAAmB;EACnB,wCAAwC;AAC1C;;AAEA;EACE,cAAc;AAChB;;AAEA;;EAEE,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;;;EAGE,mBAAmB;EACnB,qBAAqB;EACrB,cAAc;AAChB;;AAEA;;;EAGE,qBAAqB;EACrB,mBAAmB;AACrB;;AAEA;EACE,4BAA4B;AAC9B;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;;EAEE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;;EAEE,mBAAmB;AACrB;;AAEA;EACE,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,YAAY;AACd;;AAEA,mCAAmC;AACnC;EACE;IACE,sBAAsB;EACxB;;EAEA;;IAEE,YAAY;IACZ,UAAU;EACZ;;EAEA;IACE,4DAA4D;IAC5D,SAAS;EACX;AACF;;AAEA;EACE;IACE,sBAAsB;IACtB,SAAS;IACT,aAAa;EACf;;EAEA;IACE,eAAe;EACjB;;EAEA;IACE,WAAW;IACX,eAAe;EACjB;;EAEA;IACE,4DAA4D;IAC5D,QAAQ;EACV;;EAEA;IACE,aAAa;EACf;;EAEA;IACE,eAAe;IACf,QAAQ;EACV;;EAEA;IACE,WAAW;IACX,mBAAmB;IACnB,8BAA8B;IAC9B,eAAe;EACjB;;EAEA;IACE,WAAW;IACX,uBAAuB;EACzB;;EAEA;IACE,cAAc;EAChB;AACF;;AAEA;EACE;IACE,eAAe;EACjB;;EAEA;IACE,0BAA0B;EAC5B;;EAEA;IACE,WAAW;IACX,YAAY;EACd;;EAEA;IACE,eAAe;IACf,gBAAgB;IAChB,eAAe;IACf,gBAAgB;EAClB;;EAEA;IACE,WAAW;IACX,YAAY;IACZ,eAAe;EACjB;AACF;;AAEA,gCAAgC;AAChC;EACE;;;;;IAKE,gBAAgB;IAChB,eAAe;EACjB;;EAEA;IACE,aAAa;EACf;;EAEA;IACE,eAAe;EACjB;AACF","sourcesContent":["/* Dark Mode Styles */\n[data-theme=\"dark\"] {\n  color-scheme: dark;\n}\n\n[data-theme=\"dark\"] body {\n  background-color: #1a1a1a;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .pos-container {\n  background: #1a1a1a;\n}\n\n[data-theme=\"dark\"] .pos-header {\n  background: #2d2d2d;\n  border-bottom-color: #404040;\n}\n\n[data-theme=\"dark\"] .pos-header h1 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .products-section,\n[data-theme=\"dark\"] .cart-section {\n  background: #2d2d2d;\n  border-color: #404040;\n}\n\n[data-theme=\"dark\"] .product-card {\n  background: #333333;\n  border-color: #404040;\n}\n\n[data-theme=\"dark\"] .product-card:hover {\n  background: #3a3a3a;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);\n}\n\n[data-theme=\"dark\"] .product-info h3 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .product-info .sku,\n[data-theme=\"dark\"] .product-info .stock {\n  color: #b0b0b0;\n}\n\n[data-theme=\"dark\"] .variation-chip {\n  background: #1e293b;\n  color: #e5e7eb;\n}\n\n[data-theme=\"dark\"] .variation-chip-disabled {\n  background: #334155;\n  color: #9ca3af;\n}\n\n[data-theme=\"dark\"] .search-input,\n[data-theme=\"dark\"] .category-select,\n[data-theme=\"dark\"] .branch-select {\n  background: #333333;\n  border-color: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .search-input:focus,\n[data-theme=\"dark\"] .category-select:focus,\n[data-theme=\"dark\"] .branch-select:focus {\n  border-color: #667eea;\n  background: #3a3a3a;\n}\n\n[data-theme=\"dark\"] .cart-item {\n  border-bottom-color: #404040;\n}\n\n[data-theme=\"dark\"] .item-info h4 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .item-info p {\n  color: #b0b0b0;\n}\n\n[data-theme=\"dark\"] .quantity-btn {\n  background: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .quantity-btn:hover {\n  background: #4a4a4a;\n}\n\n[data-theme=\"dark\"] .quick-qty-btn {\n  background: #333333;\n  border-color: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .quick-qty-btn:hover {\n  background: #404040;\n  border-color: #667eea;\n}\n\n[data-theme=\"dark\"] .cart-summary {\n  border-top-color: #404040;\n}\n\n[data-theme=\"dark\"] .summary-row {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .checkout-btn {\n  background: #667eea;\n}\n\n[data-theme=\"dark\"] .checkout-btn:hover:not(:disabled) {\n  background: #5568d3;\n}\n\n[data-theme=\"dark\"] .logout-btn {\n  background: #c82333;\n}\n\n[data-theme=\"dark\"] .logout-btn:hover {\n  background: #a01e2a;\n}\n\n[data-theme=\"dark\"] .settings-btn,\n[data-theme=\"dark\"] .theme-toggle-btn {\n  background: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .settings-btn:hover,\n[data-theme=\"dark\"] .theme-toggle-btn:hover {\n  background: #4a4a4a;\n}\n\n[data-theme=\"dark\"] .icon-btn.exit-btn {\n  border-color: #6c757d;\n  color: #adb5bd;\n}\n\n[data-theme=\"dark\"] .icon-btn.exit-btn:hover {\n  background: #5a6268;\n  color: white;\n}\n\n/* Responsive Layout Improvements */\n@media (max-width: 1024px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    margin: 12px;\n    flex: none;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));\n    gap: 12px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-header {\n    flex-direction: column;\n    gap: 12px;\n    padding: 12px;\n  }\n\n  .pos-header h1 {\n    font-size: 20px;\n  }\n\n  .header-controls {\n    width: 100%;\n    flex-wrap: wrap;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));\n    gap: 8px;\n  }\n\n  .product-card {\n    padding: 12px;\n  }\n\n  .cart-item {\n    flex-wrap: wrap;\n    gap: 8px;\n  }\n\n  .item-controls {\n    width: 100%;\n    flex-direction: row;\n    justify-content: space-between;\n    margin-right: 0;\n  }\n\n  .quick-quantity-buttons {\n    width: 100%;\n    justify-content: center;\n  }\n\n  .quantity-controls {\n    margin: 0 auto;\n  }\n}\n\n@media (max-width: 480px) {\n  .pos-header h1 {\n    font-size: 18px;\n  }\n\n  .products-grid {\n    grid-template-columns: 1fr;\n  }\n\n  .cart-item-image {\n    width: 50px;\n    height: 50px;\n  }\n\n  .quick-qty-btn {\n    min-width: 32px;\n    min-height: 32px;\n    font-size: 11px;\n    padding: 4px 8px;\n  }\n\n  .quantity-btn {\n    width: 36px;\n    height: 36px;\n    font-size: 16px;\n  }\n}\n\n/* Touch-friendly improvements */\n@media (hover: none) and (pointer: coarse) {\n  .add-to-cart-btn,\n  .checkout-btn,\n  .quantity-btn,\n  .quick-qty-btn,\n  .remove-btn {\n    min-height: 48px;\n    min-width: 48px;\n  }\n\n  .product-card {\n    padding: 20px;\n  }\n\n  .cart-item {\n    padding: 20px 0;\n  }\n}\n\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/dark-mode.css"],"names":[],"mappings":"AAAA,qBAAqB;AACrB;EACE,kBAAkB;AACpB;;AAEA;EACE,yBAAyB;EACzB,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,4BAA4B;AAC9B;;AAEA;EACE,cAAc;AAChB;;AAEA;;EAEE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,mBAAmB;EACnB,wCAAwC;AAC1C;;AAEA;EACE,cAAc;AAChB;;AAEA;;EAEE,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;;;EAGE,mBAAmB;EACnB,qBAAqB;EACrB,cAAc;AAChB;;AAEA;;;EAGE,qBAAqB;EACrB,mBAAmB;AACrB;;AAEA;EACE,4BAA4B;AAC9B;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,qBAAqB;AACvB;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;;;EAGE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;;;EAGE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,kBAAkB;AACpB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,mBAAmB;EACnB,YAAY;AACd;;AAEA,mCAAmC;AACnC;EACE;IACE,sBAAsB;EACxB;;EAEA;;IAEE,YAAY;IACZ,UAAU;EACZ;;EAEA;IACE,4DAA4D;IAC5D,SAAS;EACX;AACF;;AAEA;EACE;IACE,sBAAsB;IACtB,SAAS;IACT,aAAa;EACf;;EAEA;IACE,eAAe;EACjB;;EAEA;IACE,WAAW;IACX,eAAe;EACjB;;EAEA;IACE,4DAA4D;IAC5D,QAAQ;EACV;;EAEA;IACE,aAAa;EACf;;EAEA;IACE,eAAe;IACf,QAAQ;EACV;;EAEA;IACE,WAAW;IACX,mBAAmB;IACnB,8BAA8B;IAC9B,eAAe;EACjB;;EAEA;IACE,WAAW;IACX,uBAAuB;EACzB;;EAEA;IACE,cAAc;EAChB;AACF;;AAEA;EACE;IACE,eAAe;EACjB;;EAEA;IACE,0BAA0B;EAC5B;;EAEA;IACE,WAAW;IACX,YAAY;EACd;;EAEA;IACE,eAAe;IACf,gBAAgB;IAChB,eAAe;IACf,gBAAgB;EAClB;;EAEA;IACE,WAAW;IACX,YAAY;IACZ,eAAe;EACjB;AACF;;AAEA,gCAAgC;AAChC;EACE;;;;;IAKE,gBAAgB;IAChB,eAAe;EACjB;;EAEA;IACE,aAAa;EACf;;EAEA;IACE,eAAe;EACjB;AACF","sourcesContent":["/* Dark Mode Styles */\n[data-theme=\"dark\"] {\n  color-scheme: dark;\n}\n\n[data-theme=\"dark\"] body {\n  background-color: #1a1a1a;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .pos-container {\n  background: #1a1a1a;\n}\n\n[data-theme=\"dark\"] .pos-header {\n  background: #2d2d2d;\n  border-bottom-color: #404040;\n}\n\n[data-theme=\"dark\"] .pos-header h1 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .products-section,\n[data-theme=\"dark\"] .cart-section {\n  background: #2d2d2d;\n  border-color: #404040;\n}\n\n[data-theme=\"dark\"] .product-card {\n  background: #333333;\n  border-color: #404040;\n}\n\n[data-theme=\"dark\"] .product-card:hover {\n  background: #3a3a3a;\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);\n}\n\n[data-theme=\"dark\"] .product-info h3 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .product-info .sku,\n[data-theme=\"dark\"] .product-info .stock {\n  color: #b0b0b0;\n}\n\n[data-theme=\"dark\"] .variation-chip {\n  background: #1e293b;\n  color: #e5e7eb;\n}\n\n[data-theme=\"dark\"] .variation-chip-disabled {\n  background: #334155;\n  color: #9ca3af;\n}\n\n[data-theme=\"dark\"] .search-input,\n[data-theme=\"dark\"] .category-select,\n[data-theme=\"dark\"] .branch-select {\n  background: #333333;\n  border-color: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .search-input:focus,\n[data-theme=\"dark\"] .category-select:focus,\n[data-theme=\"dark\"] .branch-select:focus {\n  border-color: #667eea;\n  background: #3a3a3a;\n}\n\n[data-theme=\"dark\"] .cart-item {\n  border-bottom-color: #404040;\n}\n\n[data-theme=\"dark\"] .item-info h4 {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .item-info p {\n  color: #b0b0b0;\n}\n\n[data-theme=\"dark\"] .quantity-btn {\n  background: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .quantity-btn:hover {\n  background: #4a4a4a;\n}\n\n[data-theme=\"dark\"] .quick-qty-btn {\n  background: #333333;\n  border-color: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .quick-qty-btn:hover {\n  background: #404040;\n  border-color: #667eea;\n}\n\n[data-theme=\"dark\"] .cart-summary {\n  border-top-color: #404040;\n}\n\n[data-theme=\"dark\"] .summary-row {\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .checkout-btn {\n  background: #667eea;\n}\n\n[data-theme=\"dark\"] .checkout-btn:hover:not(:disabled) {\n  background: #5568d3;\n}\n\n[data-theme=\"dark\"] .logout-btn {\n  background: #c82333;\n}\n\n[data-theme=\"dark\"] .logout-btn:hover {\n  background: #a01e2a;\n}\n\n[data-theme=\"dark\"] .settings-btn,\n[data-theme=\"dark\"] .theme-toggle-btn,\n[data-theme=\"dark\"] .receipts-btn {\n  background: #404040;\n  color: #e0e0e0;\n}\n\n[data-theme=\"dark\"] .settings-btn:hover,\n[data-theme=\"dark\"] .theme-toggle-btn:hover,\n[data-theme=\"dark\"] .receipts-btn:hover {\n  background: #4a4a4a;\n}\n\n[data-theme=\"dark\"] .receipts-menu-dropdown {\n  background: #252525;\n  border-color: #444;\n}\n\n[data-theme=\"dark\"] .receipts-menu-item {\n  color: #f1f3f5;\n}\n\n[data-theme=\"dark\"] .receipts-menu-item:hover {\n  background: #333333;\n}\n\n[data-theme=\"dark\"] .icon-btn.exit-btn {\n  border-color: #6c757d;\n  color: #adb5bd;\n}\n\n[data-theme=\"dark\"] .icon-btn.exit-btn:hover {\n  background: #5a6268;\n  color: white;\n}\n\n/* Responsive Layout Improvements */\n@media (max-width: 1024px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    margin: 12px;\n    flex: none;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));\n    gap: 12px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-header {\n    flex-direction: column;\n    gap: 12px;\n    padding: 12px;\n  }\n\n  .pos-header h1 {\n    font-size: 20px;\n  }\n\n  .header-controls {\n    width: 100%;\n    flex-wrap: wrap;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));\n    gap: 8px;\n  }\n\n  .product-card {\n    padding: 12px;\n  }\n\n  .cart-item {\n    flex-wrap: wrap;\n    gap: 8px;\n  }\n\n  .item-controls {\n    width: 100%;\n    flex-direction: row;\n    justify-content: space-between;\n    margin-right: 0;\n  }\n\n  .quick-quantity-buttons {\n    width: 100%;\n    justify-content: center;\n  }\n\n  .quantity-controls {\n    margin: 0 auto;\n  }\n}\n\n@media (max-width: 480px) {\n  .pos-header h1 {\n    font-size: 18px;\n  }\n\n  .products-grid {\n    grid-template-columns: 1fr;\n  }\n\n  .cart-item-image {\n    width: 50px;\n    height: 50px;\n  }\n\n  .quick-qty-btn {\n    min-width: 32px;\n    min-height: 32px;\n    font-size: 11px;\n    padding: 4px 8px;\n  }\n\n  .quantity-btn {\n    width: 36px;\n    height: 36px;\n    font-size: 16px;\n  }\n}\n\n/* Touch-friendly improvements */\n@media (hover: none) and (pointer: coarse) {\n  .add-to-cart-btn,\n  .checkout-btn,\n  .quantity-btn,\n  .quick-qty-btn,\n  .remove-btn {\n    min-height: 48px;\n    min-width: 48px;\n  }\n\n  .product-card {\n    padding: 20px;\n  }\n\n  .cart-item {\n    padding: 20px 0;\n  }\n}\n\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -4567,6 +4582,340 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.error-boundary {
 }
 
 `, "",{"version":3,"sources":["webpack://./src/renderer/error-boundary.css"],"names":[],"mappings":"AAAA;EACE,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,iBAAiB;EACjB,mBAAmB;EACnB,aAAa;AACf;;AAEA;EACE,iBAAiB;EACjB,mBAAmB;EACnB,aAAa;EACb,gBAAgB;EAChB,WAAW;EACX,yCAAyC;EACzC,kBAAkB;AACpB;;AAEA;EACE,eAAe;EACf,mBAAmB;AACrB;;AAEA;EACE,WAAW;EACX,mBAAmB;EACnB,eAAe;AACjB;;AAEA;EACE,WAAW;EACX,mBAAmB;EACnB,eAAe;EACf,gBAAgB;AAClB;;AAEA;EACE,cAAc;EACd,gBAAgB;EAChB,mBAAmB;EACnB,kBAAkB;EAClB,aAAa;AACf;;AAEA;EACE,eAAe;EACf,gBAAgB;EAChB,cAAc;EACd,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,cAAc;EACd,aAAa;EACb,kBAAkB;EAClB,gBAAgB;EAChB,eAAe;EACf,qCAAqC;EACrC,qBAAqB;EACrB,qBAAqB;EACrB,iBAAiB;EACjB,gBAAgB;AAClB;;AAEA;EACE,aAAa;EACb,SAAS;EACT,uBAAuB;EACvB,eAAe;AACjB;;AAEA;;EAEE,kBAAkB;EAClB,YAAY;EACZ,kBAAkB;EAClB,eAAe;EACf,gBAAgB;EAChB,eAAe;EACf,yBAAyB;EACzB,gBAAgB;EAChB,0BAA0B;AAC5B;;AAEA;EACE,mBAAmB;EACnB,YAAY;AACd;;AAEA;EACE,mBAAmB;EACnB,sBAAsB;AACxB;;AAEA;EACE,sBAAsB;AACxB;;AAEA;EACE,mBAAmB;EACnB,YAAY;AACd;;AAEA;EACE,mBAAmB;EACnB,sBAAsB;AACxB;;AAEA;EACE,sBAAsB;AACxB;;AAEA,cAAc;AACd;EACE,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,cAAc;AAChB","sourcesContent":[".error-boundary {\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  min-height: 100vh;\r\n  background: #f5f5f5;\r\n  padding: 20px;\r\n}\r\n\r\n.error-boundary-content {\r\n  background: white;\r\n  border-radius: 12px;\r\n  padding: 40px;\r\n  max-width: 600px;\r\n  width: 100%;\r\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\r\n  text-align: center;\r\n}\r\n\r\n.error-icon {\r\n  font-size: 64px;\r\n  margin-bottom: 20px;\r\n}\r\n\r\n.error-boundary-content h2 {\r\n  color: #333;\r\n  margin-bottom: 12px;\r\n  font-size: 24px;\r\n}\r\n\r\n.error-boundary-content p {\r\n  color: #666;\r\n  margin-bottom: 30px;\r\n  font-size: 16px;\r\n  line-height: 1.5;\r\n}\r\n\r\n.error-details {\r\n  margin: 20px 0;\r\n  text-align: left;\r\n  background: #f8f9fa;\r\n  border-radius: 8px;\r\n  padding: 16px;\r\n}\r\n\r\n.error-details summary {\r\n  cursor: pointer;\r\n  font-weight: 600;\r\n  color: #495057;\r\n  margin-bottom: 12px;\r\n}\r\n\r\n.error-stack {\r\n  background: #2d2d2d;\r\n  color: #e0e0e0;\r\n  padding: 16px;\r\n  border-radius: 6px;\r\n  overflow-x: auto;\r\n  font-size: 12px;\r\n  font-family: 'Courier New', monospace;\r\n  white-space: pre-wrap;\r\n  word-wrap: break-word;\r\n  max-height: 300px;\r\n  overflow-y: auto;\r\n}\r\n\r\n.error-actions {\r\n  display: flex;\r\n  gap: 12px;\r\n  justify-content: center;\r\n  flex-wrap: wrap;\r\n}\r\n\r\n.recover-btn,\r\n.reload-btn {\r\n  padding: 12px 24px;\r\n  border: none;\r\n  border-radius: 8px;\r\n  font-size: 14px;\r\n  font-weight: 500;\r\n  cursor: pointer;\r\n  transition: all 0.2s ease;\r\n  min-height: 44px;\r\n  touch-action: manipulation;\r\n}\r\n\r\n.recover-btn {\r\n  background: #667eea;\r\n  color: white;\r\n}\r\n\r\n.recover-btn:hover {\r\n  background: #5568d3;\r\n  transform: scale(1.05);\r\n}\r\n\r\n.recover-btn:active {\r\n  transform: scale(0.95);\r\n}\r\n\r\n.reload-btn {\r\n  background: #6c757d;\r\n  color: white;\r\n}\r\n\r\n.reload-btn:hover {\r\n  background: #5a6268;\r\n  transform: scale(1.05);\r\n}\r\n\r\n.reload-btn:active {\r\n  transform: scale(0.95);\r\n}\r\n\r\n/* Dark mode */\r\n[data-theme=\"dark\"] .error-boundary {\r\n  background: #1a1a1a;\r\n}\r\n\r\n[data-theme=\"dark\"] .error-boundary-content {\r\n  background: #2d2d2d;\r\n  color: #e0e0e0;\r\n}\r\n\r\n[data-theme=\"dark\"] .error-boundary-content h2 {\r\n  color: #e0e0e0;\r\n}\r\n\r\n[data-theme=\"dark\"] .error-boundary-content p {\r\n  color: #b0b0b0;\r\n}\r\n\r\n[data-theme=\"dark\"] .error-details {\r\n  background: #333333;\r\n}\r\n\r\n[data-theme=\"dark\"] .error-details summary {\r\n  color: #d0d0d0;\r\n}\r\n\r\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js!./src/renderer/modals.css":
+/*!***********************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./src/renderer/modals.css ***!
+  \***********************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.close-btn:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 20px 24px;
+  border-top: 1px solid #e1e5e9;
+}
+
+.cancel-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cancel-btn:hover {
+  background: #5a6268;
+}
+
+.complete-btn, .print-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.complete-btn:hover:not(:disabled), .print-btn:hover:not(:disabled) {
+  background: #218838;
+}
+
+.complete-btn:disabled, .print-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Checkout Modal Styles */
+.checkout-modal .modal-content {
+  max-width: 600px;
+}
+
+.sale-summary {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.sale-summary h3 {
+  margin-bottom: 12px;
+  color: #333;
+  font-size: 16px;
+}
+
+.summary-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-section h3 {
+  margin-bottom: 12px;
+  color: #333;
+  font-size: 16px;
+}
+
+.payment-methods {
+  display: flex;
+  gap: 16px;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.payment-option input[type="radio"] {
+  margin: 0;
+}
+
+.change-amount {
+  color: #28a745;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+/* Receipt Modal Styles */
+.receipt-modal .modal-content {
+  max-width: 400px;
+}
+
+.receipt {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: 16px;
+  border-bottom: 1px dashed #ccc;
+  padding-bottom: 12px;
+}
+
+.receipt-header h3 {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.receipt-details {
+  margin-bottom: 16px;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.receipt-items {
+  margin-bottom: 16px;
+}
+
+.receipt-items table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.receipt-items th,
+.receipt-items td {
+  text-align: left;
+  padding: 4px 0;
+  border-bottom: 1px dashed #ccc;
+}
+
+.receipt-items th {
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+.receipt-totals {
+  border-top: 1px dashed #ccc;
+  padding-top: 8px;
+  margin-bottom: 16px;
+}
+
+.receipt-footer {
+  text-align: center;
+  border-top: 1px dashed #ccc;
+  padding-top: 12px;
+  font-style: italic;
+}
+
+/* Find Receipt modal */
+.find-receipt-modal .find-receipt-hint {
+  margin: 0 0 12px;
+  color: #555;
+  font-size: 14px;
+}
+
+.find-receipt-modal .find-receipt-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.find-receipt-modal .find-receipt-input:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+}
+
+/* Sales History modal */
+.sales-history-modal .modal-content {
+  max-width: 640px;
+}
+
+.sales-history-loading,
+.sales-history-error,
+.sales-history-empty {
+  margin: 0;
+  padding: 12px 0;
+  color: #555;
+}
+
+.sales-history-error {
+  color: #dc3545;
+}
+
+.sales-history-table-wrap {
+  overflow-x: auto;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.sales-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.sales-history-table th,
+.sales-history-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.sales-history-table th {
+  font-weight: 600;
+  color: #333;
+  background: #f8f9fa;
+  position: sticky;
+  top: 0;
+}
+
+.sales-history-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.sales-history-view-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.sales-history-view-btn:hover:not(:disabled) {
+  background: #218838;
+}
+
+.sales-history-view-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+`, "",{"version":3,"sources":["webpack://./src/renderer/modals.css"],"names":[],"mappings":"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","sourcesContent":["/* Modal Styles */\r\n.modal-overlay {\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  right: 0;\r\n  bottom: 0;\r\n  background: rgba(0, 0, 0, 0.5);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  z-index: 1000;\r\n}\r\n\r\n.modal-content {\r\n  background: white;\r\n  border-radius: 12px;\r\n  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);\r\n  max-width: 500px;\r\n  width: 90%;\r\n  max-height: 90vh;\r\n  overflow-y: auto;\r\n}\r\n\r\n.modal-header {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  padding: 20px 24px;\r\n  border-bottom: 1px solid #e1e5e9;\r\n}\r\n\r\n.modal-header h2 {\r\n  margin: 0;\r\n  color: #333;\r\n  font-size: 20px;\r\n}\r\n\r\n.close-btn {\r\n  background: none;\r\n  border: none;\r\n  font-size: 24px;\r\n  cursor: pointer;\r\n  color: #666;\r\n  padding: 4px;\r\n  border-radius: 4px;\r\n}\r\n\r\n.close-btn:hover {\r\n  background: #f5f5f5;\r\n  color: #333;\r\n}\r\n\r\n.modal-body {\r\n  padding: 24px;\r\n}\r\n\r\n.modal-actions {\r\n  display: flex;\r\n  gap: 12px;\r\n  justify-content: flex-end;\r\n  padding: 20px 24px;\r\n  border-top: 1px solid #e1e5e9;\r\n}\r\n\r\n.cancel-btn {\r\n  background: #6c757d;\r\n  color: white;\r\n  border: none;\r\n  padding: 10px 20px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-weight: 500;\r\n}\r\n\r\n.cancel-btn:hover {\r\n  background: #5a6268;\r\n}\r\n\r\n.complete-btn, .print-btn {\r\n  background: #28a745;\r\n  color: white;\r\n  border: none;\r\n  padding: 10px 20px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-weight: 500;\r\n}\r\n\r\n.complete-btn:hover:not(:disabled), .print-btn:hover:not(:disabled) {\r\n  background: #218838;\r\n}\r\n\r\n.complete-btn:disabled, .print-btn:disabled {\r\n  background: #6c757d;\r\n  cursor: not-allowed;\r\n}\r\n\r\n/* Checkout Modal Styles */\r\n.checkout-modal .modal-content {\r\n  max-width: 600px;\r\n}\r\n\r\n.sale-summary {\r\n  background: #f8f9fa;\r\n  border-radius: 8px;\r\n  padding: 16px;\r\n  margin-bottom: 24px;\r\n}\r\n\r\n.sale-summary h3 {\r\n  margin-bottom: 12px;\r\n  color: #333;\r\n  font-size: 16px;\r\n}\r\n\r\n.summary-details {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n}\r\n\r\n.form-section {\r\n  margin-bottom: 20px;\r\n}\r\n\r\n.form-section h3 {\r\n  margin-bottom: 12px;\r\n  color: #333;\r\n  font-size: 16px;\r\n}\r\n\r\n.payment-methods {\r\n  display: flex;\r\n  gap: 16px;\r\n}\r\n\r\n.payment-option {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 8px;\r\n}\r\n\r\n.payment-option input[type=\"radio\"] {\r\n  margin: 0;\r\n}\r\n\r\n.change-amount {\r\n  color: #28a745;\r\n  font-weight: bold;\r\n  margin-top: 8px;\r\n}\r\n\r\n/* Receipt Modal Styles */\r\n.receipt-modal .modal-content {\r\n  max-width: 400px;\r\n}\r\n\r\n.receipt {\r\n  font-family: 'Courier New', monospace;\r\n  font-size: 12px;\r\n  line-height: 1.4;\r\n}\r\n\r\n.receipt-header {\r\n  text-align: center;\r\n  margin-bottom: 16px;\r\n  border-bottom: 1px dashed #ccc;\r\n  padding-bottom: 12px;\r\n}\r\n\r\n.receipt-header h3 {\r\n  margin-bottom: 4px;\r\n  font-size: 14px;\r\n}\r\n\r\n.receipt-details {\r\n  margin-bottom: 16px;\r\n}\r\n\r\n.receipt-row {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  margin-bottom: 4px;\r\n}\r\n\r\n.receipt-items {\r\n  margin-bottom: 16px;\r\n}\r\n\r\n.receipt-items table {\r\n  width: 100%;\r\n  border-collapse: collapse;\r\n}\r\n\r\n.receipt-items th,\r\n.receipt-items td {\r\n  text-align: left;\r\n  padding: 4px 0;\r\n  border-bottom: 1px dashed #ccc;\r\n}\r\n\r\n.receipt-items th {\r\n  font-weight: bold;\r\n  border-bottom: 1px solid #ccc;\r\n}\r\n\r\n.receipt-totals {\r\n  border-top: 1px dashed #ccc;\r\n  padding-top: 8px;\r\n  margin-bottom: 16px;\r\n}\r\n\r\n.receipt-footer {\r\n  text-align: center;\r\n  border-top: 1px dashed #ccc;\r\n  padding-top: 12px;\r\n  font-style: italic;\r\n}\r\n\r\n/* Find Receipt modal */\r\n.find-receipt-modal .find-receipt-hint {\r\n  margin: 0 0 12px;\r\n  color: #555;\r\n  font-size: 14px;\r\n}\r\n\r\n.find-receipt-modal .find-receipt-input {\r\n  width: 100%;\r\n  padding: 10px 12px;\r\n  border: 1px solid #ccc;\r\n  border-radius: 6px;\r\n  font-size: 16px;\r\n  box-sizing: border-box;\r\n}\r\n\r\n.find-receipt-modal .find-receipt-input:focus {\r\n  outline: none;\r\n  border-color: #28a745;\r\n  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);\r\n}\r\n\r\n/* Sales History modal */\r\n.sales-history-modal .modal-content {\r\n  max-width: 640px;\r\n}\r\n\r\n.sales-history-loading,\r\n.sales-history-error,\r\n.sales-history-empty {\r\n  margin: 0;\r\n  padding: 12px 0;\r\n  color: #555;\r\n}\r\n\r\n.sales-history-error {\r\n  color: #dc3545;\r\n}\r\n\r\n.sales-history-table-wrap {\r\n  overflow-x: auto;\r\n  max-height: 50vh;\r\n  overflow-y: auto;\r\n}\r\n\r\n.sales-history-table {\r\n  width: 100%;\r\n  border-collapse: collapse;\r\n  font-size: 14px;\r\n}\r\n\r\n.sales-history-table th,\r\n.sales-history-table td {\r\n  padding: 10px 12px;\r\n  text-align: left;\r\n  border-bottom: 1px solid #e1e5e9;\r\n}\r\n\r\n.sales-history-table th {\r\n  font-weight: 600;\r\n  color: #333;\r\n  background: #f8f9fa;\r\n  position: sticky;\r\n  top: 0;\r\n}\r\n\r\n.sales-history-table tbody tr:hover {\r\n  background: #f8f9fa;\r\n}\r\n\r\n.sales-history-view-btn {\r\n  background: #28a745;\r\n  color: white;\r\n  border: none;\r\n  padding: 6px 12px;\r\n  border-radius: 6px;\r\n  cursor: pointer;\r\n  font-size: 13px;\r\n}\r\n\r\n.sales-history-view-btn:hover:not(:disabled) {\r\n  background: #218838;\r\n}\r\n\r\n.sales-history-view-btn:disabled {\r\n  background: #6c757d;\r\n  cursor: not-allowed;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -6040,6 +6389,55 @@ body {
   color: white;
 }
 
+/* Receipts menu (Find by ID / Sales History) */
+.receipts-menu {
+  position: relative;
+}
+
+.icon-btn.receipts-btn {
+  width: auto;
+  padding: 5px 10px;
+  font-size: 12px;
+  gap: 4px;
+}
+
+.receipts-menu-label {
+  margin-left: 4px;
+}
+
+.receipts-menu-caret {
+  font-size: 10px;
+  margin-left: 2px;
+}
+
+.receipts-menu-dropdown {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
+  min-width: 160px;
+  z-index: 20;
+  padding: 4px 0;
+}
+
+.receipts-menu-item {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #212529;
+}
+
+.receipts-menu-item:hover {
+  background: #f8f9fa;
+}
+
 .pos-content {
   display: flex;
   flex: 1;
@@ -6851,7 +7249,7 @@ body {
     height: 160px;
   }
 }
-`, "",{"version":3,"sources":["webpack://./src/renderer/styles.css"],"names":[],"mappings":"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","sourcesContent":["/* Global Styles */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;\n  background-color: #f5f5f5;\n  color: #333;\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* Loading Screen */\n.loading-screen {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100vh;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n}\n\n.loading-spinner {\n  width: 50px;\n  height: 50px;\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top: 4px solid white;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n  margin-bottom: 20px;\n}\n\n@keyframes spin {\n  0% { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n/* Login Styles */\n.login-container {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n  padding: 32px 16px;\n  background: radial-gradient(circle at top left, #9f7aea 0, transparent 55%),\n    radial-gradient(circle at bottom right, #4299e1 0, transparent 55%),\n    linear-gradient(135deg, #0f172a 0%, #020617 100%);\n  color: #e5e7eb;\n}\n\n.login-shell {\n  display: grid;\n  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);\n  gap: 1px;\n  width: 100%;\n  max-width: 960px;\n  border-radius: 18px;\n  background: linear-gradient(135deg, rgba(148, 163, 184, 0.6), rgba(56, 189, 248, 0.6));\n  box-shadow:\n    0 22px 45px rgba(15, 23, 42, 0.6),\n    0 0 0 1px rgba(148, 163, 184, 0.35);\n  overflow: hidden;\n}\n\n.login-brand-panel {\n  position: relative;\n  padding: 32px 32px 28px;\n  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), transparent 55%),\n    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.22), transparent 55%),\n    linear-gradient(145deg, #020617 0%, #020617 40%, #020617 100%);\n  color: #e5e7eb;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n.login-brand-logo {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 18px;\n}\n\n.login-logo-mark {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 32px;\n  height: 32px;\n  border-radius: 11px;\n  background: radial-gradient(circle at 0 0, #22c55e 0, #16a34a 40%, #065f46 100%);\n  color: #ecfdf5;\n  font-weight: 700;\n  font-size: 18px;\n}\n\n.login-logo-text {\n  font-size: 20px;\n  font-weight: 600;\n  letter-spacing: 0.02em;\n}\n\n.login-brand-tagline {\n  font-size: 14px;\n  color: #9ca3af;\n  max-width: 320px;\n}\n\n.login-brand-highlights {\n  margin-top: 28px;\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n\n.login-highlight {\n  display: flex;\n  gap: 10px;\n  align-items: flex-start;\n}\n\n.login-highlight-dot {\n  margin-top: 4px;\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: linear-gradient(135deg, #22c55e, #a3e635);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);\n  flex-shrink: 0;\n}\n\n.login-highlight-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: #e5e7eb;\n}\n\n.login-highlight-subtitle {\n  font-size: 13px;\n  color: #9ca3af;\n}\n\n.login-environment-pill {\n  align-self: flex-start;\n  margin-top: 24px;\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 12px;\n  border-radius: 999px;\n  background: rgba(15, 23, 42, 0.9);\n  border: 1px solid rgba(148, 163, 184, 0.7);\n  font-size: 12px;\n  color: #e5e7eb;\n}\n\n.login-env-dot {\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: radial-gradient(circle at 30% 0, #22c55e 0, #16a34a 60%, #14532d 100%);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);\n}\n\n.login-card {\n  background: #f9fafb;\n  padding: 32px 32px 28px;\n  border-radius: 18px;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n}\n\n.login-header {\n  margin-bottom: 24px;\n}\n\n.login-header h1 {\n  color: #020617;\n  margin-bottom: 6px;\n  font-size: 24px;\n  font-weight: 600;\n}\n\n.login-header p {\n  color: #6b7280;\n  font-size: 14px;\n}\n\n.login-form {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n}\n\n.form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.form-group label {\n  font-size: 14px;\n  font-weight: 500;\n  color: #111827;\n}\n\n.form-input-wrapper {\n  position: relative;\n}\n\n.form-group input {\n  width: 100%;\n  padding: 11px 12px;\n  border-radius: 10px;\n  border: 1px solid #e5e7eb;\n  font-size: 14px;\n  background: #ffffff;\n  color: #111827;\n  outline: none;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background-color 0.15s ease;\n}\n\n.form-group input::placeholder {\n  color: #9ca3af;\n}\n\n.form-group input:focus {\n  border-color: #4f46e5;\n  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.65), 0 10px 18px rgba(15, 23, 42, 0.12);\n}\n\n.form-group.has-error input {\n  border-color: #f97316;\n  background-color: #fffbeb;\n}\n\n.form-group.has-error input:focus {\n  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.85), 0 10px 18px rgba(124, 45, 18, 0.25);\n}\n\n.login-form-meta {\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.checkbox-label {\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 13px;\n  color: #4b5563;\n}\n\n.checkbox-label input[type='checkbox'] {\n  width: 14px;\n  height: 14px;\n  border-radius: 4px;\n  border: 1px solid #d1d5db;\n  cursor: pointer;\n}\n\n.link-button {\n  border: none;\n  background: none;\n  padding: 0;\n  font-size: 13px;\n  color: #4f46e5;\n  cursor: pointer;\n  text-decoration: none;\n}\n\n.link-button:hover {\n  text-decoration: underline;\n}\n\n.login-button {\n  margin-top: 6px;\n  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #22c55e 120%);\n  color: white;\n  border: none;\n  padding: 12px 16px;\n  border-radius: 12px;\n  font-size: 15px;\n  font-weight: 600;\n  cursor: pointer;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  box-shadow:\n    0 12px 22px rgba(15, 23, 42, 0.35),\n    0 0 0 1px rgba(15, 23, 42, 0.75);\n  transition:\n    transform 0.12s ease,\n    box-shadow 0.12s ease,\n    filter 0.12s ease;\n}\n\n.login-button:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow:\n    0 16px 28px rgba(15, 23, 42, 0.45),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n  filter: brightness(1.03);\n}\n\n.login-button:active:not(:disabled) {\n  transform: translateY(0);\n  box-shadow:\n    0 8px 16px rgba(15, 23, 42, 0.4),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n}\n\n.login-button:disabled {\n  opacity: 0.7;\n  cursor: not-allowed;\n  filter: grayscale(0.1);\n}\n\n.error-message {\n  margin-bottom: 8px;\n  background: #fffbeb;\n  color: #92400e;\n  padding: 10px 12px;\n  border-radius: 10px;\n  border: 1px solid #fed7aa;\n  border-left-width: 4px;\n  border-left-color: #f97316;\n  font-size: 13px;\n  display: flex;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.error-message::before {\n  content: '⚠';\n  font-size: 14px;\n  line-height: 1.2;\n}\n\n.field-error {\n  font-size: 12px;\n  color: #c2410c;\n}\n\n.field-hint {\n  margin-top: 4px;\n  font-size: 12px;\n}\n\n.field-hint.warning {\n  color: #b45309;\n}\n\n.login-footer {\n  margin-top: 18px;\n  color: #6b7280;\n  font-size: 12px;\n}\n\n.login-footer p {\n  margin: 0;\n}\n\n@media (max-width: 800px) {\n  .login-shell {\n    grid-template-columns: minmax(0, 1fr);\n  }\n\n  .login-brand-panel {\n    display: none;\n  }\n\n  .login-card {\n    border-radius: 18px;\n  }\n}\n\n/* POS Styles */\n.pos-container {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n  background: #f5f7fa;\n  overflow: hidden;\n}\n\n.pos-header {\n  background: white;\n  padding: 6px 12px;\n  border-bottom: 1px solid #e1e5e9;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);\n  position: relative;\n  flex-shrink: 0;\n  gap: 12px;\n}\n\n.header-left {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  flex-shrink: 0;\n}\n\n.pos-header h1 {\n  color: #333;\n  font-size: 14px;\n  font-weight: 700;\n  margin: 0;\n  letter-spacing: -0.3px;\n}\n\n.header-center {\n  flex: 1;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 0;\n}\n\n.header-right {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  flex-shrink: 0;\n}\n\n.header-indicators {\n  display: flex;\n  gap: 6px;\n  align-items: center;\n  justify-content: center;\n}\n\n.branch-select {\n  padding: 5px 8px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 11px;\n  cursor: pointer;\n  min-width: 100px;\n}\n\n.icon-btn {\n  background: transparent;\n  border: 1px solid #e1e5e9;\n  padding: 5px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 14px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n}\n\n.icon-btn:hover {\n  background: #f8f9fa;\n  border-color: #adb5bd;\n}\n\n.icon-btn.logout-btn {\n  border-color: #dc3545;\n  color: #dc3545;\n}\n\n.icon-btn.logout-btn:hover {\n  background: #dc3545;\n  color: white;\n}\n\n.icon-btn.settings-btn:hover {\n  border-color: #667eea;\n  color: #667eea;\n}\n\n.icon-btn.theme-toggle-btn:hover {\n  border-color: #ffc107;\n}\n\n.icon-btn.exit-btn {\n  border-color: #6c757d;\n  color: #495057;\n}\n\n.icon-btn.exit-btn:hover {\n  background: #5a6268;\n  border-color: #545b62;\n  color: white;\n}\n\n.pos-content {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n  gap: 12px;\n  padding: 12px;\n}\n\n.products-section {\n  flex: 2;\n  padding: 12px;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n}\n\n.search-bar {\n  margin-bottom: 12px;\n  display: flex;\n  gap: 8px;\n}\n\n.search-input-wrapper {\n  flex: 1;\n  position: relative;\n}\n\n.search-input {\n  width: 100%;\n  padding: 8px 12px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  font-size: 13px;\n}\n\n.search-input:focus {\n  outline: none;\n  border-color: #667eea;\n  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);\n}\n\n.category-select {\n  padding: 8px 10px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 12px;\n  cursor: pointer;\n  min-width: 140px;\n}\n\n.products-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));\n  gap: 12px;\n  overflow-y: auto;\n  flex: 1;\n  min-height: 0;\n  justify-content: start;\n}\n\n.product-card {\n  background: #f8f9fa;\n  border: 1px solid #e1e5e9;\n  border-radius: 10px;\n  padding: 10px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  transition: all 0.18s ease;\n  position: relative;\n  box-sizing: border-box;\n}\n\n.product-category {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  background: #667eea;\n  color: white;\n  padding: 2px 6px;\n  border-radius: 8px;\n  font-size: 9px;\n  font-weight: 600;\n  text-transform: uppercase;\n  z-index: 1;\n}\n\n.product-card:hover {\n  border-color: #667eea;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.product-image {\n  width: 100%;\n  height: 60px;\n  margin-bottom: 6px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: #e9ecef;\n  flex-shrink: 0;\n}\n\n.product-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.product-info {\n  flex: 1;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n\n.product-info h3 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 11px;\n  font-weight: 600;\n  line-height: 1.2;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  flex-shrink: 0;\n}\n\n.product-info .sku {\n  color: #666;\n  font-size: 9px;\n  margin-bottom: 2px;\n  flex-shrink: 0;\n}\n\n.product-info .barcode {\n  color: #667eea;\n  font-size: 8px;\n  margin-bottom: 2px;\n  font-weight: 500;\n  flex-shrink: 0;\n}\n\n.product-info .price {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 13px;\n  margin: 3px 0 2px 0;\n  flex-shrink: 0;\n}\n\n.product-info .stock {\n  color: #666;\n  font-size: 9px;\n  flex-shrink: 0;\n}\n\n.variations-selector {\n  margin: 4px 0;\n  flex-shrink: 0;\n}\n\n.variation-select {\n  width: 100%;\n  padding: 3px 5px;\n  border: 1px solid #e1e5e9;\n  border-radius: 3px;\n  font-size: 9px;\n  background: white;\n}\n\n.variations-hint {\n  font-size: 10px;\n  color: #666;\n  margin: 4px 0 0;\n}\n\n.variation-chips {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n  margin-top: 4px;\n}\n\n.variation-chip {\n  border: none;\n  border-radius: 999px;\n  padding: 4px 8px;\n  font-size: 10px;\n  background: #e7f5ff;\n  color: #0b7285;\n  cursor: pointer;\n  white-space: nowrap;\n  max-width: 100%;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n}\n\n.variation-chip:hover:not(:disabled) {\n  background: #d0ebff;\n}\n\n.variation-chip-disabled {\n  background: #f1f3f5;\n  color: #868e96;\n  cursor: not-allowed;\n}\n\n/* Variation selection modal */\n.variation-modal-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1100;\n  padding: 20px;\n}\n\n.variation-modal {\n  background: white;\n  border-radius: 10px;\n  max-width: 480px;\n  width: 100%;\n  max-height: 80vh;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);\n}\n\n.variation-modal-header {\n  padding: 16px 20px;\n  border-bottom: 1px solid #e9ecef;\n  position: relative;\n}\n\n.variation-modal-header h2 {\n  margin: 0;\n  font-size: 18px;\n  color: #333;\n}\n\n.variation-modal-product-name {\n  margin: 4px 0 0;\n  font-size: 13px;\n  color: #666;\n}\n\n.variation-modal-close {\n  position: absolute;\n  top: 12px;\n  right: 12px;\n  background: none;\n  border: none;\n  font-size: 24px;\n  color: #666;\n  cursor: pointer;\n  padding: 4px;\n  line-height: 1;\n}\n\n.variation-modal-close:hover {\n  color: #333;\n}\n\n.variation-modal-list {\n  padding: 12px;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.variation-modal-empty {\n  text-align: center;\n  padding: 24px;\n  color: #666;\n  font-size: 14px;\n}\n\n.variation-modal-empty .add-base-product-btn {\n  margin-top: 12px;\n  padding: 10px 20px;\n  background: #28a745;\n  color: white;\n  border: none;\n  border-radius: 6px;\n  font-weight: 600;\n  cursor: pointer;\n}\n\n.variation-modal-empty .add-base-product-btn:hover {\n  background: #218838;\n}\n\n.product-card-clickable {\n  cursor: pointer;\n}\n\n.product-card-clickable:hover {\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);\n}\n\n.variation-card {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 12px 16px;\n  border: 2px solid #e1e5e9;\n  border-radius: 8px;\n  background: white;\n  cursor: pointer;\n  text-align: left;\n  transition: border-color 0.2s, background 0.2s;\n}\n\n.variation-card:hover:not(:disabled) {\n  border-color: #28a745;\n  background: #f0fff4;\n}\n\n.variation-card-out-of-stock {\n  opacity: 0.6;\n  cursor: not-allowed;\n}\n\n.variation-card-main {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.variation-card-label {\n  font-weight: 600;\n  font-size: 14px;\n  color: #333;\n}\n\n.variation-card-sku {\n  font-size: 11px;\n  color: #666;\n}\n\n.variation-card-price {\n  font-weight: 700;\n  font-size: 15px;\n  color: #28a745;\n}\n\n.variation-card-stock {\n  font-size: 12px;\n  padding: 4px 8px;\n  border-radius: 4px;\n}\n\n.variation-card-stock.in-stock {\n  background: #d4edda;\n  color: #155724;\n}\n\n.variation-card-stock.out-of-stock {\n  background: #f8d7da;\n  color: #721c24;\n}\n\n.add-to-cart-btn {\n  background: #28a745;\n  color: white;\n  border: none;\n  padding: 6px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 10px;\n  margin-top: 6px;\n  transition: background-color 0.2s ease;\n  touch-action: manipulation;\n  width: 100%;\n  flex-shrink: 0;\n}\n\n.add-to-cart-btn:hover:not(:disabled) {\n  background: #218838;\n}\n\n.add-to-cart-btn:disabled {\n  background: #adb5bd;\n  cursor: not-allowed;\n}\n\n.cart-section {\n  flex: 1;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  padding: 12px;\n  min-width: 320px;\n  max-width: 400px;\n}\n\n.cart-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 12px;\n}\n\n.cart-section h2 {\n  margin: 0;\n  color: #333;\n  font-size: 14px;\n  font-weight: 600;\n}\n\n.hold-transaction-btn-header {\n  background: #ffc107;\n  color: #333;\n  border: none;\n  padding: 6px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 500;\n  font-size: 11px;\n  transition: all 0.2s ease;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n\n.hold-transaction-btn-header:hover {\n  background: #ffb300;\n  transform: translateY(-1px);\n}\n\n.cart-items {\n  flex: 1;\n  overflow-y: auto;\n  margin-bottom: 12px;\n  min-height: 0;\n}\n\n.empty-cart {\n  text-align: center;\n  color: #666;\n  font-style: italic;\n  padding: 20px 0;\n  font-size: 12px;\n}\n\n.cart-item {\n  display: flex;\n  gap: 10px;\n  padding: 10px;\n  border-bottom: 1px solid #e1e5e9;\n  background: #f8f9fa;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: all 0.2s ease;\n}\n\n.cart-item:hover {\n  background: #f0f0f0;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\n}\n\n.cart-item-image {\n  flex-shrink: 0;\n  width: 50px;\n  height: 50px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #e1e5e9;\n}\n\n.cart-item-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.cart-item-content {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n  min-width: 0;\n}\n\n.cart-item-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.item-info {\n  flex: 1;\n  min-width: 0;\n}\n\n.item-info h4 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 13px;\n  font-weight: 600;\n  line-height: 1.3;\n}\n\n.item-info .sku {\n  color: #6c757d;\n  font-size: 10px;\n  margin: 0;\n}\n\n.item-info .variation-info {\n  color: #667eea;\n  font-size: 9px;\n  margin: 2px 0 0 0;\n  font-style: italic;\n}\n\n.remove-btn {\n  background: #dc3545;\n  color: white;\n  border: none;\n  width: 22px;\n  height: 22px;\n  border-radius: 50%;\n  font-size: 16px;\n  line-height: 1;\n  transition: all 0.2s ease;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  padding: 0;\n  font-weight: bold;\n}\n\n.remove-btn:hover {\n  background: #c82333;\n  transform: scale(1.1);\n}\n\n.cart-item-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.price-info {\n  display: flex;\n  align-items: baseline;\n  gap: 4px;\n}\n\n.unit-price {\n  color: #28a745;\n  font-weight: 700;\n  font-size: 13px;\n}\n\n.unit-label {\n  color: #6c757d;\n  font-size: 9px;\n  text-transform: lowercase;\n}\n\n.quantity-section {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  align-items: center;\n}\n\n.quantity-controls {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: white;\n  border: 1px solid #dee2e6;\n  border-radius: 4px;\n  padding: 2px;\n}\n\n.quantity-btn {\n  background: transparent;\n  border: none;\n  width: 26px;\n  height: 26px;\n  border-radius: 3px;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: bold;\n  font-size: 16px;\n  color: #495057;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quantity-btn:hover {\n  background: #e9ecef;\n}\n\n.quantity-btn.decrease {\n  color: #dc3545;\n}\n\n.quantity-btn.increase {\n  color: #28a745;\n}\n\n.quantity {\n  min-width: 30px;\n  text-align: center;\n  font-weight: 700;\n  font-size: 13px;\n  color: #333;\n  padding: 0 4px;\n}\n\n.quick-quantity-buttons {\n  display: flex;\n  gap: 3px;\n  flex-wrap: wrap;\n  justify-content: center;\n}\n\n.quick-qty-btn {\n  background: white;\n  border: 1px solid #dee2e6;\n  padding: 3px 6px;\n  border-radius: 3px;\n  cursor: pointer;\n  font-size: 9px;\n  font-weight: 600;\n  color: #495057;\n  min-width: 24px;\n  min-height: 20px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quick-qty-btn:hover {\n  background: #667eea;\n  border-color: #667eea;\n  color: white;\n}\n\n.item-total {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 2px;\n  flex-shrink: 0;\n}\n\n.total-label {\n  font-size: 9px;\n  color: #6c757d;\n  text-transform: uppercase;\n  letter-spacing: 0.5px;\n}\n\n.total-amount {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 14px;\n}\n\n.cart-item:last-child {\n  border-bottom: none;\n  margin-bottom: 0;\n}\n\n.cart-summary {\n  border-top: 2px solid #e1e5e9;\n  padding-top: 10px;\n  margin-bottom: 12px;\n}\n\n.summary-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 6px;\n  font-size: 12px;\n  color: #495057;\n}\n\n.summary-row.total {\n  font-size: 14px;\n  font-weight: 700;\n  color: #333;\n  border-top: 1px solid #e1e5e9;\n  padding-top: 8px;\n  margin-top: 6px;\n}\n\n.checkout-section {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.shortcut-hint {\n  margin: 0;\n  font-size: 11px;\n  color: #6c757d;\n  text-align: center;\n}\n\n.checkout-btn {\n  width: 100%;\n  padding: 12px;\n  border: none;\n  border-radius: 4px;\n  font-size: 13px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.2s ease;\n}\n\n.checkout-btn:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.checkout-btn:active:not(:disabled) {\n  transform: translateY(0);\n}\n\n.checkout-btn:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n  transform: none;\n}\n\n.checkout-btn.proceed {\n  background: #007bff;\n  color: white;\n}\n\n.checkout-btn.proceed:hover:not(:disabled) {\n  background: #0056b3;\n}\n\n.loading {\n  text-align: center;\n  padding: 20px;\n  color: #666;\n  font-style: italic;\n  font-size: 12px;\n}\n\n/* Responsive Design */\n@media (max-width: 1200px) {\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 130px);\n  }\n  \n  .product-card {\n    width: 130px;\n    height: 170px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    flex: none;\n    height: 50vh;\n  }\n\n  .checkout-section {\n    flex-direction: column;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 120px);\n    gap: 8px;\n  }\n  \n  .product-card {\n    width: 120px;\n    height: 160px;\n  }\n}\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/renderer/styles.css"],"names":[],"mappings":"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","sourcesContent":["/* Global Styles */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;\n  background-color: #f5f5f5;\n  color: #333;\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* Loading Screen */\n.loading-screen {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100vh;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n}\n\n.loading-spinner {\n  width: 50px;\n  height: 50px;\n  border: 4px solid rgba(255, 255, 255, 0.3);\n  border-top: 4px solid white;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n  margin-bottom: 20px;\n}\n\n@keyframes spin {\n  0% { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n/* Login Styles */\n.login-container {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n  padding: 32px 16px;\n  background: radial-gradient(circle at top left, #9f7aea 0, transparent 55%),\n    radial-gradient(circle at bottom right, #4299e1 0, transparent 55%),\n    linear-gradient(135deg, #0f172a 0%, #020617 100%);\n  color: #e5e7eb;\n}\n\n.login-shell {\n  display: grid;\n  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);\n  gap: 1px;\n  width: 100%;\n  max-width: 960px;\n  border-radius: 18px;\n  background: linear-gradient(135deg, rgba(148, 163, 184, 0.6), rgba(56, 189, 248, 0.6));\n  box-shadow:\n    0 22px 45px rgba(15, 23, 42, 0.6),\n    0 0 0 1px rgba(148, 163, 184, 0.35);\n  overflow: hidden;\n}\n\n.login-brand-panel {\n  position: relative;\n  padding: 32px 32px 28px;\n  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), transparent 55%),\n    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.22), transparent 55%),\n    linear-gradient(145deg, #020617 0%, #020617 40%, #020617 100%);\n  color: #e5e7eb;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n.login-brand-logo {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin-bottom: 18px;\n}\n\n.login-logo-mark {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 32px;\n  height: 32px;\n  border-radius: 11px;\n  background: radial-gradient(circle at 0 0, #22c55e 0, #16a34a 40%, #065f46 100%);\n  color: #ecfdf5;\n  font-weight: 700;\n  font-size: 18px;\n}\n\n.login-logo-text {\n  font-size: 20px;\n  font-weight: 600;\n  letter-spacing: 0.02em;\n}\n\n.login-brand-tagline {\n  font-size: 14px;\n  color: #9ca3af;\n  max-width: 320px;\n}\n\n.login-brand-highlights {\n  margin-top: 28px;\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n}\n\n.login-highlight {\n  display: flex;\n  gap: 10px;\n  align-items: flex-start;\n}\n\n.login-highlight-dot {\n  margin-top: 4px;\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: linear-gradient(135deg, #22c55e, #a3e635);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);\n  flex-shrink: 0;\n}\n\n.login-highlight-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: #e5e7eb;\n}\n\n.login-highlight-subtitle {\n  font-size: 13px;\n  color: #9ca3af;\n}\n\n.login-environment-pill {\n  align-self: flex-start;\n  margin-top: 24px;\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 12px;\n  border-radius: 999px;\n  background: rgba(15, 23, 42, 0.9);\n  border: 1px solid rgba(148, 163, 184, 0.7);\n  font-size: 12px;\n  color: #e5e7eb;\n}\n\n.login-env-dot {\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: radial-gradient(circle at 30% 0, #22c55e 0, #16a34a 60%, #14532d 100%);\n  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);\n}\n\n.login-card {\n  background: #f9fafb;\n  padding: 32px 32px 28px;\n  border-radius: 18px;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n}\n\n.login-header {\n  margin-bottom: 24px;\n}\n\n.login-header h1 {\n  color: #020617;\n  margin-bottom: 6px;\n  font-size: 24px;\n  font-weight: 600;\n}\n\n.login-header p {\n  color: #6b7280;\n  font-size: 14px;\n}\n\n.login-form {\n  display: flex;\n  flex-direction: column;\n  gap: 18px;\n}\n\n.form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.form-group label {\n  font-size: 14px;\n  font-weight: 500;\n  color: #111827;\n}\n\n.form-input-wrapper {\n  position: relative;\n}\n\n.form-group input {\n  width: 100%;\n  padding: 11px 12px;\n  border-radius: 10px;\n  border: 1px solid #e5e7eb;\n  font-size: 14px;\n  background: #ffffff;\n  color: #111827;\n  outline: none;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background-color 0.15s ease;\n}\n\n.form-group input::placeholder {\n  color: #9ca3af;\n}\n\n.form-group input:focus {\n  border-color: #4f46e5;\n  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.65), 0 10px 18px rgba(15, 23, 42, 0.12);\n}\n\n.form-group.has-error input {\n  border-color: #f97316;\n  background-color: #fffbeb;\n}\n\n.form-group.has-error input:focus {\n  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.85), 0 10px 18px rgba(124, 45, 18, 0.25);\n}\n\n.login-form-meta {\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.checkbox-label {\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 13px;\n  color: #4b5563;\n}\n\n.checkbox-label input[type='checkbox'] {\n  width: 14px;\n  height: 14px;\n  border-radius: 4px;\n  border: 1px solid #d1d5db;\n  cursor: pointer;\n}\n\n.link-button {\n  border: none;\n  background: none;\n  padding: 0;\n  font-size: 13px;\n  color: #4f46e5;\n  cursor: pointer;\n  text-decoration: none;\n}\n\n.link-button:hover {\n  text-decoration: underline;\n}\n\n.login-button {\n  margin-top: 6px;\n  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #22c55e 120%);\n  color: white;\n  border: none;\n  padding: 12px 16px;\n  border-radius: 12px;\n  font-size: 15px;\n  font-weight: 600;\n  cursor: pointer;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  box-shadow:\n    0 12px 22px rgba(15, 23, 42, 0.35),\n    0 0 0 1px rgba(15, 23, 42, 0.75);\n  transition:\n    transform 0.12s ease,\n    box-shadow 0.12s ease,\n    filter 0.12s ease;\n}\n\n.login-button:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow:\n    0 16px 28px rgba(15, 23, 42, 0.45),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n  filter: brightness(1.03);\n}\n\n.login-button:active:not(:disabled) {\n  transform: translateY(0);\n  box-shadow:\n    0 8px 16px rgba(15, 23, 42, 0.4),\n    0 0 0 1px rgba(15, 23, 42, 0.9);\n}\n\n.login-button:disabled {\n  opacity: 0.7;\n  cursor: not-allowed;\n  filter: grayscale(0.1);\n}\n\n.error-message {\n  margin-bottom: 8px;\n  background: #fffbeb;\n  color: #92400e;\n  padding: 10px 12px;\n  border-radius: 10px;\n  border: 1px solid #fed7aa;\n  border-left-width: 4px;\n  border-left-color: #f97316;\n  font-size: 13px;\n  display: flex;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.error-message::before {\n  content: '⚠';\n  font-size: 14px;\n  line-height: 1.2;\n}\n\n.field-error {\n  font-size: 12px;\n  color: #c2410c;\n}\n\n.field-hint {\n  margin-top: 4px;\n  font-size: 12px;\n}\n\n.field-hint.warning {\n  color: #b45309;\n}\n\n.login-footer {\n  margin-top: 18px;\n  color: #6b7280;\n  font-size: 12px;\n}\n\n.login-footer p {\n  margin: 0;\n}\n\n@media (max-width: 800px) {\n  .login-shell {\n    grid-template-columns: minmax(0, 1fr);\n  }\n\n  .login-brand-panel {\n    display: none;\n  }\n\n  .login-card {\n    border-radius: 18px;\n  }\n}\n\n/* POS Styles */\n.pos-container {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n  background: #f5f7fa;\n  overflow: hidden;\n}\n\n.pos-header {\n  background: white;\n  padding: 6px 12px;\n  border-bottom: 1px solid #e1e5e9;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);\n  position: relative;\n  flex-shrink: 0;\n  gap: 12px;\n}\n\n.header-left {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  flex-shrink: 0;\n}\n\n.pos-header h1 {\n  color: #333;\n  font-size: 14px;\n  font-weight: 700;\n  margin: 0;\n  letter-spacing: -0.3px;\n}\n\n.header-center {\n  flex: 1;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  min-width: 0;\n}\n\n.header-right {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  flex-shrink: 0;\n}\n\n.header-indicators {\n  display: flex;\n  gap: 6px;\n  align-items: center;\n  justify-content: center;\n}\n\n.branch-select {\n  padding: 5px 8px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 11px;\n  cursor: pointer;\n  min-width: 100px;\n}\n\n.icon-btn {\n  background: transparent;\n  border: 1px solid #e1e5e9;\n  padding: 5px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 14px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n}\n\n.icon-btn:hover {\n  background: #f8f9fa;\n  border-color: #adb5bd;\n}\n\n.icon-btn.logout-btn {\n  border-color: #dc3545;\n  color: #dc3545;\n}\n\n.icon-btn.logout-btn:hover {\n  background: #dc3545;\n  color: white;\n}\n\n.icon-btn.settings-btn:hover {\n  border-color: #667eea;\n  color: #667eea;\n}\n\n.icon-btn.theme-toggle-btn:hover {\n  border-color: #ffc107;\n}\n\n.icon-btn.exit-btn {\n  border-color: #6c757d;\n  color: #495057;\n}\n\n.icon-btn.exit-btn:hover {\n  background: #5a6268;\n  border-color: #545b62;\n  color: white;\n}\n\n/* Receipts menu (Find by ID / Sales History) */\n.receipts-menu {\n  position: relative;\n}\n\n.icon-btn.receipts-btn {\n  width: auto;\n  padding: 5px 10px;\n  font-size: 12px;\n  gap: 4px;\n}\n\n.receipts-menu-label {\n  margin-left: 4px;\n}\n\n.receipts-menu-caret {\n  font-size: 10px;\n  margin-left: 2px;\n}\n\n.receipts-menu-dropdown {\n  position: absolute;\n  top: 32px;\n  right: 0;\n  background: #ffffff;\n  border: 1px solid #e1e5e9;\n  border-radius: 6px;\n  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);\n  min-width: 160px;\n  z-index: 20;\n  padding: 4px 0;\n}\n\n.receipts-menu-item {\n  width: 100%;\n  border: none;\n  background: transparent;\n  text-align: left;\n  padding: 8px 12px;\n  font-size: 13px;\n  cursor: pointer;\n  color: #212529;\n}\n\n.receipts-menu-item:hover {\n  background: #f8f9fa;\n}\n\n.pos-content {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n  gap: 12px;\n  padding: 12px;\n}\n\n.products-section {\n  flex: 2;\n  padding: 12px;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n}\n\n.search-bar {\n  margin-bottom: 12px;\n  display: flex;\n  gap: 8px;\n}\n\n.search-input-wrapper {\n  flex: 1;\n  position: relative;\n}\n\n.search-input {\n  width: 100%;\n  padding: 8px 12px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  font-size: 13px;\n}\n\n.search-input:focus {\n  outline: none;\n  border-color: #667eea;\n  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);\n}\n\n.category-select {\n  padding: 8px 10px;\n  border: 1px solid #e1e5e9;\n  border-radius: 4px;\n  background: white;\n  font-size: 12px;\n  cursor: pointer;\n  min-width: 140px;\n}\n\n.products-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));\n  gap: 12px;\n  overflow-y: auto;\n  flex: 1;\n  min-height: 0;\n  justify-content: start;\n}\n\n.product-card {\n  background: #f8f9fa;\n  border: 1px solid #e1e5e9;\n  border-radius: 10px;\n  padding: 10px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  transition: all 0.18s ease;\n  position: relative;\n  box-sizing: border-box;\n}\n\n.product-category {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  background: #667eea;\n  color: white;\n  padding: 2px 6px;\n  border-radius: 8px;\n  font-size: 9px;\n  font-weight: 600;\n  text-transform: uppercase;\n  z-index: 1;\n}\n\n.product-card:hover {\n  border-color: #667eea;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.product-image {\n  width: 100%;\n  height: 60px;\n  margin-bottom: 6px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: #e9ecef;\n  flex-shrink: 0;\n}\n\n.product-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.product-info {\n  flex: 1;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n\n.product-info h3 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 11px;\n  font-weight: 600;\n  line-height: 1.2;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  flex-shrink: 0;\n}\n\n.product-info .sku {\n  color: #666;\n  font-size: 9px;\n  margin-bottom: 2px;\n  flex-shrink: 0;\n}\n\n.product-info .barcode {\n  color: #667eea;\n  font-size: 8px;\n  margin-bottom: 2px;\n  font-weight: 500;\n  flex-shrink: 0;\n}\n\n.product-info .price {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 13px;\n  margin: 3px 0 2px 0;\n  flex-shrink: 0;\n}\n\n.product-info .stock {\n  color: #666;\n  font-size: 9px;\n  flex-shrink: 0;\n}\n\n.variations-selector {\n  margin: 4px 0;\n  flex-shrink: 0;\n}\n\n.variation-select {\n  width: 100%;\n  padding: 3px 5px;\n  border: 1px solid #e1e5e9;\n  border-radius: 3px;\n  font-size: 9px;\n  background: white;\n}\n\n.variations-hint {\n  font-size: 10px;\n  color: #666;\n  margin: 4px 0 0;\n}\n\n.variation-chips {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n  margin-top: 4px;\n}\n\n.variation-chip {\n  border: none;\n  border-radius: 999px;\n  padding: 4px 8px;\n  font-size: 10px;\n  background: #e7f5ff;\n  color: #0b7285;\n  cursor: pointer;\n  white-space: nowrap;\n  max-width: 100%;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n}\n\n.variation-chip:hover:not(:disabled) {\n  background: #d0ebff;\n}\n\n.variation-chip-disabled {\n  background: #f1f3f5;\n  color: #868e96;\n  cursor: not-allowed;\n}\n\n/* Variation selection modal */\n.variation-modal-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1100;\n  padding: 20px;\n}\n\n.variation-modal {\n  background: white;\n  border-radius: 10px;\n  max-width: 480px;\n  width: 100%;\n  max-height: 80vh;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);\n}\n\n.variation-modal-header {\n  padding: 16px 20px;\n  border-bottom: 1px solid #e9ecef;\n  position: relative;\n}\n\n.variation-modal-header h2 {\n  margin: 0;\n  font-size: 18px;\n  color: #333;\n}\n\n.variation-modal-product-name {\n  margin: 4px 0 0;\n  font-size: 13px;\n  color: #666;\n}\n\n.variation-modal-close {\n  position: absolute;\n  top: 12px;\n  right: 12px;\n  background: none;\n  border: none;\n  font-size: 24px;\n  color: #666;\n  cursor: pointer;\n  padding: 4px;\n  line-height: 1;\n}\n\n.variation-modal-close:hover {\n  color: #333;\n}\n\n.variation-modal-list {\n  padding: 12px;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.variation-modal-empty {\n  text-align: center;\n  padding: 24px;\n  color: #666;\n  font-size: 14px;\n}\n\n.variation-modal-empty .add-base-product-btn {\n  margin-top: 12px;\n  padding: 10px 20px;\n  background: #28a745;\n  color: white;\n  border: none;\n  border-radius: 6px;\n  font-weight: 600;\n  cursor: pointer;\n}\n\n.variation-modal-empty .add-base-product-btn:hover {\n  background: #218838;\n}\n\n.product-card-clickable {\n  cursor: pointer;\n}\n\n.product-card-clickable:hover {\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);\n}\n\n.variation-card {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 12px 16px;\n  border: 2px solid #e1e5e9;\n  border-radius: 8px;\n  background: white;\n  cursor: pointer;\n  text-align: left;\n  transition: border-color 0.2s, background 0.2s;\n}\n\n.variation-card:hover:not(:disabled) {\n  border-color: #28a745;\n  background: #f0fff4;\n}\n\n.variation-card-out-of-stock {\n  opacity: 0.6;\n  cursor: not-allowed;\n}\n\n.variation-card-main {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.variation-card-label {\n  font-weight: 600;\n  font-size: 14px;\n  color: #333;\n}\n\n.variation-card-sku {\n  font-size: 11px;\n  color: #666;\n}\n\n.variation-card-price {\n  font-weight: 700;\n  font-size: 15px;\n  color: #28a745;\n}\n\n.variation-card-stock {\n  font-size: 12px;\n  padding: 4px 8px;\n  border-radius: 4px;\n}\n\n.variation-card-stock.in-stock {\n  background: #d4edda;\n  color: #155724;\n}\n\n.variation-card-stock.out-of-stock {\n  background: #f8d7da;\n  color: #721c24;\n}\n\n.add-to-cart-btn {\n  background: #28a745;\n  color: white;\n  border: none;\n  padding: 6px 8px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 10px;\n  margin-top: 6px;\n  transition: background-color 0.2s ease;\n  touch-action: manipulation;\n  width: 100%;\n  flex-shrink: 0;\n}\n\n.add-to-cart-btn:hover:not(:disabled) {\n  background: #218838;\n}\n\n.add-to-cart-btn:disabled {\n  background: #adb5bd;\n  cursor: not-allowed;\n}\n\n.cart-section {\n  flex: 1;\n  background: white;\n  border-radius: 6px;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);\n  display: flex;\n  flex-direction: column;\n  padding: 12px;\n  min-width: 320px;\n  max-width: 400px;\n}\n\n.cart-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 12px;\n}\n\n.cart-section h2 {\n  margin: 0;\n  color: #333;\n  font-size: 14px;\n  font-weight: 600;\n}\n\n.hold-transaction-btn-header {\n  background: #ffc107;\n  color: #333;\n  border: none;\n  padding: 6px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-weight: 500;\n  font-size: 11px;\n  transition: all 0.2s ease;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n\n.hold-transaction-btn-header:hover {\n  background: #ffb300;\n  transform: translateY(-1px);\n}\n\n.cart-items {\n  flex: 1;\n  overflow-y: auto;\n  margin-bottom: 12px;\n  min-height: 0;\n}\n\n.empty-cart {\n  text-align: center;\n  color: #666;\n  font-style: italic;\n  padding: 20px 0;\n  font-size: 12px;\n}\n\n.cart-item {\n  display: flex;\n  gap: 10px;\n  padding: 10px;\n  border-bottom: 1px solid #e1e5e9;\n  background: #f8f9fa;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: all 0.2s ease;\n}\n\n.cart-item:hover {\n  background: #f0f0f0;\n  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\n}\n\n.cart-item-image {\n  flex-shrink: 0;\n  width: 50px;\n  height: 50px;\n  border-radius: 4px;\n  overflow: hidden;\n  background: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #e1e5e9;\n}\n\n.cart-item-image img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.cart-item-content {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n  min-width: 0;\n}\n\n.cart-item-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 8px;\n}\n\n.item-info {\n  flex: 1;\n  min-width: 0;\n}\n\n.item-info h4 {\n  margin: 0 0 3px 0;\n  color: #333;\n  font-size: 13px;\n  font-weight: 600;\n  line-height: 1.3;\n}\n\n.item-info .sku {\n  color: #6c757d;\n  font-size: 10px;\n  margin: 0;\n}\n\n.item-info .variation-info {\n  color: #667eea;\n  font-size: 9px;\n  margin: 2px 0 0 0;\n  font-style: italic;\n}\n\n.remove-btn {\n  background: #dc3545;\n  color: white;\n  border: none;\n  width: 22px;\n  height: 22px;\n  border-radius: 50%;\n  font-size: 16px;\n  line-height: 1;\n  transition: all 0.2s ease;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  padding: 0;\n  font-weight: bold;\n}\n\n.remove-btn:hover {\n  background: #c82333;\n  transform: scale(1.1);\n}\n\n.cart-item-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.price-info {\n  display: flex;\n  align-items: baseline;\n  gap: 4px;\n}\n\n.unit-price {\n  color: #28a745;\n  font-weight: 700;\n  font-size: 13px;\n}\n\n.unit-label {\n  color: #6c757d;\n  font-size: 9px;\n  text-transform: lowercase;\n}\n\n.quantity-section {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  align-items: center;\n}\n\n.quantity-controls {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: white;\n  border: 1px solid #dee2e6;\n  border-radius: 4px;\n  padding: 2px;\n}\n\n.quantity-btn {\n  background: transparent;\n  border: none;\n  width: 26px;\n  height: 26px;\n  border-radius: 3px;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: bold;\n  font-size: 16px;\n  color: #495057;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quantity-btn:hover {\n  background: #e9ecef;\n}\n\n.quantity-btn.decrease {\n  color: #dc3545;\n}\n\n.quantity-btn.increase {\n  color: #28a745;\n}\n\n.quantity {\n  min-width: 30px;\n  text-align: center;\n  font-weight: 700;\n  font-size: 13px;\n  color: #333;\n  padding: 0 4px;\n}\n\n.quick-quantity-buttons {\n  display: flex;\n  gap: 3px;\n  flex-wrap: wrap;\n  justify-content: center;\n}\n\n.quick-qty-btn {\n  background: white;\n  border: 1px solid #dee2e6;\n  padding: 3px 6px;\n  border-radius: 3px;\n  cursor: pointer;\n  font-size: 9px;\n  font-weight: 600;\n  color: #495057;\n  min-width: 24px;\n  min-height: 20px;\n  transition: all 0.2s ease;\n  touch-action: manipulation;\n}\n\n.quick-qty-btn:hover {\n  background: #667eea;\n  border-color: #667eea;\n  color: white;\n}\n\n.item-total {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 2px;\n  flex-shrink: 0;\n}\n\n.total-label {\n  font-size: 9px;\n  color: #6c757d;\n  text-transform: uppercase;\n  letter-spacing: 0.5px;\n}\n\n.total-amount {\n  font-weight: 700;\n  color: #28a745;\n  font-size: 14px;\n}\n\n.cart-item:last-child {\n  border-bottom: none;\n  margin-bottom: 0;\n}\n\n.cart-summary {\n  border-top: 2px solid #e1e5e9;\n  padding-top: 10px;\n  margin-bottom: 12px;\n}\n\n.summary-row {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 6px;\n  font-size: 12px;\n  color: #495057;\n}\n\n.summary-row.total {\n  font-size: 14px;\n  font-weight: 700;\n  color: #333;\n  border-top: 1px solid #e1e5e9;\n  padding-top: 8px;\n  margin-top: 6px;\n}\n\n.checkout-section {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.shortcut-hint {\n  margin: 0;\n  font-size: 11px;\n  color: #6c757d;\n  text-align: center;\n}\n\n.checkout-btn {\n  width: 100%;\n  padding: 12px;\n  border: none;\n  border-radius: 4px;\n  font-size: 13px;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.2s ease;\n}\n\n.checkout-btn:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n\n.checkout-btn:active:not(:disabled) {\n  transform: translateY(0);\n}\n\n.checkout-btn:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n  transform: none;\n}\n\n.checkout-btn.proceed {\n  background: #007bff;\n  color: white;\n}\n\n.checkout-btn.proceed:hover:not(:disabled) {\n  background: #0056b3;\n}\n\n.loading {\n  text-align: center;\n  padding: 20px;\n  color: #666;\n  font-style: italic;\n  font-size: 12px;\n}\n\n/* Responsive Design */\n@media (max-width: 1200px) {\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 130px);\n  }\n  \n  .product-card {\n    width: 130px;\n    height: 170px;\n  }\n}\n\n@media (max-width: 768px) {\n  .pos-content {\n    flex-direction: column;\n  }\n\n  .products-section,\n  .cart-section {\n    flex: none;\n    height: 50vh;\n  }\n\n  .checkout-section {\n    flex-direction: column;\n  }\n\n  .products-grid {\n    grid-template-columns: repeat(auto-fill, 120px);\n    gap: 8px;\n  }\n  \n  .product-card {\n    width: 120px;\n    height: 160px;\n  }\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -43035,6 +43433,85 @@ exports["default"] = ErrorBoundary;
 
 /***/ }),
 
+/***/ "./src/renderer/components/FindReceiptModal.tsx":
+/*!******************************************************!*\
+  !*** ./src/renderer/components/FindReceiptModal.tsx ***!
+  \******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ../modals.css */ "./src/renderer/modals.css");
+const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
+const FindReceiptModal = ({ onClose, onReceiptFound }) => {
+    const [saleId, setSaleId] = (0, react_1.useState)('');
+    const [loading, setLoading] = (0, react_1.useState)(false);
+    const handleLookup = async () => {
+        const id = saleId.trim();
+        if (!id) {
+            (0, Toast_1.showToast)('Enter a receipt or sale ID', 'error');
+            return;
+        }
+        setLoading(true);
+        try {
+            const result = await window.electronAPI.getReceipt(id);
+            if (result.success && result.receipt) {
+                onReceiptFound(result.receipt);
+                onClose();
+            }
+            else {
+                (0, Toast_1.showToast)(result.error || 'Receipt not found', 'error');
+            }
+        }
+        catch (e) {
+            (0, Toast_1.showToast)('Failed to fetch receipt', 'error');
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+    return ((0, jsx_runtime_1.jsx)("div", { className: "modal-overlay", onClick: onClose, children: (0, jsx_runtime_1.jsxs)("div", { className: "modal-content find-receipt-modal", onClick: e => e.stopPropagation(), children: [(0, jsx_runtime_1.jsxs)("div", { className: "modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Find Receipt" }), (0, jsx_runtime_1.jsx)("button", { type: "button", className: "close-btn", onClick: onClose, "aria-label": "Close", children: "\u00D7" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "modal-body", children: [(0, jsx_runtime_1.jsx)("p", { className: "find-receipt-hint", children: "Enter the receipt or sale ID to view the receipt and process returns." }), (0, jsx_runtime_1.jsx)("input", { type: "text", className: "find-receipt-input", placeholder: "e.g. REC-001 or sale ID", value: saleId, onChange: e => setSaleId(e.target.value), onKeyDown: e => e.key === 'Enter' && handleLookup(), autoFocus: true })] }), (0, jsx_runtime_1.jsxs)("div", { className: "modal-actions", children: [(0, jsx_runtime_1.jsx)("button", { type: "button", className: "cancel-btn", onClick: onClose, children: "Cancel" }), (0, jsx_runtime_1.jsx)("button", { type: "button", className: "complete-btn", onClick: handleLookup, disabled: loading, children: loading ? 'Looking up...' : 'Look up' })] })] }) }));
+};
+exports["default"] = FindReceiptModal;
+
+
+/***/ }),
+
 /***/ "./src/renderer/components/Login.tsx":
 /*!*******************************************!*\
   !*** ./src/renderer/components/Login.tsx ***!
@@ -43534,6 +44011,8 @@ const ProductSelection_1 = __importDefault(__webpack_require__(/*! ./ProductSele
 const Checkout_1 = __importDefault(__webpack_require__(/*! ./Checkout */ "./src/renderer/components/Checkout.tsx"));
 const Receipt_1 = __importDefault(__webpack_require__(/*! ./Receipt */ "./src/renderer/components/Receipt.tsx"));
 const PrintPreview_1 = __importDefault(__webpack_require__(/*! ./PrintPreview */ "./src/renderer/components/PrintPreview.tsx"));
+const FindReceiptModal_1 = __importDefault(__webpack_require__(/*! ./FindReceiptModal */ "./src/renderer/components/FindReceiptModal.tsx"));
+const SalesHistoryModal_1 = __importDefault(__webpack_require__(/*! ./SalesHistoryModal */ "./src/renderer/components/SalesHistoryModal.tsx"));
 const AuthContext_1 = __webpack_require__(/*! ../contexts/AuthContext */ "./src/renderer/contexts/AuthContext.tsx");
 const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
 const usePendingTransactions_1 = __webpack_require__(/*! ../hooks/usePendingTransactions */ "./src/renderer/hooks/usePendingTransactions.ts");
@@ -43556,6 +44035,8 @@ const POS = () => {
     const [processingSale, setProcessingSale] = (0, react_1.useState)(false);
     const [printing, setPrinting] = (0, react_1.useState)(false);
     const [queuedSalesCount, setQueuedSalesCount] = (0, react_1.useState)(0);
+    const [showFindReceiptModal, setShowFindReceiptModal] = (0, react_1.useState)(false);
+    const [showSalesHistoryModal, setShowSalesHistoryModal] = (0, react_1.useState)(false);
     // Update queue count periodically when processing or when queue exists
     (0, react_1.useEffect)(() => {
         const updateQueueCount = () => {
@@ -44636,7 +45117,13 @@ const POS = () => {
         deleteTransaction(transactionId);
         (0, Toast_1.showToast)('Pending transaction deleted.', 'info');
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-app", children: [currentStep === 'products' && ((0, jsx_runtime_1.jsx)(ProductSelection_1.default, { cart: cart, onAddToCart: addToCart, onUpdateQuantity: updateQuantity, onRemoveFromCart: removeFromCart, onProceedToCheckout: handleProceedToCheckout, onHoldTransaction: handleHoldTransaction, onResumeTransaction: handleResumeTransaction, onDeletePendingTransaction: handleDeletePendingTransaction, pendingTransactions: pendingTransactions, getTotal: getTotal, getVAT: getVAT, getGrandTotal: getGrandTotal, branches: branches, selectedBranch: selectedBranch, onBranchChange: setSelectedBranch })), currentStep === 'checkout' && ((0, jsx_runtime_1.jsx)(Checkout_1.default, { cart: cart, subtotal: getTotal(), vat: getVAT(), total: getGrandTotal(), onCompleteSale: handleCompleteSale, onBackToProducts: handleBackToProducts, loading: processingSale, queuedSalesCount: queuedSalesCount })), currentStep === 'receipt' && ((0, jsx_runtime_1.jsx)(Receipt_1.default, { receipt: currentReceipt, onPrint: handleShowPrintPreview, onNewSale: handleNewSale, printing: printing })), currentStep === 'print-preview' && ((0, jsx_runtime_1.jsx)(PrintPreview_1.default, { receipt: currentReceipt, onPrint: handlePrintReceipt, onBack: handleBackFromPrintPreview, onPrintViaBrowser: handlePrintViaBrowser, printing: printing }))] }));
+    const handleReceiptFromLookup = (receipt) => {
+        setCurrentReceipt(receipt);
+        setCurrentStep('receipt');
+        setShowFindReceiptModal(false);
+        setShowSalesHistoryModal(false);
+    };
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-app", children: [showFindReceiptModal && ((0, jsx_runtime_1.jsx)(FindReceiptModal_1.default, { onClose: () => setShowFindReceiptModal(false), onReceiptFound: handleReceiptFromLookup })), showSalesHistoryModal && ((0, jsx_runtime_1.jsx)(SalesHistoryModal_1.default, { onClose: () => setShowSalesHistoryModal(false), onReceiptFound: handleReceiptFromLookup })), currentStep === 'products' && ((0, jsx_runtime_1.jsx)(ProductSelection_1.default, { cart: cart, onAddToCart: addToCart, onUpdateQuantity: updateQuantity, onRemoveFromCart: removeFromCart, onProceedToCheckout: handleProceedToCheckout, onHoldTransaction: handleHoldTransaction, onResumeTransaction: handleResumeTransaction, onDeletePendingTransaction: handleDeletePendingTransaction, pendingTransactions: pendingTransactions, getTotal: getTotal, getVAT: getVAT, getGrandTotal: getGrandTotal, branches: branches, selectedBranch: selectedBranch, onBranchChange: setSelectedBranch, onFindReceiptClick: () => setShowFindReceiptModal(true), onSalesHistoryClick: () => setShowSalesHistoryModal(true) })), currentStep === 'checkout' && ((0, jsx_runtime_1.jsx)(Checkout_1.default, { cart: cart, subtotal: getTotal(), vat: getVAT(), total: getGrandTotal(), onCompleteSale: handleCompleteSale, onBackToProducts: handleBackToProducts, loading: processingSale, queuedSalesCount: queuedSalesCount })), currentStep === 'receipt' && ((0, jsx_runtime_1.jsx)(Receipt_1.default, { receipt: currentReceipt, onPrint: handleShowPrintPreview, onNewSale: handleNewSale, printing: printing })), currentStep === 'print-preview' && ((0, jsx_runtime_1.jsx)(PrintPreview_1.default, { receipt: currentReceipt, onPrint: handlePrintReceipt, onBack: handleBackFromPrintPreview, onPrintViaBrowser: handlePrintViaBrowser, printing: printing }))] }));
 };
 exports["default"] = POS;
 
@@ -44755,7 +45242,7 @@ const PrintPreview = ({ receipt, onPrint, onBack, onPrintViaBrowser, printing })
             catch (error) {
                 console.error('Failed to get API base URL:', error);
                 // Fallback to default
-                setApiBaseUrl('http://127.0.0.1:9000');
+                setApiBaseUrl('http://127.0.0.1:5100');
             }
         };
         fetchApiUrl();
@@ -44870,7 +45357,7 @@ const useBarcodeScanner_1 = __webpack_require__(/*! ../hooks/useBarcodeScanner *
 const useDebounce_1 = __importDefault(__webpack_require__(/*! ../hooks/useDebounce */ "./src/renderer/hooks/useDebounce.ts"));
 __webpack_require__(/*! ../pending-transactions.css */ "./src/renderer/pending-transactions.css");
 __webpack_require__(/*! ../barcode-scanner.css */ "./src/renderer/barcode-scanner.css");
-const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCart, onProceedToCheckout, onHoldTransaction, onResumeTransaction, onDeletePendingTransaction, pendingTransactions = [], getTotal, getVAT, getGrandTotal, branches = [], selectedBranch: propSelectedBranch = '', onBranchChange }) => {
+const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCart, onProceedToCheckout, onHoldTransaction, onResumeTransaction, onDeletePendingTransaction, pendingTransactions = [], getTotal, getVAT, getGrandTotal, branches = [], selectedBranch: propSelectedBranch = '', onBranchChange, onFindReceiptClick, onSalesHistoryClick }) => {
     const { logout } = (0, AuthContext_1.useAuth)();
     const { theme, toggleTheme } = (0, ThemeContext_1.useTheme)();
     const [products, setProducts] = (0, react_1.useState)([]);
@@ -44898,7 +45385,21 @@ const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCar
     const [showSettings, setShowSettings] = (0, react_1.useState)(false);
     const [scannedBarcode, setScannedBarcode] = (0, react_1.useState)(null);
     const [showBarcodeHelp, setShowBarcodeHelp] = (0, react_1.useState)(false);
+    const [showReceiptsMenu, setShowReceiptsMenu] = (0, react_1.useState)(false);
     const searchInputRef = (0, react_1.useRef)(null);
+    const receiptsMenuRef = (0, react_1.useRef)(null);
+    // Close receipts dropdown when clicking outside
+    (0, react_1.useEffect)(() => {
+        const handleClickOutside = (event) => {
+            if (receiptsMenuRef.current && !receiptsMenuRef.current.contains(event.target)) {
+                setShowReceiptsMenu(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
     // Barcode scanner hook
     const { isScanning, lastScannedCode, clearScan } = (0, useBarcodeScanner_1.useBarcodeScanner)({
         onScan: (barcode) => {
@@ -45088,7 +45589,13 @@ const ProductSelection = ({ cart, onAddToCart, onUpdateQuantity, onRemoveFromCar
         setShowVariationModal(false);
         setSelectedProductForVariation(null);
     };
-    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pos-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "header-left", children: [(0, jsx_runtime_1.jsx)("h1", { children: "POS" }), (0, jsx_runtime_1.jsx)(SyncStatus_1.default, {})] }), (0, jsx_runtime_1.jsx)("div", { className: "header-center", children: (0, jsx_runtime_1.jsxs)("div", { className: "header-indicators", children: [isScanning && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanning-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "scanning-pulse" }), (0, jsx_runtime_1.jsx)("span", { children: "Scanning..." })] })), scannedBarcode && !isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanned-indicator", children: (0, jsx_runtime_1.jsxs)("span", { children: ["\u2713 ", scannedBarcode] }) }))] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "header-right", children: [(0, jsx_runtime_1.jsxs)("select", { value: selectedBranch, onChange: (e) => handleBranchChange(e.target.value), className: "branch-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "Select Branch" }), branches.map((branch) => ((0, jsx_runtime_1.jsx)("option", { value: branch.id, children: branch.name }, branch.id)))] }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn theme-toggle-btn", onClick: toggleTheme, title: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode', children: theme === 'dark' ? '☀️' : '🌙' }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn settings-btn", onClick: () => setShowSettings(true), title: "Settings", children: "\u2699\uFE0F" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn logout-btn", onClick: logout, title: "Logout", children: "\uD83D\uDEAA" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn exit-btn", onClick: () => {
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "pos-container", children: [(0, jsx_runtime_1.jsxs)("div", { className: "pos-header", children: [(0, jsx_runtime_1.jsxs)("div", { className: "header-left", children: [(0, jsx_runtime_1.jsx)("h1", { children: "POS" }), (0, jsx_runtime_1.jsx)(SyncStatus_1.default, {})] }), (0, jsx_runtime_1.jsx)("div", { className: "header-center", children: (0, jsx_runtime_1.jsxs)("div", { className: "header-indicators", children: [isScanning && ((0, jsx_runtime_1.jsxs)("div", { className: "barcode-scanning-indicator", children: [(0, jsx_runtime_1.jsx)("div", { className: "scanning-pulse" }), (0, jsx_runtime_1.jsx)("span", { children: "Scanning..." })] })), scannedBarcode && !isScanning && ((0, jsx_runtime_1.jsx)("div", { className: "barcode-scanned-indicator", children: (0, jsx_runtime_1.jsxs)("span", { children: ["\u2713 ", scannedBarcode] }) }))] }) }), (0, jsx_runtime_1.jsxs)("div", { className: "header-right", children: [(onFindReceiptClick || onSalesHistoryClick) && ((0, jsx_runtime_1.jsxs)("div", { className: "receipts-menu", ref: receiptsMenuRef, children: [(0, jsx_runtime_1.jsxs)("button", { type: "button", className: "icon-btn receipts-btn", onClick: () => setShowReceiptsMenu(prev => !prev), title: "Receipts", "aria-label": "Receipts menu", children: ["\uD83E\uDDFE", (0, jsx_runtime_1.jsx)("span", { className: "receipts-menu-label", children: "Receipts" }), (0, jsx_runtime_1.jsx)("span", { className: "receipts-menu-caret", children: "\u25BE" })] }), showReceiptsMenu && ((0, jsx_runtime_1.jsxs)("div", { className: "receipts-menu-dropdown", children: [onFindReceiptClick && ((0, jsx_runtime_1.jsx)("button", { type: "button", className: "receipts-menu-item", onClick: () => {
+                                                    setShowReceiptsMenu(false);
+                                                    onFindReceiptClick();
+                                                }, children: "Find by ID" })), onSalesHistoryClick && ((0, jsx_runtime_1.jsx)("button", { type: "button", className: "receipts-menu-item", onClick: () => {
+                                                    setShowReceiptsMenu(false);
+                                                    onSalesHistoryClick();
+                                                }, children: "Sales History" }))] }))] })), (0, jsx_runtime_1.jsxs)("select", { value: selectedBranch, onChange: (e) => handleBranchChange(e.target.value), className: "branch-select", children: [(0, jsx_runtime_1.jsx)("option", { value: "", children: "Select Branch" }), branches.map((branch) => ((0, jsx_runtime_1.jsx)("option", { value: branch.id, children: branch.name }, branch.id)))] }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn theme-toggle-btn", onClick: toggleTheme, title: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode', children: theme === 'dark' ? '☀️' : '🌙' }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn settings-btn", onClick: () => setShowSettings(true), title: "Settings", children: "\u2699\uFE0F" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn logout-btn", onClick: logout, title: "Logout", children: "\uD83D\uDEAA" }), (0, jsx_runtime_1.jsx)("button", { className: "icon-btn exit-btn", onClick: () => {
                                     if (cart.length > 0 && !window.confirm('Exit POS? Current sale will be lost.'))
                                         return;
                                     window.electronAPI.quitApp();
@@ -45195,7 +45702,7 @@ const Receipt = ({ receipt, onPrint, onNewSale, printing }) => {
             catch (error) {
                 console.error('Failed to get API base URL:', error);
                 // Fallback to default
-                setApiBaseUrl('http://127.0.0.1:9000');
+                setApiBaseUrl('http://127.0.0.1:5100');
             }
         };
         fetchApiUrl();
@@ -45351,6 +45858,121 @@ const Receipt = ({ receipt, onPrint, onNewSale, printing }) => {
                                                                 }) })] })), receipt.creditNotes && ((0, jsx_runtime_1.jsxs)("div", { className: "credit-notes-section", children: [(0, jsx_runtime_1.jsx)("span", { className: "credit-label", children: "Notes:" }), (0, jsx_runtime_1.jsx)("p", { className: "credit-notes-text", children: receipt.creditNotes })] }))] })), receipt.amountReceived && receipt.paymentMethod !== 'credit' && ((0, jsx_runtime_1.jsxs)("div", { className: "payment-details", children: [(0, jsx_runtime_1.jsxs)("div", { className: "payment-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Amount Received:" }), (0, jsx_runtime_1.jsx)("span", { children: formatCurrency(receipt.amountReceived) })] }), receipt.change !== undefined && receipt.change > 0 && ((0, jsx_runtime_1.jsxs)("div", { className: "payment-row change-row", children: [(0, jsx_runtime_1.jsx)("span", { children: "Change:" }), (0, jsx_runtime_1.jsx)("span", { className: "change-amount", children: formatCurrency(receipt.change) })] }))] }))] }))] }), (0, jsx_runtime_1.jsxs)("div", { className: "receipt-footer-card", children: [(0, jsx_runtime_1.jsx)("p", { className: "thank-you", children: "Thank you for your business!" }), (0, jsx_runtime_1.jsx)("p", { className: "footer-note", children: "Please keep this receipt for your records" })] })] })] })] }));
 };
 exports["default"] = Receipt;
+
+
+/***/ }),
+
+/***/ "./src/renderer/components/SalesHistoryModal.tsx":
+/*!*******************************************************!*\
+  !*** ./src/renderer/components/SalesHistoryModal.tsx ***!
+  \*******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ../modals.css */ "./src/renderer/modals.css");
+const Toast_1 = __webpack_require__(/*! ./Toast */ "./src/renderer/components/Toast.tsx");
+const formatDate = (d) => {
+    try {
+        return new Date(d).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' });
+    }
+    catch {
+        return d;
+    }
+};
+const formatCurrency = (n) => `Ksh ${(n ?? 0).toFixed(2)}`;
+const SalesHistoryModal = ({ onClose, onReceiptFound }) => {
+    const [sales, setSales] = (0, react_1.useState)([]);
+    const [loading, setLoading] = (0, react_1.useState)(true);
+    const [error, setError] = (0, react_1.useState)(null);
+    const [loadingReceiptId, setLoadingReceiptId] = (0, react_1.useState)(null);
+    (0, react_1.useEffect)(() => {
+        let cancelled = false;
+        (async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const result = await window.electronAPI.getRecentSales();
+                if (cancelled)
+                    return;
+                if (result.success && Array.isArray(result.sales)) {
+                    setSales(result.sales);
+                }
+                else {
+                    setError(result.error || 'Failed to load sales');
+                    setSales([]);
+                }
+            }
+            catch (e) {
+                if (!cancelled) {
+                    setError('Failed to load sales');
+                    setSales([]);
+                }
+            }
+            finally {
+                if (!cancelled)
+                    setLoading(false);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, []);
+    const openReceipt = async (saleId) => {
+        setLoadingReceiptId(saleId);
+        try {
+            const result = await window.electronAPI.getReceipt(saleId);
+            if (result.success && result.receipt) {
+                onReceiptFound(result.receipt);
+                onClose();
+            }
+            else {
+                (0, Toast_1.showToast)(result.error || 'Receipt not found', 'error');
+            }
+        }
+        catch (e) {
+            (0, Toast_1.showToast)('Failed to fetch receipt', 'error');
+        }
+        finally {
+            setLoadingReceiptId(null);
+        }
+    };
+    return ((0, jsx_runtime_1.jsx)("div", { className: "modal-overlay", onClick: onClose, children: (0, jsx_runtime_1.jsxs)("div", { className: "modal-content sales-history-modal", onClick: e => e.stopPropagation(), children: [(0, jsx_runtime_1.jsxs)("div", { className: "modal-header", children: [(0, jsx_runtime_1.jsx)("h2", { children: "Sales History" }), (0, jsx_runtime_1.jsx)("button", { type: "button", className: "close-btn", onClick: onClose, "aria-label": "Close", children: "\u00D7" })] }), (0, jsx_runtime_1.jsxs)("div", { className: "modal-body", children: [loading && (0, jsx_runtime_1.jsx)("p", { className: "sales-history-loading", children: "Loading recent sales..." }), error && (0, jsx_runtime_1.jsx)("p", { className: "sales-history-error", children: error }), !loading && !error && sales.length === 0 && ((0, jsx_runtime_1.jsx)("p", { className: "sales-history-empty", children: "No recent sales." })), !loading && sales.length > 0 && ((0, jsx_runtime_1.jsx)("div", { className: "sales-history-table-wrap", children: (0, jsx_runtime_1.jsxs)("table", { className: "sales-history-table", children: [(0, jsx_runtime_1.jsx)("thead", { children: (0, jsx_runtime_1.jsxs)("tr", { children: [(0, jsx_runtime_1.jsx)("th", { children: "Date" }), (0, jsx_runtime_1.jsx)("th", { children: "Receipt ID" }), (0, jsx_runtime_1.jsx)("th", { children: "Customer" }), (0, jsx_runtime_1.jsx)("th", { children: "Total" }), (0, jsx_runtime_1.jsx)("th", {})] }) }), (0, jsx_runtime_1.jsx)("tbody", { children: sales.map((sale) => ((0, jsx_runtime_1.jsxs)("tr", { children: [(0, jsx_runtime_1.jsx)("td", { children: formatDate(sale.date) }), (0, jsx_runtime_1.jsx)("td", { children: sale.id }), (0, jsx_runtime_1.jsx)("td", { children: (sale.customerName || sale.customerPhone || '—') }), (0, jsx_runtime_1.jsx)("td", { children: formatCurrency(sale.total) }), (0, jsx_runtime_1.jsx)("td", { children: (0, jsx_runtime_1.jsx)("button", { type: "button", className: "sales-history-view-btn", onClick: () => openReceipt(sale.id), disabled: loadingReceiptId !== null, children: loadingReceiptId === sale.id ? 'Opening...' : 'View' }) })] }, sale.id))) })] }) }))] }), (0, jsx_runtime_1.jsx)("div", { className: "modal-actions", children: (0, jsx_runtime_1.jsx)("button", { type: "button", className: "cancel-btn", onClick: onClose, children: "Close" }) })] }) }));
+};
+exports["default"] = SalesHistoryModal;
 
 
 /***/ }),
@@ -47665,6 +48287,60 @@ __webpack_require__(/*! ./styles.css */ "./src/renderer/styles.css");
 __webpack_require__(/*! ./dark-mode.css */ "./src/renderer/dark-mode.css");
 const root = client_1.default.createRoot(document.getElementById('root'));
 root.render((0, jsx_runtime_1.jsx)(react_1.default.StrictMode, { children: (0, jsx_runtime_1.jsx)(App_1.default, {}) }));
+
+
+/***/ }),
+
+/***/ "./src/renderer/modals.css":
+/*!*********************************!*\
+  !*** ./src/renderer/modals.css ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_modals_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../node_modules/css-loader/dist/cjs.js!./modals.css */ "./node_modules/css-loader/dist/cjs.js!./src/renderer/modals.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_modals_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_modals_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_modals_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_modals_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

@@ -47313,6 +47313,42 @@ electron_1.ipcMain.handle('getReceipt', async (event, saleId) => {
         return { success: false, error: errorMessage };
     }
 });
+electron_1.ipcMain.handle('getRecentSales', async () => {
+    const store = new electron_store_1.default();
+    try {
+        const token = getAuthToken(store);
+        if (!token) {
+            logger_1.logger.warn('No authentication token for recent sales', { component: 'sales' });
+            return { success: false, error: 'Not authenticated', sales: [] };
+        }
+        let online = false;
+        try {
+            await axios_1.default.get(BACKEND_HEALTH_URL, { timeout: 5000 });
+            online = true;
+        }
+        catch {
+            online = false;
+        }
+        if (!online) {
+            return { success: false, error: 'Offline', sales: [] };
+        }
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/sales/recent`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.get(`${BACKEND_BASE_URL}/sales/recent`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            timeout: 10000,
+        }), endpoint);
+        return { success: true, sales: response.data ?? [] };
+    }
+    catch (error) {
+        logger_1.logger.error('Error fetching recent sales', { component: 'sales', error: error.message });
+        const parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseAxiosError)(error));
+        return { success: false, error: parsedError?.message || 'Failed to fetch recent sales', sales: [] };
+    }
+});
 electron_1.ipcMain.handle('printReceipt', async (event, receiptData) => {
     try {
         logger_1.logger.info('Printing receipt for sale', { component: 'receipts', saleId: receiptData.saleId });
@@ -48623,8 +48659,8 @@ exports.APP_CONFIG = exports.WS_BASE_URL = exports.API_BASE_URL = void 0;
 // Configuration constants for the POS application
 // Use localhost backend for development; override via env vars.
 // Use 127.0.0.1 instead of localhost to avoid IPv6 (::1) connection issues on Windows
-exports.API_BASE_URL = process.env.API_BASE_URL || 'http://127.0.0.1:9000';
-exports.WS_BASE_URL = process.env.WS_BASE_URL || 'ws://127.0.0.1:9000';
+exports.API_BASE_URL = process.env.API_BASE_URL || 'http://127.0.0.1:5100';
+exports.WS_BASE_URL = process.env.WS_BASE_URL || 'ws://127.0.0.1:5100';
 exports.APP_CONFIG = {
     name: 'SaaS POS',
     version: '1.0.0',

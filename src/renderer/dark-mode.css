@@ -129,17 +129,28 @@
 
 [data-theme="dark"] .settings-btn,
 [data-theme="dark"] .theme-toggle-btn,
-[data-theme="dark"] .find-receipt-btn,
-[data-theme="dark"] .sales-history-btn {
+[data-theme="dark"] .receipts-btn {
   background: #404040;
   color: #e0e0e0;
 }
 
 [data-theme="dark"] .settings-btn:hover,
 [data-theme="dark"] .theme-toggle-btn:hover,
-[data-theme="dark"] .find-receipt-btn:hover,
-[data-theme="dark"] .sales-history-btn:hover {
+[data-theme="dark"] .receipts-btn:hover {
   background: #4a4a4a;
+}
+
+[data-theme="dark"] .receipts-menu-dropdown {
+  background: #252525;
+  border-color: #444;
+}
+
+[data-theme="dark"] .receipts-menu-item {
+  color: #f1f3f5;
+}
+
+[data-theme="dark"] .receipts-menu-item:hover {
+  background: #333333;
 }
 
 [data-theme="dark"] .icon-btn.exit-btn {
