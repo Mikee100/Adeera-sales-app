@@ -4064,3 +4064,204 @@
 {"component":"receipts","error":{"error":"Not Found","message":"Business information not found","statusCode":404},"level":"error","message":"Error fetching receipt","saleId":"8d2fd96f-7b6f-405c-95fb-90aa319af75a","service":"saas-pos","status":404,"timestamp":"2026-02-25T18:34:12.512Z"}
 {"component":"receipts","level":"info","message":"Fetching receipt for sale","saleId":"8d2fd96f-7b6f-405c-95fb-90aa319af75a","service":"saas-pos","timestamp":"2026-02-25T18:34:17.327Z"}
 {"component":"receipts","error":{"error":"Not Found","message":"Business information not found","statusCode":404},"level":"error","message":"Error fetching receipt","saleId":"8d2fd96f-7b6f-405c-95fb-90aa319af75a","service":"saas-pos","status":404,"timestamp":"2026-02-25T18:34:17.366Z"}
+{"component":"app","level":"info","message":"User session found on app start, starting periodic sync","service":"saas-pos","timestamp":"2026-03-11T10:28:48.781Z"}
+{"component":"products","level":"info","message":"Periodic product sync started (every 5 minutes)","service":"saas-pos","timestamp":"2026-03-11T10:28:48.802Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:28:53.612Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:28:53.627Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:28:53.630Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:28:53.653Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:28:53.682Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:28:53.684Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:28:53.705Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:28:53.716Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:28:53.719Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:28:53.769Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:28:53.776Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:28:53.778Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:30:04.988Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:30:05.008Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:30:05.026Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:30:05.029Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:30:05.034Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:30:05.037Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:30:05.047Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:30:05.055Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:30:05.065Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:30:05.068Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:30:05.071Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:30:05.074Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:30:13.218Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:30:13.241Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:30:13.252Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:30:13.255Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:30:13.260Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:30:13.264Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:30:13.309Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:30:13.315Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:30:13.319Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:30:13.398Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T10:30:13.410Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T10:30:13.413Z"}
+{"component":"app","level":"info","message":"User session found on app start, starting periodic sync","service":"saas-pos","timestamp":"2026-03-11T10:32:23.108Z"}
+{"component":"products","level":"info","message":"Periodic product sync started (every 5 minutes)","service":"saas-pos","timestamp":"2026-03-11T10:32:23.126Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:32:27.186Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:32:27.215Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:32:27.329Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:32:27.384Z"}
+{"component":"products","error":{"message":"Unauthorized","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-03-11T10:32:27.596Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (backend error)","service":"saas-pos","timestamp":"2026-03-11T10:32:27.600Z"}
+{"component":"branches","error":"Request failed with status code 401","level":"warn","message":"Failed to fetch branches","service":"saas-pos","status":401,"timestamp":"2026-03-11T10:32:27.762Z"}
+{"component":"products","error":{"message":"Unauthorized","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-03-11T10:32:27.771Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (backend error)","service":"saas-pos","timestamp":"2026-03-11T10:32:27.790Z"}
+{"component":"products","error":{"message":"Unauthorized","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-03-11T10:32:27.808Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (backend error)","service":"saas-pos","timestamp":"2026-03-11T10:32:27.815Z"}
+{"component":"products","error":{"message":"Unauthorized","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-03-11T10:32:27.872Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (backend error)","service":"saas-pos","timestamp":"2026-03-11T10:32:27.875Z"}
+{"component":"branches","error":"Request failed with status code 401","level":"warn","message":"Failed to fetch branches","service":"saas-pos","status":401,"timestamp":"2026-03-11T10:32:27.917Z"}
+{"component":"products","level":"info","message":"Force syncing products from backend","service":"saas-pos","timestamp":"2026-03-11T10:32:54.275Z"}
+{"component":"products","level":"warn","message":"Authentication failed during product sync, clearing token","service":"saas-pos","timestamp":"2026-03-11T10:32:54.335Z"}
+{"component":"token-storage","level":"info","message":"Token deleted","service":"saas-pos","timestamp":"2026-03-11T10:32:55.834Z"}
+{"component":"products","level":"info","message":"Periodic product sync stopped","service":"saas-pos","timestamp":"2026-03-11T10:32:55.914Z"}
+{"component":"auth","level":"info","message":"User logged out, cleared all cached data","service":"saas-pos","timestamp":"2026-03-11T10:32:55.915Z"}
+{"component":"auth","email":"adeera@gmail.com","level":"info","message":"Authentication attempt","service":"saas-pos","timestamp":"2026-03-11T10:33:05.106Z"}
+{"component":"auth","level":"debug","message":"Checking backend health","service":"saas-pos","timestamp":"2026-03-11T10:33:05.108Z"}
+{"component":"auth","level":"info","message":"Backend is online","service":"saas-pos","timestamp":"2026-03-11T10:33:05.122Z"}
+{"component":"auth","level":"debug","message":"Sending login request to backend","service":"saas-pos","timestamp":"2026-03-11T10:33:05.125Z","url":"http://127.0.0.1:5100/auth/login"}
+{"component":"auth","error":{"error":"Unauthorized","message":"Invalid credentials","statusCode":401},"level":"error","message":"Login error","service":"saas-pos","status":401,"timestamp":"2026-03-11T10:33:05.504Z"}
+{"component":"auth","email":"upperhill@gmail.com","level":"info","message":"Authentication attempt","service":"saas-pos","timestamp":"2026-03-11T10:33:24.098Z"}
+{"component":"auth","level":"debug","message":"Checking backend health","service":"saas-pos","timestamp":"2026-03-11T10:33:24.099Z"}
+{"component":"auth","level":"info","message":"Backend is online","service":"saas-pos","timestamp":"2026-03-11T10:33:24.114Z"}
+{"component":"auth","level":"debug","message":"Sending login request to backend","service":"saas-pos","timestamp":"2026-03-11T10:33:24.115Z","url":"http://127.0.0.1:5100/auth/login"}
+{"component":"auth","level":"debug","message":"Backend response received","service":"saas-pos","status":201,"timestamp":"2026-03-11T10:33:24.373Z"}
+{"component":"auth","level":"info","message":"Login successful, caching data","service":"saas-pos","timestamp":"2026-03-11T10:33:24.373Z"}
+{"component":"token-storage","hasExpiry":false,"level":"info","message":"Token stored securely","service":"saas-pos","timestamp":"2026-03-11T10:33:24.390Z"}
+{"component":"auth","encrypted":true,"level":"debug","message":"Data cached successfully","service":"saas-pos","timestamp":"2026-03-11T10:33:24.404Z"}
+{"component":"products","level":"info","message":"Periodic product sync started (every 5 minutes)","service":"saas-pos","timestamp":"2026-03-11T10:33:24.404Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:24.415Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:24.427Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:24.443Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:24.450Z"}
+{"component":"branches","error":"Request failed with status code 401","level":"warn","message":"Failed to fetch branches","service":"saas-pos","status":401,"timestamp":"2026-03-11T10:33:24.493Z"}
+{"component":"branches","error":"Request failed with status code 401","level":"warn","message":"Failed to fetch branches","service":"saas-pos","status":401,"timestamp":"2026-03-11T10:33:24.497Z"}
+{"component":"products","level":"info","message":"Received 5 products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:24.571Z"}
+{"component":"products","level":"debug","message":"Products cached successfully","productCount":5,"service":"saas-pos","timestamp":"2026-03-11T10:33:24.600Z"}
+{"component":"products","level":"info","message":"Received 5 products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:24.611Z"}
+{"component":"products","level":"debug","message":"Products cached successfully","productCount":5,"service":"saas-pos","timestamp":"2026-03-11T10:33:24.654Z"}
+{"component":"products","level":"info","message":"Received 5 products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:24.657Z"}
+{"component":"products","level":"debug","message":"Products cached successfully","productCount":5,"service":"saas-pos","timestamp":"2026-03-11T10:33:24.686Z"}
+{"component":"products","level":"info","message":"Received 5 products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:24.687Z"}
+{"component":"products","level":"debug","message":"Products cached successfully","productCount":5,"service":"saas-pos","timestamp":"2026-03-11T10:33:24.713Z"}
+{"component":"products","level":"info","message":"Force syncing products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:30.273Z"}
+{"component":"products","level":"info","message":"Products synced successfully: 5 products","service":"saas-pos","timestamp":"2026-03-11T10:33:30.340Z"}
+{"component":"receipts","level":"info","message":"Fetching receipt for sale","saleId":"8d2fd96f-7b6f-405c-95fb-90aa319af75a","service":"saas-pos","timestamp":"2026-03-11T10:33:39.886Z"}
+{"component":"receipts","level":"info","message":"Receipt fetched successfully","saleId":"8d2fd96f-7b6f-405c-95fb-90aa319af75a","service":"saas-pos","timestamp":"2026-03-11T10:33:39.933Z"}
+{"component":"returns","items":1,"level":"info","message":"Creating return for sale","saleId":"8d2fd96f-7b6f-405c-95fb-90aa319af75a","service":"saas-pos","timestamp":"2026-03-11T10:33:50.418Z"}
+{"component":"returns","error":{"message":"Return unitPrice must be a non-negative number","path":"/sales/8d2fd96f-7b6f-405c-95fb-90aa319af75a/returns","statusCode":400,"timestamp":"2026-03-11T10:33:50.458Z"},"level":"error","message":"Error creating return","saleId":"8d2fd96f-7b6f-405c-95fb-90aa319af75a","service":"saas-pos","status":400,"timestamp":"2026-03-11T10:33:50.459Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:57.669Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:57.675Z"}
+{"component":"products","level":"info","message":"Received 5 products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:57.715Z"}
+{"component":"products","level":"debug","message":"Products cached successfully","productCount":5,"service":"saas-pos","timestamp":"2026-03-11T10:33:57.744Z"}
+{"component":"products","level":"info","message":"Received 5 products from backend","service":"saas-pos","timestamp":"2026-03-11T10:33:57.747Z"}
+{"component":"products","level":"debug","message":"Products cached successfully","productCount":5,"service":"saas-pos","timestamp":"2026-03-11T10:33:57.777Z"}
+{"branchId":"b152a8ff-680c-49f2-aae9-59c47b606eb3","component":"sales","hasIdempotencyKey":true,"items":1,"level":"info","message":"Creating sale","paymentMethod":"cash","saleDataKeys":["items","paymentMethod","idempotencyKey","branchId","amountReceived"],"service":"saas-pos","timestamp":"2026-03-11T10:34:17.009Z"}
+{"amountReceived":2800,"branchId":"b152a8ff-680c-49f2-aae9-59c47b606eb3","component":"sales","idempotencyKey":"sale_1773225257002_7abkha10f","items":[{"hasVariationId":true,"price":1200,"productId":"f33c5147-9be1-4fae-93e4-f9167c0da01c","quantity":2}],"level":"debug","message":"Sale data being sent","paymentMethod":"cash","service":"saas-pos","timestamp":"2026-03-11T10:34:17.010Z"}
+{"component":"sales","level":"info","message":"Sale created successfully","saleId":"c108a0ec-544c-40b9-947d-bfccaf70c1d2","service":"saas-pos","timestamp":"2026-03-11T10:34:17.182Z"}
+{"component":"printer","level":"info","message":"Opening cash drawer","service":"saas-pos","timestamp":"2026-03-11T10:34:17.184Z"}
+{"component":"printer","level":"info","message":"SerialPort loaded successfully","service":"saas-pos","timestamp":"2026-03-11T10:34:18.217Z"}
+{"component":"printer","devicePath":"COM1","level":"info","message":"Opening cash drawer via USB/Serial","service":"saas-pos","timestamp":"2026-03-11T10:34:18.218Z"}
+{"component":"sales","level":"info","message":"Refreshing product catalog after successful sale","service":"saas-pos","timestamp":"2026-03-11T10:34:18.225Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-03-11T10:34:18.228Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:34:18.235Z"}
+{"component":"sales","level":"info","message":"Product catalog refreshed after sale: 5 products","service":"saas-pos","timestamp":"2026-03-11T10:34:18.273Z"}
+{"component":"products","level":"info","message":"Received 5 products from backend","service":"saas-pos","timestamp":"2026-03-11T10:34:18.308Z"}
+{"component":"products","level":"debug","message":"Products cached successfully","productCount":5,"service":"saas-pos","timestamp":"2026-03-11T10:34:18.332Z"}
+{"component":"receipts","level":"info","message":"Fetching receipt for sale","saleId":"c108a0ec-544c-40b9-947d-bfccaf70c1d2","service":"saas-pos","timestamp":"2026-03-11T10:34:18.342Z"}
+{"component":"receipts","level":"info","message":"Receipt fetched successfully","saleId":"c108a0ec-544c-40b9-947d-bfccaf70c1d2","service":"saas-pos","timestamp":"2026-03-11T10:34:18.370Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:34:18.383Z"}
+{"component":"products","level":"info","message":"Received 5 products from backend","service":"saas-pos","timestamp":"2026-03-11T10:34:18.405Z"}
+{"component":"products","level":"debug","message":"Products cached successfully","productCount":5,"service":"saas-pos","timestamp":"2026-03-11T10:34:18.427Z"}
+{"component":"receipts","level":"info","message":"Printing receipt for sale","saleId":"c108a0ec-544c-40b9-947d-bfccaf70c1d2","service":"saas-pos","timestamp":"2026-03-11T10:34:25.182Z"}
+{"component":"printer","level":"info","message":"Starting receipt print","saleId":"c108a0ec-544c-40b9-947d-bfccaf70c1d2","service":"saas-pos","timestamp":"2026-03-11T10:34:25.184Z"}
+{"component":"printer","error":"Cannot read properties of undefined (reading 'toFixed')","level":"error","message":"Error printing receipt","service":"saas-pos","timestamp":"2026-03-11T10:34:25.204Z"}
+{"component":"receipts","errorMessage":"Cannot read properties of undefined (reading 'toFixed')","level":"error","message":"Receipt print failed","saleId":"c108a0ec-544c-40b9-947d-bfccaf70c1d2","service":"saas-pos","timestamp":"2026-03-11T10:34:25.206Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:35:06.446Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T10:35:06.456Z"}
+{"component":"products","level":"info","message":"Received 5 products from backend","service":"saas-pos","timestamp":"2026-03-11T10:35:06.498Z"}
+{"component":"products","level":"debug","message":"Products cached successfully","productCount":5,"service":"saas-pos","timestamp":"2026-03-11T10:35:06.540Z"}
+{"component":"products","level":"info","message":"Received 5 products from backend","service":"saas-pos","timestamp":"2026-03-11T10:35:06.544Z"}
+{"component":"products","level":"debug","message":"Products cached successfully","productCount":5,"service":"saas-pos","timestamp":"2026-03-11T10:35:06.586Z"}
+{"component":"app","level":"info","message":"User session found on app start, starting periodic sync","service":"saas-pos","timestamp":"2026-03-11T16:30:07.815Z"}
+{"component":"products","level":"info","message":"Periodic product sync started (every 5 minutes)","service":"saas-pos","timestamp":"2026-03-11T16:30:07.838Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T16:30:13.857Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T16:30:13.882Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T16:30:13.885Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T16:30:13.900Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T16:30:13.918Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T16:30:13.925Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T16:30:13.928Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T16:30:13.933Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T16:30:13.936Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T16:30:13.993Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T16:30:13.998Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T16:30:14.001Z"}
+{"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-03-11T16:35:07.863Z"}
+{"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-03-11T16:40:07.879Z"}
+{"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-03-11T16:45:07.876Z"}
+{"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-03-11T16:50:07.882Z"}
+{"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-03-11T16:55:07.897Z"}
+{"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-03-11T17:00:07.897Z"}
+{"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-03-11T17:05:07.908Z"}
+{"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-03-11T17:10:07.917Z"}
+{"branchId":"b152a8ff-680c-49f2-aae9-59c47b606eb3","component":"sales","hasIdempotencyKey":true,"items":1,"level":"info","message":"Creating sale","paymentMethod":"cash","saleDataKeys":["items","paymentMethod","idempotencyKey","branchId","amountReceived"],"service":"saas-pos","timestamp":"2026-03-11T17:10:54.049Z"}
+{"amountReceived":1500,"branchId":"b152a8ff-680c-49f2-aae9-59c47b606eb3","component":"sales","idempotencyKey":"sale_1773249054036_wpvmgrku1","items":[{"hasVariationId":true,"price":1200,"productId":"f33c5147-9be1-4fae-93e4-f9167c0da01c","quantity":1}],"level":"debug","message":"Sale data being sent","paymentMethod":"cash","service":"saas-pos","timestamp":"2026-03-11T17:10:54.052Z"}
+{"component":"sales","level":"info","message":"Backend offline, queuing sale for later sync","service":"saas-pos","timestamp":"2026-03-11T17:10:54.064Z"}
+{"component":"sales","level":"info","maxQueueSize":1000,"message":"Sale queued for offline sync. Queue size: 1/1000","queueSize":1,"service":"saas-pos","timestamp":"2026-03-11T17:10:54.088Z"}
+{"component":"sales","level":"debug","message":"Product stock updated in cache for offline sale","service":"saas-pos","timestamp":"2026-03-11T17:10:54.127Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:10:54.159Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:10:54.166Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:10:54.170Z"}
+{"component":"receipts","level":"info","message":"Fetching receipt for sale","service":"saas-pos","timestamp":"2026-03-11T17:10:54.188Z"}
+{"component":"receipts","level":"warn","message":"Backend offline, cannot fetch receipt","service":"saas-pos","timestamp":"2026-03-11T17:10:54.195Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:10:54.221Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:10:54.226Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:10:54.228Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:11:12.343Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:11:12.354Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:11:12.361Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:11:12.364Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:11:12.367Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:11:12.370Z"}
+{"component":"offline","level":"info","message":"Starting batched sync of 1 offline sales","service":"saas-pos","timestamp":"2026-03-11T17:11:20.015Z"}
+{"component":"offline","level":"info","message":"Processing batch 1/1 (1 sales)","service":"saas-pos","timestamp":"2026-03-11T17:11:20.026Z"}
+{"component":"offline","level":"warn","message":"Sync attempt 1 failed for sale offline-1773249054067-57ejq8npp: connect ECONNREFUSED 127.0.0.1:5100","service":"saas-pos","timestamp":"2026-03-11T17:11:20.064Z"}
+{"component":"offline","level":"debug","message":"Waiting 1000ms before retry","retryCount":1,"saleId":"offline-1773249054067-57ejq8npp","service":"saas-pos","timestamp":"2026-03-11T17:11:20.070Z"}
+{"component":"offline","level":"warn","message":"Sync attempt 2 failed for sale offline-1773249054067-57ejq8npp: connect ECONNREFUSED 127.0.0.1:5100","service":"saas-pos","timestamp":"2026-03-11T17:11:21.083Z"}
+{"component":"offline","level":"debug","message":"Waiting 2000ms before retry","retryCount":2,"saleId":"offline-1773249054067-57ejq8npp","service":"saas-pos","timestamp":"2026-03-11T17:11:21.087Z"}
+{"component":"offline","level":"warn","message":"Sync attempt 3 failed for sale offline-1773249054067-57ejq8npp: connect ECONNREFUSED 127.0.0.1:5100","service":"saas-pos","timestamp":"2026-03-11T17:11:23.114Z"}
+{"component":"offline","error":"connect ECONNREFUSED 127.0.0.1:5100","level":"error","message":"Failed to sync offline sale offline-1773249054067-57ejq8npp after 3 attempts","saleId":"offline-1773249054067-57ejq8npp","service":"saas-pos","timestamp":"2026-03-11T17:11:23.119Z"}
+{"component":"offline","level":"info","message":"Batched sync completed: 0 synced, 1 failed","service":"saas-pos","timestamp":"2026-03-11T17:11:23.283Z"}
+{"component":"products","level":"info","message":"Force syncing products from backend","service":"saas-pos","timestamp":"2026-03-11T17:11:27.021Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:11:44.221Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:11:44.268Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:11:44.293Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:11:44.296Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:11:44.301Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:11:44.303Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:11:44.313Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:11:44.321Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:11:44.327Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:11:44.331Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:11:44.333Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:11:44.336Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:12:00.938Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:12:00.983Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:12:01.005Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:12:01.008Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:12:01.013Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:12:01.015Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:12:01.026Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-03-11T17:12:01.034Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:12:01.047Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:12:01.049Z"}
+{"component":"products","level":"info","message":"Backend offline, using cached products","service":"saas-pos","timestamp":"2026-03-11T17:12:01.052Z"}
+{"component":"products","level":"info","message":"Returning 5 cached products (offline mode)","service":"saas-pos","timestamp":"2026-03-11T17:12:01.055Z"}

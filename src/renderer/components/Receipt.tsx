@@ -30,7 +30,7 @@ const Receipt: React.FC<ReceiptProps> = ({
       } catch (error) {
         console.error('Failed to get API base URL:', error);
         // Fallback to default
-        setApiBaseUrl('http://127.0.0.1:5100');
+        setApiBaseUrl('http://127.0.0.1:7000');
       }
     };
     fetchApiUrl();

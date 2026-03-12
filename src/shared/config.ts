@@ -2,10 +2,10 @@
 // Use localhost backend for development; override via env vars.
 // Use 127.0.0.1 instead of localhost to avoid IPv6 (::1) connection issues on Windows
 export const API_BASE_URL =
-  process.env.API_BASE_URL || 'http://127.0.0.1:5100';
+  process.env.API_BASE_URL || 'http://127.0.0.1:7000';
 
 export const WS_BASE_URL =
-  process.env.WS_BASE_URL || 'ws://127.0.0.1:5100';
+  process.env.WS_BASE_URL || 'ws://127.0.0.1:7000';
 
 export const APP_CONFIG = {
   name: 'SaaS POS',

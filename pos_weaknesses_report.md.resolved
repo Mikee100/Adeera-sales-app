@@ -1,0 +1,74 @@
+# POS System Weaknesses & Improvement Report
+
+After analyzing the `sales-app` codebase, here is a detailed breakdown of the current weaknesses, missing features, and technical inconsistencies.
+
+## 🔴 High Priority (Missing Core Features)
+
+### 1. **Lack of Industry-Standard Payment Methods**
+- **Issue**: The system currently only supports **Cash**, **M-Pesa**, and **Credit**.
+- **Weakness**: There is no support for **Credit/Debit Cards** (visa/mastercard) or **Bank Transfers**. This is a major blocker for many retail environments.
+- **Recommendation**: Integrate a card payment gateway or provide a generic "Card" payment method with manual transaction reference entry.
+
+### 2. **Basic Discount Logic**
+- **Issue**: Discounts are limited to manual fixed amounts or hardcoded 5%/10% keyboard shortcuts.
+- **Weakness**: No support for:
+    - **Coupon Codes**: Validating and applying promotional codes.
+    - **Promotional Rules**: "Buy X Get Y", Multi-buy discounts, or Tiered pricing.
+    - **Percentage Discounts**: No UI field for arbitrary % discounts (only fixed amounts).
+- **Recommendation**: Implement a `PromotionEngine` and add a "Discount %" field to the [Checkout](file:///c:/Users/mikek/Desktop/projects/SaaS%20Platform/sales-app/src/renderer/components/Checkout.tsx#65-1099) UI.
+
+### 3. **Missing Refunds & Returns**
+- **Issue**: There is no functionality in the UI to process returns.
+- **Weakness**: Inventory cannot be easily adjusted for returned goods, and there is no record of "Negative Sales" or refund receipts.
+- **Recommendation**: Create a `Returns` module that allows looking up a sale by receipt number and selecting items to return/refund.
+
+### 4. **Hardcoded Tax (VAT) Rates**
+- **Issue**: The 16% VAT rate is hardcoded in multiple places (e.g., `POS.tsx:398`, `Checkout.tsx:107`).
+- **Weakness**: Makes the app difficult to scale to other countries or adapt to changes in local tax laws.
+- **Recommendation**: Move tax rates to a configuration setting or retrieve them from the tenant/business info.
+
+---
+
+## 🟡 Medium Priority (Operational & UX Gaps)
+
+### 5. **Currency Inconsistency**
+- **Issue**: The UI mixes `$` and `Ksh` symbols.
+- **Weakness**: In [Checkout.tsx](file:///c:/Users/mikek/Desktop/projects/SaaS%20Platform/sales-app/src/renderer/components/Checkout.tsx), the order summary uses `$` (e.g., line 550), while split payment fields use `Ksh` (e.g., line 203). This looks unprofessional and confusing.
+- **Recommendation**: Consistently use `Ksh` (or the configured currency) throughout all UI components.
+
+### 6. **Missing Sales Reports & Analytics**
+- **Issue**: There is no dashboard or reporting view within the POS app.
+- **Weakness**: Cashiers and managers cannot see daily totals, top-selling products, or payment method breakdowns without checking the backend.
+- **Recommendation**: Add a "EndOfDay" report and a basic "Sales Summary" view.
+
+### 7. **Missing Shift Management**
+- **Issue**: No concept of "Starting" or "Closing" a shift.
+- **Weakness**: No way to track cash drawer reconciliation (expected vs. actual cash) or hold cashiers accountable for their sessions.
+- **Recommendation**: Implement a `ShiftService` to track when a user starts/ends their session and record opening/closing balances.
+
+### 8. **Limited Inventory Features**
+- **Issue**: Validation only happens at the point of addition/checkout.
+- **Weakness**: No **Low Stock Alerts** in the UI to warn cashiers before they even try to add an item. No way to transfer stock between branches.
+- **Recommendation**: Add visual "Low Stock" badges to products in the `ProductSelection` view.
+
+---
+
+## 🔵 Low Priority (Polish & Security)
+
+### 9. **Keyboard Shortcut Gaps**
+- **Issue**: Basic shortcuts exist, but many actions still require a mouse.
+- **Weakness**: Slows down experienced cashiers in high-volume environments.
+- **Recommendation**: Add shortcuts for `F1` (Search), `+`/`-` (Quantity), and `F4` (Print Last Receipt).
+
+### 10. **Price Override Permissions**
+- **Issue**: Prices are currently fixed to what's in the catalog.
+- **Weakness**: No way for a manager to provide a specific price for a custom deal on the fly.
+- **Recommendation**: Add a "Price Override" feature gated by manager PIN/permission.
+
+---
+
+## ✅ Notable Strengths (Recently Improved)
+- **Robust Hardware Integration**: Printer, Cash Drawer, and Barcode Scanner services are well-implemented.
+- **Split Payments**: The split payment logic is actually quite advanced, supporting multiple concurrent methods.
+- **Pessimistic Stock Locking**: The system correctly refreshes stock for low-stock items before completing a sale to prevent race conditions.
+- **Offline Reliability**: The background sync and offline queue systems are solid.
