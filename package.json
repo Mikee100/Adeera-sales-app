@@ -41,7 +41,7 @@
     "concurrently": "^8.2.0",
     "css-loader": "^6.8.1",
     "electron": "^25.0.0",
-    "electron-builder": "^24.6.4",
+    "electron-builder": "^24.13.3",
     "electron-rebuild": "^3.2.9",
     "html-webpack-plugin": "^5.5.3",
     "style-loader": "^3.3.3",

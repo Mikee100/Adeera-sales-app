@@ -1,7 +1,7 @@
 // Configuration constants for the POS application
 // Use localhost backend for development; override via env vars.
-// Use 127.0.0.1 instead of localhost to avoid IPv6 (::1) connection issues on Windows
-export const API_BASE_URL =
+// Use 127.0.0.1:7000 instead of localhost to avoid IPv6 (::1) connection issues on Windows
+export const API_BASE_URL = 'https://saas-business.duckdns.org';
   process.env.API_BASE_URL || 'http://127.0.0.1:7000';
 
 export const WS_BASE_URL =

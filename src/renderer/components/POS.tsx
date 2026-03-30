@@ -454,11 +454,11 @@ const POS: React.FC = () => {
           const branchId = selectedBranch || user?.branchId;
           console.log('  - Final branchId to use:', branchId);
 
-          if (!branchId) {
-            const errorMessage = branches.length === 0 
-              ? 'No branches available. Please contact your administrator.'
-              : 'Please select a branch before completing the sale.';
-            
+          // If there are branches, require a selection; if there are no branches at all,
+          // allow the sale to proceed without a branchId (backend treats branch as optional).
+          if (!branchId && branches.length > 0) {
+            const errorMessage = 'Please select a branch before completing the sale.';
+
             handleError(
               new AppError(errorMessage, 'VALIDATION_ERROR', {
                 operation: 'completeSale',

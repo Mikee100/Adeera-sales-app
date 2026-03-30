@@ -187,8 +187,10 @@ export const validateSaleData = (saleData: {
   }
 
   // Validate branch ID
-  if (!saleData.branchId || typeof saleData.branchId !== 'string') {
-    return { isValid: false, error: 'Branch ID is required' };
+  // Branch is required only when branches are configured in the system.
+  // When no branch is selected (single-branch or branchless tenants), backend treats it as optional.
+  if (saleData.branchId != null && typeof saleData.branchId !== 'string') {
+    return { isValid: false, error: 'Branch ID must be a string' };
   }
 
   // Validate idempotency key
