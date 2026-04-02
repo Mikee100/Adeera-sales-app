@@ -454,7 +454,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
       </div>
 
       {showSettings && (
-        <Settings onClose={() => setShowSettings(false)} onUnauthorized={logout} />
+        <Settings onClose={() => { setShowSettings(false); loadProducts(); }} onUnauthorized={logout} />
       )}
 
       {showVariationModal && selectedProductForVariation && (

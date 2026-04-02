@@ -1039,9 +1039,13 @@ const POS: React.FC = () => {
               const getReceiptResult = await (window as any).electronAPI?.getReceipt?.(saleId);
               if (getReceiptResult?.success && getReceiptResult?.receipt) {
                 receiptToShow = getReceiptResult.receipt;
+                console.log('✅ Got full receipt from getReceipt:', { branch: receiptToShow?.branch, saleId });
+              } else {
+                console.warn('⚠️ getReceipt returned no data, using createSale response. Branch from createSale:', response.receipt?.branch);
               }
             } catch (_) {
               // Keep create-sale receipt if fetch fails
+              console.warn('⚠️ getReceipt call failed, using createSale response. Branch from createSale:', response.receipt?.branch);
             }
 
             const backendBiz = receiptToShow?.businessInfo;

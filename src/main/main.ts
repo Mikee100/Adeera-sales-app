@@ -92,6 +92,108 @@ console.log(`Backend URL resolved at startup: ${BACKEND_BASE_URL}`);
 const BACKEND_HEALTH_URL =
   process.env.BACKEND_HEALTH_URL || `${BACKEND_BASE_URL.replace(/\/$/, '')}/health`;
 
+// ---- GLOBAL AXIOS INTERCEPTOR FOR AUTOMATIC TOKEN REFRESH ----
+let isRefreshing = false;
+let failedQueue: Array<{ resolve: (value?: unknown) => void; reject: (reason?: any) => void }> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Intercept 401 Unauthorized for non-auth endpoints
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes('/auth/login') &&
+      !originalRequest.url?.includes('/auth/refresh')
+    ) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers['Authorization'] = `Bearer ${token}`;
+            return axios(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const store = new ElectronStore();
+        const { SecureTokenStorage } = require('./secure-token-storage');
+        let refreshToken = null;
+
+        if (SecureTokenStorage.isAvailable()) {
+          refreshToken = SecureTokenStorage.getRefreshToken();
+        }
+        if (!refreshToken) {
+          refreshToken = store.get('refreshToken');
+        }
+
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+
+        logger.info('Attempting silent token refresh...', { component: 'auth' });
+        const refreshResponse = await axios.post(`${BACKEND_BASE_URL}/auth/refresh`, {
+          refreshToken: refreshToken,
+        });
+
+        const newAccessToken = refreshResponse.data.access_token;
+        const newRefreshToken = refreshResponse.data.refresh_token;
+
+        if (newAccessToken) {
+          const encryptionAvailable = SecureTokenStorage.isAvailable();
+          if (encryptionAvailable) {
+            SecureTokenStorage.setToken(newAccessToken);
+            if (newRefreshToken) SecureTokenStorage.setRefreshToken(newRefreshToken);
+          } else {
+            store.set('authToken', newAccessToken);
+            if (newRefreshToken) store.set('refreshToken', newRefreshToken);
+          }
+
+          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+          
+          processQueue(null, newAccessToken);
+          isRefreshing = false;
+
+          logger.info('Silent token refresh successful! Retrying original request.', { component: 'auth' });
+          return axios(originalRequest);
+        } else {
+           throw new Error('Refresh response missing token');
+        }
+      } catch (refreshError: any) {
+        processQueue(refreshError, null);
+        isRefreshing = false;
+        
+        logger.warn('Token refresh failed, forcing logout state', { component: 'auth', error: refreshError.message });
+        return Promise.reject(error); // Reject with original 401 so renderer kicks user out
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+// ---------------------------------------------------------------
+
 const createWindow = (): void => {
   // Create the browser window – fullscreen like games and POS systems
   mainWindow = new BrowserWindow({
