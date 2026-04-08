@@ -621,20 +621,16 @@ const POS: React.FC = () => {
           const saleData = {
         items: cart.map(item => {
           const productPrice = item.product.price;
-          const priceValue = (productPrice != null && !isNaN(Number(productPrice))) 
-            ? Number(productPrice) 
-            : undefined;
-          
-          const base: { productId: string; quantity: number; price?: number; variationId?: string } = {
+          const priceValue = (productPrice != null && !isNaN(Number(productPrice)))
+            ? Number(productPrice)
+            : 0; // fallback to 0 if price is missing or invalid
+
+          const base: { productId: string; quantity: number; price: number; variationId?: string } = {
             productId: (item.product as any).baseProductId || item.product.id,
             quantity: Number(item.quantity) || 1,
+            price: priceValue,
           };
-          
-          // Only include price if it's a valid number (price is optional in DTO)
-          if (priceValue != null && priceValue >= 0) {
-            base.price = priceValue;
-          }
-          
+
           if ((item.product as any).variationId) {
             base.variationId = (item.product as any).variationId;
           }
@@ -953,20 +949,32 @@ const POS: React.FC = () => {
             }
           );
 
-          if (response.success) {
-            console.log('Sale completed successfully:', response.sale);
+          // Assert the type of response
+          const saleResponse = response as {
+            success: boolean;
+            sale?: any;
+            receipt?: any;
+            error?: string;
+            queueSize?: number;
+            maxQueueSize?: number;
+            isCritical?: boolean;
+            isWarning?: boolean;
+          };
+
+          if (saleResponse.success) {
+            console.log('Sale completed successfully:', saleResponse.sale);
             
             // Check for queue warnings if sale was queued offline
-            if (response.queueSize !== undefined) {
-              if (response.isCritical) {
+            if (saleResponse.queueSize !== undefined) {
+              if (saleResponse.isCritical) {
                 showToast(
-                  `⚠️ Offline sales queue is FULL (${response.queueSize}/${response.maxQueueSize}). Please sync immediately!`,
+                  `⚠️ Offline sales queue is FULL (${saleResponse.queueSize}/${saleResponse.maxQueueSize}). Please sync immediately!`,
                   'error',
                   10000
                 );
-              } else if (response.isWarning) {
+              } else if (saleResponse.isWarning) {
                 showToast(
-                  `⚠️ Large offline sales queue: ${response.queueSize} sales. Consider syncing soon.`,
+                  `⚠️ Large offline sales queue: ${saleResponse.queueSize} sales. Consider syncing soon.`,
                   'warning',
                   6000
                 );
@@ -985,13 +993,17 @@ const POS: React.FC = () => {
             }
 
             // Validate receipt number and transaction integrity
-            if (response.receipt?.saleId) {
-              const receiptNumberValidation = validateReceiptNumber(response.receipt.saleId);
+            const typedResponse = response as {
+              receipt?: { saleId?: string; [key: string]: any };
+              [key: string]: any;
+            };
+            if (typedResponse.receipt?.saleId) {
+              const receiptNumberValidation = validateReceiptNumber(typedResponse.receipt.saleId);
               if (!receiptNumberValidation.isValid) {
                 showToast('Warning: Receipt number validation issue detected', 'warning');
                 auditLogger.log(
                   AuditEventType.SECURITY_VIOLATION,
-                  { receiptId: response.receipt.saleId, reason: receiptNumberValidation.error },
+                  { receiptId: typedResponse.receipt.saleId, reason: receiptNumberValidation.error },
                   'high',
                   user?.id,
                   user?.name
@@ -1004,7 +1016,7 @@ const POS: React.FC = () => {
                 showToast('Warning: Transaction integrity check failed', 'warning');
                 auditLogger.log(
                   AuditEventType.SECURITY_VIOLATION,
-                  { receiptId: response.receipt.saleId, reason: integrityCheck.error },
+                  { receiptId: typedResponse.receipt.saleId, reason: integrityCheck.error },
                   'high',
                   user?.id,
                   user?.name
@@ -1016,7 +1028,7 @@ const POS: React.FC = () => {
             auditLogger.log(
               AuditEventType.SALE_COMPLETED,
               {
-                saleId: response.sale?.saleId || response.receipt?.saleId,
+                saleId: (response as any).sale?.saleId || (response as any).receipt?.saleId,
                 itemCount: cart.length,
                 totalAmount: getGrandTotal(),
                 paymentMethod: paymentData.paymentMethod,
@@ -1076,10 +1088,13 @@ const POS: React.FC = () => {
             // Reload products to update stock
             loadProducts(0);
           } else {
-            console.error('Sale failed:', response.error);
+            const errorMsg = (typeof response === 'object' && response !== null && 'error' in response)
+              ? (response as { error?: string }).error
+              : undefined;
+            console.error('Sale failed:', errorMsg);
 
             // Check if this is a stock conflict error
-            const stockConflict = detectStockConflict({ message: response.error, data: response });
+            const stockConflict = detectStockConflict({ message: errorMsg, data: response });
             
             if (stockConflict.isStockConflict) {
               console.warn('Stock conflict detected:', stockConflict);

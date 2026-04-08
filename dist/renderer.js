@@ -44476,15 +44476,12 @@ const POS = () => {
                             const productPrice = item.product.price;
                             const priceValue = (productPrice != null && !isNaN(Number(productPrice)))
                                 ? Number(productPrice)
-                                : undefined;
+                                : 0; // fallback to 0 if price is missing or invalid
                             const base = {
                                 productId: item.product.baseProductId || item.product.id,
                                 quantity: Number(item.quantity) || 1,
+                                price: priceValue,
                             };
-                            // Only include price if it's a valid number (price is optional in DTO)
-                            if (priceValue != null && priceValue >= 0) {
-                                base.price = priceValue;
-                            }
                             if (item.product.variationId) {
                                 base.variationId = item.product.variationId;
                             }
@@ -44767,15 +44764,17 @@ const POS = () => {
                         maxRetries: 2,
                         showRetryToast: true,
                     });
-                    if (response.success) {
-                        console.log('Sale completed successfully:', response.sale);
+                    // Assert the type of response
+                    const saleResponse = response;
+                    if (saleResponse.success) {
+                        console.log('Sale completed successfully:', saleResponse.sale);
                         // Check for queue warnings if sale was queued offline
-                        if (response.queueSize !== undefined) {
-                            if (response.isCritical) {
-                                (0, Toast_1.showToast)(`⚠️ Offline sales queue is FULL (${response.queueSize}/${response.maxQueueSize}). Please sync immediately!`, 'error', 10000);
+                        if (saleResponse.queueSize !== undefined) {
+                            if (saleResponse.isCritical) {
+                                (0, Toast_1.showToast)(`⚠️ Offline sales queue is FULL (${saleResponse.queueSize}/${saleResponse.maxQueueSize}). Please sync immediately!`, 'error', 10000);
                             }
-                            else if (response.isWarning) {
-                                (0, Toast_1.showToast)(`⚠️ Large offline sales queue: ${response.queueSize} sales. Consider syncing soon.`, 'warning', 6000);
+                            else if (saleResponse.isWarning) {
+                                (0, Toast_1.showToast)(`⚠️ Large offline sales queue: ${saleResponse.queueSize} sales. Consider syncing soon.`, 'warning', 6000);
                             }
                         }
                         // CRITICAL: Refresh products from backend after successful sale to get accurate stock
@@ -44790,17 +44789,18 @@ const POS = () => {
                             // Don't fail the sale if refresh fails - will sync on next periodic sync
                         }
                         // Validate receipt number and transaction integrity
-                        if (response.receipt?.saleId) {
-                            const receiptNumberValidation = (0, validation_1.validateReceiptNumber)(response.receipt.saleId);
+                        const typedResponse = response;
+                        if (typedResponse.receipt?.saleId) {
+                            const receiptNumberValidation = (0, validation_1.validateReceiptNumber)(typedResponse.receipt.saleId);
                             if (!receiptNumberValidation.isValid) {
                                 (0, Toast_1.showToast)('Warning: Receipt number validation issue detected', 'warning');
-                                audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SECURITY_VIOLATION, { receiptId: response.receipt.saleId, reason: receiptNumberValidation.error }, 'high', user?.id, user?.name);
+                                audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SECURITY_VIOLATION, { receiptId: typedResponse.receipt.saleId, reason: receiptNumberValidation.error }, 'high', user?.id, user?.name);
                             }
                             // Re-validate sale data for integrity check
                             const integrityCheck = (0, validation_1.validateSaleData)(saleData);
                             if (!integrityCheck.isValid) {
                                 (0, Toast_1.showToast)('Warning: Transaction integrity check failed', 'warning');
-                                audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SECURITY_VIOLATION, { receiptId: response.receipt.saleId, reason: integrityCheck.error }, 'high', user?.id, user?.name);
+                                audit_logger_1.auditLogger.log(audit_logger_1.AuditEventType.SECURITY_VIOLATION, { receiptId: typedResponse.receipt.saleId, reason: integrityCheck.error }, 'high', user?.id, user?.name);
                             }
                         }
                         // Log successful sale completion
@@ -44859,9 +44859,12 @@ const POS = () => {
                         loadProducts(0);
                     }
                     else {
-                        console.error('Sale failed:', response.error);
+                        const errorMsg = (typeof response === 'object' && response !== null && 'error' in response)
+                            ? response.error
+                            : undefined;
+                        console.error('Sale failed:', errorMsg);
                         // Check if this is a stock conflict error
-                        const stockConflict = (0, stock_conflict_handler_1.detectStockConflict)({ message: response.error, data: response });
+                        const stockConflict = (0, stock_conflict_handler_1.detectStockConflict)({ message: errorMsg, data: response });
                         if (stockConflict.isStockConflict) {
                             console.warn('Stock conflict detected:', stockConflict);
                             // Refresh products to get latest stock
