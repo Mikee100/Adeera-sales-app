@@ -2,18 +2,20 @@
   "name": "saas-pos",
   "version": "1.0.0",
   "description": "Point of Sale application for SaaS Platform",
+  "author": "Adeera",
   "main": "dist/main.js",
   "scripts": {
     "start": "electron dist/main.js",
-    "dev": "concurrently \"webpack serve --config webpack.renderer.config.js --no-hot\" \"npm run build:watch\" \"wait-on http://localhost:3001 && set NODE_ENV=development&& electron dist/main.js\"",
+    "dev": "concurrently \"webpack serve --config webpack.renderer.config.js --no-hot\" \"npm run build:watch\" \"wait-on http://localhost:3100 && set NODE_ENV=development&& electron dist/main.js\"",
     "build": "webpack --mode production",
     "build:watch": "webpack --mode development --watch",
-    "rebuild": "electron-rebuild",
-    "postinstall": "electron-rebuild",
+    "rebuild": "electron-builder install-app-deps",
+    "postinstall": "electron-builder install-app-deps",
     "package": "electron-builder",
     "package:win": "electron-builder --win",
     "package:mac": "electron-builder --mac",
-    "package:linux": "electron-builder --linux"
+    "package:linux": "electron-builder --linux",
+    "deploy:updates": "powershell -Command \"Copy-Item release/latest.yml ../backend/uploads/pos-updates/ -Force; Copy-Item release/*.exe ../backend/uploads/pos-updates/ -Force\""
   },
   "dependencies": {
     "@types/lru-cache": "^7.10.9",
@@ -43,7 +45,6 @@
     "css-loader": "^6.8.1",
     "electron": "^25.0.0",
     "electron-builder": "^24.13.3",
-    "electron-rebuild": "^3.2.9",
     "html-webpack-plugin": "^5.5.3",
     "style-loader": "^3.3.3",
     "ts-loader": "^9.5.1",
@@ -62,19 +63,30 @@
     "files": [
       "dist/**/*",
       "node_modules/**/*",
+      "assets/**/*",
       "package.json"
     ],
     "win": {
       "target": "nsis",
-      "icon": "assets/icon.ico"
+      "publish": [
+        {
+          "provider": "generic",
+          "url": "https://saas-business.duckdns.org/updates/pos/"
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Adeera POS"
     },
     "mac": {
-      "target": "dmg",
-      "icon": "assets/icon.ico"
+      "target": "dmg"
     },
     "linux": {
-      "target": "AppImage",
-      "icon": "assets/icon.ico"
+      "target": "AppImage"
     }
   }
 }

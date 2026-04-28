@@ -60,6 +60,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'renderer.js',
+    publicPath: './',
     globalObject: 'this',
   },
   plugins: [
@@ -73,7 +74,7 @@ module.exports = {
   ],
   devServer: {
     host: '127.0.0.1',
-    port: 3001,
+    port: 3100,
     hot: false,
     liveReload: false,
     client: false,

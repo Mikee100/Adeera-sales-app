@@ -63136,14 +63136,14 @@ const createWindow = () => {
             nodeIntegration: false,
             contextIsolation: true,
         },
-        // icon: path.join(__dirname, '../assets/icon.png'), // Add icon later
+        icon: path.join(__dirname, '..', 'assets', 'favicon.ico'),
         show: false, // Don't show until ready
     });
     // Load the index.html of the app.
     // In development: load the POS renderer from this app's webpack dev server (port 3001).
     // Port 3000 is the Next.js SaaS website – we must use a different port for the POS UI.
     if (true) {
-        const devServerUrl = process.env.ELECTRON_RENDERER_URL || 'http://localhost:3001';
+        const devServerUrl = process.env.ELECTRON_RENDERER_URL || 'http://localhost:3100';
         mainWindow.loadURL(devServerUrl);
     }
     else // removed by dead control flow
@@ -63259,16 +63259,17 @@ function stopPeriodicProductSync() {
 // but fails gracefully (logs a warning) if the module is not installed or
 // no update server is configured yet. This lets you keep installers manual
 // today and plug in a real update channel later without code changes.
+// Auto-updater instance
+let autoUpdaterInstance;
 function setupAutoUpdater() {
     if (!electron_1.app.isPackaged) {
         // Do not run auto-updates in development mode.
         return;
     }
-    let autoUpdater;
     try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const updaterModule = __webpack_require__(/*! electron-updater */ "./node_modules/electron-updater/out/main.js");
-        autoUpdater = updaterModule.autoUpdater;
+        autoUpdaterInstance = updaterModule.autoUpdater;
     }
     catch (error) {
         logger_1.logger.warn('Auto-update module not available; skipping update checks', {
@@ -63278,24 +63279,24 @@ function setupAutoUpdater() {
         return;
     }
     try {
-        autoUpdater.logger = logger_1.logger;
+        autoUpdaterInstance.logger = logger_1.logger;
     }
     catch {
         // Ignore if logger cannot be attached
     }
-    autoUpdater.on('error', (error) => {
+    autoUpdaterInstance.on('error', (error) => {
         logger_1.logger.warn('Auto-update error', {
             component: 'autoUpdater',
             errorMessage: error.message,
         });
     });
-    autoUpdater.on('update-available', () => {
+    autoUpdaterInstance.on('update-available', () => {
         logger_1.logger.info('Update available', { component: 'autoUpdater' });
         if (mainWindow && !mainWindow.isDestroyed()) {
             mainWindow.webContents.send('update-available');
         }
     });
-    autoUpdater.on('update-downloaded', () => {
+    autoUpdaterInstance.on('update-downloaded', () => {
         logger_1.logger.info('Update downloaded', { component: 'autoUpdater' });
         if (mainWindow && !mainWindow.isDestroyed()) {
             mainWindow.webContents.send('update-downloaded');
@@ -63303,7 +63304,7 @@ function setupAutoUpdater() {
     });
     // Initial check; will download and notify when configured with a publish target.
     try {
-        autoUpdater.checkForUpdatesAndNotify();
+        autoUpdaterInstance.checkForUpdatesAndNotify();
     }
     catch (error) {
         logger_1.logger.warn('Failed to check for updates', {
@@ -63360,6 +63361,15 @@ const isOnline = () => {
 // IPC Handlers for renderer communication
 electron_1.ipcMain.handle('quitApp', () => {
     electron_1.app.quit();
+});
+electron_1.ipcMain.handle('installUpdate', () => {
+    if (autoUpdaterInstance) {
+        logger_1.logger.info('User requested installUpdate; quitting and installing', { component: 'autoUpdater' });
+        autoUpdaterInstance.quitAndInstall();
+    }
+    else {
+        logger_1.logger.warn('installUpdate requested but autoUpdater is not initialized', { component: 'autoUpdater' });
+    }
 });
 electron_1.ipcMain.handle('authenticate', async (event, credentials) => {
     const store = new electron_store_1.default();
@@ -65901,6 +65911,39 @@ function enhanceErrorMessage(parsedError) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -65908,6 +65951,23 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.logDebug = exports.logInfo = exports.logWarn = exports.logError = exports.logger = void 0;
 const electron_log_1 = __importDefault(__webpack_require__(/*! electron-log */ "./node_modules/electron-log/src/index.js"));
 const winston_1 = __importDefault(__webpack_require__(/*! winston */ "./node_modules/winston/lib/winston.js"));
+const path = __importStar(__webpack_require__(/*! path */ "path"));
+const fs = __importStar(__webpack_require__(/*! fs */ "fs"));
+// Helper to get a writable log directory
+const getLogDirectory = () => {
+    // In development, keep logs local
+    if (true) {
+        return 'logs';
+    }
+    // In production, we MUST use a writerable directory (AppData)
+    // We can only access the 'app' module in the main process
+    // removed by dead control flow
+
+    // Fallback for renderer or if something failed
+    // removed by dead control flow
+
+};
+const LOG_DIR = getLogDirectory();
 // Configure electron-log for file output
 electron_log_1.default.transports.file.level = 'info';
 electron_log_1.default.transports.file.maxSize = 10 * 1024 * 1024; // 10MB
@@ -65919,9 +65979,14 @@ const winstonLogger = winston_1.default.createLogger({
     defaultMeta: { service: 'saas-pos' },
     transports: [
         // Write all logs with importance level of `error` or less to `error.log`
-        new winston_1.default.transports.File({ filename: 'logs/error.log', level: 'error' }),
+        new winston_1.default.transports.File({
+            filename: path.join(LOG_DIR, 'error.log'),
+            level: 'error'
+        }),
         // Write all logs with importance level of `info` or less to `combined.log`
-        new winston_1.default.transports.File({ filename: 'logs/combined.log' }),
+        new winston_1.default.transports.File({
+            filename: path.join(LOG_DIR, 'combined.log')
+        }),
     ],
 });
 // If we're not in production then log to the console with a simple format

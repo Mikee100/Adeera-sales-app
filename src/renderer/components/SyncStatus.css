@@ -1,3 +1,4 @@
+
 .sync-status {
   display: flex;
   align-items: center;
@@ -7,6 +8,40 @@
   border-radius: 4px;
   font-size: 10px;
   border: 1px solid #e9ecef;
+}
+
+.sync-status-inline {
+  background: transparent;
+  border: none;
+  padding: 0;
+  gap: 16px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.navbar-title-group {
+  display: flex;
+  align-items: center;
+.sync-status-inline {
+  background: transparent;
+  border: none;
+  padding: 0;
+  gap: 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-title-group {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+  font-size: 14px;
+  margin: 0 4px;
+  user-select: none;
 }
 
 .sync-status-indicator {

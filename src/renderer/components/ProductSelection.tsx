@@ -90,7 +90,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   onFindReceiptClick,
   onSalesHistoryClick
 }) => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -349,12 +349,12 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
 
   return (
     <div className="pos-container">
-      <div className="pos-header">
-        <div className="header-left">
-          <h1>POS</h1>
+      <div className="pos-header improved-navbar">
+        <div className="header-left improved-navbar-left" style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 24, minWidth: 0}}>
+          <h1 className="navbar-title" style={{margin: 0, fontSize: 22, fontWeight: 700, letterSpacing: 0.5, whiteSpace: 'nowrap', flexShrink: 0}}>SaaS POS</h1>
           <SyncStatus />
         </div>
-        <div className="header-center">
+        <div className="header-center improved-navbar-center">
           <div className="header-indicators">
             {isScanning && (
               <div className="barcode-scanning-indicator">
@@ -369,35 +369,36 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             )}
           </div>
         </div>
-        <div className="header-right">
-          {(onFindReceiptClick || onSalesHistoryClick) && (
-            <div className="receipts-menu" ref={receiptsMenuRef}>
-              <button
-                type="button"
-                className="icon-btn receipts-btn"
-                onClick={() => setShowReceiptsMenu(prev => !prev)}
-                title="Receipts"
-                aria-label="Receipts menu"
-              >
-                🧾
-                <span className="receipts-menu-label">Receipts</span>
-                <span className="receipts-menu-caret">▾</span>
-              </button>
-              {showReceiptsMenu && (
-                <div className="receipts-menu-dropdown">
-                  {onFindReceiptClick && (
-                    <button
-                      type="button"
-                      className="receipts-menu-item"
-                      onClick={() => {
-                        setShowReceiptsMenu(false);
-                        onFindReceiptClick();
-                      }}
-                    >
-                      Find by ID
-                    </button>
-                  )}
-                  {onSalesHistoryClick && (
+        <div className="header-right improved-navbar-right">
+          <div className="navbar-actions-group">
+            {user && (user.isSuperadmin || user.roles?.includes('owner') || user.roles?.includes('admin') || user.permissions?.includes('view_sales')) && (onFindReceiptClick || onSalesHistoryClick) && (
+              <div className="receipts-menu" ref={receiptsMenuRef}>
+                <button
+                  type="button"
+                  className="icon-btn receipts-btn"
+                  onClick={() => setShowReceiptsMenu(prev => !prev)}
+                  title="Receipts"
+                  aria-label="Receipts menu"
+                >
+                  🧾
+                  <span className="receipts-menu-label">Receipts</span>
+                  <span className="receipts-menu-caret">▾</span>
+                </button>
+                {showReceiptsMenu && (
+                  <div className="receipts-menu-dropdown">
+                    {onFindReceiptClick && (
+                      <button
+                        type="button"
+                        className="receipts-menu-item"
+                        onClick={() => {
+                          setShowReceiptsMenu(false);
+                          onFindReceiptClick();
+                        }}
+                      >
+                        Find by ID
+                      </button>
+                    )}
+                    {onSalesHistoryClick && (
                     <button
                       type="button"
                       className="receipts-menu-item"
@@ -413,43 +414,45 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               )}
             </div>
           )}
-          <select
-            value={selectedBranch}
-            onChange={(e) => handleBranchChange(e.target.value)}
-            className="branch-select"
-          >
-            <option value="">Select Branch</option>
-            {branches.map((branch) => (
-              <option key={branch.id} value={branch.id}>
-                {branch.name}
-              </option>
-            ))}
-          </select>
-          <button 
-            className="icon-btn theme-toggle-btn" 
-            onClick={toggleTheme}
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {theme === 'dark' ? '☀️' : '🌙'}
-          </button>
-          <button 
-            className="icon-btn settings-btn" 
-            onClick={() => setShowSettings(true)}
-            title="Settings"
-          >
-            ⚙️
-          </button>
-          <button className="icon-btn logout-btn" onClick={logout} title="Logout">🚪</button>
-          <button
-            className="icon-btn exit-btn"
-            onClick={() => {
-              if (cart.length > 0 && !window.confirm('Exit POS? Current sale will be lost.')) return;
-              window.electronAPI.quitApp();
-            }}
-            title="Exit / Quit"
-          >
-            ⏻
-          </button>
+            <select
+              value={selectedBranch}
+              onChange={(e) => handleBranchChange(e.target.value)}
+              className="branch-select improved-branch-select"
+            >
+              <option value="">Select Branch</option>
+              {branches.map((branch) => (
+                <option key={branch.id} value={branch.id}>
+                  {branch.name}
+                </option>
+              ))}
+            </select>
+            <button 
+              className="icon-btn theme-toggle-btn" 
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+            {user && (user.isSuperadmin || user.roles?.includes('owner') || user.roles?.includes('admin') || user.permissions?.includes('view_settings')) && (
+              <button 
+                className="icon-btn settings-btn" 
+                onClick={() => setShowSettings(true)}
+                title="Settings"
+              >
+                ⚙️
+              </button>
+            )}
+            <button
+              className="icon-btn exit-btn" 
+              onClick={() => {
+                if (cart.length > 0 && !window.confirm('Exit POS? Current sale will be lost.')) return;
+                window.electronAPI.quitApp();
+              }}
+              title="Exit / Quit"
+            >
+              ⏻
+            </button>
+          </div>
         </div>
       </div>
 
@@ -544,17 +547,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                 </button>
               )}
             </div>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="category-select"
-            >
-              {categories.map(category => (
-                <option key={category} value={category}>
-                  {category === 'all' ? 'All Categories' : category}
-                </option>
-              ))}
-            </select>
+           
           </div>
 
           {/* Barcode Scanner Help - Collapsible */}
@@ -609,7 +602,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                 return (
                   <div
                     key={product.id}
-                    className="product-card product-card-clickable"
+                    className="product-card product-card-clickable enhanced-product-card"
                     onClick={() => handleProductClick(product)}
                     role="button"
                     tabIndex={0}
@@ -620,23 +613,19 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                         {product.category.name}
                       </div>
                     )}
-                    {product.images && product.images.length > 0 && (
-                      <div className="product-image">
-                        <img
-                          src={product.images[0]}
-                          alt={product.name || 'Product'}
-                          style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '4px' }}
-                        />
-                      </div>
-                    )}
-                    <div className="product-info">
+
+                    <div className="product-info enhanced-product-info">
                       <h3>{product.name || 'Unnamed Product'}</h3>
-                      <p className="sku">SKU: {product.sku || 'N/A'}</p>
-                      {(product as any).barcode && (
-                        <p className="barcode">Barcode: {(product as any).barcode}</p>
-                      )}
-                      <p className="price">${product.price?.toFixed(2) || '0.00'}</p>
-                      <p className="stock">Stock: {product.stock || 0}</p>
+                      <div className="product-meta-row">
+                        <span className="sku">SKU: {product.sku || 'N/A'}</span>
+                        {(product as any).barcode && (
+                          <span className="barcode">Barcode: {(product as any).barcode}</span>
+                        )}
+                      </div>
+                      <div className="product-price-stock-row">
+                        <span className="price">${product.price?.toFixed(2) || '0.00'}</span>
+                        <span className={`stock ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>{product.stock > 0 ? `Stock: ${product.stock}` : 'Out of stock'}</span>
+                      </div>
 
                       {showInlineVariations && (
                         <div className="variation-chips">

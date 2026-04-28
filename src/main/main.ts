@@ -205,7 +205,7 @@ const createWindow = (): void => {
       nodeIntegration: false,
       contextIsolation: true,
     },
-    // icon: path.join(__dirname, '../assets/icon.png'), // Add icon later
+    icon: path.join(__dirname, '..', 'assets', 'favicon.ico'),
     show: false, // Don't show until ready
   });
 
@@ -213,7 +213,7 @@ const createWindow = (): void => {
   // In development: load the POS renderer from this app's webpack dev server (port 3001).
   // Port 3000 is the Next.js SaaS website – we must use a different port for the POS UI.
   if (process.env.NODE_ENV === 'development') {
-    const devServerUrl = process.env.ELECTRON_RENDERER_URL || 'http://localhost:3001';
+    const devServerUrl = process.env.ELECTRON_RENDERER_URL || 'http://localhost:3100';
     mainWindow.loadURL(devServerUrl);
   } else {
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
@@ -344,17 +344,19 @@ function stopPeriodicProductSync() {
 // but fails gracefully (logs a warning) if the module is not installed or
 // no update server is configured yet. This lets you keep installers manual
 // today and plug in a real update channel later without code changes.
+// Auto-updater instance
+let autoUpdaterInstance: any;
+
 function setupAutoUpdater() {
   if (!app.isPackaged) {
     // Do not run auto-updates in development mode.
     return;
   }
 
-  let autoUpdater: any;
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const updaterModule = require('electron-updater');
-    autoUpdater = updaterModule.autoUpdater;
+    autoUpdaterInstance = updaterModule.autoUpdater;
   } catch (error: any) {
     logger.warn('Auto-update module not available; skipping update checks', {
       component: 'autoUpdater',
@@ -364,26 +366,26 @@ function setupAutoUpdater() {
   }
 
   try {
-    autoUpdater.logger = logger;
+    autoUpdaterInstance.logger = logger;
   } catch {
     // Ignore if logger cannot be attached
   }
 
-  autoUpdater.on('error', (error: Error) => {
+  autoUpdaterInstance.on('error', (error: Error) => {
     logger.warn('Auto-update error', {
       component: 'autoUpdater',
       errorMessage: error.message,
     });
   });
 
-  autoUpdater.on('update-available', () => {
+  autoUpdaterInstance.on('update-available', () => {
     logger.info('Update available', { component: 'autoUpdater' });
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('update-available');
     }
   });
 
-  autoUpdater.on('update-downloaded', () => {
+  autoUpdaterInstance.on('update-downloaded', () => {
     logger.info('Update downloaded', { component: 'autoUpdater' });
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('update-downloaded');
@@ -392,7 +394,7 @@ function setupAutoUpdater() {
 
   // Initial check; will download and notify when configured with a publish target.
   try {
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdaterInstance.checkForUpdatesAndNotify();
   } catch (error: any) {
     logger.warn('Failed to check for updates', {
       component: 'autoUpdater',
@@ -453,6 +455,15 @@ const isOnline = (): boolean => {
 // IPC Handlers for renderer communication
 ipcMain.handle('quitApp', () => {
   app.quit();
+});
+
+ipcMain.handle('installUpdate', () => {
+  if (autoUpdaterInstance) {
+    logger.info('User requested installUpdate; quitting and installing', { component: 'autoUpdater' });
+    autoUpdaterInstance.quitAndInstall();
+  } else {
+    logger.warn('installUpdate requested but autoUpdater is not initialized', { component: 'autoUpdater' });
+  }
 });
 
 ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Credentials) => {
@@ -1591,7 +1602,7 @@ ipcMain.handle('printReceipt', async (event, receiptData) => {
 });
 
 // Create a return for an existing sale
-ipcMain.handle('createReturn', async (_event, payload: { saleId: string; items: any[]; reason?: string }) => {
+ipcMain.handle('createReturn', async (_event, payload: { saleId: string; items: any[]; reason?: string; refundMethod?: string }) => {
   const store = new ElectronStore();
 
   try {

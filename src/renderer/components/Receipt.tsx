@@ -20,6 +20,9 @@ const Receipt: React.FC<ReceiptProps> = ({
   const [isReturnMode, setIsReturnMode] = useState(false);
   const [returnQuantities, setReturnQuantities] = useState<number[]>([]);
   const [returnSubmitting, setReturnSubmitting] = useState(false);
+  const [returnReason, setReturnReason] = useState<string>('');
+  const [returnRefundMethod, setReturnRefundMethod] = useState<string>('cash');
+  const [returnIsResalable, setReturnIsResalable] = useState<boolean>(true);
 
   // Get API base URL from Electron main process
   useEffect(() => {
@@ -68,6 +71,9 @@ const Receipt: React.FC<ReceiptProps> = ({
     }
     setIsReturnMode(false);
     setReturnSubmitting(false);
+    setReturnReason('');
+    setReturnRefundMethod('cash');
+    setReturnIsResalable(true);
   }, [receipt]);
 
   if (!receipt) return null;
@@ -139,11 +145,13 @@ const Receipt: React.FC<ReceiptProps> = ({
           if (!qty) return null;
           return {
             productId: item.productId || item.id,
+            variationId: item.variationId,
             quantity: qty,
             unitPrice: item.price || 0,
+            isResalable: returnIsResalable,
           };
         })
-        .filter(Boolean) as { productId: string; quantity: number; unitPrice: number }[];
+        .filter(Boolean) as { productId: string; quantity: number; unitPrice: number; variationId?: string; isResalable?: boolean }[];
 
     if (!itemsToReturn.length) {
       showToast('Set at least one item quantity to return.', 'warning', 4000);
@@ -155,6 +163,8 @@ const Receipt: React.FC<ReceiptProps> = ({
       const payload = {
         saleId: receipt.saleId,
         items: itemsToReturn,
+        reason: returnReason,
+        refundMethod: returnRefundMethod,
       };
       const response = await (window as any).electronAPI.createReturn(payload);
       if (response?.success) {
@@ -358,8 +368,44 @@ const Receipt: React.FC<ReceiptProps> = ({
           {isReturnMode && (
             <div className="totals-card return-summary-card">
               <div className="section-title">Return Summary</div>
-              <div className="totals-list">
-                <div className="total-item">
+              <div className="totals-list" style={{ marginBottom: '16px' }}>
+                <div className="total-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
+                  <label style={{ fontSize: '12px', color: '#6b7280', fontWeight: 600 }}>Refund Method</label>
+                  <select 
+                    value={returnRefundMethod} 
+                    onChange={e => setReturnRefundMethod(e.target.value)}
+                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  >
+                    <option value="cash">Cash Refund</option>
+                    <option value="mpesa">M-Pesa Reversal</option>
+                    <option value="credit">Credit Adjustment</option>
+                  </select>
+                </div>
+                <div className="total-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
+                  <label style={{ fontSize: '12px', color: '#6b7280', fontWeight: 600 }}>Return Reason</label>
+                  <select 
+                    value={returnReason} 
+                    onChange={e => setReturnReason(e.target.value)}
+                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  >
+                    <option value="">Select a reason...</option>
+                    <option value="defective">Defective / Damaged</option>
+                    <option value="wrong_item">Wrong Item</option>
+                    <option value="changed_mind">Changed Mind</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div className="total-item" style={{ justifyContent: 'flex-start', gap: '8px' }}>
+                  <input 
+                    type="checkbox" 
+                    id="isResalable" 
+                    checked={returnIsResalable} 
+                    onChange={e => setReturnIsResalable(e.target.checked)}
+                    style={{ width: '16px', height: '16px' }}
+                  />
+                  <label htmlFor="isResalable" style={{ fontSize: '13px', cursor: 'pointer' }}>Item is resalable (Restock)</label>
+                </div>
+                <div className="total-item" style={{ borderTop: '1px solid #e5e7eb', paddingTop: '12px', marginTop: '12px' }}>
                   <span className="total-label">Return Subtotal</span>
                   <span className="total-value">
                     {formatCurrency(returnSubtotal || 0)}

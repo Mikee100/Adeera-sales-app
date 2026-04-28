@@ -1,3 +1,36 @@
+/* Logout Button */
+.settings-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(.4,2,.3,1);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.18);
+  margin-top: 12px;
+}
+
+.settings-logout-btn:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.22);
+}
+
+.settings-logout-btn:active {
+  transform: translateY(0) scale(1);
+}
+
+.settings-logout-btn svg {
+  flex-shrink: 0;
+}
 /* Settings Modal - Modern Professional Design */
 .settings-modal-overlay {
   position: fixed;

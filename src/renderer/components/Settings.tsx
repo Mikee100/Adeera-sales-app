@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { useSleepMode } from '../contexts/SleepModeContext';
 import './Settings.css';
 
@@ -177,6 +178,7 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
     }
   };
 
+  const { logout } = useAuth();
   return (
     <div className="settings-modal-overlay" onClick={onClose}>
       <div className="settings-modal" onClick={(e) => e.stopPropagation()}>
@@ -539,6 +541,25 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                           </svg>
                           <span>Enter Sleep Mode</span>
+                        </button>
+                      </div>
+                      <div className="settings-field">
+                        <label className="settings-label">
+                          <span className="settings-label-text">Logout</span>
+                          <p className="settings-label-description">Sign out of your account and return to the login screen.</p>
+                        </label>
+                        <button
+                          className="settings-logout-btn"
+                          onClick={async () => {
+                            await logout();
+                            onClose();
+                          }}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
+                            <path d="M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0z"></path>
+                          </svg>
+                          <span>Logout</span>
                         </button>
                       </div>
                     </div>

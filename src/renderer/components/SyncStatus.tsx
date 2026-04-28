@@ -340,80 +340,15 @@ const SyncStatus: React.FC = () => {
   };
 
   return (
-    <div className="sync-status">
+    <div className="sync-status sync-status-inline">
       <div className="sync-status-indicator">
         <div className={`status-dot ${syncStatus.online ? 'online' : 'offline'}`}></div>
         <span className="status-text">
           {syncStatus.online ? 'Online' : 'Offline'}
         </span>
       </div>
-
-      {syncStatus.pendingSyncs > 0 && (
-        <div className="pending-syncs">
-          <span className="pending-count">{syncStatus.pendingSyncs} pending</span>
-          {isSyncing && (
-            <>
-              {syncProgress ? (
-                <div className="sync-progress-container">
-                  <div className="sync-progress-info">
-                    <span className="auto-sync-indicator">
-                      Syncing... {syncProgress.processed}/{syncProgress.total} 
-                      ({syncProgress.currentBatch}/{syncProgress.totalBatches} batches)
-                    </span>
-                    <div className="progress-bar-container">
-                      <div 
-                        className="progress-bar" 
-                        style={{ width: `${syncProgress.percentage}%` }}
-                      ></div>
-                    </div>
-                    <span className="progress-stats">
-                      ✓ {syncProgress.synced} synced | ✗ {syncProgress.failed} failed
-                    </span>
-                  </div>
-                  <button
-                    className="cancel-sync-button"
-                    onClick={handleCancelSync}
-                    title="Cancel sync"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ) : (
-                <span className="auto-sync-indicator">Syncing...</span>
-              )}
-            </>
-          )}
-          {!isSyncing && syncStatus.online && (
-            <button
-              className="sync-button"
-              onClick={() => handleSyncNow(false)}
-              title="Manually sync now"
-            >
-              Sync
-            </button>
-          )}
-        </div>
-      )}
-      
-      {/* Queue size warnings */}
-      {syncStatus.queueSize !== undefined && syncStatus.queueSize > 0 && (
-        <div className={`queue-warning ${syncStatus.isCritical ? 'critical' : syncStatus.isWarning ? 'warning' : ''}`}>
-          {syncStatus.isCritical && (
-            <span className="queue-alert">
-              ⚠️ Queue full ({syncStatus.queueSize}/{syncStatus.maxQueueSize}). Sync immediately!
-            </span>
-          )}
-          {syncStatus.isWarning && !syncStatus.isCritical && (
-            <span className="queue-alert">
-              ⚠️ Large queue ({syncStatus.queueSize} sales). Consider syncing soon.
-            </span>
-          )}
-        </div>
-      )}
-
-      <div className="last-sync">
-        Last sync: {formatLastSync(syncStatus.lastSync)}
-      </div>
+      <span className="sync-status-divider">•</span>
+      <span className="last-sync-inline">Last sync: {formatLastSync(syncStatus.lastSync)}</span>
     </div>
   );
 };

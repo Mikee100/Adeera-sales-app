@@ -1,5 +1,38 @@
 import log from 'electron-log';
 import winston from 'winston';
+import * as path from 'path';
+import * as fs from 'fs';
+
+// Helper to get a writable log directory
+const getLogDirectory = () => {
+  // In development, keep logs local
+  if (process.env.NODE_ENV === 'development') {
+    return 'logs';
+  }
+
+  // In production, we MUST use a writerable directory (AppData)
+  // We can only access the 'app' module in the main process
+  if (process.type === 'browser') {
+    try {
+      const { app } = require('electron');
+      const userDataPath = app.getPath('userData');
+      const prodLogDir = path.join(userDataPath, 'logs');
+      
+      // Ensure the directory exists
+      if (!fs.existsSync(prodLogDir)) {
+        fs.mkdirSync(prodLogDir, { recursive: true });
+      }
+      return prodLogDir;
+    } catch (e) {
+      console.error('Failed to resolve production log directory:', e);
+    }
+  }
+
+  // Fallback for renderer or if something failed
+  return 'logs';
+};
+
+const LOG_DIR = getLogDirectory();
 
 // Configure electron-log for file output
 log.transports.file.level = 'info';
@@ -17,9 +50,14 @@ const winstonLogger = winston.createLogger({
   defaultMeta: { service: 'saas-pos' },
   transports: [
     // Write all logs with importance level of `error` or less to `error.log`
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new winston.transports.File({ 
+      filename: path.join(LOG_DIR, 'error.log'), 
+      level: 'error' 
+    }),
     // Write all logs with importance level of `info` or less to `combined.log`
-    new winston.transports.File({ filename: 'logs/combined.log' }),
+    new winston.transports.File({ 
+      filename: path.join(LOG_DIR, 'combined.log') 
+    }),
   ],
 });
 
