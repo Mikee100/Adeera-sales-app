@@ -98,6 +98,20 @@ const POS: React.FC = () => {
   const [showFindReceiptModal, setShowFindReceiptModal] = useState(false);
   const [showSalesHistoryModal, setShowSalesHistoryModal] = useState(false);
 
+  const normalizedRoles: string[] = Array.isArray(user?.roles)
+    ? user.roles.map((role: string) => String(role).toLowerCase())
+    : [];
+  const assignedBranchId =
+    typeof user?.branchId === 'string' && user.branchId.trim().length > 0
+      ? user.branchId.trim()
+      : '';
+  const isBranchLockedUser =
+    !!assignedBranchId &&
+    (normalizedRoles.includes('cashier') ||
+      normalizedRoles.includes('staff') ||
+      String((user as any)?.role || '').toLowerCase() === 'cashier' ||
+      String((user as any)?.role || '').toLowerCase() === 'staff');
+
   // Update queue count periodically when processing or when queue exists
   useEffect(() => {
     const updateQueueCount = () => {
@@ -116,28 +130,71 @@ const POS: React.FC = () => {
   // Load branches on mount and when user changes
   useEffect(() => {
     const loadBranches = async () => {
+      const fallbackLockedBranch =
+        isBranchLockedUser && assignedBranchId
+          ? [{ id: assignedBranchId, name: user?.branchName || 'Assigned Branch' }]
+          : [];
+
       try {
         const response = await window.electronAPI.getBranches();
         if (response.success && response.branches) {
-          setBranches(response.branches);
+          const normalizedBranches = response.branches.map((branch) => ({
+            ...branch,
+            name:
+              (typeof branch?.name === 'string' && branch.name.trim()) ||
+              (branch?.id === assignedBranchId && user?.branchName) ||
+              'Assigned Branch',
+          }));
+
+          const availableBranches = isBranchLockedUser && assignedBranchId
+            ? normalizedBranches.filter((branch) => branch.id === assignedBranchId)
+            : normalizedBranches;
+
+          const effectiveBranches =
+            isBranchLockedUser && assignedBranchId && availableBranches.length === 0
+              ? [{ id: assignedBranchId, name: user?.branchName || 'Assigned Branch' }]
+              : availableBranches;
+
+          setBranches(effectiveBranches);
           
           // Set default branch: user's branchId or first available branch
-          if (!selectedBranch && response.branches.length > 0) {
-            const defaultBranchId = user?.branchId || response.branches[0]?.id;
+          if (!selectedBranch && effectiveBranches.length > 0) {
+            const defaultBranchId = assignedBranchId || effectiveBranches[0]?.id;
             if (defaultBranchId) {
               setSelectedBranch(defaultBranchId);
             }
           }
+
+          if (isBranchLockedUser && assignedBranchId && selectedBranch !== assignedBranchId) {
+            setSelectedBranch(assignedBranchId);
+          }
+        } else if (fallbackLockedBranch.length > 0) {
+          setBranches(fallbackLockedBranch);
+          if (selectedBranch !== assignedBranchId) {
+            setSelectedBranch(assignedBranchId);
+          }
         }
       } catch (error) {
         console.error('Failed to load branches:', error);
+        if (fallbackLockedBranch.length > 0) {
+          setBranches(fallbackLockedBranch);
+          if (selectedBranch !== assignedBranchId) {
+            setSelectedBranch(assignedBranchId);
+          }
+        }
       }
     };
 
     if (user) {
       loadBranches();
     }
-  }, [user]);
+  }, [user, isBranchLockedUser, assignedBranchId, selectedBranch]);
+
+  useEffect(() => {
+    if (isBranchLockedUser && assignedBranchId && selectedBranch !== assignedBranchId) {
+      setSelectedBranch(assignedBranchId);
+    }
+  }, [isBranchLockedUser, assignedBranchId, selectedBranch]);
 
   useEffect(() => {
     loadProducts(0);
@@ -451,7 +508,9 @@ const POS: React.FC = () => {
 
           // Prioritize selectedBranch over user.branchId (user explicitly selected a branch)
           // Fallback to user.branchId if no branch is selected
-          const branchId = selectedBranch || user?.branchId;
+          const branchId = isBranchLockedUser
+            ? assignedBranchId
+            : selectedBranch || user?.branchId;
           console.log('  - Final branchId to use:', branchId);
 
           // If there are branches, require a selection; if there are no branches at all,
@@ -1483,6 +1542,8 @@ const POS: React.FC = () => {
           branches={branches}
           selectedBranch={selectedBranch}
           onBranchChange={setSelectedBranch}
+          branchSelectionLocked={isBranchLockedUser}
+          lockedBranchId={assignedBranchId}
           onFindReceiptClick={() => setShowFindReceiptModal(true)}
           onSalesHistoryClick={() => setShowSalesHistoryModal(true)}
         />

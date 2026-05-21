@@ -63013,6 +63013,21 @@ function getAuthToken(store) {
     }
     return plainToken;
 }
+function isCashierOrStaffUser(user) {
+    if (!user)
+        return false;
+    const roleNames = Array.isArray(user.roles)
+        ? user.roles.map((role) => String(role).toLowerCase())
+        : [];
+    const primaryRole = String(user.role || '').toLowerCase();
+    return (roleNames.includes('cashier') ||
+        roleNames.includes('staff') ||
+        primaryRole === 'cashier' ||
+        primaryRole === 'staff');
+}
+function shouldLockUserToAssignedBranch(user) {
+    return !!(user?.branchId && isCashierOrStaffUser(user));
+}
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -63152,8 +63167,9 @@ const createWindow = () => {
     mainWindow.once('ready-to-show', () => {
         mainWindow?.show();
     });
-    // Open the DevTools if in development
-    if (true) {
+    // Open DevTools only when explicitly requested.
+    // Set OPEN_DEVTOOLS=true to enable it during development.
+    if ( true && process.env.OPEN_DEVTOOLS === 'true') {
         mainWindow.webContents.openDevTools();
     }
     // Emitted when the window is closed.
@@ -63431,6 +63447,9 @@ electron_1.ipcMain.handle('authenticate', async (event, credentials) => {
                 }
                 // Store user data (not sensitive, can be plain)
                 store.set('user', response.data.user);
+                // Clear stale cached data from any previous user/session before refilling.
+                store.delete('cachedBranches');
+                store.delete('cachedProducts');
                 logger_1.logger.debug('Data cached successfully', { component: 'auth', encrypted: encryptionAvailable });
                 // Start periodic product sync after successful login
                 startPeriodicProductSync();
@@ -63502,7 +63521,10 @@ electron_1.ipcMain.handle('getUserData', () => {
 });
 electron_1.ipcMain.handle('getBranches', async () => {
     const store = new electron_store_1.default();
-    const token = store.get('authToken');
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    const lockToAssignedBranch = shouldLockUserToAssignedBranch(user);
+    const assignedBranchId = user?.branchId;
     if (!token) {
         logger_1.logger.warn('No authentication token found for branches', { component: 'branches' });
         return { success: false, branches: [], error: 'Not authenticated', unauthorized: true };
@@ -63528,17 +63550,23 @@ electron_1.ipcMain.handle('getBranches', async () => {
                 timeout: 10000,
             }), endpoint);
             const branches = Array.isArray(response.data) ? response.data : [];
-            logger_1.logger.info(`Fetched ${branches.length} branches`, { component: 'branches' });
+            const visibleBranches = lockToAssignedBranch && assignedBranchId
+                ? branches.filter((branch) => branch?.id === assignedBranchId)
+                : branches;
+            logger_1.logger.info(`Fetched ${visibleBranches.length} branches`, { component: 'branches' });
             // Cache branches for offline use
-            store.set('cachedBranches', branches);
-            return { success: true, branches };
+            store.set('cachedBranches', visibleBranches);
+            return { success: true, branches: visibleBranches };
         }
         else {
             // Offline mode: return cached branches if available
             const cachedBranches = store.get('cachedBranches');
             if (cachedBranches && Array.isArray(cachedBranches)) {
-                logger_1.logger.info(`Returning ${cachedBranches.length} cached branches (offline)`, { component: 'branches' });
-                return { success: true, branches: cachedBranches };
+                const visibleBranches = lockToAssignedBranch && assignedBranchId
+                    ? cachedBranches.filter((branch) => branch?.id === assignedBranchId)
+                    : cachedBranches;
+                logger_1.logger.info(`Returning ${visibleBranches.length} cached branches (offline)`, { component: 'branches' });
+                return { success: true, branches: visibleBranches };
             }
             return { success: false, branches: [], error: 'Backend offline and no cached branches' };
         }
@@ -63550,8 +63578,11 @@ electron_1.ipcMain.handle('getBranches', async () => {
         // Try to return cached branches on error
         const cachedBranches = store.get('cachedBranches');
         if (cachedBranches && Array.isArray(cachedBranches)) {
-            logger_1.logger.info(`Returning ${cachedBranches.length} cached branches (error fallback)`, { component: 'branches' });
-            return { success: true, branches: cachedBranches };
+            const visibleBranches = lockToAssignedBranch && assignedBranchId
+                ? cachedBranches.filter((branch) => branch?.id === assignedBranchId)
+                : cachedBranches;
+            logger_1.logger.info(`Returning ${visibleBranches.length} cached branches (error fallback)`, { component: 'branches' });
+            return { success: true, branches: visibleBranches };
         }
         return {
             success: false,
@@ -63882,6 +63913,20 @@ electron_1.ipcMain.handle('getProductVariations', async (_event, productId) => {
 });
 electron_1.ipcMain.handle('createSale', async (event, saleData) => {
     const store = new electron_store_1.default();
+    const user = store.get('user');
+    const lockToAssignedBranch = shouldLockUserToAssignedBranch(user);
+    const assignedBranchId = user?.branchId;
+    if (lockToAssignedBranch && assignedBranchId) {
+        if (saleData.branchId && saleData.branchId !== assignedBranchId) {
+            logger_1.logger.warn('Overriding mismatched sale branch for restricted user', {
+                component: 'sales',
+                requestedBranchId: saleData.branchId,
+                assignedBranchId,
+                userId: user?.id,
+            });
+        }
+        saleData.branchId = assignedBranchId;
+    }
     try {
         // Get stored JWT token (encrypted or plain text)
         const token = getAuthToken(store);

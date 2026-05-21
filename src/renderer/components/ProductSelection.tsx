@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import Settings from './Settings';
@@ -67,6 +67,8 @@ interface ProductSelectionProps {
   branches?: Branch[];
   selectedBranch?: string;
   onBranchChange?: (branchId: string) => void;
+  branchSelectionLocked?: boolean;
+  lockedBranchId?: string;
   onFindReceiptClick?: () => void;
   onSalesHistoryClick?: () => void;
 }
@@ -87,6 +89,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   branches = [],
   selectedBranch: propSelectedBranch = '',
   onBranchChange,
+  branchSelectionLocked = false,
+  lockedBranchId = '',
   onFindReceiptClick,
   onSalesHistoryClick
 }) => {
@@ -105,6 +109,9 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   }, [propSelectedBranch]);
 
   const handleBranchChange = (branchId: string) => {
+    if (branchSelectionLocked && lockedBranchId && branchId !== lockedBranchId) {
+      return;
+    }
     setSelectedBranch(branchId);
     if (onBranchChange) {
       onBranchChange(branchId);
@@ -116,12 +123,39 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   const [selectedProductForVariation, setSelectedProductForVariation] = useState<Product | null>(null);
   const [modalVariations, setModalVariations] = useState<Array<{ id: string; sku: string; price?: number | null; stock: number; attributes?: Record<string, string> }>>([]);
   const [loadingVariations, setLoadingVariations] = useState(false);
+  const [variationSearchTerm, setVariationSearchTerm] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
   const [showBarcodeHelp, setShowBarcodeHelp] = useState(false);
   const [showReceiptsMenu, setShowReceiptsMenu] = useState(false);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const receiptsMenuRef = useRef<HTMLDivElement | null>(null);
+  const sessionExpiryHandledRef = useRef(false);
+
+  const handleSessionExpired = useCallback(async (message: string) => {
+    if (sessionExpiryHandledRef.current) {
+      return;
+    }
+    sessionExpiryHandledRef.current = true;
+    showToast(message, 'warning', 2500);
+    await logout();
+  }, [logout]);
+
+  const visibleBranches =
+    branchSelectionLocked && lockedBranchId
+      ? (() => {
+          const lockedFromList = branches.filter((branch) => branch.id === lockedBranchId);
+          if (lockedFromList.length > 0) {
+            return lockedFromList;
+          }
+          return [
+            {
+              id: lockedBranchId,
+              name: user?.branchName || 'Assigned Branch',
+            },
+          ];
+        })()
+      : branches;
 
   // Close receipts dropdown when clicking outside
   useEffect(() => {
@@ -150,6 +184,19 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   useEffect(() => {
     loadProducts();
   }, [selectedBranch]);
+
+  useEffect(() => {
+    if (!showVariationModal) return;
+
+    const handleEscClose = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeVariationModal();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscClose);
+    return () => window.removeEventListener('keydown', handleEscClose);
+  }, [showVariationModal]);
 
   // Keyboard shortcut: Ctrl/Cmd + K focuses the search box for faster checkout
   useEffect(() => {
@@ -215,10 +262,29 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
       if (response.success) {
         setProducts(response.products || []);
       } else {
+        const authError =
+          response.error?.includes('authentication') ||
+          response.error?.includes('Unauthorized') ||
+          response.error?.includes('token') ||
+          response.error?.includes('auth');
+        if (authError) {
+          await handleSessionExpired('Session expired. Redirecting to login...');
+          return;
+        }
         console.error('Failed to load products:', response.error);
         setProducts([]);
       }
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error || '');
+      const authError =
+        message.includes('authentication') ||
+        message.includes('Unauthorized') ||
+        message.includes('token') ||
+        message.includes('auth');
+      if (authError) {
+        await handleSessionExpired('Session expired. Redirecting to login...');
+        return;
+      }
       console.error('Failed to load products:', error);
       setProducts([]);
     } finally {
@@ -265,6 +331,12 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     attributes: v.attributes || {},
   });
 
+  const closeVariationModal = () => {
+    setShowVariationModal(false);
+    setSelectedProductForVariation(null);
+    setVariationSearchTerm('');
+  };
+
   const handleProductClick = async (product: Product) => {
     const hasAnyVariations =
       product.hasVariations || (product.variations && product.variations.length > 0);
@@ -277,6 +349,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
 
     setSelectedProductForVariation(product);
     setShowVariationModal(true);
+    setVariationSearchTerm('');
     // Use product.variations immediately if available (from products list with includeVariations)
     const fromProduct = (product.variations || []).map(mapVariation);
     if (fromProduct.length > 0) {
@@ -291,7 +364,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
       const vars = (res.variations || []).map(mapVariation);
       setModalVariations(vars.length > 0 ? vars : fromProduct);
       if (!res.success && (res as any).unauthorized) {
-        showToast('Session expired. Please log in again to load variations.', 'warning', 4000);
+        await handleSessionExpired('Session expired. Redirecting to login...');
       }
     } catch {
       // API failed - fall back to product.variations if we have them
@@ -325,8 +398,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
       return;
     }
     onAddToCart(variationProduct);
-    setShowVariationModal(false);
-    setSelectedProductForVariation(null);
+    closeVariationModal();
   };
 
   const handleAddBaseProductToCart = (product: Product) => {
@@ -343,9 +415,20 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
       return;
     }
     onAddToCart(product);
-    setShowVariationModal(false);
-    setSelectedProductForVariation(null);
+    closeVariationModal();
   };
+
+  const filteredModalVariations = modalVariations
+    .filter((variation) => {
+      const label =
+        variation.attributes && Object.keys(variation.attributes).length > 0
+          ? Object.entries(variation.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')
+          : variation.sku;
+
+      const searchableText = `${label} ${variation.sku}`.toLowerCase();
+      return searchableText.includes(variationSearchTerm.trim().toLowerCase());
+    })
+    .sort((a, b) => Number(b.stock > 0) - Number(a.stock > 0));
 
   return (
     <div className="pos-container">
@@ -418,11 +501,13 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               value={selectedBranch}
               onChange={(e) => handleBranchChange(e.target.value)}
               className="branch-select improved-branch-select"
+              disabled={branchSelectionLocked}
+              title={branchSelectionLocked ? 'Branch is fixed for your account' : 'Select branch'}
             >
-              <option value="">Select Branch</option>
-              {branches.map((branch) => (
+              {!branchSelectionLocked && <option value="">Select Branch</option>}
+              {visibleBranches.map((branch) => (
                 <option key={branch.id} value={branch.id}>
-                  {branch.name}
+                  {branch.name || user?.branchName || 'Assigned Branch'}
                 </option>
               ))}
             </select>
@@ -433,7 +518,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             >
               {theme === 'dark' ? '☀️' : '🌙'}
             </button>
-            {user && (user.isSuperadmin || user.roles?.includes('owner') || user.roles?.includes('admin') || user.permissions?.includes('view_settings')) && (
+            {user && (
               <button 
                 className="icon-btn settings-btn" 
                 onClick={() => setShowSettings(true)}
@@ -457,16 +542,45 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
       </div>
 
       {showSettings && (
-        <Settings onClose={() => { setShowSettings(false); loadProducts(); }} onUnauthorized={logout} />
+        <Settings
+          onClose={async () => {
+            setShowSettings(false);
+            const token = await window.electronAPI.getAuthToken();
+            if (token) {
+              await loadProducts();
+            }
+          }}
+          onUnauthorized={() => {
+            void handleSessionExpired('Session expired. Redirecting to login...');
+          }}
+        />
       )}
 
       {showVariationModal && selectedProductForVariation && (
-        <div className="variation-modal-overlay" onClick={() => { setShowVariationModal(false); setSelectedProductForVariation(null); }}>
+        <div className="variation-modal-overlay" onClick={closeVariationModal}>
           <div className="variation-modal" onClick={e => e.stopPropagation()}>
             <div className="variation-modal-header">
               <h2>Select Variation</h2>
               <p className="variation-modal-product-name">{selectedProductForVariation.name}</p>
-              <button className="variation-modal-close" onClick={() => { setShowVariationModal(false); setSelectedProductForVariation(null); }}>×</button>
+              <div className="variation-modal-toolbar">
+                <input
+                  type="text"
+                  value={variationSearchTerm}
+                  onChange={(e) => setVariationSearchTerm(e.target.value)}
+                  placeholder="Search variant by size, color, or SKU..."
+                  className="variation-search-input"
+                  autoFocus
+                />
+              </div>
+              <button
+                type="button"
+                className="variation-modal-close"
+                onClick={closeVariationModal}
+                title="Close"
+                aria-label="Close variation modal"
+              >
+                ×
+              </button>
             </div>
             <div className="variation-modal-list">
               {loadingVariations ? (
@@ -482,7 +596,11 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                     Add base product to cart
                   </button>
                 </div>
-              ) : modalVariations.map(variation => {
+              ) : filteredModalVariations.length === 0 ? (
+                <div className="variation-modal-empty">
+                  <p>No matching variations found.</p>
+                </div>
+              ) : filteredModalVariations.map(variation => {
                 const attrsLabel = variation.attributes && typeof variation.attributes === 'object'
                   ? Object.entries(variation.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')
                   : variation.sku;
@@ -594,10 +712,30 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               <div className="loading">No products found</div>
             ) : (
               filteredProducts.map(product => {
-                const inlineVariations =
-                  (product.variations || []).map(mapVariation).slice(0, 3);
+                const mappedVariations = (product.variations || []).map(mapVariation);
+                const hasAnyVariations = product.hasVariations || mappedVariations.length > 0;
+                const totalVariationStock = mappedVariations.reduce(
+                  (sum, variation) => sum + Math.max(variation.stock || 0, 0),
+                  0
+                );
+                const inStockVariationCount = mappedVariations.filter(
+                  (variation) => variation.stock > 0
+                ).length;
+                const productHasStock = hasAnyVariations
+                  ? inStockVariationCount > 0
+                  : product.stock > 0;
+                const stockLabel = hasAnyVariations
+                  ? (productHasStock
+                    ? `Variants in stock: ${inStockVariationCount} (${totalVariationStock} units)`
+                    : 'Out of stock')
+                  : (product.stock > 0
+                    ? `Stock: ${product.stock}`
+                    : 'Out of stock');
+
+                const inlineVariations = mappedVariations.slice(0, 3);
                 const showInlineVariations =
                   inlineVariations.length > 0 && inlineVariations.length <= 3;
+                const variationCount = mappedVariations.length;
 
                 return (
                   <div
@@ -624,7 +762,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                       </div>
                       <div className="product-price-stock-row">
                         <span className="price">${product.price?.toFixed(2) || '0.00'}</span>
-                        <span className={`stock ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>{product.stock > 0 ? `Stock: ${product.stock}` : 'Out of stock'}</span>
+                        <span className={`stock ${productHasStock ? 'in-stock' : 'out-of-stock'}`}>{stockLabel}</span>
                       </div>
 
                       {showInlineVariations && (
@@ -659,6 +797,15 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                           ? 'Tap a variant below, or open details'
                           : 'Tap to add / choose variant'}
                       </p>
+
+                      <div className="product-card-footer">
+                        <span className="product-card-type">
+                          {hasAnyVariations ? `${variationCount} variants` : 'Simple product'}
+                        </span>
+                        <span className="product-card-cta">
+                          {hasAnyVariations ? 'Choose ▸' : 'Add ▸'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );

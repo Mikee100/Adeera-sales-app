@@ -162,6 +162,11 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
             ? 'Session expired. Please log in again to sync the catalog.'
             : (response.error || 'Failed to sync products'),
         });
+        if (isUnauthorized && onUnauthorized) {
+          setTimeout(() => {
+            onUnauthorized();
+          }, 1200);
+        }
         setTimeout(() => setMessage(null), 8000);
       }
     } catch (error: any) {
@@ -172,6 +177,11 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
           ? 'Session expired. Please log in again to sync the catalog.'
           : (error.message || 'Failed to sync products'),
       });
+      if (isUnauthorized && onUnauthorized) {
+        setTimeout(() => {
+          onUnauthorized();
+        }, 1200);
+      }
       setTimeout(() => setMessage(null), 8000);
     } finally {
       setSyncing(false);
