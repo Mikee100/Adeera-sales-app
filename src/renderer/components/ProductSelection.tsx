@@ -62,7 +62,6 @@ interface ProductSelectionProps {
   onDeletePendingTransaction?: (transactionId: string) => void;
   pendingTransactions?: PendingTransaction[];
   getTotal: () => number;
-  getVAT: () => number;
   getGrandTotal: () => number;
   branches?: Branch[];
   selectedBranch?: string;
@@ -84,7 +83,6 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   onDeletePendingTransaction,
   pendingTransactions = [],
   getTotal,
-  getVAT,
   getGrandTotal,
   branches = [],
   selectedBranch: propSelectedBranch = '',
@@ -257,7 +255,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     try {
       setLoading(true);
 
-      const response = await window.electronAPI.getProducts() as ProductsResponse;
+      const response = await window.electronAPI.getProducts(selectedBranch || undefined) as ProductsResponse;
 
       if (response.success) {
         setProducts(response.products || []);
@@ -936,10 +934,6 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             <div className="summary-row">
               <span>Subtotal:</span>
               <span>${getTotal().toFixed(2)}</span>
-            </div>
-            <div className="summary-row">
-              <span>VAT (16%):</span>
-              <span>${getVAT().toFixed(2)}</span>
             </div>
             <div className="summary-row total">
               <span>Total:</span>

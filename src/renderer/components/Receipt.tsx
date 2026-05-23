@@ -451,10 +451,6 @@ const Receipt: React.FC<ReceiptProps> = ({
                 <span className="total-label">Subtotal</span>
                 <span className="total-value">{formatCurrency(receipt.subtotal || 0)}</span>
               </div>
-              <div className="total-item">
-                <span className="total-label">VAT (16%)</span>
-                <span className="total-value">{formatCurrency(receipt.vatAmount || 0)}</span>
-              </div>
               <div className="total-item grand-total">
                 <span className="total-label">Total Amount</span>
                 <span className="total-amount">{formatCurrency(receipt.total || 0)}</span>

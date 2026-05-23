@@ -92,11 +92,11 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
           { name: 'Test Item', quantity: 1, price: 10.00, sku: 'TEST-001' },
         ],
         subtotal: 10.00,
-        vatAmount: 1.60,
-        total: 11.60,
+        vatAmount: 0,
+        total: 10.00,
         paymentMethod: 'cash',
         amountReceived: 20.00,
-        change: 8.40,
+        change: 10.00,
       };
 
       const response = await (window as any).electronAPI.printReceipt(testReceipt);

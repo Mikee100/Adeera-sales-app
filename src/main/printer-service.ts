@@ -265,8 +265,6 @@ class PrinterService {
     // Totals
     this.addText(commands, `Subtotal:${' '.repeat(22)}Ksh ${receiptData.subtotal.toFixed(2)}`);
     commands.push(0x0A);
-    this.addText(commands, `VAT (16%):${' '.repeat(21)}Ksh ${receiptData.vatAmount.toFixed(2)}`);
-    commands.push(0x0A);
     this.addText(commands, '--------------------------------');
     commands.push(0x0A);
     commands.push(0x1D, 0x21, 0x11); // Double size

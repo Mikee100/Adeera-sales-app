@@ -10,7 +10,7 @@ declare global {
       getAuthToken: () => Promise<string | null>;
       getUserData: () => Promise<any>;
       logout: () => Promise<{ success: boolean }>;
-      getProducts: () => Promise<{
+      getProducts: (branchId?: string) => Promise<{
         success: boolean;
         products?: any[];
         error?: string;

@@ -4,7 +4,7 @@ interface ElectronAPI {
   getUserData: () => Promise<any | null>;
   getBranches: () => Promise<{ success: boolean; branches?: any[]; error?: string; unauthorized?: boolean }>;
   logout: () => Promise<{ success: boolean }>;
-  getProducts: () => Promise<{ success: boolean; products?: any[]; error?: string }>;
+  getProducts: (branchId?: string) => Promise<{ success: boolean; products?: any[]; error?: string }>;
   getProductVariations: (productId: string) => Promise<{ success: boolean; variations?: any[]; error?: string }>;
   createSale: (saleData: any) => Promise<{ success: boolean; sale?: any; receipt?: any; error?: string; queueSize?: number; maxQueueSize?: number; warningThreshold?: number; isWarning?: boolean; isCritical?: boolean }>;
   getReceipt: (saleId: string) => Promise<{ success: boolean; receipt?: any; error?: string }>;

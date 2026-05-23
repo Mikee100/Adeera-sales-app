@@ -63609,22 +63609,31 @@ electron_1.ipcMain.handle('logout', () => {
     logger_1.logger.info('User logged out, cleared all cached data', { component: 'auth' });
     return { success: true };
 });
-electron_1.ipcMain.handle('getProducts', async () => {
+electron_1.ipcMain.handle('getProducts', async (_event, branchId) => {
     const store = new electron_store_1.default();
     try {
+        const user = store.get('user');
+        const requestedBranchId = typeof branchId === 'string' && branchId.trim().length > 0
+            ? branchId.trim()
+            : undefined;
+        const effectiveBranchId = requestedBranchId || user?.branchId;
+        const branchCacheKey = effectiveBranchId ? `cachedProducts:${effectiveBranchId}` : 'cachedProducts';
         // Get stored JWT token (encrypted or plain text)
         const token = getAuthToken(store);
         if (!token) {
             logger_1.logger.warn('No authentication token found', { component: 'products' });
             // Return cached products if available
-            const cachedProducts = store.get('cachedProducts');
+            const cachedProducts = store.get(branchCacheKey);
             if (cachedProducts && Array.isArray(cachedProducts)) {
-                logger_1.logger.info(`Returning ${cachedProducts.length} cached products (no token)`, { component: 'products' });
+                logger_1.logger.info(`Returning ${cachedProducts.length} cached products (no token)`, {
+                    component: 'products',
+                    branchId: effectiveBranchId,
+                });
                 return { success: true, products: cachedProducts };
             }
             else if (cachedProducts) {
                 logger_1.logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
-                store.delete('cachedProducts');
+                store.delete(branchCacheKey);
             }
             return { success: false, error: 'No authentication token found' };
         }
@@ -63642,14 +63651,13 @@ electron_1.ipcMain.handle('getProducts', async () => {
             // Online mode: fetch from backend and cache
             try {
                 // Fetch products with pagination and variations for POS (includeVariations needed for product variation selection)
-                const user = store.get('user');
                 const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/products`);
                 await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
                 const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.get(`${BACKEND_BASE_URL}/products?page=1&limit=1000&includeVariations=true`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
-                        ...(user?.branchId && { 'x-branch-id': user.branchId }),
+                        ...(effectiveBranchId && { 'x-branch-id': effectiveBranchId }),
                     },
                     timeout: 10000, // 10 second timeout
                 }), endpoint);
@@ -63702,22 +63710,29 @@ electron_1.ipcMain.handle('getProducts', async () => {
                     return base;
                 });
                 // Cache the products locally with timestamp
-                store.set('cachedProducts', products);
+                store.set(branchCacheKey, products);
                 store.set('catalogLastSynced', new Date().toISOString());
-                logger_1.logger.debug('Products cached successfully', { component: 'products', productCount: products.length });
+                logger_1.logger.debug('Products cached successfully', {
+                    component: 'products',
+                    productCount: products.length,
+                    branchId: effectiveBranchId,
+                });
                 return { success: true, products };
             }
             catch (error) {
                 logger_1.logger.error('Error fetching products from backend', { component: 'products', status: error.response?.status, error: error.response?.data || error.message });
                 // Fall back to cached products
-                const cachedProducts = store.get('cachedProducts');
+                const cachedProducts = store.get(branchCacheKey);
                 if (cachedProducts && Array.isArray(cachedProducts)) {
-                    logger_1.logger.info(`Returning ${cachedProducts.length} cached products (backend error)`, { component: 'products' });
+                    logger_1.logger.info(`Returning ${cachedProducts.length} cached products (backend error)`, {
+                        component: 'products',
+                        branchId: effectiveBranchId,
+                    });
                     return { success: true, products: cachedProducts };
                 }
                 else if (cachedProducts) {
                     logger_1.logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
-                    store.delete('cachedProducts');
+                    store.delete(branchCacheKey);
                 }
                 throw error; // Re-throw if no cache available
             }
@@ -63725,14 +63740,17 @@ electron_1.ipcMain.handle('getProducts', async () => {
         else {
             // Offline mode: return cached products
             logger_1.logger.info('Backend offline, using cached products', { component: 'products' });
-            const cachedProducts = store.get('cachedProducts');
+            const cachedProducts = store.get(branchCacheKey);
             if (cachedProducts && Array.isArray(cachedProducts)) {
-                logger_1.logger.info(`Returning ${cachedProducts.length} cached products (offline mode)`, { component: 'products' });
+                logger_1.logger.info(`Returning ${cachedProducts.length} cached products (offline mode)`, {
+                    component: 'products',
+                    branchId: effectiveBranchId,
+                });
                 return { success: true, products: cachedProducts };
             }
             else if (cachedProducts) {
                 logger_1.logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
-                store.delete('cachedProducts');
+                store.delete(branchCacheKey);
             }
             else {
                 logger_1.logger.warn('No cached products available in offline mode', { component: 'products' });
@@ -63743,14 +63761,23 @@ electron_1.ipcMain.handle('getProducts', async () => {
     catch (error) {
         logger_1.logger.error('Error in getProducts', { component: 'products', error: error.message });
         // Final fallback: try to return cached products
-        const cachedProducts = store.get('cachedProducts');
+        const user = store.get('user');
+        const requestedBranchId = typeof branchId === 'string' && branchId.trim().length > 0
+            ? branchId.trim()
+            : undefined;
+        const effectiveBranchId = requestedBranchId || user?.branchId;
+        const branchCacheKey = effectiveBranchId ? `cachedProducts:${effectiveBranchId}` : 'cachedProducts';
+        const cachedProducts = store.get(branchCacheKey);
         if (cachedProducts && Array.isArray(cachedProducts)) {
-            logger_1.logger.info(`Returning ${cachedProducts.length} cached products (final fallback)`, { component: 'products' });
+            logger_1.logger.info(`Returning ${cachedProducts.length} cached products (final fallback)`, {
+                component: 'products',
+                branchId: effectiveBranchId,
+            });
             return { success: true, products: cachedProducts };
         }
         else if (cachedProducts) {
             logger_1.logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
-            store.delete('cachedProducts');
+            store.delete(branchCacheKey);
         }
         // IMPROVED: Use error parser for consistent error message extraction
         const parsedError = (0, error_parser_1.enhanceErrorMessage)((0, error_parser_1.parseAxiosError)(error));
@@ -65123,8 +65150,6 @@ class PrinterService {
         commands.push(0x0A);
         // Totals
         this.addText(commands, `Subtotal:${' '.repeat(22)}Ksh ${receiptData.subtotal.toFixed(2)}`);
-        commands.push(0x0A);
-        this.addText(commands, `VAT (16%):${' '.repeat(21)}Ksh ${receiptData.vatAmount.toFixed(2)}`);
         commands.push(0x0A);
         this.addText(commands, '--------------------------------');
         commands.push(0x0A);

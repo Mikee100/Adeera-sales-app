@@ -27,7 +27,6 @@ interface CartItem {
 interface CheckoutProps {
   cart: CartItem[];
   subtotal: number;
-  vat: number;
   total: number;
   onCompleteSale: (paymentData: PaymentData) => void;
   onBackToProducts: () => void;
@@ -65,7 +64,6 @@ interface PaymentData {
 const Checkout: React.FC<CheckoutProps> = ({
   cart,
   subtotal,
-  vat,
   total,
   onCompleteSale,
   onBackToProducts,
@@ -102,10 +100,9 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [mpesaReceipt, setMpesaReceipt] = useState<string | null>(null);
   const [currentMpesaPaymentIndex, setCurrentMpesaPaymentIndex] = useState<number | null>(null);
 
-  // Computed totals after discount (discount applied to subtotal, then VAT on remainder)
+  // Computed totals after discount
   const subtotalAfterDiscount = Math.max(0, subtotal - discountAmount);
-  const vatAfterDiscount = Math.round(subtotalAfterDiscount * 0.16 * 100) / 100;
-  const totalAfterDiscount = subtotalAfterDiscount + vatAfterDiscount;
+  const totalAfterDiscount = subtotalAfterDiscount;
 
   // Progress steps
   const steps = ['Cart Review', 'Payment', 'Confirmation'];
@@ -564,10 +561,6 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <span className="discount-amount">−${discountAmount.toFixed(2)}</span>
                 </div>
               )}
-              <div className="total-row">
-                <span>VAT (16%)</span>
-                <span>${vatAfterDiscount.toFixed(2)}</span>
-              </div>
               <div className="total-row grand-total">
                 <span>Total Amount</span>
                 <span className="total-amount">${totalAfterDiscount.toFixed(2)}</span>
@@ -1079,7 +1072,7 @@ const Checkout: React.FC<CheckoutProps> = ({
               price: item.product.price,
             })),
             subtotal: subtotalAfterDiscount,
-            vat: vatAfterDiscount,
+            vat: 0,
             total: currentMpesaPaymentIndex !== null && isSplitPayment
               ? splitPayments[currentMpesaPaymentIndex]?.amount || 0
               : totalAfterDiscount,

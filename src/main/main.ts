@@ -742,22 +742,32 @@ ipcMain.handle('logout', () => {
   return { success: true };
 });
 
-ipcMain.handle('getProducts', async () => {
+ipcMain.handle('getProducts', async (_event, branchId?: string) => {
   const store = new ElectronStore();
 
   try {
+    const user = store.get('user') as { branchId?: string } | undefined;
+    const requestedBranchId = typeof branchId === 'string' && branchId.trim().length > 0
+      ? branchId.trim()
+      : undefined;
+    const effectiveBranchId = requestedBranchId || user?.branchId;
+    const branchCacheKey = effectiveBranchId ? `cachedProducts:${effectiveBranchId}` : 'cachedProducts';
+
     // Get stored JWT token (encrypted or plain text)
     const token = getAuthToken(store);
     if (!token) {
       logger.warn('No authentication token found', { component: 'products' });
       // Return cached products if available
-      const cachedProducts = store.get('cachedProducts') as any[];
+      const cachedProducts = store.get(branchCacheKey) as any[];
       if (cachedProducts && Array.isArray(cachedProducts)) {
-        logger.info(`Returning ${cachedProducts.length} cached products (no token)`, { component: 'products' });
+        logger.info(`Returning ${cachedProducts.length} cached products (no token)`, {
+          component: 'products',
+          branchId: effectiveBranchId,
+        });
         return { success: true, products: cachedProducts };
       } else if (cachedProducts) {
         logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
-        store.delete('cachedProducts');
+        store.delete(branchCacheKey);
       }
       return { success: false, error: 'No authentication token found' };
     }
@@ -777,7 +787,6 @@ ipcMain.handle('getProducts', async () => {
       // Online mode: fetch from backend and cache
       try {
         // Fetch products with pagination and variations for POS (includeVariations needed for product variation selection)
-        const user = store.get('user') as { branchId?: string } | undefined;
         const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/products`);
         await apiRateLimiter.waitIfNeeded(endpoint);
         
@@ -786,7 +795,7 @@ ipcMain.handle('getProducts', async () => {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json',
-              ...(user?.branchId && { 'x-branch-id': user.branchId }),
+              ...(effectiveBranchId && { 'x-branch-id': effectiveBranchId }),
             },
             timeout: 10000, // 10 second timeout
           }),
@@ -845,34 +854,44 @@ ipcMain.handle('getProducts', async () => {
         });
 
         // Cache the products locally with timestamp
-        store.set('cachedProducts', products);
+        store.set(branchCacheKey, products);
         store.set('catalogLastSynced', new Date().toISOString());
-        logger.debug('Products cached successfully', { component: 'products', productCount: products.length });
+        logger.debug('Products cached successfully', {
+          component: 'products',
+          productCount: products.length,
+          branchId: effectiveBranchId,
+        });
 
         return { success: true, products };
       } catch (error: any) {
         logger.error('Error fetching products from backend', { component: 'products', status: error.response?.status, error: error.response?.data || error.message });
         // Fall back to cached products
-        const cachedProducts = store.get('cachedProducts') as any[];
+        const cachedProducts = store.get(branchCacheKey) as any[];
         if (cachedProducts && Array.isArray(cachedProducts)) {
-          logger.info(`Returning ${cachedProducts.length} cached products (backend error)`, { component: 'products' });
+          logger.info(`Returning ${cachedProducts.length} cached products (backend error)`, {
+            component: 'products',
+            branchId: effectiveBranchId,
+          });
           return { success: true, products: cachedProducts };
         } else if (cachedProducts) {
           logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
-          store.delete('cachedProducts');
+          store.delete(branchCacheKey);
         }
         throw error; // Re-throw if no cache available
       }
     } else {
       // Offline mode: return cached products
       logger.info('Backend offline, using cached products', { component: 'products' });
-      const cachedProducts = store.get('cachedProducts') as any[];
+      const cachedProducts = store.get(branchCacheKey) as any[];
       if (cachedProducts && Array.isArray(cachedProducts)) {
-        logger.info(`Returning ${cachedProducts.length} cached products (offline mode)`, { component: 'products' });
+        logger.info(`Returning ${cachedProducts.length} cached products (offline mode)`, {
+          component: 'products',
+          branchId: effectiveBranchId,
+        });
         return { success: true, products: cachedProducts };
       } else if (cachedProducts) {
         logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
-        store.delete('cachedProducts');
+        store.delete(branchCacheKey);
       } else {
         logger.warn('No cached products available in offline mode', { component: 'products' });
         return { success: false, error: 'No cached products available. Please connect to the internet and try again.' };
@@ -882,13 +901,22 @@ ipcMain.handle('getProducts', async () => {
     logger.error('Error in getProducts', { component: 'products', error: error.message });
 
     // Final fallback: try to return cached products
-    const cachedProducts = store.get('cachedProducts') as any[];
+    const user = store.get('user') as { branchId?: string } | undefined;
+    const requestedBranchId = typeof branchId === 'string' && branchId.trim().length > 0
+      ? branchId.trim()
+      : undefined;
+    const effectiveBranchId = requestedBranchId || user?.branchId;
+    const branchCacheKey = effectiveBranchId ? `cachedProducts:${effectiveBranchId}` : 'cachedProducts';
+    const cachedProducts = store.get(branchCacheKey) as any[];
     if (cachedProducts && Array.isArray(cachedProducts)) {
-      logger.info(`Returning ${cachedProducts.length} cached products (final fallback)`, { component: 'products' });
+      logger.info(`Returning ${cachedProducts.length} cached products (final fallback)`, {
+        component: 'products',
+        branchId: effectiveBranchId,
+      });
       return { success: true, products: cachedProducts };
     } else if (cachedProducts) {
       logger.warn('Cached products found but not in array format, clearing cache', { component: 'products' });
-      store.delete('cachedProducts');
+      store.delete(branchCacheKey);
     }
 
     // IMPROVED: Use error parser for consistent error message extraction
@@ -1497,11 +1525,11 @@ ipcMain.handle('createSale', async (event, saleData) => {
           quantity: item.quantity
         })),
         subtotal: saleData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0),
-        vatAmount: saleData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0) * 0.16,
-        total: saleData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0) * 1.16,
+        vatAmount: 0,
+        total: saleData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0),
         paymentMethod: saleData.paymentMethod,
         amountReceived: saleData.amountReceived,
-        change: saleData.amountReceived ? saleData.amountReceived - (saleData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0) * 1.16) : undefined,
+        change: saleData.amountReceived ? saleData.amountReceived - saleData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0) : undefined,
         businessInfo: { name: userData?.tenantName || 'Business' },
         branch: saleData.branchId ? {
           id: saleData.branchId,

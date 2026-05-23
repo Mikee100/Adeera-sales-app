@@ -228,10 +228,6 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
               <span className="print-total-label">Subtotal:</span>
               <span className="print-total-value">{formatCurrency(receipt.subtotal || 0)}</span>
             </div>
-            <div className="print-total-row">
-              <span className="print-total-label">VAT (16%):</span>
-              <span className="print-total-value">{formatCurrency(receipt.vatAmount || 0)}</span>
-            </div>
             <div className="print-total-row print-grand-total">
               <span className="print-total-label">Total:</span>
               <span className="print-grand-total-value">{formatCurrency(receipt.total || 0)}</span>

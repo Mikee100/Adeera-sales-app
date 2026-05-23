@@ -13,7 +13,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getUserData: () => ipcRenderer.invoke('getUserData'),
   getBranches: () => ipcRenderer.invoke('getBranches'),
   logout: () => ipcRenderer.invoke('logout'),
-  getProducts: () => ipcRenderer.invoke('getProducts'),
+  getProducts: (branchId?: string) => ipcRenderer.invoke('getProducts', branchId),
   getProductVariations: (productId: string) => ipcRenderer.invoke('getProductVariations', productId),
   createSale: (saleData: any) => ipcRenderer.invoke('createSale', saleData),
   createReturn: (payload: any) => ipcRenderer.invoke('createReturn', payload),

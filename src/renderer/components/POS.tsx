@@ -272,7 +272,7 @@ const POS: React.FC = () => {
       }
 
       const response = await handleNetworkOperation(
-        () => window.electronAPI.getProducts() as Promise<ProductsResponse>,
+        () => window.electronAPI.getProducts(selectedBranch || undefined) as Promise<ProductsResponse>,
         {
           operation: 'loadProducts',
           component: 'POS',
@@ -452,11 +452,11 @@ const POS: React.FC = () => {
   };
 
   const getVAT = () => {
-    return getTotal() * 0.16; // 16% VAT
+    return 0;
   };
 
   const getGrandTotal = () => {
-    return getTotal() + getVAT();
+    return getTotal();
   };
 
   const handleProceedToCheckout = () => {
@@ -674,7 +674,7 @@ const POS: React.FC = () => {
             }
           }
 
-          // Prepare sale data (include discount so backend applies it before VAT)
+          // Prepare sale data (discount is sent as a separate field)
           // For variation items: productId = base product, variationId = variation
           // Ensure all numeric fields are numbers for backend validation
           const saleData = {
@@ -940,7 +940,7 @@ const POS: React.FC = () => {
             console.log(`Refreshing products for low-stock items: ${lowStockItems.join(', ')}`);
             try {
               // Refresh products and wait for state update
-              const refreshResponse = await window.electronAPI.getProducts();
+              const refreshResponse = await window.electronAPI.getProducts(selectedBranch || undefined);
               if (refreshResponse.success && refreshResponse.products) {
                 setProducts(refreshResponse.products);
                 // Re-check stock after refresh using refreshed products
@@ -1537,7 +1537,6 @@ const POS: React.FC = () => {
           onDeletePendingTransaction={handleDeletePendingTransaction}
           pendingTransactions={pendingTransactions}
           getTotal={getTotal}
-          getVAT={getVAT}
           getGrandTotal={getGrandTotal}
           branches={branches}
           selectedBranch={selectedBranch}
@@ -1553,7 +1552,6 @@ const POS: React.FC = () => {
         <Checkout
           cart={cart}
           subtotal={getTotal()}
-          vat={getVAT()}
           total={getGrandTotal()}
           onCompleteSale={handleCompleteSale}
           onBackToProducts={handleBackToProducts}
