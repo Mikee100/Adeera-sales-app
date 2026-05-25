@@ -4,3 +4,5 @@ dist/
 logs/
 *.log
 .DS_Store
+# Ignore backup files
+backups/

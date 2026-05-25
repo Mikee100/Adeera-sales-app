@@ -8455,3 +8455,91 @@
 {"component":"products","level":"info","message":"Periodic sync completed: 2 products","service":"saas-pos","timestamp":"2026-05-23T11:07:06.401Z"}
 {"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-05-23T11:12:06.368Z"}
 {"component":"products","level":"info","message":"Periodic sync completed: 2 products","service":"saas-pos","timestamp":"2026-05-23T11:12:06.472Z"}
+{"component":"app","level":"info","message":"User session found on app start, starting periodic sync","service":"saas-pos","timestamp":"2026-05-25T09:14:06.910Z"}
+{"component":"products","level":"info","message":"Periodic product sync started (every 5 minutes)","service":"saas-pos","timestamp":"2026-05-25T09:14:06.928Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:10.715Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:10.756Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:10.790Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:10.811Z"}
+{"component":"auth","level":"info","message":"Attempting silent token refresh...","service":"saas-pos","timestamp":"2026-05-25T09:14:11.015Z"}
+{"component":"token-storage","hasExpiry":false,"level":"info","message":"Token stored securely","service":"saas-pos","timestamp":"2026-05-25T09:14:11.139Z"}
+{"component":"token-storage","level":"info","message":"Refresh token stored securely","service":"saas-pos","timestamp":"2026-05-25T09:14:11.172Z"}
+{"component":"auth","level":"info","message":"Silent token refresh successful! Retrying original request.","service":"saas-pos","timestamp":"2026-05-25T09:14:11.176Z"}
+{"component":"branches","level":"info","message":"Fetched 2 branches","service":"saas-pos","timestamp":"2026-05-25T09:14:11.304Z"}
+{"component":"branches","level":"info","message":"Fetched 2 branches","service":"saas-pos","timestamp":"2026-05-25T09:14:11.335Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:11.397Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:11.412Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:11.429Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:14:11.475Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:11.477Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:14:11.523Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:11.524Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:14:11.575Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:11.576Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:14:11.619Z"}
+{"component":"branches","level":"info","message":"Fetched 2 branches","service":"saas-pos","timestamp":"2026-05-25T09:14:11.625Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:11.648Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:14:11.701Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:14:11.707Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:14:11.769Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:26.835Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:26.864Z"}
+{"component":"products","level":"info","message":"Received 1 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:26.950Z"}
+{"branchId":"4030c725-9e31-41e5-a64a-f76e79d50064","component":"products","level":"debug","message":"Products cached successfully","productCount":1,"service":"saas-pos","timestamp":"2026-05-25T09:15:27.001Z"}
+{"component":"products","level":"info","message":"Received 1 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:27.006Z"}
+{"branchId":"4030c725-9e31-41e5-a64a-f76e79d50064","component":"products","level":"debug","message":"Products cached successfully","productCount":1,"service":"saas-pos","timestamp":"2026-05-25T09:15:27.052Z"}
+{"component":"branches","level":"info","message":"Fetched 2 branches","service":"saas-pos","timestamp":"2026-05-25T09:15:27.054Z"}
+{"branchId":"4030c725-9e31-41e5-a64a-f76e79d50064","component":"sales","hasIdempotencyKey":true,"items":3,"level":"info","message":"Creating sale","paymentMethod":"cash","saleDataKeys":["items","paymentMethod","idempotencyKey","branchId","amountReceived"],"service":"saas-pos","timestamp":"2026-05-25T09:15:38.735Z"}
+{"amountReceived":45000,"branchId":"4030c725-9e31-41e5-a64a-f76e79d50064","component":"sales","idempotencyKey":"sale_1779700538724_gjvyyisqj","items":[{"hasVariationId":true,"price":3000,"productId":"76575ed3-c200-4179-9128-3a4bc3bd4c15","quantity":3},{"hasVariationId":true,"price":3000,"productId":"76575ed3-c200-4179-9128-3a4bc3bd4c15","quantity":7},{"hasVariationId":true,"price":3000,"productId":"76575ed3-c200-4179-9128-3a4bc3bd4c15","quantity":5}],"level":"debug","message":"Sale data being sent","paymentMethod":"cash","service":"saas-pos","timestamp":"2026-05-25T09:15:38.738Z"}
+{"component":"sales","level":"info","message":"Sale created successfully","saleId":"d24d214b-6fd7-4a70-9fd6-0f64052dc192","service":"saas-pos","timestamp":"2026-05-25T09:15:39.192Z"}
+{"component":"printer","level":"info","message":"Opening cash drawer","service":"saas-pos","timestamp":"2026-05-25T09:15:39.196Z"}
+{"component":"printer","level":"info","message":"SerialPort loaded successfully","service":"saas-pos","timestamp":"2026-05-25T09:15:41.361Z"}
+{"component":"printer","devicePath":"COM1","level":"info","message":"Opening cash drawer via USB/Serial","service":"saas-pos","timestamp":"2026-05-25T09:15:41.363Z"}
+{"component":"sales","level":"info","message":"Refreshing product catalog after successful sale","service":"saas-pos","timestamp":"2026-05-25T09:15:41.370Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-05-25T09:15:41.382Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:41.398Z"}
+{"component":"sales","level":"info","message":"Product catalog refreshed after sale: 2 products","service":"saas-pos","timestamp":"2026-05-25T09:15:41.464Z"}
+{"component":"products","level":"info","message":"Received 1 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:41.487Z"}
+{"branchId":"4030c725-9e31-41e5-a64a-f76e79d50064","component":"products","level":"debug","message":"Products cached successfully","productCount":1,"service":"saas-pos","timestamp":"2026-05-25T09:15:41.530Z"}
+{"component":"receipts","level":"info","message":"Fetching receipt for sale","saleId":"d24d214b-6fd7-4a70-9fd6-0f64052dc192","service":"saas-pos","timestamp":"2026-05-25T09:15:41.551Z"}
+{"component":"receipts","level":"info","message":"Receipt fetched successfully","saleId":"d24d214b-6fd7-4a70-9fd6-0f64052dc192","service":"saas-pos","timestamp":"2026-05-25T09:15:41.632Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:41.666Z"}
+{"component":"products","level":"info","message":"Received 1 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:41.699Z"}
+{"branchId":"4030c725-9e31-41e5-a64a-f76e79d50064","component":"products","level":"debug","message":"Products cached successfully","productCount":1,"service":"saas-pos","timestamp":"2026-05-25T09:15:41.744Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:47.693Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:47.710Z"}
+{"component":"products","level":"info","message":"Received 1 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:47.811Z"}
+{"branchId":"4030c725-9e31-41e5-a64a-f76e79d50064","component":"products","level":"debug","message":"Products cached successfully","productCount":1,"service":"saas-pos","timestamp":"2026-05-25T09:15:49.962Z"}
+{"component":"products","level":"info","message":"Received 1 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:49.970Z"}
+{"branchId":"4030c725-9e31-41e5-a64a-f76e79d50064","component":"products","level":"debug","message":"Products cached successfully","productCount":1,"service":"saas-pos","timestamp":"2026-05-25T09:15:50.045Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:52.720Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:52.756Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:52.904Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:15:52.945Z"}
+{"component":"branches","level":"info","message":"Fetched 2 branches","service":"saas-pos","timestamp":"2026-05-25T09:15:52.947Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:15:52.976Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:15:53.024Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"sales","hasIdempotencyKey":true,"items":4,"level":"info","message":"Creating sale","paymentMethod":"cash","saleDataKeys":["items","paymentMethod","idempotencyKey","branchId","amountReceived"],"service":"saas-pos","timestamp":"2026-05-25T09:16:07.711Z"}
+{"amountReceived":17000,"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"sales","idempotencyKey":"sale_1779700567703_jalm65pp1","items":[{"hasVariationId":true,"price":2500,"productId":"5a4f32fa-0562-4d30-9c49-298763af81b2","quantity":2},{"hasVariationId":true,"price":2500,"productId":"5a4f32fa-0562-4d30-9c49-298763af81b2","quantity":2},{"hasVariationId":true,"price":3500,"productId":"c909f681-7a4e-4352-97e2-7797be137e20","quantity":1},{"hasVariationId":true,"price":3500,"productId":"c909f681-7a4e-4352-97e2-7797be137e20","quantity":1}],"level":"debug","message":"Sale data being sent","paymentMethod":"cash","service":"saas-pos","timestamp":"2026-05-25T09:16:07.714Z"}
+{"component":"sales","level":"info","message":"Sale created successfully","saleId":"31ff5bfd-d75d-4713-b345-e5ce97b9792d","service":"saas-pos","timestamp":"2026-05-25T09:16:07.988Z"}
+{"component":"printer","level":"info","message":"Opening cash drawer","service":"saas-pos","timestamp":"2026-05-25T09:16:07.990Z"}
+{"component":"printer","devicePath":"COM1","level":"info","message":"Opening cash drawer via USB/Serial","service":"saas-pos","timestamp":"2026-05-25T09:16:07.992Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-05-25T09:16:07.996Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:16:08.007Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:16:08.043Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:16:08.078Z"}
+{"component":"receipts","level":"info","message":"Fetching receipt for sale","saleId":"31ff5bfd-d75d-4713-b345-e5ce97b9792d","service":"saas-pos","timestamp":"2026-05-25T09:16:08.098Z"}
+{"component":"receipts","level":"info","message":"Receipt fetched successfully","saleId":"31ff5bfd-d75d-4713-b345-e5ce97b9792d","service":"saas-pos","timestamp":"2026-05-25T09:16:08.147Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:16:08.177Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:16:08.212Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:16:08.247Z"}
+{"component":"sales","level":"info","message":"Refreshing product catalog after successful sale","service":"saas-pos","timestamp":"2026-05-25T09:16:08.498Z"}
+{"component":"sales","level":"info","message":"Product catalog refreshed after sale: 2 products","service":"saas-pos","timestamp":"2026-05-25T09:16:08.569Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:17:49.196Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-05-25T09:17:49.208Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:17:49.256Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:17:49.297Z"}
+{"component":"products","level":"info","message":"Received 2 products from backend","service":"saas-pos","timestamp":"2026-05-25T09:17:49.300Z"}
+{"branchId":"8a291a2e-8a90-4808-a626-3c38b4d9d141","component":"products","level":"debug","message":"Products cached successfully","productCount":2,"service":"saas-pos","timestamp":"2026-05-25T09:17:49.348Z"}
+{"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-05-25T09:19:06.945Z"}
+{"component":"products","level":"info","message":"Periodic sync completed: 2 products","service":"saas-pos","timestamp":"2026-05-25T09:19:07.038Z"}
