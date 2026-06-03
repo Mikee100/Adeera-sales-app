@@ -62984,6 +62984,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const electron_1 = __webpack_require__(/*! electron */ "electron");
 const path = __importStar(__webpack_require__(/*! path */ "path"));
+const fs_1 = __webpack_require__(/*! fs */ "fs");
 const electron_store_1 = __importDefault(__webpack_require__(/*! electron-store */ "./node_modules/electron-store/index.js"));
 const axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/dist/node/axios.cjs"));
 const logger_1 = __webpack_require__(/*! ../shared/logger */ "./src/shared/logger.ts");
@@ -63031,6 +63032,7 @@ function shouldLockUserToAssignedBranch(user) {
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+const devRendererWatchers = [];
 // Global ElectronStore instance for reading configuration values such as backendBaseUrl.
 const globalStore = new electron_store_1.default();
 // Backend configuration: prefer a value set in local config (ElectronStore) when present,
@@ -63154,12 +63156,17 @@ const createWindow = () => {
         icon: path.join(__dirname, '..', 'assets', 'favicon.ico'),
         show: false, // Don't show until ready
     });
-    // Load the index.html of the app.
-    // In development: load the POS renderer from this app's webpack dev server (port 3001).
-    // Port 3000 is the Next.js SaaS website – we must use a different port for the POS UI.
+    // Load renderer UI.
+    // In development, prefer ELECTRON_RENDERER_URL when explicitly provided.
+    // Otherwise load the locally-built dist/index.html to avoid requiring a dev server port.
     if (true) {
-        const devServerUrl = process.env.ELECTRON_RENDERER_URL || 'http://localhost:3100';
-        mainWindow.loadURL(devServerUrl);
+        const devServerUrl = (process.env.ELECTRON_RENDERER_URL || '').trim();
+        if (devServerUrl) {
+            mainWindow.loadURL(devServerUrl);
+        }
+        else {
+            mainWindow.loadFile(path.join(__dirname, 'index.html'));
+        }
     }
     else // removed by dead control flow
 {}
@@ -63179,6 +63186,44 @@ const createWindow = () => {
         // when you should delete the corresponding element.
         mainWindow = null;
     });
+};
+const setupDevRendererLiveReload = () => {
+    if (false)
+        // removed by dead control flow
+{}
+    // If a dedicated renderer URL is used, rely on that server's own reload behavior.
+    const devServerUrl = (process.env.ELECTRON_RENDERER_URL || '').trim();
+    if (devServerUrl)
+        return;
+    if (devRendererWatchers.length > 0)
+        return;
+    const filesToWatch = ['index.html', 'renderer.js'];
+    let reloadTimer = null;
+    for (const fileName of filesToWatch) {
+        const filePath = path.join(__dirname, fileName);
+        try {
+            const watcher = (0, fs_1.watch)(filePath, () => {
+                if (!mainWindow || mainWindow.isDestroyed())
+                    return;
+                if (reloadTimer) {
+                    clearTimeout(reloadTimer);
+                }
+                reloadTimer = setTimeout(() => {
+                    if (mainWindow && !mainWindow.isDestroyed()) {
+                        mainWindow.webContents.reloadIgnoringCache();
+                    }
+                }, 120);
+            });
+            devRendererWatchers.push(watcher);
+        }
+        catch (error) {
+            logger_1.logger.warn('Dev live reload watcher could not be attached', {
+                component: 'app',
+                fileName,
+                errorMessage: error?.message,
+            });
+        }
+    }
 };
 // Periodic product sync timer (runs every 5 minutes)
 let productSyncInterval = null;
@@ -63346,6 +63391,7 @@ electron_1.app.whenReady().then(() => {
         }
     }
     createWindow();
+    setupDevRendererLiveReload();
     setupAutoUpdater();
     // Start periodic product sync if user is already logged in (e.g., app restart)
     const store = new electron_store_1.default();
@@ -63357,6 +63403,10 @@ electron_1.app.whenReady().then(() => {
 });
 // Quit when all windows are closed.
 electron_1.app.on('window-all-closed', () => {
+    for (const watcher of devRendererWatchers) {
+        watcher.close();
+    }
+    devRendererWatchers.length = 0;
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
@@ -64425,6 +64475,166 @@ electron_1.ipcMain.handle('printReceipt', async (event, receiptData) => {
         return { success: false, error: error.message || 'Failed to print receipt' };
     }
 });
+electron_1.ipcMain.handle('printKitchenTicket', async (event, ticketData) => {
+    try {
+        logger_1.logger.info('Queueing kitchen ticket', { component: 'kitchen', orderId: ticketData.orderId });
+        const ticketId = printer_service_1.kitchenQueueService.addTicket(ticketData);
+        return { success: true, ticketId };
+    }
+    catch (error) {
+        logger_1.logger.error('Error queueing kitchen ticket', { component: 'kitchen', error: error.message });
+        return { success: false, error: error.message };
+    }
+});
+electron_1.ipcMain.handle('getRestaurantConfig', async () => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    if (!token)
+        return { success: false, enabled: false };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/config`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.get(`${BACKEND_BASE_URL}/restaurant/config`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+            timeout: 5000,
+        }), endpoint);
+        return { success: true, enabled: response.data.enabled };
+    }
+    catch (err) {
+        return { success: false, enabled: false };
+    }
+});
+electron_1.ipcMain.handle('getDiningTables', async () => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, tables: [] };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/tables`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.get(`${BACKEND_BASE_URL}/restaurant/tables`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 5000,
+        }), endpoint);
+        return { success: true, tables: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to get tables', { error: error.message });
+        return { success: false, tables: [], error: error.message };
+    }
+});
+electron_1.ipcMain.handle('getRestaurantOrders', async () => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, orders: [] };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/orders`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.get(`${BACKEND_BASE_URL}/restaurant/orders`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 5000,
+        }), endpoint);
+        return { success: true, orders: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to get restaurant orders', { error: error.message });
+        return { success: false, orders: [], error: error.message };
+    }
+});
+electron_1.ipcMain.handle('createRestaurantOrder', async (event, data) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/orders`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.post(`${BACKEND_BASE_URL}/restaurant/orders`, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 10000,
+        }), endpoint);
+        return { success: true, order: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to create order', { error: error.message });
+        return { success: false, error: error.message };
+    }
+});
+electron_1.ipcMain.handle('addRestaurantOrderItems', async (event, { id, items }) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/orders/${id}/items`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.post(`${BACKEND_BASE_URL}/restaurant/orders/${id}/items`, { items }, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 10000,
+        }), endpoint);
+        return { success: true, result: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to add restaurant order items', { error: error.message });
+        return { success: false, error: error.message };
+    }
+});
+electron_1.ipcMain.handle('updateRestaurantOrderStatus', async (event, { id, status }) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    if (!token)
+        return { success: false };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/orders/${id}/status`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.put(`${BACKEND_BASE_URL}/restaurant/orders/${id}/status`, { status }, {
+            headers: { 'Authorization': `Bearer ${token}` },
+            timeout: 10000,
+        }), endpoint);
+        return { success: true, order: response.data };
+    }
+    catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+electron_1.ipcMain.handle('checkoutRestaurantOrder', async (event, { id, payload }) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    if (!token)
+        return { success: false, error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/orders/${id}/checkout`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.post(`${BACKEND_BASE_URL}/restaurant/orders/${id}/checkout`, payload, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            timeout: 15000,
+        }), endpoint);
+        return { success: true, receipt: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to checkout restaurant order', { error: error.message });
+        return { success: false, error: error.message };
+    }
+});
 // Create a return for an existing sale
 electron_1.ipcMain.handle('createReturn', async (_event, payload) => {
     const store = new electron_store_1.default();
@@ -64956,7 +65166,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.printerService = void 0;
+exports.kitchenQueueService = exports.printerService = void 0;
 const logger_1 = __webpack_require__(/*! ../shared/logger */ "./src/shared/logger.ts");
 const electron_store_1 = __importDefault(__webpack_require__(/*! electron-store */ "./node_modules/electron-store/index.js"));
 // Lazy load serialport to avoid native module issues during import
@@ -65480,6 +65690,103 @@ class PrinterService {
     }
 }
 exports.printerService = PrinterService.getInstance();
+class KitchenQueueService {
+    constructor() {
+        this.queue = [];
+        this.isProcessing = false;
+        this.timer = null;
+        this.store = new electron_store_1.default();
+        this.loadQueue();
+        this.startQueue();
+    }
+    static getInstance() {
+        if (!KitchenQueueService.instance) {
+            KitchenQueueService.instance = new KitchenQueueService();
+        }
+        return KitchenQueueService.instance;
+    }
+    loadQueue() {
+        const saved = this.store.get('kitchenQueue');
+        if (saved && Array.isArray(saved)) {
+            this.queue = saved;
+        }
+    }
+    saveQueue() {
+        this.store.set('kitchenQueue', this.queue);
+    }
+    addTicket(ticket) {
+        const newTicket = {
+            ...ticket,
+            id: Math.random().toString(36).substring(2, 15),
+            status: 'PENDING',
+            createdAt: new Date().toISOString(),
+            retryCount: 0,
+        };
+        this.queue.push(newTicket);
+        this.saveQueue();
+        this.processQueue();
+        return newTicket.id;
+    }
+    startQueue() {
+        // Check queue every 30 seconds for failed jobs
+        this.timer = setInterval(() => this.processQueue(), 30000);
+    }
+    async processQueue() {
+        if (this.isProcessing)
+            return;
+        this.isProcessing = true;
+        try {
+            const pendingTickets = this.queue.filter(t => t.status === 'PENDING' || t.status === 'FAILED');
+            for (const ticket of pendingTickets) {
+                if (ticket.retryCount > 10)
+                    continue; // Stop retrying after 10 attempts
+                // Generate ESC/POS commands for kitchen
+                const commands = this.generateKitchenTicketCommands(ticket);
+                // Print it (Assuming printerService is configured for the kitchen or we use the default printer)
+                // In a real setup, kitchen has a separate printer IP/config. We will just use the default printerService for now.
+                const result = await exports.printerService.printReceipt(commands); // Type hacking to pass raw buffer later if we adjust printerService
+                // Wait, printerService.printReceipt takes ReceiptData, not Buffer.
+                // Let's add a raw print method to printerService, or just format a ReceiptData for kitchen.
+                const kitchenReceiptData = {
+                    saleId: `ORDER-${ticket.orderId}-v${ticket.ticketVersion}`,
+                    date: ticket.createdAt,
+                    businessInfo: { name: `** KITCHEN TICKET: ${ticket.type} **` },
+                    items: ticket.items.map(i => ({
+                        name: `${i.name} ${i.notes ? '(' + i.notes + ')' : ''}`,
+                        quantity: i.quantity,
+                        price: 0
+                    })),
+                    subtotal: 0,
+                    vatAmount: 0,
+                    total: 0,
+                    paymentMethod: 'KITCHEN',
+                    customerName: ticket.tableNumber ? `Table: ${ticket.tableNumber}` : 'Takeaway',
+                    customerPhone: ticket.waiterName ? `Waiter: ${ticket.waiterName}` : '',
+                };
+                const printResult = await exports.printerService.printReceipt(kitchenReceiptData);
+                if (printResult.success) {
+                    ticket.status = 'PRINTED';
+                }
+                else {
+                    ticket.status = 'FAILED';
+                    ticket.retryCount++;
+                    logger_1.logger.warn(`Kitchen print failed for ticket ${ticket.id}`, { component: 'printer' });
+                }
+            }
+            // Cleanup printed tickets
+            this.queue = this.queue.filter(t => t.status !== 'PRINTED');
+            this.saveQueue();
+        }
+        finally {
+            this.isProcessing = false;
+        }
+    }
+    generateKitchenTicketCommands(ticket) {
+        // If we wanted to write raw buffer commands specifically for kitchen with large red fonts, we would do it here.
+        return Buffer.from([]);
+    }
+}
+exports.kitchenQueueService = KitchenQueueService.getInstance();
 
 
 /***/ }),

@@ -23,6 +23,15 @@ interface ElectronAPI {
   getApiBaseUrl: () => Promise<string>;
   isOnline: () => boolean;
   quitApp: () => Promise<void>;
+
+  printKitchenTicket: (ticket: any) => Promise<{ success: boolean; ticketId?: string; error?: string }>;
+  getRestaurantConfig: () => Promise<{ success: boolean; enabled: boolean }>;
+  getDiningTables: () => Promise<{ success: boolean; tables: any[]; error?: string }>;
+  getRestaurantOrders: () => Promise<{ success: boolean; orders: any[]; error?: string }>;
+  createRestaurantOrder: (data: any) => Promise<{ success: boolean; order?: any; error?: string }>;
+  addRestaurantOrderItems: (id: string, items: any[]) => Promise<{ success: boolean; result?: any; error?: string }>;
+  updateRestaurantOrderStatus: (id: string, status: string) => Promise<{ success: boolean; order?: any; error?: string }>;
+  checkoutRestaurantOrder: (id: string, payload: any) => Promise<{ success: boolean; receipt?: any; error?: string }>;
 }
 
 interface SyncProgress {

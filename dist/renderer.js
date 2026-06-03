@@ -42857,6 +42857,7 @@ const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modul
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Login_1 = __importDefault(__webpack_require__(/*! ./components/Login */ "./src/renderer/components/Login.tsx"));
 const POS_1 = __importDefault(__webpack_require__(/*! ./components/POS */ "./src/renderer/components/POS.tsx"));
+const RestaurantRenderer_1 = __importDefault(__webpack_require__(/*! ./restaurant/RestaurantRenderer */ "./src/renderer/restaurant/RestaurantRenderer.tsx"));
 const SyncScreen_1 = __importDefault(__webpack_require__(/*! ./components/SyncScreen */ "./src/renderer/components/SyncScreen.tsx"));
 const SleepScreen_1 = __importDefault(__webpack_require__(/*! ./components/SleepScreen */ "./src/renderer/components/SleepScreen.tsx"));
 const AuthContext_1 = __webpack_require__(/*! ./contexts/AuthContext */ "./src/renderer/contexts/AuthContext.tsx");
@@ -42873,6 +42874,7 @@ const AppContent = () => {
     const { syncProgress, performInitialSync } = (0, useInitialSync_1.useInitialSync)();
     const { isSleepMode, exitSleepMode, enterSleepMode } = (0, SleepModeContext_1.useSleepMode)();
     const idleTimerRef = (0, react_1.useRef)(null);
+    const [restaurantEnabled, setRestaurantEnabled] = (0, react_1.useState)(false);
     // Debug: Log sleep mode state changes
     (0, react_1.useEffect)(() => {
         console.log('Sleep mode state changed:', isSleepMode);
@@ -42911,6 +42913,22 @@ const AppContent = () => {
             });
         }
     }, [initialSyncComplete, performInitialSync, onInitialSyncComplete]);
+    (0, react_1.useEffect)(() => {
+        const loadRestaurantConfig = async () => {
+            if (!isAuthenticated) {
+                setRestaurantEnabled(false);
+                return;
+            }
+            try {
+                const config = await window.electronAPI.getRestaurantConfig();
+                setRestaurantEnabled(!!(config.success && config.enabled));
+            }
+            catch {
+                setRestaurantEnabled(false);
+            }
+        };
+        loadRestaurantConfig();
+    }, [isAuthenticated]);
     // Show sleep screen if sleep mode is active (highest priority)
     if (isSleepMode) {
         console.log('Rendering SleepScreen - isSleepMode is true');
@@ -42924,7 +42942,7 @@ const AppContent = () => {
     if (loading) {
         return ((0, jsx_runtime_1.jsxs)("div", { className: "loading-screen", children: [(0, jsx_runtime_1.jsx)("div", { className: "loading-spinner" }), (0, jsx_runtime_1.jsx)("p", { children: "Loading SaaS POS..." })] }));
     }
-    return ((0, jsx_runtime_1.jsx)(ErrorBoundary_1.default, { children: (0, jsx_runtime_1.jsxs)("div", { className: "app", children: [isAuthenticated ? (0, jsx_runtime_1.jsx)(POS_1.default, {}) : (0, jsx_runtime_1.jsx)(Login_1.default, {}), (0, jsx_runtime_1.jsx)(Toast_1.ToastContainer, { toasts: toasts, onRemove: removeToast })] }) }));
+    return ((0, jsx_runtime_1.jsx)(ErrorBoundary_1.default, { children: (0, jsx_runtime_1.jsxs)("div", { className: "app", children: [isAuthenticated ? (restaurantEnabled ? (0, jsx_runtime_1.jsx)(RestaurantRenderer_1.default, {}) : (0, jsx_runtime_1.jsx)(POS_1.default, {})) : (0, jsx_runtime_1.jsx)(Login_1.default, {}), (0, jsx_runtime_1.jsx)(Toast_1.ToastContainer, { toasts: toasts, onRemove: removeToast })] }) }));
 };
 const App = () => {
     return ((0, jsx_runtime_1.jsx)(ThemeContext_1.ThemeProvider, { children: (0, jsx_runtime_1.jsx)(AuthContext_1.AuthProvider, { children: (0, jsx_runtime_1.jsx)(SleepModeContext_1.SleepModeProvider, { children: (0, jsx_runtime_1.jsx)(AppContent, {}) }) }) }));
@@ -48814,6 +48832,408 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_receipt_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_receipt_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_receipt_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./src/renderer/restaurant/RestaurantRenderer.tsx":
+/*!********************************************************!*\
+  !*** ./src/renderer/restaurant/RestaurantRenderer.tsx ***!
+  \********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const jsx_runtime_1 = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Toast_1 = __webpack_require__(/*! ../components/Toast */ "./src/renderer/components/Toast.tsx");
+const COMMON_MODIFIERS = [
+    'No onions',
+    'No salt',
+    'No sugar',
+    'Extra spicy',
+    'Less spicy',
+    'Extra cheese',
+    'Gluten free',
+    'Well done',
+    'Medium',
+    'Rare',
+];
+const MODIFIERS_BY_KEYWORD = [
+    {
+        keywords: ['pizza', 'burger', 'sandwich', 'wrap'],
+        modifiers: ['Extra cheese', 'No cheese', 'No onions', 'No sauce', 'Extra sauce'],
+    },
+    {
+        keywords: ['steak', 'beef', 'chicken', 'meat', 'nyama', 'fish'],
+        modifiers: ['Rare', 'Medium', 'Well done', 'Extra spicy', 'Less spicy'],
+    },
+    {
+        keywords: ['tea', 'coffee', 'latte', 'cappuccino', 'chai'],
+        modifiers: ['No sugar', 'Less sugar', 'Extra sugar', 'Extra hot', 'No milk'],
+    },
+    {
+        keywords: ['juice', 'soda', 'drink', 'cocktail', 'mocktail'],
+        modifiers: ['No ice', 'Less ice', 'Extra ice', 'No sugar', 'Less sugar'],
+    },
+    {
+        keywords: ['fries', 'chips', 'potato', 'snack'],
+        modifiers: ['Extra crispy', 'Lightly salted', 'No salt', 'Extra sauce'],
+    },
+];
+const getSuggestedModifiers = (productName) => {
+    const normalizedName = (productName || '').toLowerCase();
+    const dynamic = MODIFIERS_BY_KEYWORD.flatMap((group) => group.keywords.some((keyword) => normalizedName.includes(keyword)) ? group.modifiers : []);
+    return Array.from(new Set([...dynamic, ...COMMON_MODIFIERS]));
+};
+const currency = (value) => `KES ${Number(value || 0).toFixed(2)}`;
+const RestaurantRenderer = () => {
+    const [loading, setLoading] = (0, react_1.useState)(false);
+    const [tables, setTables] = (0, react_1.useState)([]);
+    const [orders, setOrders] = (0, react_1.useState)([]);
+    const [products, setProducts] = (0, react_1.useState)([]);
+    const [selectedTableId, setSelectedTableId] = (0, react_1.useState)('');
+    const [activeOrderId, setActiveOrderId] = (0, react_1.useState)(null);
+    const [draftItems, setDraftItems] = (0, react_1.useState)([]);
+    const [customerName, setCustomerName] = (0, react_1.useState)('');
+    const [customerPhone, setCustomerPhone] = (0, react_1.useState)('');
+    const [paymentMethod, setPaymentMethod] = (0, react_1.useState)('cash');
+    const [amountReceived, setAmountReceived] = (0, react_1.useState)('');
+    const [splitPayments, setSplitPayments] = (0, react_1.useState)([
+        {
+            localId: `split-${Date.now()}-cash`,
+            method: 'cash',
+            amount: '',
+            amountReceived: '',
+        },
+        {
+            localId: `split-${Date.now()}-mpesa`,
+            method: 'mpesa',
+            amount: '',
+            mpesaTransactionId: '',
+        },
+    ]);
+    const activeOrder = (0, react_1.useMemo)(() => orders.find((order) => order.id === activeOrderId) || null, [orders, activeOrderId]);
+    const tableActiveOrder = (0, react_1.useMemo)(() => {
+        if (!selectedTableId)
+            return null;
+        return (orders.find((order) => order.tableId === selectedTableId &&
+            order.status !== 'Closed' &&
+            order.status !== 'Voided') || null);
+    }, [orders, selectedTableId]);
+    const draftTotal = (0, react_1.useMemo)(() => draftItems.reduce((sum, item) => sum + item.quantity * item.price, 0), [draftItems]);
+    const splitTotal = (0, react_1.useMemo)(() => splitPayments.reduce((sum, p) => sum + Number(p.amount || 0), 0), [splitPayments]);
+    const splitRemaining = (0, react_1.useMemo)(() => {
+        if (!activeOrder)
+            return 0;
+        return Number((activeOrder.total - splitTotal).toFixed(2));
+    }, [activeOrder, splitTotal]);
+    const loadData = (0, react_1.useCallback)(async () => {
+        setLoading(true);
+        try {
+            const [tablesRes, ordersRes, productsRes] = await Promise.all([
+                window.electronAPI.getDiningTables(),
+                window.electronAPI.getRestaurantOrders(),
+                window.electronAPI.getProducts(),
+            ]);
+            if (tablesRes.success) {
+                setTables(tablesRes.tables || []);
+            }
+            if (ordersRes.success) {
+                setOrders(ordersRes.orders || []);
+            }
+            if (productsRes.success) {
+                setProducts(productsRes.products || []);
+            }
+            if (!tablesRes.success || !ordersRes.success || !productsRes.success) {
+                (0, Toast_1.showToast)('Some restaurant data failed to load', 'warning');
+            }
+        }
+        catch {
+            (0, Toast_1.showToast)('Failed to load restaurant workspace', 'error');
+        }
+        finally {
+            setLoading(false);
+        }
+    }, []);
+    (0, react_1.useEffect)(() => {
+        loadData();
+    }, [loadData]);
+    (0, react_1.useEffect)(() => {
+        if (!selectedTableId) {
+            setActiveOrderId(null);
+            return;
+        }
+        if (tableActiveOrder) {
+            setActiveOrderId(tableActiveOrder.id);
+            setCustomerName(tableActiveOrder.customerName || '');
+            setCustomerPhone(tableActiveOrder.customerPhone || '');
+        }
+        else {
+            setActiveOrderId(null);
+            setCustomerName('');
+            setCustomerPhone('');
+        }
+    }, [selectedTableId, tableActiveOrder]);
+    const addDraftProduct = (product) => {
+        const newItem = {
+            localId: `${product.id}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+            productId: product.id,
+            productName: product.name,
+            quantity: 1,
+            price: product.price,
+            notes: '',
+            modifierSelections: [],
+            modifiersText: '',
+        };
+        setDraftItems((prev) => [newItem, ...prev]);
+    };
+    const updateDraftItem = (localId, patch) => {
+        setDraftItems((prev) => prev.map((item) => (item.localId === localId ? { ...item, ...patch } : item)));
+    };
+    const removeDraftItem = (localId) => {
+        setDraftItems((prev) => prev.filter((item) => item.localId !== localId));
+    };
+    const toggleDraftModifier = (localId, modifier) => {
+        setDraftItems((prev) => prev.map((item) => {
+            if (item.localId !== localId)
+                return item;
+            const current = Array.isArray(item.modifierSelections) ? item.modifierSelections : [];
+            const exists = current.includes(modifier);
+            return {
+                ...item,
+                modifierSelections: exists
+                    ? current.filter((m) => m !== modifier)
+                    : [...current, modifier],
+            };
+        }));
+    };
+    const addSplitRow = () => {
+        setSplitPayments((prev) => [
+            ...prev,
+            {
+                localId: `split-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                method: 'cash',
+                amount: '',
+                amountReceived: '',
+            },
+        ]);
+    };
+    const removeSplitRow = (localId) => {
+        setSplitPayments((prev) => prev.filter((row) => row.localId !== localId));
+    };
+    const updateSplitRow = (localId, patch) => {
+        setSplitPayments((prev) => prev.map((row) => (row.localId === localId ? { ...row, ...patch } : row)));
+    };
+    const toPayloadItems = (items) => items.map((item) => ({
+        productId: item.productId,
+        quantity: Number(item.quantity || 1),
+        price: Number(item.price || 0),
+        notes: item.notes || undefined,
+        modifierSelections: Array.from(new Set([
+            ...(Array.isArray(item.modifierSelections) ? item.modifierSelections : []),
+            ...((item.modifiersText || '')
+                .split(',')
+                .map((m) => m.trim())
+                .filter(Boolean)),
+        ])),
+    }));
+    const createOrderForTable = async () => {
+        if (!selectedTableId) {
+            (0, Toast_1.showToast)('Select a table first', 'warning');
+            return;
+        }
+        if (draftItems.length === 0) {
+            (0, Toast_1.showToast)('Add at least one item', 'warning');
+            return;
+        }
+        const payload = {
+            tableId: selectedTableId,
+            customerName: customerName || undefined,
+            customerPhone: customerPhone || undefined,
+            total: draftTotal,
+            items: toPayloadItems(draftItems),
+        };
+        const result = await window.electronAPI.createRestaurantOrder(payload);
+        if (!result.success) {
+            (0, Toast_1.showToast)(result.error || 'Failed to create order', 'error');
+            return;
+        }
+        (0, Toast_1.showToast)('Order created', 'success');
+        setDraftItems([]);
+        await loadData();
+    };
+    const addItemsToOrder = async () => {
+        if (!activeOrder) {
+            (0, Toast_1.showToast)('Open/select an active order first', 'warning');
+            return;
+        }
+        if (activeOrder.status !== 'Open') {
+            (0, Toast_1.showToast)('Can only add items while order is Open', 'warning');
+            return;
+        }
+        if (draftItems.length === 0) {
+            (0, Toast_1.showToast)('No draft items to add', 'warning');
+            return;
+        }
+        const result = await window.electronAPI.addRestaurantOrderItems(activeOrder.id, toPayloadItems(draftItems));
+        if (!result.success) {
+            (0, Toast_1.showToast)(result.error || 'Failed to add order items', 'error');
+            return;
+        }
+        (0, Toast_1.showToast)('Items added to order', 'success');
+        setDraftItems([]);
+        await loadData();
+    };
+    const updateStatus = async (status) => {
+        if (!activeOrder)
+            return;
+        const result = await window.electronAPI.updateRestaurantOrderStatus(activeOrder.id, status);
+        if (!result.success) {
+            (0, Toast_1.showToast)(result.error || `Failed to set status: ${status}`, 'error');
+            return;
+        }
+        (0, Toast_1.showToast)(`Order moved to ${status}`, 'success');
+        await loadData();
+    };
+    const sendToKitchen = async () => {
+        if (!activeOrder)
+            return;
+        if (activeOrder.status !== 'Open') {
+            (0, Toast_1.showToast)('Order must be Open before sending to kitchen', 'warning');
+            return;
+        }
+        const ticket = {
+            orderId: activeOrder.id,
+            ticketVersion: 1,
+            tableNumber: activeOrder.table?.number,
+            items: activeOrder.items.map((item) => ({
+                name: products.find((p) => p.id === item.productId)?.name || `Product ${item.productId}`,
+                quantity: item.quantity,
+                notes: item.notes,
+                modifiers: Array.isArray(item.modifierSelections) ? item.modifierSelections : [],
+            })),
+            type: 'NEW',
+        };
+        const queueResult = await window.electronAPI.printKitchenTicket(ticket);
+        if (!queueResult.success) {
+            (0, Toast_1.showToast)(queueResult.error || 'Failed to queue kitchen ticket', 'error');
+            return;
+        }
+        await updateStatus('SentToKitchen');
+    };
+    const checkoutOrder = async () => {
+        if (!activeOrder) {
+            (0, Toast_1.showToast)('No active order selected', 'warning');
+            return;
+        }
+        if (activeOrder.status !== 'Served') {
+            (0, Toast_1.showToast)('Order must be Served before checkout', 'warning');
+            return;
+        }
+        if (paymentMethod === 'split') {
+            const validRows = splitPayments.filter((row) => Number(row.amount || 0) > 0);
+            if (validRows.length < 2) {
+                (0, Toast_1.showToast)('Add at least two split payment rows with amounts', 'warning');
+                return;
+            }
+            const diff = Math.abs((activeOrder.total || 0) - splitTotal);
+            if (diff > 0.01) {
+                (0, Toast_1.showToast)('Split amounts must equal order total before checkout', 'warning');
+                return;
+            }
+        }
+        const payload = {
+            paymentMethod,
+            amountReceived: paymentMethod === 'cash' ? Number(amountReceived || 0) : undefined,
+            customerName: customerName || undefined,
+            customerPhone: customerPhone || undefined,
+            idempotencyKey: `restaurant-checkout:${activeOrder.id}`,
+            splitPayments: paymentMethod === 'split'
+                ? splitPayments
+                    .filter((row) => Number(row.amount || 0) > 0)
+                    .map((row) => ({
+                    method: row.method,
+                    amount: Number(row.amount || 0),
+                    amountReceived: row.method === 'cash'
+                        ? Number(row.amountReceived || row.amount || 0)
+                        : undefined,
+                    mpesaTransactionId: row.method === 'mpesa' ? (row.mpesaTransactionId || undefined) : undefined,
+                    creditDueDate: row.method === 'credit' ? (row.creditDueDate || undefined) : undefined,
+                    creditNotes: row.method === 'credit' ? (row.creditNotes || undefined) : undefined,
+                }))
+                : undefined,
+        };
+        const result = await window.electronAPI.checkoutRestaurantOrder(activeOrder.id, payload);
+        if (!result.success) {
+            (0, Toast_1.showToast)(result.error || 'Checkout failed', 'error');
+            return;
+        }
+        (0, Toast_1.showToast)('Checkout completed and sale recorded', 'success');
+        setAmountReceived('');
+        await loadData();
+    };
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "app", style: { padding: 12 }, children: [(0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between', marginBottom: 10 }, children: [(0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsx)("h2", { style: { margin: 0 }, children: "Restaurant Renderer" }), (0, jsx_runtime_1.jsx)("small", { children: "Dedicated restaurant workspace inside POS" })] }), (0, jsx_runtime_1.jsx)("button", { onClick: loadData, disabled: loading, children: loading ? 'Refreshing...' : 'Refresh' })] }), (0, jsx_runtime_1.jsxs)("div", { style: { display: 'grid', gridTemplateColumns: '0.9fr 1.1fr 1fr', gap: 10 }, children: [(0, jsx_runtime_1.jsxs)("section", { style: { border: '1px solid #ccc', borderRadius: 8, padding: 10 }, children: [(0, jsx_runtime_1.jsx)("h3", { style: { marginTop: 0 }, children: "Tables" }), tables.map((table) => {
+                                const linkedOrder = orders.find((order) => order.tableId === table.id && order.status !== 'Closed' && order.status !== 'Voided');
+                                return ((0, jsx_runtime_1.jsxs)("button", { onClick: () => setSelectedTableId(table.id), style: {
+                                        width: '100%',
+                                        textAlign: 'left',
+                                        marginBottom: 6,
+                                        padding: '8px 10px',
+                                        borderRadius: 6,
+                                        border: selectedTableId === table.id ? '2px solid #0a84ff' : '1px solid #ddd',
+                                        background: linkedOrder ? '#fff8e6' : '#fff',
+                                    }, children: [(0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between' }, children: [(0, jsx_runtime_1.jsx)("strong", { children: table.number }), (0, jsx_runtime_1.jsx)("span", { children: linkedOrder ? linkedOrder.status : table.status })] }), linkedOrder && (0, jsx_runtime_1.jsxs)("small", { children: ["Order ", linkedOrder.id.slice(0, 8)] })] }, table.id));
+                            })] }), (0, jsx_runtime_1.jsxs)("section", { style: { border: '1px solid #ccc', borderRadius: 8, padding: 10 }, children: [(0, jsx_runtime_1.jsx)("h3", { style: { marginTop: 0 }, children: "Menu + Draft Items" }), (0, jsx_runtime_1.jsx)("div", { style: { maxHeight: 220, overflowY: 'auto', borderBottom: '1px solid #eee', marginBottom: 10 }, children: products.map((product) => ((0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between', padding: '6px 0' }, children: [(0, jsx_runtime_1.jsxs)("div", { children: [(0, jsx_runtime_1.jsx)("div", { children: product.name }), (0, jsx_runtime_1.jsx)("small", { children: currency(product.price) })] }), (0, jsx_runtime_1.jsx)("button", { onClick: () => addDraftProduct(product), children: "Add" })] }, product.id))) }), (0, jsx_runtime_1.jsx)("div", { children: draftItems.length === 0 ? ((0, jsx_runtime_1.jsx)("small", { children: "No draft items yet." })) : (draftItems.map((item) => ((0, jsx_runtime_1.jsxs)("div", { style: { border: '1px solid #eee', borderRadius: 6, padding: 8, marginBottom: 8 }, children: [(0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between' }, children: [(0, jsx_runtime_1.jsx)("strong", { children: item.productName }), (0, jsx_runtime_1.jsx)("button", { onClick: () => removeDraftItem(item.localId), children: "Remove" })] }), (0, jsx_runtime_1.jsxs)("div", { style: { display: 'grid', gridTemplateColumns: '80px 1fr', gap: 6, marginTop: 6 }, children: [(0, jsx_runtime_1.jsx)("input", { type: "number", min: 1, value: item.quantity, onChange: (e) => updateDraftItem(item.localId, { quantity: Number(e.target.value || 1) }) }), (0, jsx_runtime_1.jsx)("input", { placeholder: "Item notes (e.g. no onions)", value: item.notes || '', onChange: (e) => updateDraftItem(item.localId, { notes: e.target.value }) }), (0, jsx_runtime_1.jsx)("input", { style: { gridColumn: '1 / span 2' }, placeholder: "Modifiers comma-separated (e.g. Rare, Extra Cheese)", value: item.modifiersText, onChange: (e) => updateDraftItem(item.localId, { modifiersText: e.target.value }) }), (0, jsx_runtime_1.jsx)("div", { style: { gridColumn: '1 / span 2', display: 'flex', flexWrap: 'wrap', gap: 6 }, children: getSuggestedModifiers(item.productName).map((modifier) => {
+                                                        const selected = (item.modifierSelections || []).includes(modifier);
+                                                        return ((0, jsx_runtime_1.jsx)("button", { type: "button", onClick: () => toggleDraftModifier(item.localId, modifier), style: {
+                                                                fontSize: 12,
+                                                                borderRadius: 999,
+                                                                border: selected ? '1px solid #0a84ff' : '1px solid #ddd',
+                                                                background: selected ? '#e8f2ff' : '#fff',
+                                                                padding: '4px 8px',
+                                                            }, children: modifier }, `${item.localId}-${modifier}`));
+                                                    }) })] })] }, item.localId)))) }), (0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between', marginTop: 10 }, children: [(0, jsx_runtime_1.jsx)("strong", { children: "Draft Total" }), (0, jsx_runtime_1.jsx)("strong", { children: currency(draftTotal) })] }), (0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', gap: 8, marginTop: 8 }, children: [(0, jsx_runtime_1.jsx)("button", { onClick: createOrderForTable, disabled: !selectedTableId || draftItems.length === 0, children: "Create Order" }), (0, jsx_runtime_1.jsx)("button", { onClick: addItemsToOrder, disabled: !activeOrder || draftItems.length === 0, children: "Add to Open Order" })] })] }), (0, jsx_runtime_1.jsxs)("section", { style: { border: '1px solid #ccc', borderRadius: 8, padding: 10 }, children: [(0, jsx_runtime_1.jsx)("h3", { style: { marginTop: 0 }, children: "Active Order + Checkout" }), !activeOrder ? ((0, jsx_runtime_1.jsx)("small", { children: "Select a table to open/create an order." })) : ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between' }, children: [(0, jsx_runtime_1.jsx)("strong", { children: activeOrder.table?.number || 'Takeaway' }), (0, jsx_runtime_1.jsx)("span", { children: activeOrder.status })] }), (0, jsx_runtime_1.jsxs)("div", { style: { marginTop: 6 }, children: [(0, jsx_runtime_1.jsx)("input", { placeholder: "Customer name", value: customerName, onChange: (e) => setCustomerName(e.target.value), style: { width: '100%', marginBottom: 6 } }), (0, jsx_runtime_1.jsx)("input", { placeholder: "Customer phone", value: customerPhone, onChange: (e) => setCustomerPhone(e.target.value), style: { width: '100%' } })] }), (0, jsx_runtime_1.jsx)("div", { style: { marginTop: 10, maxHeight: 160, overflowY: 'auto' }, children: activeOrder.items.map((item, index) => {
+                                            const name = products.find((p) => p.id === item.productId)?.name || `Item ${index + 1}`;
+                                            return ((0, jsx_runtime_1.jsxs)("div", { style: { padding: '4px 0', borderBottom: '1px solid #f0f0f0' }, children: [(0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between' }, children: [(0, jsx_runtime_1.jsxs)("span", { children: [name, " x ", item.quantity] }), (0, jsx_runtime_1.jsx)("span", { children: currency(item.quantity * item.price) })] }), item.notes && (0, jsx_runtime_1.jsxs)("small", { children: ["Note: ", item.notes] }), Array.isArray(item.modifierSelections) && item.modifierSelections.length > 0 && ((0, jsx_runtime_1.jsxs)("small", { children: ["Modifiers: ", item.modifierSelections.join(', ')] }))] }, `${item.productId}-${index}`));
+                                        }) }), (0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between', marginTop: 8 }, children: [(0, jsx_runtime_1.jsx)("strong", { children: "Total" }), (0, jsx_runtime_1.jsx)("strong", { children: currency(activeOrder.total) })] }), (0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', gap: 6, marginTop: 10 }, children: [(0, jsx_runtime_1.jsx)("button", { onClick: sendToKitchen, disabled: activeOrder.status !== 'Open', children: "Send to Kitchen" }), (0, jsx_runtime_1.jsx)("button", { onClick: () => updateStatus('Served'), disabled: activeOrder.status !== 'SentToKitchen', children: "Mark Served" })] }), (0, jsx_runtime_1.jsxs)("div", { style: { borderTop: '1px solid #eee', marginTop: 10, paddingTop: 10 }, children: [(0, jsx_runtime_1.jsxs)("div", { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }, children: [(0, jsx_runtime_1.jsxs)("select", { value: paymentMethod, onChange: (e) => setPaymentMethod(e.target.value), children: [(0, jsx_runtime_1.jsx)("option", { value: "cash", children: "Cash" }), (0, jsx_runtime_1.jsx)("option", { value: "mpesa", children: "M-Pesa" }), (0, jsx_runtime_1.jsx)("option", { value: "credit", children: "Credit" }), (0, jsx_runtime_1.jsx)("option", { value: "split", children: "Split" })] }), (0, jsx_runtime_1.jsx)("input", { placeholder: "Amount received", value: amountReceived, onChange: (e) => setAmountReceived(e.target.value), disabled: paymentMethod !== 'cash' })] }), paymentMethod === 'split' && ((0, jsx_runtime_1.jsxs)("div", { style: { marginTop: 8, border: '1px solid #eee', borderRadius: 6, padding: 8 }, children: [(0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between', marginBottom: 6 }, children: [(0, jsx_runtime_1.jsx)("strong", { style: { fontSize: 13 }, children: "Split Payments" }), (0, jsx_runtime_1.jsx)("button", { type: "button", onClick: addSplitRow, children: "+ Add Row" })] }), splitPayments.map((row) => ((0, jsx_runtime_1.jsxs)("div", { style: { border: '1px solid #f0f0f0', borderRadius: 6, padding: 6, marginBottom: 6 }, children: [(0, jsx_runtime_1.jsxs)("div", { style: { display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 6 }, children: [(0, jsx_runtime_1.jsxs)("select", { value: row.method, onChange: (e) => updateSplitRow(row.localId, {
+                                                                            method: e.target.value,
+                                                                        }), children: [(0, jsx_runtime_1.jsx)("option", { value: "cash", children: "Cash" }), (0, jsx_runtime_1.jsx)("option", { value: "mpesa", children: "M-Pesa" }), (0, jsx_runtime_1.jsx)("option", { value: "credit", children: "Credit" })] }), (0, jsx_runtime_1.jsx)("input", { placeholder: "Amount", value: row.amount, onChange: (e) => updateSplitRow(row.localId, { amount: e.target.value }) }), (0, jsx_runtime_1.jsx)("button", { type: "button", onClick: () => removeSplitRow(row.localId), children: "Remove" })] }), row.method === 'cash' && ((0, jsx_runtime_1.jsx)("input", { style: { width: '100%', marginTop: 6 }, placeholder: "Cash received", value: row.amountReceived || '', onChange: (e) => updateSplitRow(row.localId, { amountReceived: e.target.value }) })), row.method === 'mpesa' && ((0, jsx_runtime_1.jsx)("input", { style: { width: '100%', marginTop: 6 }, placeholder: "M-Pesa transaction ID", value: row.mpesaTransactionId || '', onChange: (e) => updateSplitRow(row.localId, { mpesaTransactionId: e.target.value }) })), row.method === 'credit' && ((0, jsx_runtime_1.jsxs)("div", { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 6 }, children: [(0, jsx_runtime_1.jsx)("input", { type: "date", value: row.creditDueDate || '', onChange: (e) => updateSplitRow(row.localId, { creditDueDate: e.target.value }) }), (0, jsx_runtime_1.jsx)("input", { placeholder: "Credit notes", value: row.creditNotes || '', onChange: (e) => updateSplitRow(row.localId, { creditNotes: e.target.value }) })] }))] }, row.localId))), (0, jsx_runtime_1.jsxs)("div", { style: { display: 'flex', justifyContent: 'space-between', fontSize: 12 }, children: [(0, jsx_runtime_1.jsxs)("span", { children: ["Split Total: ", currency(splitTotal)] }), (0, jsx_runtime_1.jsxs)("span", { style: { color: Math.abs(splitRemaining) <= 0.01 ? '#0a7a2f' : '#b42318' }, children: ["Remaining: ", currency(splitRemaining)] })] })] })), (0, jsx_runtime_1.jsx)("button", { onClick: checkoutOrder, style: { width: '100%', marginTop: 8 }, disabled: activeOrder.status !== 'Served', children: "Checkout to Sale" })] })] }))] })] })] }));
+};
+exports["default"] = RestaurantRenderer;
 
 
 /***/ }),

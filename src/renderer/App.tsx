@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Login from './components/Login';
 import POS from './components/POS';
+import RestaurantRenderer from './restaurant/RestaurantRenderer';
 import SyncScreen from './components/SyncScreen';
 import SleepScreen from './components/SleepScreen';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
@@ -18,6 +19,7 @@ const AppContent: React.FC = () => {
   const { syncProgress, performInitialSync } = useInitialSync();
   const { isSleepMode, exitSleepMode, enterSleepMode } = useSleepMode();
   const idleTimerRef = useRef<{ reset: () => void } | null>(null);
+  const [restaurantEnabled, setRestaurantEnabled] = useState(false);
 
   // Debug: Log sleep mode state changes
   useEffect(() => {
@@ -62,6 +64,24 @@ const AppContent: React.FC = () => {
     }
   }, [initialSyncComplete, performInitialSync, onInitialSyncComplete]);
 
+  useEffect(() => {
+    const loadRestaurantConfig = async () => {
+      if (!isAuthenticated) {
+        setRestaurantEnabled(false);
+        return;
+      }
+
+      try {
+        const config = await window.electronAPI.getRestaurantConfig();
+        setRestaurantEnabled(!!(config.success && config.enabled));
+      } catch {
+        setRestaurantEnabled(false);
+      }
+    };
+
+    loadRestaurantConfig();
+  }, [isAuthenticated]);
+
   // Show sleep screen if sleep mode is active (highest priority)
   if (isSleepMode) {
     console.log('Rendering SleepScreen - isSleepMode is true');
@@ -94,7 +114,7 @@ const AppContent: React.FC = () => {
   return (
     <ErrorBoundary>
       <div className="app">
-        {isAuthenticated ? <POS /> : <Login />}
+        {isAuthenticated ? (restaurantEnabled ? <RestaurantRenderer /> : <POS />) : <Login />}
         <ToastContainer toasts={toasts} onRemove={removeToast} />
       </div>
     </ErrorBoundary>

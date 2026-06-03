@@ -2,6 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
+const rendererPort = Number(process.env.POS_RENDERER_PORT || 3110);
+
 module.exports = {
   name: 'renderer',
   entry: './src/renderer/index.tsx',
@@ -74,7 +76,7 @@ module.exports = {
   ],
   devServer: {
     host: '127.0.0.1',
-    port: 3100,
+    port: rendererPort,
     hot: false,
     liveReload: false,
     client: false,

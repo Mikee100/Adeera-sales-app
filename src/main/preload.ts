@@ -37,4 +37,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getApiBaseUrl: () => ipcRenderer.invoke('getApiBaseUrl'),
   isOnline: () => navigator.onLine,
   quitApp: () => ipcRenderer.invoke('quitApp'),
+  
+  // Restaurant Mode IPCs
+  printKitchenTicket: (ticket: any) => ipcRenderer.invoke('printKitchenTicket', ticket),
+  getRestaurantConfig: () => ipcRenderer.invoke('getRestaurantConfig'),
+  getDiningTables: () => ipcRenderer.invoke('getDiningTables'),
+  getRestaurantOrders: () => ipcRenderer.invoke('getRestaurantOrders'),
+  createRestaurantOrder: (data: any) => ipcRenderer.invoke('createRestaurantOrder', data),
+  addRestaurantOrderItems: (id: string, items: any[]) => ipcRenderer.invoke('addRestaurantOrderItems', { id, items }),
+  updateRestaurantOrderStatus: (id: string, status: string) => ipcRenderer.invoke('updateRestaurantOrderStatus', { id, status }),
+  checkoutRestaurantOrder: (id: string, payload: any) => ipcRenderer.invoke('checkoutRestaurantOrder', { id, payload }),
 });

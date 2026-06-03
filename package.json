@@ -6,7 +6,8 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "electron dist/main.js",
-    "dev": "concurrently \"webpack serve --config webpack.renderer.config.js --no-hot\" \"npm run build:watch\" \"wait-on http://localhost:3100 && set NODE_ENV=development&& electron dist/main.js\"",
+    "dev": "concurrently -k \"npm run build:watch\" \"npm run dev:electron\"",
+    "dev:electron": "wait-on dist/main.js dist/preload.js dist/index.html && set NODE_ENV=development&& nodemon",
     "build": "webpack --mode production",
     "build:watch": "webpack --mode development --watch",
     "rebuild": "electron-builder install-app-deps",
@@ -46,6 +47,7 @@
     "electron": "^25.0.0",
     "electron-builder": "^24.13.3",
     "html-webpack-plugin": "^5.5.3",
+    "nodemon": "^3.1.10",
     "style-loader": "^3.3.3",
     "ts-loader": "^9.5.1",
     "typescript": "^5.2.2",

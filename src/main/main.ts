@@ -1,10 +1,11 @@
 import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 import * as path from 'path';
+import { FSWatcher, watch } from 'fs';
 import ElectronStore from 'electron-store';
 import axios from 'axios';
 import { logger } from '../shared/logger';
 import { cacheService } from '../shared/cache-service';
-import { printerService } from './printer-service';
+import { printerService, kitchenQueueService } from './printer-service';
 import { API_BASE_URL } from '../shared/config';
 import { SecureTokenStorage } from './secure-token-storage';
 import { rateLimitedAxios, extractEndpoint, apiRateLimiter, authRateLimiter, syncRateLimiter } from '../shared/rate-limiter';
@@ -81,6 +82,7 @@ function shouldLockUserToAssignedBranch(user: Partial<User> | undefined): boolea
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null;
+const devRendererWatchers: FSWatcher[] = [];
 
 // Global ElectronStore instance for reading configuration values such as backendBaseUrl.
 const globalStore = new ElectronStore();
@@ -228,12 +230,16 @@ const createWindow = (): void => {
     show: false, // Don't show until ready
   });
 
-  // Load the index.html of the app.
-  // In development: load the POS renderer from this app's webpack dev server (port 3001).
-  // Port 3000 is the Next.js SaaS website – we must use a different port for the POS UI.
+  // Load renderer UI.
+  // In development, prefer ELECTRON_RENDERER_URL when explicitly provided.
+  // Otherwise load the locally-built dist/index.html to avoid requiring a dev server port.
   if (process.env.NODE_ENV === 'development') {
-    const devServerUrl = process.env.ELECTRON_RENDERER_URL || 'http://localhost:3100';
-    mainWindow.loadURL(devServerUrl);
+    const devServerUrl = (process.env.ELECTRON_RENDERER_URL || '').trim();
+    if (devServerUrl) {
+      mainWindow.loadURL(devServerUrl);
+    } else {
+      mainWindow.loadFile(path.join(__dirname, 'index.html'));
+    }
   } else {
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
   }
@@ -256,6 +262,45 @@ const createWindow = (): void => {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+};
+
+const setupDevRendererLiveReload = (): void => {
+  if (process.env.NODE_ENV !== 'development') return;
+
+  // If a dedicated renderer URL is used, rely on that server's own reload behavior.
+  const devServerUrl = (process.env.ELECTRON_RENDERER_URL || '').trim();
+  if (devServerUrl) return;
+
+  if (devRendererWatchers.length > 0) return;
+
+  const filesToWatch = ['index.html', 'renderer.js'];
+  let reloadTimer: NodeJS.Timeout | null = null;
+
+  for (const fileName of filesToWatch) {
+    const filePath = path.join(__dirname, fileName);
+    try {
+      const watcher = watch(filePath, () => {
+        if (!mainWindow || mainWindow.isDestroyed()) return;
+
+        if (reloadTimer) {
+          clearTimeout(reloadTimer);
+        }
+
+        reloadTimer = setTimeout(() => {
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.reloadIgnoringCache();
+          }
+        }, 120);
+      });
+      devRendererWatchers.push(watcher);
+    } catch (error: any) {
+      logger.warn('Dev live reload watcher could not be attached', {
+        component: 'app',
+        fileName,
+        errorMessage: error?.message,
+      });
+    }
+  }
 };
 
 // Periodic product sync timer (runs every 5 minutes)
@@ -439,6 +484,7 @@ app.whenReady().then(() => {
     }
   }
   createWindow();
+  setupDevRendererLiveReload();
   setupAutoUpdater();
   
   // Start periodic product sync if user is already logged in (e.g., app restart)
@@ -452,6 +498,11 @@ app.whenReady().then(() => {
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
+  for (const watcher of devRendererWatchers) {
+    watcher.close();
+  }
+  devRendererWatchers.length = 0;
+
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
@@ -1677,6 +1728,167 @@ ipcMain.handle('printReceipt', async (event, receiptData) => {
   } catch (error: any) {
     logger.error('Error printing receipt', { component: 'receipts', saleId: receiptData.saleId, error: error.message });
     return { success: false, error: error.message || 'Failed to print receipt' };
+  }
+});
+
+ipcMain.handle('printKitchenTicket', async (event, ticketData) => {
+  try {
+    logger.info('Queueing kitchen ticket', { component: 'kitchen', orderId: ticketData.orderId });
+    const ticketId = kitchenQueueService.addTicket(ticketData);
+    return { success: true, ticketId };
+  } catch (error: any) {
+    logger.error('Error queueing kitchen ticket', { component: 'kitchen', error: error.message });
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('getRestaurantConfig', async () => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  if (!token) return { success: false, enabled: false };
+  try {
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/config`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    const response = await rateLimitedAxios(() => axios.get(`${BACKEND_BASE_URL}/restaurant/config`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+      timeout: 5000,
+    }), endpoint);
+    return { success: true, enabled: response.data.enabled };
+  } catch (err) {
+    return { success: false, enabled: false };
+  }
+});
+
+ipcMain.handle('getDiningTables', async () => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  const user = store.get('user') as User | undefined;
+  if (!token) return { success: false, tables: [] };
+  
+  try {
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/tables`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    const response = await rateLimitedAxios(() => axios.get(`${BACKEND_BASE_URL}/restaurant/tables`, {
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        ...(user?.branchId && { 'x-branch-id': user.branchId }),
+      },
+      timeout: 5000,
+    }), endpoint);
+    return { success: true, tables: response.data };
+  } catch (error: any) {
+    logger.error('Failed to get tables', { error: error.message });
+    return { success: false, tables: [], error: error.message };
+  }
+});
+
+ipcMain.handle('getRestaurantOrders', async () => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  const user = store.get('user') as User | undefined;
+  if (!token) return { success: false, orders: [] };
+
+  try {
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    const response = await rateLimitedAxios(() => axios.get(`${BACKEND_BASE_URL}/restaurant/orders`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        ...(user?.branchId && { 'x-branch-id': user.branchId }),
+      },
+      timeout: 5000,
+    }), endpoint);
+    return { success: true, orders: response.data };
+  } catch (error: any) {
+    logger.error('Failed to get restaurant orders', { error: error.message });
+    return { success: false, orders: [], error: error.message };
+  }
+});
+
+ipcMain.handle('createRestaurantOrder', async (event, data) => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  const user = store.get('user') as User | undefined;
+  if (!token) return { success: false, error: 'No token' };
+
+  try {
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    const response = await rateLimitedAxios(() => axios.post(`${BACKEND_BASE_URL}/restaurant/orders`, data, {
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        ...(user?.branchId && { 'x-branch-id': user.branchId }),
+      },
+      timeout: 10000,
+    }), endpoint);
+    return { success: true, order: response.data };
+  } catch (error: any) {
+    logger.error('Failed to create order', { error: error.message });
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('addRestaurantOrderItems', async (event, { id, items }) => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  const user = store.get('user') as User | undefined;
+  if (!token) return { success: false, error: 'No token' };
+
+  try {
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${id}/items`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    const response = await rateLimitedAxios(() => axios.post(`${BACKEND_BASE_URL}/restaurant/orders/${id}/items`, { items }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        ...(user?.branchId && { 'x-branch-id': user.branchId }),
+      },
+      timeout: 10000,
+    }), endpoint);
+
+    return { success: true, result: response.data };
+  } catch (error: any) {
+    logger.error('Failed to add restaurant order items', { error: error.message });
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('updateRestaurantOrderStatus', async (event, { id, status }) => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  if (!token) return { success: false };
+
+  try {
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${id}/status`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    const response = await rateLimitedAxios(() => axios.put(`${BACKEND_BASE_URL}/restaurant/orders/${id}/status`, { status }, {
+      headers: { 'Authorization': `Bearer ${token}` },
+      timeout: 10000,
+    }), endpoint);
+    return { success: true, order: response.data };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('checkoutRestaurantOrder', async (event, { id, payload }) => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  if (!token) return { success: false, error: 'No token' };
+
+  try {
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${id}/checkout`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    const response = await rateLimitedAxios(() => axios.post(`${BACKEND_BASE_URL}/restaurant/orders/${id}/checkout`, payload, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      timeout: 15000,
+    }), endpoint);
+
+    return { success: true, receipt: response.data };
+  } catch (error: any) {
+    logger.error('Failed to checkout restaurant order', { error: error.message });
+    return { success: false, error: error.message };
   }
 });
 

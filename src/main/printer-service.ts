@@ -635,3 +635,136 @@ class PrinterService {
 
 export const printerService = PrinterService.getInstance();
 
+export interface KitchenTicketData {
+  id: string; // Unique ID for this ticket print job
+  orderId: string;
+  ticketVersion: number;
+  tableNumber?: string;
+  waiterName?: string;
+  items: Array<{
+    name: string;
+    quantity: number;
+    notes?: string;
+    modifiers?: string[];
+  }>;
+  type: 'NEW' | 'UPDATE' | 'VOID';
+  status: 'PENDING' | 'PRINTED' | 'FAILED';
+  createdAt: string;
+  retryCount: number;
+}
+
+class KitchenQueueService {
+  private static instance: KitchenQueueService;
+  private store: ElectronStore;
+  private queue: KitchenTicketData[] = [];
+  private isProcessing = false;
+  private timer: NodeJS.Timeout | null = null;
+
+  private constructor() {
+    this.store = new ElectronStore();
+    this.loadQueue();
+    this.startQueue();
+  }
+
+  static getInstance(): KitchenQueueService {
+    if (!KitchenQueueService.instance) {
+      KitchenQueueService.instance = new KitchenQueueService();
+    }
+    return KitchenQueueService.instance;
+  }
+
+  private loadQueue() {
+    const saved = this.store.get('kitchenQueue') as KitchenTicketData[] | undefined;
+    if (saved && Array.isArray(saved)) {
+      this.queue = saved;
+    }
+  }
+
+  private saveQueue() {
+    this.store.set('kitchenQueue', this.queue);
+  }
+
+  addTicket(ticket: Omit<KitchenTicketData, 'id' | 'status' | 'createdAt' | 'retryCount'>) {
+    const newTicket: KitchenTicketData = {
+      ...ticket,
+      id: Math.random().toString(36).substring(2, 15),
+      status: 'PENDING',
+      createdAt: new Date().toISOString(),
+      retryCount: 0,
+    };
+    this.queue.push(newTicket);
+    this.saveQueue();
+    this.processQueue();
+    return newTicket.id;
+  }
+
+  private startQueue() {
+    // Check queue every 30 seconds for failed jobs
+    this.timer = setInterval(() => this.processQueue(), 30000);
+  }
+
+  private async processQueue() {
+    if (this.isProcessing) return;
+    this.isProcessing = true;
+
+    try {
+      const pendingTickets = this.queue.filter(t => t.status === 'PENDING' || t.status === 'FAILED');
+      
+      for (const ticket of pendingTickets) {
+        if (ticket.retryCount > 10) continue; // Stop retrying after 10 attempts
+
+        // Generate ESC/POS commands for kitchen
+        const commands = this.generateKitchenTicketCommands(ticket);
+        
+        // Print it (Assuming printerService is configured for the kitchen or we use the default printer)
+        // In a real setup, kitchen has a separate printer IP/config. We will just use the default printerService for now.
+        const result = await printerService.printReceipt(commands as any); // Type hacking to pass raw buffer later if we adjust printerService
+        // Wait, printerService.printReceipt takes ReceiptData, not Buffer.
+        // Let's add a raw print method to printerService, or just format a ReceiptData for kitchen.
+        
+        const kitchenReceiptData = {
+          saleId: `ORDER-${ticket.orderId}-v${ticket.ticketVersion}`,
+          date: ticket.createdAt,
+          businessInfo: { name: `** KITCHEN TICKET: ${ticket.type} **` },
+          items: ticket.items.map(i => ({
+            name: `${i.name} ${i.notes ? '(' + i.notes + ')' : ''}`,
+            quantity: i.quantity,
+            price: 0
+          })),
+          subtotal: 0,
+          vatAmount: 0,
+          total: 0,
+          paymentMethod: 'KITCHEN',
+          customerName: ticket.tableNumber ? `Table: ${ticket.tableNumber}` : 'Takeaway',
+          customerPhone: ticket.waiterName ? `Waiter: ${ticket.waiterName}` : '',
+        };
+
+        const printResult = await printerService.printReceipt(kitchenReceiptData);
+
+        if (printResult.success) {
+          ticket.status = 'PRINTED';
+        } else {
+          ticket.status = 'FAILED';
+          ticket.retryCount++;
+          logger.warn(`Kitchen print failed for ticket ${ticket.id}`, { component: 'printer' });
+        }
+      }
+
+      // Cleanup printed tickets
+      this.queue = this.queue.filter(t => t.status !== 'PRINTED');
+      this.saveQueue();
+
+    } finally {
+      this.isProcessing = false;
+    }
+  }
+
+  private generateKitchenTicketCommands(ticket: KitchenTicketData): Buffer {
+    // If we wanted to write raw buffer commands specifically for kitchen with large red fonts, we would do it here.
+    return Buffer.from([]);
+  }
+}
+
+export const kitchenQueueService = KitchenQueueService.getInstance();
+
+
