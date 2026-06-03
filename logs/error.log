@@ -609,3 +609,6 @@
 {"component":"products","error":{"error":"Unauthorized","message":"Invalid or expired refresh token","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-05-29T13:40:08.169Z"}
 {"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-06-02T17:27:43.786Z"}
 {"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-06-02T17:37:33.974Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-06-03T11:53:34.308Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-06-03T12:16:10.104Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-06-03T12:30:40.554Z"}

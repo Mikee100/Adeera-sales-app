@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import Settings from './Settings';
@@ -70,6 +70,8 @@ interface ProductSelectionProps {
   lockedBranchId?: string;
   onFindReceiptClick?: () => void;
   onSalesHistoryClick?: () => void;
+  isUltraCompact?: boolean;
+  onToggleUltraCompact?: () => void;
 }
 
 const ProductSelection: React.FC<ProductSelectionProps> = ({
@@ -90,7 +92,9 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   branchSelectionLocked = false,
   lockedBranchId = '',
   onFindReceiptClick,
-  onSalesHistoryClick
+  onSalesHistoryClick,
+  isUltraCompact = false,
+  onToggleUltraCompact
 }) => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -291,33 +295,38 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   };
 
   // Get unique categories
-  const categories = ['all', ...Array.from(new Set(products.map(p => p.category?.name).filter(Boolean)))];
+  const categories = useMemo(
+    () => ['all', ...Array.from(new Set(products.map(p => p.category?.name).filter(Boolean)))],
+    [products]
+  );
 
   // Faster, more forgiving search:
   // - token-based (supports "blue large" etc.)
   // - searches name, SKU, barcode, and category
   // - still works with debounced input for performance
-  const filteredProducts = products.filter(product => {
+  const filteredProducts = useMemo(() => {
     const term = debouncedSearchTerm.trim().toLowerCase();
     const tokens = term.split(/\s+/).filter(Boolean);
 
-    const haystackParts = [
-      product.name || '',
-      product.sku || '',
-      (product as any).barcode || '',
-      product.category?.name || '',
-    ];
-    const haystack = haystackParts.join(' ').toLowerCase();
+    return products.filter(product => {
+      const haystackParts = [
+        product.name || '',
+        product.sku || '',
+        (product as any).barcode || '',
+        product.category?.name || '',
+      ];
+      const haystack = haystackParts.join(' ').toLowerCase();
 
-    const textMatch = tokens.length === 0
-      ? true
-      : tokens.every(token => haystack.includes(token));
+      const textMatch = tokens.length === 0
+        ? true
+        : tokens.every(token => haystack.includes(token));
 
-    const categoryMatch =
-      selectedCategory === 'all' || product.category?.name === selectedCategory;
+      const categoryMatch =
+        selectedCategory === 'all' || product.category?.name === selectedCategory;
 
-    return textMatch && categoryMatch;
-  });
+      return textMatch && categoryMatch;
+    });
+  }, [products, debouncedSearchTerm, selectedCategory]);
 
   type Variation = { id: string; sku: string; price?: number | null; stock: number; attributes?: Record<string, string> };
 
@@ -516,6 +525,29 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             >
               {theme === 'dark' ? '☀️' : '🌙'}
             </button>
+            {onToggleUltraCompact && (
+              <button
+                className={`icon-btn pos-density-toggle ${isUltraCompact ? 'is-active' : ''}`}
+                onClick={onToggleUltraCompact}
+                title="Toggle ultra compact density"
+                aria-pressed={isUltraCompact}
+              >
+                <span className="pos-density-dot" aria-hidden="true" />
+                <span>Compact</span>
+              </button>
+            )}
+            {user && (
+              <button
+                className="icon-btn logout-btn"
+                onClick={async () => {
+                  if (cart.length > 0 && !window.confirm('Logout now? Current sale will be lost.')) return;
+                  await logout();
+                }}
+                title="Logout"
+              >
+                ⇥
+              </button>
+            )}
             {user && (
               <button 
                 className="icon-btn settings-btn" 

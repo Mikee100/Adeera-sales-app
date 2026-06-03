@@ -63283,6 +63283,8 @@ function startPeriodicProductSync() {
                                 images: product.images || [],
                                 branchId: product.branchId,
                                 tenantId: product.tenantId,
+                                category: product.category || null,
+                                customFields: product.customFields || product.custom_fields || {},
                             };
                             if (product.variations && Array.isArray(product.variations) && product.variations.length > 0) {
                                 base.hasVariations = true;
@@ -63745,6 +63747,8 @@ electron_1.ipcMain.handle('getProducts', async (_event, branchId) => {
                         images: product.images || [],
                         branchId: product.branchId,
                         tenantId: product.tenantId,
+                        category: product.category || null,
+                        customFields: product.customFields || product.custom_fields || {},
                     };
                     // Show variations when product has them, even if hasVariations flag isn't set
                     if (product.variations && Array.isArray(product.variations) && product.variations.length > 0) {
@@ -63895,6 +63899,8 @@ electron_1.ipcMain.handle('syncProducts', async () => {
                 images: product.images || [],
                 branchId: product.branchId,
                 tenantId: product.tenantId,
+                category: product.category || null,
+                customFields: product.customFields || product.custom_fields || {},
             };
             if (product.variations && Array.isArray(product.variations) && product.variations.length > 0) {
                 base.hasVariations = true;
@@ -64118,6 +64124,8 @@ electron_1.ipcMain.handle('createSale', async (event, saleData) => {
                                     images: product.images || [],
                                     branchId: product.branchId,
                                     tenantId: product.tenantId,
+                                    category: product.category || null,
+                                    customFields: product.customFields || product.custom_fields || {},
                                 };
                                 if (product.variations && Array.isArray(product.variations) && product.variations.length > 0) {
                                     base.hasVariations = true;

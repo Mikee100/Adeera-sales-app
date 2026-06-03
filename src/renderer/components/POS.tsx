@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Clock3, LogOut, Power, ReceiptText, ShoppingCart, WalletCards, Printer } from 'lucide-react';
 import ProductSelection from './ProductSelection';
 import Checkout from './Checkout';
 import Receipt from './Receipt';
@@ -16,6 +18,7 @@ import { sanitizeCustomerName, sanitizePhoneNumber, sanitizeNotes } from '../uti
 import { saleMutex } from '../utils/sale-mutex';
 import { detectStockConflict } from '../../shared/stock-conflict-handler';
 import { retrySaleWithRefresh } from '../utils/stock-conflict-handler';
+import '../pos-premium-theme.css';
 
 interface Product {
   id: string;
@@ -83,7 +86,7 @@ interface Branch {
 }
 
 const POS: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { pendingTransactions, holdTransaction, resumeTransaction, deleteTransaction } = usePendingTransactions();
   const [currentStep, setCurrentStep] = useState<POSStep>('products');
   const [products, setProducts] = useState<Product[]>([]);
@@ -97,6 +100,14 @@ const POS: React.FC = () => {
   const [queuedSalesCount, setQueuedSalesCount] = useState(0);
   const [showFindReceiptModal, setShowFindReceiptModal] = useState(false);
   const [showSalesHistoryModal, setShowSalesHistoryModal] = useState(false);
+  const [clock, setClock] = useState(new Date());
+  const [isUltraCompact, setIsUltraCompact] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('pos.ultraCompact') === '1';
+    } catch {
+      return false;
+    }
+  });
 
   const normalizedRoles: string[] = Array.isArray(user?.roles)
     ? user.roles.map((role: string) => String(role).toLowerCase())
@@ -126,6 +137,19 @@ const POS: React.FC = () => {
     const interval = setInterval(updateQueueCount, 500); // Update every 500ms
     return () => clearInterval(interval);
   }, [processingSale]);
+
+  useEffect(() => {
+    const timer = setInterval(() => setClock(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('pos.ultraCompact', isUltraCompact ? '1' : '0');
+    } catch {
+      // Ignore persistence issues in restricted environments.
+    }
+  }, [isUltraCompact]);
 
   // Load branches on mount and when user changes
   useEffect(() => {
@@ -1509,75 +1533,177 @@ const POS: React.FC = () => {
     setShowSalesHistoryModal(false);
   };
 
+  const handleLogout = async () => {
+    if (cart.length > 0 && !window.confirm('Logout now? Current cart will be lost.')) {
+      return;
+    }
+    await logout();
+  };
+
+  const handleExit = async () => {
+    const message = cart.length > 0
+      ? 'Exit POS now? Current cart will be lost.'
+      : 'Exit POS application now?';
+    if (!window.confirm(message)) {
+      return;
+    }
+    await window.electronAPI.quitApp();
+  };
+
+  const steps: Array<{ id: POSStep; label: string; icon: React.ReactNode }> = [
+    { id: 'products', label: 'Products', icon: <ShoppingCart size={15} /> },
+    { id: 'checkout', label: 'Checkout', icon: <WalletCards size={15} /> },
+    { id: 'receipt', label: 'Receipt', icon: <ReceiptText size={15} /> },
+    { id: 'print-preview', label: 'Print', icon: <Printer size={15} /> },
+  ];
+
   return (
-    <div className="pos-app">
+    <div className={`pos-app ${isUltraCompact ? 'pos-density-ultra' : ''}`}>
+      <section className="pos-shell-main pos-shell-main--full">
+        {currentStep !== 'products' && (
+          <header className="pos-shell-header">
+            <div>
+              <h2>Main POS</h2>
+              <p>{user?.name || 'Cashier'} · {user?.branchName || 'Branch'}</p>
+            </div>
 
-      {showFindReceiptModal && (
-        <FindReceiptModal
-          onClose={() => setShowFindReceiptModal(false)}
-          onReceiptFound={handleReceiptFromLookup}
-        />
-      )}
-      {showSalesHistoryModal && (
-        <SalesHistoryModal
-          onClose={() => setShowSalesHistoryModal(false)}
-          onReceiptFound={handleReceiptFromLookup}
-        />
-      )}
+            <div className="pos-shell-header-right">
+              <div className="clock-pill">
+                <Clock3 size={14} />
+                <span>{clock.toLocaleDateString()} · {clock.toLocaleTimeString()}</span>
+              </div>
+              <button type="button" className="shell-action-btn" onClick={handleLogout}>
+                <LogOut size={14} />
+                Logout
+              </button>
+              <button type="button" className="shell-action-btn danger" onClick={handleExit}>
+                <Power size={14} />
+                Exit
+              </button>
+            </div>
+          </header>
+        )}
 
-      {currentStep === 'products' && (
-        <ProductSelection
-          cart={cart}
-          onAddToCart={addToCart}
-          onUpdateQuantity={updateQuantity}
-          onRemoveFromCart={removeFromCart}
-          onProceedToCheckout={handleProceedToCheckout}
-          onHoldTransaction={handleHoldTransaction}
-          onResumeTransaction={handleResumeTransaction}
-          onDeletePendingTransaction={handleDeletePendingTransaction}
-          pendingTransactions={pendingTransactions}
-          getTotal={getTotal}
-          getGrandTotal={getGrandTotal}
-          branches={branches}
-          selectedBranch={selectedBranch}
-          onBranchChange={setSelectedBranch}
-          branchSelectionLocked={isBranchLockedUser}
-          lockedBranchId={assignedBranchId}
-          onFindReceiptClick={() => setShowFindReceiptModal(true)}
-          onSalesHistoryClick={() => setShowSalesHistoryModal(true)}
-        />
-      )}
+        <div className="pos-top-strip">
+          <nav className="pos-shell-step-nav pos-shell-step-nav--inline">
+            {steps.map((step) => {
+              const active = currentStep === step.id;
+              return (
+                <button
+                  key={step.id}
+                  type="button"
+                  className={`step-chip ${active ? 'is-active' : ''}`}
+                  disabled={!active}
+                >
+                  {step.icon}
+                  <span>{step.label}</span>
+                </button>
+              );
+            })}
+          </nav>
 
-      {currentStep === 'checkout' && (
-        <Checkout
-          cart={cart}
-          subtotal={getTotal()}
-          total={getGrandTotal()}
-          onCompleteSale={handleCompleteSale}
-          onBackToProducts={handleBackToProducts}
-          loading={processingSale}
-          queuedSalesCount={queuedSalesCount}
-        />
-      )}
+          <div className="pos-top-strip-right">
+            {currentStep !== 'products' && (
+              <button
+                type="button"
+                className={`shell-action-btn pos-density-toggle ${isUltraCompact ? 'is-active' : ''}`}
+                onClick={() => setIsUltraCompact((prev) => !prev)}
+                title="Toggle ultra compact density"
+                aria-pressed={isUltraCompact}
+              >
+                <span className="pos-density-dot" aria-hidden="true" />
+                <span>Compact</span>
+              </button>
+            )}
+            <div className="pos-shell-stats pos-shell-stats--inline">
+              <div className="stat-row"><span>Items</span><strong>{cart.length}</strong></div>
+              <div className="stat-row"><span>Queued</span><strong>{queuedSalesCount}</strong></div>
+              <div className="stat-row"><span>Total</span><strong>KES {getGrandTotal().toFixed(2)}</strong></div>
+            </div>
+          </div>
+        </div>
 
-      {currentStep === 'receipt' && (
-        <Receipt
-          receipt={currentReceipt}
-          onPrint={handleShowPrintPreview}
-          onNewSale={handleNewSale}
-          printing={printing}
-        />
-      )}
+        <div className="pos-shell-body">
+          {showFindReceiptModal && (
+            <FindReceiptModal
+              onClose={() => setShowFindReceiptModal(false)}
+              onReceiptFound={handleReceiptFromLookup}
+            />
+          )}
+          {showSalesHistoryModal && (
+            <SalesHistoryModal
+              onClose={() => setShowSalesHistoryModal(false)}
+              onReceiptFound={handleReceiptFromLookup}
+            />
+          )}
 
-      {currentStep === 'print-preview' && (
-        <PrintPreview
-          receipt={currentReceipt}
-          onPrint={handlePrintReceipt}
-          onBack={handleBackFromPrintPreview}
-          onPrintViaBrowser={handlePrintViaBrowser}
-          printing={printing}
-        />
-      )}
+          <AnimatePresence mode="wait">
+            {currentStep === 'products' && (
+              <motion.div key="products" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
+                <ProductSelection
+                  cart={cart}
+                  onAddToCart={addToCart}
+                  onUpdateQuantity={updateQuantity}
+                  onRemoveFromCart={removeFromCart}
+                  onProceedToCheckout={handleProceedToCheckout}
+                  onHoldTransaction={handleHoldTransaction}
+                  onResumeTransaction={handleResumeTransaction}
+                  onDeletePendingTransaction={handleDeletePendingTransaction}
+                  pendingTransactions={pendingTransactions}
+                  getTotal={getTotal}
+                  getGrandTotal={getGrandTotal}
+                  branches={branches}
+                  selectedBranch={selectedBranch}
+                  onBranchChange={setSelectedBranch}
+                  branchSelectionLocked={isBranchLockedUser}
+                  lockedBranchId={assignedBranchId}
+                  onFindReceiptClick={() => setShowFindReceiptModal(true)}
+                  onSalesHistoryClick={() => setShowSalesHistoryModal(true)}
+                  isUltraCompact={isUltraCompact}
+                  onToggleUltraCompact={() => setIsUltraCompact((prev) => !prev)}
+                />
+              </motion.div>
+            )}
+
+            {currentStep === 'checkout' && (
+              <motion.div key="checkout" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
+                <Checkout
+                  cart={cart}
+                  subtotal={getTotal()}
+                  total={getGrandTotal()}
+                  onCompleteSale={handleCompleteSale}
+                  onBackToProducts={handleBackToProducts}
+                  loading={processingSale}
+                  queuedSalesCount={queuedSalesCount}
+                />
+              </motion.div>
+            )}
+
+            {currentStep === 'receipt' && (
+              <motion.div key="receipt" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
+                <Receipt
+                  receipt={currentReceipt}
+                  onPrint={handleShowPrintPreview}
+                  onNewSale={handleNewSale}
+                  printing={printing}
+                />
+              </motion.div>
+            )}
+
+            {currentStep === 'print-preview' && (
+              <motion.div key="print-preview" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
+                <PrintPreview
+                  receipt={currentReceipt}
+                  onPrint={handlePrintReceipt}
+                  onBack={handleBackFromPrintPreview}
+                  onPrintViaBrowser={handlePrintViaBrowser}
+                  printing={printing}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
     </div>
   );
 };

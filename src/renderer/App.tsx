@@ -11,7 +11,17 @@ import { ToastContainer, useToast } from './components/Toast';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useInitialSync } from './hooks/useInitialSync';
 import { useIdleTimer } from './hooks/useIdleTimer';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './error-boundary.css';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 15000,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const AppContent: React.FC = () => {
   const { isAuthenticated, loading, initialSyncComplete, onInitialSyncComplete } = useAuth();
@@ -123,13 +133,15 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <SleepModeProvider>
-          <AppContent />
-        </SleepModeProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <AuthProvider>
+          <SleepModeProvider>
+            <AppContent />
+          </SleepModeProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 };
 
