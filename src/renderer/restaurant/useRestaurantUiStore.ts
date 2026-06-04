@@ -23,7 +23,7 @@ interface RestaurantUiState {
 }
 
 export const useRestaurantUiStore = create<RestaurantUiState>((set) => ({
-  sidebarCollapsed: false,
+  sidebarCollapsed: true,
   activeScreen: 'pos',
   paymentModalOpen: false,
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),

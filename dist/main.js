@@ -64512,6 +64512,53 @@ electron_1.ipcMain.handle('getRestaurantConfig', async () => {
         return { success: false, enabled: false };
     }
 });
+electron_1.ipcMain.handle('getBomRecipes', async () => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, recipes: [], error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/bom/recipes`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.get(`${BACKEND_BASE_URL}/restaurant/bom/recipes`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 7000,
+        }), endpoint);
+        const recipes = Array.isArray(response.data) ? response.data : [];
+        return { success: true, recipes };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to get BOM recipes', { error: error.message });
+        return { success: false, recipes: [], error: error.message };
+    }
+});
+electron_1.ipcMain.handle('saveBomRecipe', async (_event, data) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/bom/recipes`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.post(`${BACKEND_BASE_URL}/restaurant/bom/recipes`, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 10000,
+        }), endpoint);
+        return { success: true, recipe: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to save BOM recipe', { error: error.message });
+        return { success: false, error: error.message };
+    }
+});
 electron_1.ipcMain.handle('getDiningTables', async () => {
     const store = new electron_store_1.default();
     const token = getAuthToken(store);
@@ -64528,11 +64575,197 @@ electron_1.ipcMain.handle('getDiningTables', async () => {
             },
             timeout: 5000,
         }), endpoint);
-        return { success: true, tables: response.data };
+        const raw = response.data;
+        const tables = Array.isArray(raw)
+            ? raw
+            : Array.isArray(raw?.tables)
+                ? raw.tables
+                : [];
+        // First-use bootstrap: create default tables for branches with none.
+        if (tables.length === 0) {
+            logger_1.logger.info('No dining tables found, bootstrapping defaults', {
+                component: 'restaurant',
+                branchId: user?.branchId,
+            });
+            const createEndpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/tables`);
+            for (let i = 1; i <= 12; i += 1) {
+                await rate_limiter_1.apiRateLimiter.waitIfNeeded(createEndpoint);
+                try {
+                    await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.post(`${BACKEND_BASE_URL}/restaurant/tables`, { number: String(i), capacity: i <= 4 ? 4 : i <= 8 ? 6 : 8 }, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            ...(user?.branchId && { 'x-branch-id': user.branchId }),
+                        },
+                        timeout: 5000,
+                    }), createEndpoint);
+                }
+                catch (createErr) {
+                    logger_1.logger.warn('Default table bootstrap item failed', {
+                        component: 'restaurant',
+                        number: i,
+                        error: createErr?.message,
+                    });
+                }
+            }
+            await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+            const refreshed = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.get(`${BACKEND_BASE_URL}/restaurant/tables`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    ...(user?.branchId && { 'x-branch-id': user.branchId }),
+                },
+                timeout: 5000,
+            }), endpoint);
+            const refreshedRaw = refreshed.data;
+            const refreshedTables = Array.isArray(refreshedRaw)
+                ? refreshedRaw
+                : Array.isArray(refreshedRaw?.tables)
+                    ? refreshedRaw.tables
+                    : [];
+            return { success: true, tables: refreshedTables };
+        }
+        return { success: true, tables };
     }
     catch (error) {
         logger_1.logger.error('Failed to get tables', { error: error.message });
         return { success: false, tables: [], error: error.message };
+    }
+});
+electron_1.ipcMain.handle('getUsers', async () => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, users: [], error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/user`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.get(`${BACKEND_BASE_URL}/user`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 7000,
+        }), endpoint);
+        return { success: true, users: Array.isArray(response.data) ? response.data : [] };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to get users', { error: error.message });
+        return { success: false, users: [], error: error.message };
+    }
+});
+electron_1.ipcMain.handle('createUser', async (_event, data) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/user`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.post(`${BACKEND_BASE_URL}/user`, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 10000,
+        }), endpoint);
+        return { success: true, user: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to create user', { error: error.message });
+        return { success: false, error: error.message };
+    }
+});
+electron_1.ipcMain.handle('setUserPosPin', async (_event, { userId, pin }) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/user/${userId}/pos-pin`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.put(`${BACKEND_BASE_URL}/user/${userId}/pos-pin`, { pin }, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 10000,
+        }), endpoint);
+        return { success: true, result: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to set user POS PIN', { error: error.message, userId });
+        return { success: false, error: error.message };
+    }
+});
+electron_1.ipcMain.handle('verifyUserPosPin', async (_event, { userId, pin }) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/user/verify-pos-pin`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.post(`${BACKEND_BASE_URL}/user/verify-pos-pin`, { userId, pin }, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 10000,
+        }), endpoint);
+        return response.data;
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to verify user POS PIN', { error: error.message, userId });
+        return { success: false, error: error.message };
+    }
+});
+electron_1.ipcMain.handle('createDiningTable', async (_event, data) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/tables`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.post(`${BACKEND_BASE_URL}/restaurant/tables`, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 5000,
+        }), endpoint);
+        return { success: true, table: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to create dining table', { error: error.message });
+        return { success: false, error: error.message };
+    }
+});
+electron_1.ipcMain.handle('updateDiningTable', async (_event, id, data) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, error: 'No token' };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/tables/${id}`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.put(`${BACKEND_BASE_URL}/restaurant/tables/${id}`, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 5000,
+        }), endpoint);
+        return { success: true, table: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to update dining table', { error: error.message, tableId: id });
+        return { success: false, error: error.message };
     }
 });
 electron_1.ipcMain.handle('getRestaurantOrders', async () => {
@@ -64555,6 +64788,35 @@ electron_1.ipcMain.handle('getRestaurantOrders', async () => {
     }
     catch (error) {
         logger_1.logger.error('Failed to get restaurant orders', { error: error.message });
+        return { success: false, orders: [], error: error.message };
+    }
+});
+electron_1.ipcMain.handle('getRestaurantOrderHistory', async (_event, filters) => {
+    const store = new electron_store_1.default();
+    const token = getAuthToken(store);
+    const user = store.get('user');
+    if (!token)
+        return { success: false, orders: [] };
+    try {
+        const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/orders/history`);
+        await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.get(`${BACKEND_BASE_URL}/restaurant/orders/history`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            params: {
+                ...(filters?.from ? { from: filters.from } : {}),
+                ...(filters?.to ? { to: filters.to } : {}),
+                ...(filters?.waiterId ? { waiterId: filters.waiterId } : {}),
+                ...(filters?.status ? { status: filters.status } : {}),
+            },
+            timeout: 7000,
+        }), endpoint);
+        return { success: true, orders: response.data };
+    }
+    catch (error) {
+        logger_1.logger.error('Failed to get restaurant order history', { error: error.message });
         return { success: false, orders: [], error: error.message };
     }
 });
@@ -64604,7 +64866,7 @@ electron_1.ipcMain.handle('addRestaurantOrderItems', async (event, { id, items }
         return { success: false, error: error.message };
     }
 });
-electron_1.ipcMain.handle('updateRestaurantOrderStatus', async (event, { id, status }) => {
+electron_1.ipcMain.handle('updateRestaurantOrderStatus', async (event, { id, status, voidReason }) => {
     const store = new electron_store_1.default();
     const token = getAuthToken(store);
     if (!token)
@@ -64612,7 +64874,7 @@ electron_1.ipcMain.handle('updateRestaurantOrderStatus', async (event, { id, sta
     try {
         const endpoint = (0, rate_limiter_1.extractEndpoint)(`${BACKEND_BASE_URL}/restaurant/orders/${id}/status`);
         await rate_limiter_1.apiRateLimiter.waitIfNeeded(endpoint);
-        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.put(`${BACKEND_BASE_URL}/restaurant/orders/${id}/status`, { status }, {
+        const response = await (0, rate_limiter_1.rateLimitedAxios)(() => axios_1.default.put(`${BACKEND_BASE_URL}/restaurant/orders/${id}/status`, { status, voidReason }, {
             headers: { 'Authorization': `Bearer ${token}` },
             timeout: 10000,
         }), endpoint);

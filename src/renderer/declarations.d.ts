@@ -26,11 +26,18 @@ interface ElectronAPI {
 
   printKitchenTicket: (ticket: any) => Promise<{ success: boolean; ticketId?: string; error?: string }>;
   getRestaurantConfig: () => Promise<{ success: boolean; enabled: boolean }>;
+  getBomRecipes: () => Promise<{ success: boolean; recipes: any[]; error?: string }>;
+  saveBomRecipe: (data: any) => Promise<{ success: boolean; recipe?: any; error?: string }>;
+  getUsers: () => Promise<{ success: boolean; users: any[]; error?: string }>;
+  createUser: (data: any) => Promise<{ success: boolean; user?: any; error?: string }>;
+  setUserPosPin: (userId: string, pin: string) => Promise<{ success: boolean; result?: any; error?: string }>;
+  verifyUserPosPin: (userId: string, pin: string) => Promise<{ success: boolean; waiter?: any; reason?: string; error?: string }>;
   getDiningTables: () => Promise<{ success: boolean; tables: any[]; error?: string }>;
   getRestaurantOrders: () => Promise<{ success: boolean; orders: any[]; error?: string }>;
+  getRestaurantOrderHistory: (filters?: { from?: string; to?: string; waiterId?: string; status?: string }) => Promise<{ success: boolean; orders: any[]; error?: string }>;
   createRestaurantOrder: (data: any) => Promise<{ success: boolean; order?: any; error?: string }>;
   addRestaurantOrderItems: (id: string, items: any[]) => Promise<{ success: boolean; result?: any; error?: string }>;
-  updateRestaurantOrderStatus: (id: string, status: string) => Promise<{ success: boolean; order?: any; error?: string }>;
+  updateRestaurantOrderStatus: (id: string, status: string, voidReason?: string) => Promise<{ success: boolean; order?: any; error?: string }>;
   checkoutRestaurantOrder: (id: string, payload: any) => Promise<{ success: boolean; receipt?: any; error?: string }>;
 }
 

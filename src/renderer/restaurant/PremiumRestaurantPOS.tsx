@@ -32,12 +32,53 @@ import { useAuth } from '../contexts/AuthContext';
 type OrderStatus = 'Open' | 'SentToKitchen' | 'Served' | 'Closed' | 'Voided';
 
 type PaymentMethod = 'cash' | 'card' | 'mobile-money' | 'split';
+type ReservationStatus = 'Booked' | 'Arrived' | 'Seated' | 'NoShow' | 'Cancelled';
 
 interface DiningTable {
   id: string;
   number: string;
   status: string;
   capacity?: number;
+}
+
+interface Reservation {
+  id: string;
+  tableId: string;
+  customerName: string;
+  phone?: string;
+  pax: number;
+  reservedAt: string;
+  notes?: string;
+  status: ReservationStatus;
+  createdAt: string;
+}
+
+interface BomRecipeLine {
+  id?: string;
+  ingredientProductId: string;
+  quantity: number;
+  unit: string;
+  wastePercent?: number;
+  ingredientProduct?: Product;
+}
+
+interface BomRecipe {
+  id: string;
+  productId: string;
+  yieldQty: number;
+  yieldUnit: string;
+  version: number;
+  isActive: boolean;
+  product?: Product;
+  lines: BomRecipeLine[];
+}
+
+interface BomLineDraft {
+  localId: string;
+  ingredientProductId: string;
+  quantity: string;
+  unit: string;
+  wastePercent: string;
 }
 
 interface Product {
@@ -63,6 +104,7 @@ interface RestaurantOrder {
   id: string;
   status: OrderStatus;
   total: number;
+  waiterId?: string;
   tableId?: string;
   table?: { id?: string; number?: string };
   customerName?: string;
@@ -76,7 +118,25 @@ interface DraftItem extends OrderItem {
   productName: string;
 }
 
+interface StaffUser {
+  id: string;
+  name?: string;
+  email?: string;
+  branchId?: string;
+  hasPosPin?: boolean;
+  userRoles?: Array<{ role?: { name?: string } }>;
+  roles?: string[];
+}
+
+interface ActiveWaiterSession {
+  id: string;
+  name?: string;
+  email?: string;
+}
+
 const ALL_CATEGORY = 'All';
+const RESERVATION_STORAGE_KEY = 'restaurant-pos-reservations';
+const ACTIVE_WAITER_STORAGE_KEY = 'restaurant-active-waiter-session';
 
 const SIDEBAR_ITEMS: Array<{ id: RestaurantScreen; label: string; icon: React.ReactNode }> = [
   { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
@@ -94,6 +154,11 @@ const SIDEBAR_ITEMS: Array<{ id: RestaurantScreen; label: string; icon: React.Re
 
 const currency = (value: number) => `KES ${Number(value || 0).toFixed(2)}`;
 
+const toLocalDateTimeValue = (date: Date) => {
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
+};
+
 const screenVariants = {
   initial: { opacity: 0, y: 8 },
   animate: { opacity: 1, y: 0 },
@@ -102,7 +167,7 @@ const screenVariants = {
 
 const PremiumRestaurantPOS: React.FC = () => {
   const queryClient = useQueryClient();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState(ALL_CATEGORY);
   const [selectedTableId, setSelectedTableId] = useState('');
@@ -111,6 +176,64 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [receivedAmount, setReceivedAmount] = useState('');
   const [discountValue, setDiscountValue] = useState('0');
   const [clock, setClock] = useState(new Date());
+  const [tableSearch, setTableSearch] = useState('');
+  const [tableStatusFilter, setTableStatusFilter] = useState<'all' | 'Available' | 'Occupied' | 'Reserved'>('all');
+  const [orderSearch, setOrderSearch] = useState('');
+  const [orderStatusFilter, setOrderStatusFilter] = useState<'all' | OrderStatus>('all');
+  const [orderTypeFilter, setOrderTypeFilter] = useState<'all' | 'table' | 'takeaway'>('all');
+  const [historyFrom, setHistoryFrom] = useState('');
+  const [historyTo, setHistoryTo] = useState('');
+  const [orderWaiterFilter, setOrderWaiterFilter] = useState('');
+  const [useHistoryView, setUseHistoryView] = useState(true);
+  const [staffForm, setStaffForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: 'waiter',
+  });
+  const [staffPinModalOpen, setStaffPinModalOpen] = useState(false);
+  const [staffPinTarget, setStaffPinTarget] = useState<StaffUser | null>(null);
+  const [staffPinValue, setStaffPinValue] = useState('');
+  const [staffPinError, setStaffPinError] = useState('');
+  const [activeWaiter, setActiveWaiter] = useState<ActiveWaiterSession | null>(null);
+  const [waiterCheckinOpen, setWaiterCheckinOpen] = useState(false);
+  const [waiterCandidateId, setWaiterCandidateId] = useState('');
+  const [waiterPinInput, setWaiterPinInput] = useState('');
+  const [waiterCheckinError, setWaiterCheckinError] = useState('');
+  const [waiterLastActivityAt, setWaiterLastActivityAt] = useState<number>(Date.now());
+  const [newTableNumber, setNewTableNumber] = useState('');
+  const [newTableCapacity, setNewTableCapacity] = useState('4');
+  const [editingTableId, setEditingTableId] = useState<string | null>(null);
+  const [editTableCapacity, setEditTableCapacity] = useState('4');
+  const [reservations, setReservations] = useState<Reservation[]>(() => {
+    try {
+      const raw = window.localStorage.getItem(RESERVATION_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
+  const [reservationForm, setReservationForm] = useState({
+    tableId: '',
+    customerName: '',
+    phone: '',
+    pax: '2',
+    reservedAt: toLocalDateTimeValue(new Date(Date.now() + 60 * 60 * 1000)),
+    notes: '',
+  });
+  const [reservationSearch, setReservationSearch] = useState('');
+  const [reservationStatusFilter, setReservationStatusFilter] = useState<'all' | ReservationStatus>('all');
+  const [bomSearch, setBomSearch] = useState('');
+  const [bomSaving, setBomSaving] = useState(false);
+  const [bomForm, setBomForm] = useState({
+    productId: '',
+    yieldQty: '1',
+    yieldUnit: 'portion',
+  });
+  const [bomLines, setBomLines] = useState<BomLineDraft[]>([
+    { localId: `bom-line-${Date.now()}`, ingredientProductId: '', quantity: '1', unit: 'unit', wastePercent: '0' },
+  ]);
 
   const {
     activeScreen,
@@ -121,10 +244,23 @@ const PremiumRestaurantPOS: React.FC = () => {
     setPaymentModalOpen,
   } = useRestaurantUiStore();
 
+  const normalizedRoles: string[] = Array.isArray(user?.roles)
+    ? user.roles.map((role: string) => String(role).toLowerCase())
+    : [];
+  const canManageTables =
+    Boolean(user?.isSuperadmin) ||
+    normalizedRoles.includes('owner') ||
+    normalizedRoles.includes('admin');
+  const canManageStaff = canManageTables;
+
   useEffect(() => {
     const timer = setInterval(() => setClock(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(RESERVATION_STORAGE_KEY, JSON.stringify(reservations));
+  }, [reservations]);
 
   const fetchTables = useCallback(async (): Promise<DiningTable[]> => {
     const res = await window.electronAPI.getDiningTables();
@@ -137,6 +273,14 @@ const PremiumRestaurantPOS: React.FC = () => {
   }, []);
 
   const fetchProducts = useCallback(async (): Promise<Product[]> => {
+    // Try to refresh local cache so category/customFields are available in POS.
+    if (typeof window.electronAPI.syncProducts === 'function') {
+      try {
+        await window.electronAPI.syncProducts();
+      } catch {
+        // Non-blocking: fallback to existing cached products.
+      }
+    }
     const res = await window.electronAPI.getProducts();
     return res.success ? res.products || [] : [];
   }, []);
@@ -149,12 +293,351 @@ const PremiumRestaurantPOS: React.FC = () => {
   const { data: orders = [] } = useQuery({
     queryKey: ['restaurant', 'orders'],
     queryFn: fetchOrders,
+    refetchInterval: 5000,
+  });
+
+  const { data: orderHistory = [] } = useQuery({
+    queryKey: ['restaurant', 'orders', 'history', historyFrom, historyTo, orderWaiterFilter],
+    queryFn: async () => {
+      const res = await window.electronAPI.getRestaurantOrderHistory({
+        from: historyFrom || undefined,
+        to: historyTo || undefined,
+        waiterId: orderWaiterFilter.trim() || undefined,
+      });
+      return res.success ? res.orders || [] : [];
+    },
+    enabled: activeScreen === 'orders',
+    refetchInterval: 5000,
   });
 
   const { data: products = [] } = useQuery({
     queryKey: ['restaurant', 'products'],
     queryFn: fetchProducts,
   });
+
+  const { data: bomRecipes = [] } = useQuery({
+    queryKey: ['restaurant', 'bom-recipes'],
+    queryFn: async (): Promise<BomRecipe[]> => {
+      if (typeof window.electronAPI.getBomRecipes !== 'function') return [];
+      const res = await window.electronAPI.getBomRecipes();
+      return res.success ? (res.recipes || []) : [];
+    },
+    enabled: activeScreen === 'inventory',
+  });
+
+  const { data: staffUsers = [] } = useQuery({
+    queryKey: ['restaurant', 'staff-users'],
+    queryFn: async (): Promise<StaffUser[]> => {
+      const res = await window.electronAPI.getUsers();
+      return res.success ? (res.users || []) : [];
+    },
+    enabled: activeScreen === 'orders' || activeScreen === 'employees' || waiterCheckinOpen,
+    refetchInterval: 10000,
+  });
+
+  const staffNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const member of staffUsers) {
+      if (member?.id) {
+        map.set(member.id, member.name || member.email || member.id.slice(0, 8));
+      }
+    }
+    return map;
+  }, [staffUsers]);
+
+  const staffRoleName = (member: StaffUser) => {
+    const fromUserRoles = member.userRoles?.[0]?.role?.name;
+    if (fromUserRoles) return String(fromUserRoles).toLowerCase();
+    const fromRoles = Array.isArray(member.roles) && member.roles.length > 0 ? member.roles[0] : undefined;
+    return fromRoles ? String(fromRoles).toLowerCase() : 'staff';
+  };
+
+  const selectableWaiters = useMemo(() => {
+    const filtered = staffUsers.filter((member) => {
+      const role = staffRoleName(member);
+      return ['waiter', 'owner', 'admin', 'cashier', 'manager'].includes(role);
+    });
+
+    // Fallback: if role metadata is missing, still allow selection from loaded staff users.
+    return filtered.length > 0 ? filtered : staffUsers;
+  }, [staffUsers]);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(ACTIVE_WAITER_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed?.id && typeof parsed.id === 'string') {
+        setActiveWaiter({ id: parsed.id, name: parsed.name, email: parsed.email });
+      }
+    } catch {
+      // Ignore malformed local waiter session cache.
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeWaiter) {
+      window.localStorage.setItem(ACTIVE_WAITER_STORAGE_KEY, JSON.stringify(activeWaiter));
+    } else {
+      window.localStorage.removeItem(ACTIVE_WAITER_STORAGE_KEY);
+    }
+  }, [activeWaiter]);
+
+  const lockWaiterSession = (message?: string) => {
+    setActiveWaiter(null);
+    setWaiterCandidateId('');
+    setWaiterPinInput('');
+    setWaiterCheckinError('');
+    setWaiterCheckinOpen(true);
+    if (message) {
+      window.alert(message);
+    }
+  };
+
+  const requireWaiterSession = (actionLabel: string) => {
+    if (activeWaiter?.id) return true;
+    setWaiterCheckinError(`Check in a waiter before ${actionLabel}.`);
+    setWaiterCheckinOpen(true);
+    return false;
+  };
+
+  const markWaiterActivity = () => {
+    setWaiterLastActivityAt(Date.now());
+  };
+
+  const verifyAndActivateWaiter = async () => {
+    const targetUserId = waiterCandidateId.trim();
+    const pin = waiterPinInput.trim();
+
+    if (!targetUserId || !pin) {
+      setWaiterCheckinError('Select waiter and enter PIN.');
+      return;
+    }
+
+    if (typeof window.electronAPI.verifyUserPosPin !== 'function') {
+      setWaiterCheckinError('POS update not fully loaded. Restart the POS app and try again.');
+      return;
+    }
+
+    const result = await window.electronAPI.verifyUserPosPin(targetUserId, pin);
+    if (!result?.success || !result?.waiter) {
+      setWaiterCheckinError(result?.reason || result?.error || 'Invalid waiter PIN.');
+      return;
+    }
+
+    setActiveWaiter({
+      id: result.waiter.id,
+      name: result.waiter.name,
+      email: result.waiter.email,
+    });
+    setWaiterCheckinOpen(false);
+    setWaiterCheckinError('');
+    setWaiterPinInput('');
+    markWaiterActivity();
+  };
+
+  useEffect(() => {
+    if (!activeWaiter) return;
+
+    const idleTimeoutMs = 5 * 60 * 1000;
+    const timer = window.setInterval(() => {
+      if (Date.now() - waiterLastActivityAt > idleTimeoutMs) {
+        lockWaiterSession('Waiter session locked due to inactivity. Please check in again.');
+      }
+    }, 15000);
+
+    return () => window.clearInterval(timer);
+  }, [activeWaiter, waiterLastActivityAt]);
+
+  useEffect(() => {
+    if (activeWaiter) return;
+    if (activeScreen === 'pos' || activeScreen === 'orders' || activeScreen === 'kitchen') {
+      setWaiterCheckinOpen(true);
+    }
+  }, [activeScreen, activeWaiter]);
+
+  const productNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const product of products) {
+      map.set(product.id, product.name);
+    }
+    return map;
+  }, [products]);
+
+  const productCostById = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const product of products) {
+      const cost = Number(product.cost || 0);
+      const fallbackPrice = Number(product.price || 0);
+      map.set(product.id, cost > 0 ? cost : fallbackPrice);
+    }
+    return map;
+  }, [products]);
+
+  const isIngredientProduct = useCallback((product: Product) => {
+    const custom = (product.customFields || {}) as Record<string, unknown>;
+    const category = resolvedCategory(product).toLowerCase();
+    const sku = String(product.sku || '').toUpperCase();
+    const hasIngredientFlag = custom.isIngredient === true || custom.ingredient === true;
+    const looksLikeIngredientCategory = category === 'ingredients' || category === 'ingredient';
+    const isIngredientSku = sku.startsWith('ING-');
+    return hasIngredientFlag || looksLikeIngredientCategory || isIngredientSku;
+  }, []);
+
+  const menuProductsForBom = useMemo(
+    () => products.filter((product) => !isIngredientProduct(product)),
+    [products, isIngredientProduct],
+  );
+
+  const ingredientProductsForBom = useMemo(
+    () => products.filter((product) => isIngredientProduct(product)),
+    [products, isIngredientProduct],
+  );
+
+  const recipeCost = useCallback(
+    (recipeLines: Array<{ ingredientProductId: string; quantity: number; wastePercent?: number }>) => {
+      return recipeLines.reduce((sum, line) => {
+        const cost = Number(productCostById.get(line.ingredientProductId) || 0);
+        const wasteMultiplier = 1 + Math.max(0, Number(line.wastePercent || 0)) / 100;
+        return sum + cost * Number(line.quantity || 0) * wasteMultiplier;
+      }, 0);
+    },
+    [productCostById],
+  );
+
+  const currentBomIngredientOptions = useMemo(
+    () => ingredientProductsForBom.filter((product) => product.id !== bomForm.productId),
+    [ingredientProductsForBom, bomForm.productId],
+  );
+
+  const filteredBomRecipes = useMemo(() => {
+    const term = bomSearch.trim().toLowerCase();
+    return bomRecipes
+      .filter((recipe) => {
+        if (!term) return true;
+        const name = recipe.product?.name || productNameById.get(recipe.productId) || '';
+        return name.toLowerCase().includes(term);
+      })
+      .sort((a, b) => {
+        const nameA = (a.product?.name || productNameById.get(a.productId) || '').toLowerCase();
+        const nameB = (b.product?.name || productNameById.get(b.productId) || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+  }, [bomRecipes, bomSearch, productNameById]);
+
+  useEffect(() => {
+    if (!bomForm.productId) return;
+
+    const existing = bomRecipes.find((recipe) => recipe.productId === bomForm.productId);
+    if (!existing) {
+      setBomForm((prev) => ({ ...prev, yieldQty: '1', yieldUnit: prev.yieldUnit || 'portion' }));
+      setBomLines([{ localId: `bom-line-${Date.now()}`, ingredientProductId: '', quantity: '1', unit: 'unit', wastePercent: '0' }]);
+      return;
+    }
+
+    setBomForm((prev) => ({
+      ...prev,
+      yieldQty: String(existing.yieldQty || 1),
+      yieldUnit: existing.yieldUnit || 'portion',
+    }));
+    setBomLines(
+      (existing.lines || []).map((line, index) => ({
+        localId: `${existing.id}-${index}`,
+        ingredientProductId: line.ingredientProductId,
+        quantity: String(line.quantity || 1),
+        unit: line.unit || 'unit',
+        wastePercent: String(line.wastePercent || 0),
+      })),
+    );
+  }, [bomForm.productId, bomRecipes]);
+
+  const updateBomLine = (localId: string, patch: Partial<BomLineDraft>) => {
+    setBomLines((prev) => prev.map((line) => (line.localId === localId ? { ...line, ...patch } : line)));
+  };
+
+  const addBomLine = () => {
+    setBomLines((prev) => [
+      ...prev,
+      { localId: `bom-line-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, ingredientProductId: '', quantity: '1', unit: 'unit', wastePercent: '0' },
+    ]);
+  };
+
+  const removeBomLine = (localId: string) => {
+    setBomLines((prev) => {
+      const next = prev.filter((line) => line.localId !== localId);
+      return next.length > 0
+        ? next
+        : [{ localId: `bom-line-${Date.now()}`, ingredientProductId: '', quantity: '1', unit: 'unit', wastePercent: '0' }];
+    });
+  };
+
+  const bomDraftCost = useMemo(
+    () =>
+      recipeCost(
+        bomLines.map((line) => ({
+          ingredientProductId: line.ingredientProductId,
+          quantity: Number(line.quantity || 0),
+          wastePercent: Number(line.wastePercent || 0),
+        })),
+      ),
+    [bomLines, recipeCost],
+  );
+
+  const saveBomRecipe = async () => {
+    if (!bomForm.productId) {
+      window.alert('Select the menu item/product to create BOM for.');
+      return;
+    }
+
+    const validLines = bomLines
+      .map((line) => ({
+        ingredientProductId: line.ingredientProductId,
+        quantity: Number(line.quantity || 0),
+        unit: (line.unit || 'unit').trim() || 'unit',
+        wastePercent: Number(line.wastePercent || 0),
+      }))
+      .filter((line) => line.ingredientProductId && line.quantity > 0);
+
+    if (validLines.length === 0) {
+      window.alert('Add at least one valid ingredient line.');
+      return;
+    }
+
+    if (validLines.some((line) => line.ingredientProductId === bomForm.productId)) {
+      window.alert('A menu item cannot be its own ingredient.');
+      return;
+    }
+
+    if (new Set(validLines.map((line) => line.ingredientProductId)).size !== validLines.length) {
+      window.alert('Duplicate ingredients are not allowed in a recipe.');
+      return;
+    }
+
+    if (typeof window.electronAPI.saveBomRecipe !== 'function') {
+      window.alert('POS update not fully loaded. Restart the app and try again.');
+      return;
+    }
+
+    setBomSaving(true);
+    try {
+      const result = await window.electronAPI.saveBomRecipe({
+        productId: bomForm.productId,
+        yieldQty: Math.max(0.0001, Number(bomForm.yieldQty || 1)),
+        yieldUnit: (bomForm.yieldUnit || 'portion').trim() || 'portion',
+        lines: validLines,
+      });
+
+      if (!result?.success) {
+        window.alert(result?.error || 'Failed to save BOM recipe.');
+        return;
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ['restaurant', 'bom-recipes'] });
+      window.alert('BOM recipe saved.');
+    } finally {
+      setBomSaving(false);
+    }
+  };
 
   const activeOrder = useMemo(
     () =>
@@ -166,6 +649,26 @@ const PremiumRestaurantPOS: React.FC = () => {
       ) || null,
     [orders, selectedTableId],
   );
+
+  const activeOrdersByTable = useMemo(() => {
+    const map = new Map<string, RestaurantOrder>();
+    orders
+      .filter((order) => order.status !== 'Closed' && order.status !== 'Voided' && order.tableId)
+      .forEach((order) => {
+        if (order.tableId) {
+          map.set(order.tableId, order);
+        }
+      });
+    return map;
+  }, [orders]);
+
+  const activeReservationsByTable = useMemo(() => {
+    const map = new Map<string, Reservation>();
+    reservations
+      .filter((r) => r.status === 'Booked' || r.status === 'Arrived')
+      .forEach((r) => map.set(r.tableId, r));
+    return map;
+  }, [reservations]);
 
   const draftTotal = useMemo(
     () => draftItems.reduce((sum, item) => sum + item.quantity * item.price, 0),
@@ -180,6 +683,7 @@ const PremiumRestaurantPOS: React.FC = () => {
   const subtotalAfterDiscount = Math.max(0, draftTotal - discountAmount);
   const tax = subtotalAfterDiscount * 0.16;
   const grandTotal = subtotalAfterDiscount + tax;
+  const canSendOrder = Boolean(selectedTableId) && draftItems.length > 0;
 
   const metrics = useMemo(() => {
     const openOrders = orders.filter((order) => order.status === 'Open').length;
@@ -235,6 +739,15 @@ const PremiumRestaurantPOS: React.FC = () => {
     });
   }, [products, category, search]);
 
+  const categoryCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const product of products) {
+      const key = resolvedCategory(product);
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    return counts;
+  }, [products]);
+
   const addDraftItem = (product: Product) => {
     setDraftItems((prev) => {
       const existing = prev.find((item) => item.productId === product.id);
@@ -283,9 +796,11 @@ const PremiumRestaurantPOS: React.FC = () => {
 
   const createOrder = async () => {
     if (!selectedTableId || draftItems.length === 0) return;
+    if (!requireWaiterSession('sending orders')) return;
 
     const payload = {
       tableId: selectedTableId,
+      waiterId: activeWaiter?.id,
       total: grandTotal,
       items: draftItems.map((item) => ({
         productId: item.productId,
@@ -296,6 +811,7 @@ const PremiumRestaurantPOS: React.FC = () => {
     };
 
     await window.electronAPI.createRestaurantOrder(payload);
+  markWaiterActivity();
     setDraftItems([]);
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] }),
@@ -305,6 +821,7 @@ const PremiumRestaurantPOS: React.FC = () => {
 
   const completePayment = async () => {
     if (!activeOrder) return;
+    if (!requireWaiterSession('completing payment')) return;
 
     await window.electronAPI.checkoutRestaurantOrder(activeOrder.id, {
       paymentMethod,
@@ -315,8 +832,237 @@ const PremiumRestaurantPOS: React.FC = () => {
     });
 
     setPaymentModalOpen(false);
+    markWaiterActivity();
     await queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] });
   };
+
+  const upsertReservationStatus = (id: string, status: ReservationStatus) => {
+    setReservations((prev) => prev.map((item) => (item.id === id ? { ...item, status } : item)));
+  };
+
+  const seatTableToPos = (tableId: string, reservationId?: string) => {
+    setSelectedTableId(tableId);
+    if (reservationId) {
+      upsertReservationStatus(reservationId, 'Seated');
+    }
+    setActiveScreen('pos');
+  };
+
+  const closeTableOrder = async (orderId: string) => {
+    const confirmed = window.confirm('Close this table order now? This will mark it as closed.');
+    if (!confirmed) return;
+    if (!requireWaiterSession('closing table orders')) return;
+
+    await window.electronAPI.updateRestaurantOrderStatus(orderId, 'Closed');
+    markWaiterActivity();
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] }),
+      queryClient.invalidateQueries({ queryKey: ['restaurant', 'tables'] }),
+    ]);
+  };
+
+  const updateKitchenOrderStatus = async (orderId: string, status: OrderStatus, voidReason?: string) => {
+    if (!requireWaiterSession('updating order status')) return;
+    await window.electronAPI.updateRestaurantOrderStatus(orderId, status, voidReason);
+    markWaiterActivity();
+    await queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] });
+    await queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders', 'history'] });
+  };
+
+  const handleCreateTable = async () => {
+    if (!canManageTables) return;
+
+    const number = newTableNumber.trim();
+    const capacity = Math.max(1, Number(newTableCapacity || 1));
+    if (!number) {
+      window.alert('Table number is required.');
+      return;
+    }
+
+    const result = await window.electronAPI.createDiningTable({
+      number,
+      capacity,
+    });
+
+    if (!result?.success) {
+      window.alert(result?.error || 'Failed to create table.');
+      return;
+    }
+
+    setNewTableNumber('');
+    setNewTableCapacity('4');
+    await queryClient.invalidateQueries({ queryKey: ['restaurant', 'tables'] });
+  };
+
+  const beginEditTable = (table: DiningTable) => {
+    if (!canManageTables) return;
+    setEditingTableId(table.id);
+    setEditTableCapacity(String(Math.max(1, Number(table.capacity || 1))));
+  };
+
+  const saveTableCapacity = async (tableId: string) => {
+    if (!canManageTables) return;
+
+    const capacity = Math.max(1, Number(editTableCapacity || 1));
+    const result = await window.electronAPI.updateDiningTable(tableId, { capacity });
+
+    if (!result?.success) {
+      window.alert(result?.error || 'Failed to update table seats.');
+      return;
+    }
+
+    setEditingTableId(null);
+    await queryClient.invalidateQueries({ queryKey: ['restaurant', 'tables'] });
+  };
+
+  const cancelReservation = (id: string) => {
+    upsertReservationStatus(id, 'Cancelled');
+  };
+
+  const hasReservationConflict = (tableId: string, reservedAtIsoLike: string) => {
+    const candidateTime = new Date(reservedAtIsoLike).getTime();
+    if (Number.isNaN(candidateTime)) return true;
+
+    const overlapWindowMs = 2 * 60 * 60 * 1000;
+    return reservations.some((reservation) => {
+      if (reservation.tableId !== tableId) return false;
+      if (!(reservation.status === 'Booked' || reservation.status === 'Arrived')) return false;
+      const existingTime = new Date(reservation.reservedAt).getTime();
+      return Math.abs(existingTime - candidateTime) < overlapWindowMs;
+    });
+  };
+
+  const createReservation = () => {
+    const customerName = reservationForm.customerName.trim();
+    if (!reservationForm.tableId || !customerName || !reservationForm.reservedAt) {
+      window.alert('Table, customer name, and reservation time are required.');
+      return;
+    }
+
+    const reservationTime = new Date(reservationForm.reservedAt);
+    if (Number.isNaN(reservationTime.getTime())) {
+      window.alert('Please select a valid reservation date/time.');
+      return;
+    }
+
+    if (reservationTime.getTime() < Date.now() - 60 * 1000) {
+      window.alert('Reservation time cannot be in the past.');
+      return;
+    }
+
+    if (hasReservationConflict(reservationForm.tableId, reservationForm.reservedAt)) {
+      window.alert('This table already has a nearby active reservation. Choose another table or time.');
+      return;
+    }
+
+    const payload: Reservation = {
+      id: `res-${Date.now()}`,
+      tableId: reservationForm.tableId,
+      customerName,
+      phone: reservationForm.phone.trim() || undefined,
+      pax: Math.max(1, Number(reservationForm.pax || 1)),
+      reservedAt: reservationForm.reservedAt,
+      notes: reservationForm.notes.trim() || undefined,
+      status: 'Booked',
+      createdAt: new Date().toISOString(),
+    };
+
+    setReservations((prev) => [payload, ...prev]);
+    setReservationForm({
+      tableId: '',
+      customerName: '',
+      phone: '',
+      pax: '2',
+      reservedAt: toLocalDateTimeValue(new Date(Date.now() + 60 * 60 * 1000)),
+      notes: '',
+    });
+  };
+
+  const availableReservationTables = useMemo(() => {
+    return tables
+      .filter((table) => !hasReservationConflict(table.id, reservationForm.reservedAt))
+      .sort((a, b) => a.number.localeCompare(b.number, undefined, { numeric: true }));
+  }, [tables, reservationForm.reservedAt, reservations]);
+
+  const filteredReservations = useMemo(() => {
+    const term = reservationSearch.trim().toLowerCase();
+    const now = Date.now();
+
+    const urgencyRank = (reservation: Reservation) => {
+      const isActive = reservation.status === 'Booked' || reservation.status === 'Arrived';
+      if (!isActive) return 2;
+
+      const reservationTimeMs = new Date(reservation.reservedAt).getTime();
+      if (reservationTimeMs < now) return 0;
+      if (reservationTimeMs <= now + 30 * 60 * 1000) return 1;
+      return 2;
+    };
+
+    return reservations
+      .filter((reservation) =>
+        reservationStatusFilter === 'all' ? true : reservation.status === reservationStatusFilter,
+      )
+      .filter((reservation) => {
+        if (!term) return true;
+        const table = tables.find((t) => t.id === reservation.tableId);
+        const haystack = [
+          reservation.customerName,
+          reservation.phone || '',
+          reservation.notes || '',
+          table?.number || '',
+        ]
+          .join(' ')
+          .toLowerCase();
+        return haystack.includes(term);
+      })
+      .sort((a, b) => {
+        const rankDiff = urgencyRank(a) - urgencyRank(b);
+        if (rankDiff !== 0) return rankDiff;
+        return new Date(a.reservedAt).getTime() - new Date(b.reservedAt).getTime();
+      });
+  }, [reservations, reservationStatusFilter, reservationSearch, tables]);
+
+  const reservationStats = useMemo(() => {
+    return {
+      total: reservations.length,
+      booked: reservations.filter((r) => r.status === 'Booked').length,
+      arrived: reservations.filter((r) => r.status === 'Arrived').length,
+      seated: reservations.filter((r) => r.status === 'Seated').length,
+      noShow: reservations.filter((r) => r.status === 'NoShow').length,
+    };
+  }, [reservations]);
+
+  const tableBoard = useMemo(() => {
+    const term = tableSearch.trim().toLowerCase();
+
+    return tables
+      .map((table) => {
+        const activeOrderForTable = activeOrdersByTable.get(table.id);
+        const reservationForTable = activeReservationsByTable.get(table.id);
+
+        const derivedStatus = activeOrderForTable
+          ? 'Occupied'
+          : reservationForTable
+          ? 'Reserved'
+          : table.status || 'Available';
+
+        return {
+          ...table,
+          derivedStatus,
+          activeOrder: activeOrderForTable,
+          reservation: reservationForTable,
+        };
+      })
+      .filter((table) => {
+        const matchesStatus = tableStatusFilter === 'all' || table.derivedStatus === tableStatusFilter;
+        const matchesSearch =
+          !term ||
+          table.number.toLowerCase().includes(term) ||
+          table.derivedStatus.toLowerCase().includes(term);
+        return matchesStatus && matchesSearch;
+      })
+      .sort((a, b) => a.number.localeCompare(b.number, undefined, { numeric: true }));
+  }, [tables, activeOrdersByTable, activeReservationsByTable, tableSearch, tableStatusFilter]);
 
   const handleLogout = async () => {
     const hasDraft = draftItems.length > 0;
@@ -335,6 +1081,84 @@ const PremiumRestaurantPOS: React.FC = () => {
       return;
     }
     await window.electronAPI.quitApp();
+  };
+
+  const handleSidebarItemClick = (screen: RestaurantScreen) => {
+    setActiveScreen(screen);
+    setSidebarCollapsed(true);
+  };
+
+  const createStaffAccount = async () => {
+    if (!canManageStaff) {
+      window.alert('Only owner/admin can create staff accounts.');
+      return;
+    }
+
+    const payload = {
+      name: staffForm.name.trim(),
+      email: staffForm.email.trim(),
+      password: staffForm.password,
+      role: staffForm.role,
+      branchId: user?.branchId || undefined,
+    };
+
+    if (!payload.name || !payload.email || !payload.password) {
+      window.alert('Name, email, and password are required.');
+      return;
+    }
+
+    const result = await window.electronAPI.createUser(payload);
+    if (!result?.success) {
+      window.alert(result?.error || 'Failed to create staff account.');
+      return;
+    }
+
+    setStaffForm({ name: '', email: '', password: '', role: 'waiter' });
+    await queryClient.invalidateQueries({ queryKey: ['restaurant', 'staff-users'] });
+  };
+
+  const setStaffPosPin = async (member: StaffUser) => {
+    if (!canManageStaff) {
+      window.alert('Only owner/admin can set POS PIN.');
+      return;
+    }
+
+    if (typeof window.electronAPI.setUserPosPin !== 'function') {
+      window.alert('POS update not fully loaded. Please restart the POS app and try again.');
+      return;
+    }
+
+    setStaffPinTarget(member);
+    setStaffPinValue('');
+    setStaffPinError('');
+    setStaffPinModalOpen(true);
+  };
+
+  const confirmSetStaffPosPin = async () => {
+    if (!staffPinTarget) {
+      setStaffPinModalOpen(false);
+      return;
+    }
+
+    const trimmedPin = staffPinValue.trim();
+
+    if (!/^\d{4,8}$/.test(trimmedPin)) {
+      setStaffPinError('PIN must be 4 to 8 digits.');
+      return;
+    }
+
+    const result = await window.electronAPI.setUserPosPin(staffPinTarget.id, trimmedPin);
+    if (!result?.success) {
+      setStaffPinError(result?.error || 'Failed to set POS PIN.');
+      return;
+    }
+
+    setStaffPinModalOpen(false);
+    setStaffPinTarget(null);
+    setStaffPinValue('');
+    setStaffPinError('');
+    await queryClient.invalidateQueries({ queryKey: ['restaurant', 'staff-users'] });
+    window.alert('POS PIN updated.');
   };
 
   const statusColor = (status: string) => {
@@ -400,7 +1224,7 @@ const PremiumRestaurantPOS: React.FC = () => {
                       className={`touch-btn ${category === item ? 'bg-brand-indigo text-white' : 'bg-slate-100 text-slate-700'}`}
                       onClick={() => setCategory(item)}
                     >
-                      {item}
+                      {item} ({item === ALL_CATEGORY ? products.length : categoryCounts.get(item) || 0})
                     </button>
                   ))}
                 </div>
@@ -415,6 +1239,11 @@ const PremiumRestaurantPOS: React.FC = () => {
                 </div>
               </CardHeader>
               <CardContent>
+                {products.length === 0 && (
+                  <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
+                    No products loaded yet. Ensure branch catalog is synced and has category data.
+                  </div>
+                )}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredProducts.map((product) => (
                     <motion.button
@@ -448,9 +1277,14 @@ const PremiumRestaurantPOS: React.FC = () => {
           <section className="xl:col-span-3">
             <Card className="sticky top-3">
               <CardHeader>
-                <CardTitle>Current Order</CardTitle>
-                <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
-                  <div>
+                <div className="flex items-center justify-between gap-2">
+                  <CardTitle>Current Order</CardTitle>
+                  <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-600">
+                    {draftItems.length} item{draftItems.length === 1 ? '' : 's'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-xs text-slate-600">
+                  <div className="col-span-2">
                     <label className="mb-1 block">Table</label>
                     <select
                       className="w-full rounded-lg border border-slate-200 bg-white px-2 py-2"
@@ -460,7 +1294,7 @@ const PremiumRestaurantPOS: React.FC = () => {
                       <option value="">Select table</option>
                       {tables.map((table) => (
                         <option key={table.id} value={table.id}>
-                          {table.number}
+                          Table {table.number}
                         </option>
                       ))}
                     </select>
@@ -478,49 +1312,349 @@ const PremiumRestaurantPOS: React.FC = () => {
               <CardContent className="space-y-3">
                 <div className="max-h-72 space-y-2 overflow-y-auto">
                   {draftItems.map((item) => (
-                    <div key={item.localId} className="rounded-lg border border-slate-100 p-2">
+                    <div key={item.localId} className="rounded-lg border border-slate-100 p-1.5">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium">{item.productName}</p>
-                          <p className="text-xs text-slate-500">{currency(item.price)}</p>
+                          <p className="text-xs font-semibold text-slate-900">{item.productName}</p>
+                          <p className="text-[11px] text-slate-500">{currency(item.price)}</p>
                         </div>
                         <Button variant="danger" size="sm" onClick={() => removeDraftItem(item.localId)}>
                           Remove
                         </Button>
                       </div>
-                      <div className="mt-2 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
+                      <div className="mt-1.5 flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
                           <Button variant="secondary" size="sm" onClick={() => updateDraftQty(item.localId, -1)}>-</Button>
-                          <span className="text-sm font-semibold">{item.quantity}</span>
+                          <span className="min-w-4 text-center text-xs font-semibold">{item.quantity}</span>
                           <Button variant="secondary" size="sm" onClick={() => updateDraftQty(item.localId, 1)}>+</Button>
                         </div>
-                        <p className="text-sm font-semibold">{currency(item.quantity * item.price)}</p>
+                        <p className="text-xs font-semibold text-slate-800">{currency(item.quantity * item.price)}</p>
                       </div>
                     </div>
                   ))}
-                  {draftItems.length === 0 && <p className="text-sm text-slate-500">No items in order.</p>}
+                  {draftItems.length === 0 && (
+                    <p className="rounded-lg border border-dashed border-slate-200 p-3 text-sm text-slate-500">
+                      No items in order.
+                    </p>
+                  )}
                 </div>
 
-                <div className="space-y-1 border-t border-slate-100 pt-3 text-sm">
-                  <div className="flex justify-between"><span>Subtotal</span><span>{currency(draftTotal)}</span></div>
-                  <div className="flex justify-between"><span>Discount</span><span>-{currency(discountAmount)}</span></div>
-                  <div className="flex justify-between"><span>Tax (16%)</span><span>{currency(tax)}</span></div>
-                  <div className="flex justify-between text-base font-semibold"><span>Total</span><span>{currency(grandTotal)}</span></div>
+                <div className="grid grid-cols-2 gap-2 rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] md:grid-cols-4">
+                  <div className="rounded border border-slate-200 bg-white px-2 py-1">
+                    <p className="text-[10px] uppercase tracking-wide text-slate-500">Subtotal</p>
+                    <p className="font-semibold text-slate-800">{currency(draftTotal)}</p>
+                  </div>
+                  <div className="rounded border border-slate-200 bg-white px-2 py-1">
+                    <p className="text-[10px] uppercase tracking-wide text-slate-500">Discount</p>
+                    <p className="font-semibold text-slate-800">-{currency(discountAmount)}</p>
+                  </div>
+                  <div className="rounded border border-slate-200 bg-white px-2 py-1">
+                    <p className="text-[10px] uppercase tracking-wide text-slate-500">Tax 16%</p>
+                    <p className="font-semibold text-slate-800">{currency(tax)}</p>
+                  </div>
+                  <div className="rounded border border-indigo-200 bg-indigo-50 px-2 py-1">
+                    <p className="text-[10px] uppercase tracking-wide text-indigo-600">Total</p>
+                    <p className="font-semibold text-indigo-700">{currency(grandTotal)}</p>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
-                  <Button variant="secondary" onClick={holdOrder}>Hold Order</Button>
-                  <Button variant="secondary" onClick={saveDraft}>Save Draft</Button>
-                  <Button variant="warning" onClick={() => setPaymentMethod('split')}>Split Bill</Button>
-                  <Button variant="secondary">Apply Discount</Button>
-                  <Button variant="secondary" onClick={() => window.electronAPI.printReceipt?.({ source: 'pos-draft' } as any)}>Print Receipt</Button>
-                  <Button variant="success" onClick={() => setPaymentModalOpen(true)}>Complete Payment</Button>
+                  <Button className="w-full" onClick={createOrder} disabled={!canSendOrder}>Send Order</Button>
+                  <Button variant="success" onClick={() => setPaymentModalOpen(true)} disabled={!activeOrder}>Complete Payment</Button>
                 </div>
 
-                <Button className="w-full" onClick={createOrder}>Send Order</Button>
+                <details className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5">
+                  <summary className="cursor-pointer text-xs font-medium text-slate-700">More actions</summary>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <Button variant="secondary" onClick={holdOrder} disabled={draftItems.length === 0}>Hold</Button>
+                    <Button variant="secondary" onClick={saveDraft} disabled={draftItems.length === 0}>Save Draft</Button>
+                    <Button
+                      variant="warning"
+                      onClick={() => {
+                        setPaymentMethod('split');
+                        setPaymentModalOpen(true);
+                      }}
+                      disabled={!activeOrder}
+                    >
+                      Split Bill
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => window.electronAPI.printReceipt?.({ source: 'pos-draft' } as any)}
+                      disabled={draftItems.length === 0 && !activeOrder}
+                    >
+                      Print Receipt
+                    </Button>
+                  </div>
+                </details>
               </CardContent>
             </Card>
           </section>
+        </motion.div>
+      );
+    }
+
+    if (activeScreen === 'orders') {
+      const sourceOrders = useHistoryView ? orderHistory : orders;
+
+      const filteredOrders = sourceOrders
+        .filter((order) => {
+          if (orderStatusFilter === 'all') return true;
+          return order.status === orderStatusFilter;
+        })
+        .filter((order) => {
+          if (orderTypeFilter === 'all') return true;
+          if (orderTypeFilter === 'table') return Boolean(order.tableId || order.table?.number);
+          return !order.tableId && !order.table?.number;
+        })
+        .filter((order) => {
+          const term = orderSearch.trim().toLowerCase();
+          if (!term) return true;
+
+          const tableLabel = `table ${order.table?.number || order.tableId || ''}`.toLowerCase();
+          const customerLabel = `${order.customerName || ''} ${order.customerPhone || ''}`.toLowerCase();
+          const itemNames = order.items
+            .map((item) => productNameById.get(item.productId) || item.productId)
+            .join(' ')
+            .toLowerCase();
+
+          return (
+            order.id.toLowerCase().includes(term) ||
+            tableLabel.includes(term) ||
+            customerLabel.includes(term) ||
+            itemNames.includes(term)
+          );
+        })
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+      const counts = {
+        all: sourceOrders.length,
+        Open: sourceOrders.filter((o) => o.status === 'Open').length,
+        SentToKitchen: sourceOrders.filter((o) => o.status === 'SentToKitchen').length,
+        Served: sourceOrders.filter((o) => o.status === 'Served').length,
+        Closed: sourceOrders.filter((o) => o.status === 'Closed').length,
+        Voided: sourceOrders.filter((o) => o.status === 'Voided').length,
+      };
+
+      const voidOrderWithReason = async (order: RestaurantOrder) => {
+        const reason = window.prompt(`Void reason for order #${order.id.slice(0, 8)} (required):`, '');
+        if (reason === null) return;
+
+        const trimmed = reason.trim();
+        if (!trimmed) {
+          window.alert('Void reason is required.');
+          return;
+        }
+
+        const confirmed = window.confirm(`Void order #${order.id.slice(0, 8)} now?`);
+        if (!confirmed) return;
+
+        await updateKitchenOrderStatus(order.id, 'Voided', trimmed);
+      };
+
+      const quickCheckoutOrder = async (order: RestaurantOrder) => {
+        if (order.status !== 'Served') {
+          window.alert('Only served orders can be checked out.');
+          return;
+        }
+
+        const confirmed = window.confirm(`Checkout order #${order.id.slice(0, 8)} with cash now?`);
+        if (!confirmed) return;
+
+        await window.electronAPI.checkoutRestaurantOrder(order.id, {
+          paymentMethod: 'cash',
+          amountReceived: Number(order.total || 0),
+          customerName: order.customerName || undefined,
+          customerPhone: order.customerPhone || undefined,
+          idempotencyKey: `orders:checkout:${order.id}:${Date.now()}`,
+        });
+
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] }),
+          queryClient.invalidateQueries({ queryKey: ['restaurant', 'tables'] }),
+        ]);
+      };
+
+      return (
+        <motion.div key="orders" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Orders Board</CardTitle>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                {(['all', 'Open', 'SentToKitchen', 'Served', 'Closed', 'Voided'] as const).map((item) => (
+                  <button
+                    key={item}
+                    className={`touch-btn px-3 py-1.5 text-xs ${orderStatusFilter === item ? 'bg-brand-indigo text-white' : 'bg-slate-100 text-slate-700'}`}
+                    onClick={() => setOrderStatusFilter(item)}
+                  >
+                    {item === 'all' ? `All (${counts.all})` : `${item} (${counts[item]})`}
+                  </button>
+                ))}
+                <div className="ml-auto flex items-center gap-2">
+                  <button
+                    className={`touch-btn px-3 py-1.5 text-xs ${useHistoryView ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}`}
+                    onClick={() => setUseHistoryView((prev) => !prev)}
+                  >
+                    {useHistoryView ? 'History View: ON' : 'History View: OFF'}
+                  </button>
+                  {(['all', 'table', 'takeaway'] as const).map((item) => (
+                    <button
+                      key={item}
+                      className={`touch-btn px-3 py-1.5 text-xs ${orderTypeFilter === item ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}`}
+                      onClick={() => setOrderTypeFilter(item)}
+                    >
+                      {item === 'all' ? 'All Types' : item === 'table' ? 'Table' : 'Takeaway'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
+                <input
+                  type="datetime-local"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                  value={historyFrom}
+                  onChange={(e) => setHistoryFrom(e.target.value)}
+                  placeholder="From"
+                />
+                <input
+                  type="datetime-local"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                  value={historyTo}
+                  onChange={(e) => setHistoryTo(e.target.value)}
+                  placeholder="To"
+                />
+                <div className="flex gap-2">
+                  <select
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                    value={orderWaiterFilter}
+                    onChange={(e) => setOrderWaiterFilter(e.target.value)}
+                  >
+                    <option value="">All waiters</option>
+                    {selectableWaiters.map((member) => (
+                      <option key={member.id} value={member.id}>
+                        {member.name || member.email || member.id.slice(0, 8)}
+                      </option>
+                    ))}
+                  </select>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => setOrderWaiterFilter(String(activeWaiter?.id || user?.id || user?.userId || ''))}
+                    disabled={!activeWaiter?.id && !user?.id && !user?.userId}
+                  >
+                    My Orders
+                  </Button>
+                </div>
+              </div>
+              <div className="relative mt-2">
+                <Search size={15} className="absolute left-3 top-2.5 text-slate-400" />
+                <input
+                  className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm"
+                  placeholder="Search by order id, table, customer, or item"
+                  value={orderSearch}
+                  onChange={(e) => setOrderSearch(e.target.value)}
+                />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-2 text-xs text-slate-500">
+                Live active tickets only. Oldest appears first to reduce missed orders.
+              </p>
+
+              <div className="rounded-lg border border-slate-200">
+                <div className="hidden grid-cols-12 gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-600 md:grid">
+                  <span className="col-span-2">Order</span>
+                  <span className="col-span-2">Table / Type</span>
+                  <span className="col-span-2">Customer</span>
+                  <span className="col-span-2">Elapsed</span>
+                  <span className="col-span-1 text-right">Items</span>
+                  <span className="col-span-1 text-right">Total</span>
+                  <span className="col-span-1">Status</span>
+                  <span className="col-span-1 text-right">Actions</span>
+                </div>
+
+                {filteredOrders.length === 0 && (
+                  <div className="px-3 py-5 text-sm text-slate-500">No orders match your filters.</div>
+                )}
+
+                {filteredOrders.map((order) => {
+                  const elapsedMinutes = Math.max(
+                    0,
+                    Math.floor((Date.now() - new Date(order.createdAt).getTime()) / 60000),
+                  );
+
+                  const ageTone =
+                    elapsedMinutes >= 20
+                      ? 'bg-red-100 text-red-700'
+                      : elapsedMinutes >= 10
+                      ? 'bg-amber-100 text-amber-700'
+                      : 'bg-emerald-100 text-emerald-700';
+
+                  return (
+                    <div key={order.id} className="grid grid-cols-1 gap-2 border-b border-slate-100 px-3 py-2 text-xs md:grid-cols-12 md:items-center md:gap-2 md:text-sm">
+                      <div className="md:col-span-2">
+                        <p className="font-semibold text-slate-900">#{order.id.slice(0, 8)}</p>
+                        <p className="text-[11px] text-slate-500">{new Date(order.createdAt).toLocaleTimeString()}</p>
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <p className="font-medium">{order.table?.number || order.tableId || 'Takeaway'}</p>
+                        <p className="text-[11px] text-slate-500">{order.tableId ? 'Table Service' : 'Takeaway'}</p>
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <p className="truncate">{order.customerName || '-'}</p>
+                        <p className="text-[11px] text-slate-500">
+                          {order.customerPhone || '-'} · Waiter {order.waiterId ? (staffNameById.get(order.waiterId) || order.waiterId.slice(0, 8)) : '-'}
+                        </p>
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${ageTone}`}>
+                          {elapsedMinutes}m
+                        </span>
+                      </div>
+
+                      <div className="text-left font-semibold md:col-span-1 md:text-right">{order.items.length}</div>
+                      <div className="text-left font-semibold md:col-span-1 md:text-right">{currency(order.total)}</div>
+
+                      <div className="md:col-span-1">
+                        <span className={`rounded-full px-2 py-0.5 text-[11px] ${statusColor(order.status)}`}>{order.status}</span>
+                      </div>
+
+                      <div className="flex flex-wrap justify-start gap-1 md:col-span-1 md:justify-end">
+                        {order.tableId && (
+                          <Button size="sm" variant="secondary" onClick={() => seatTableToPos(order.tableId!)}>
+                            Open
+                          </Button>
+                        )}
+                        {order.status === 'Open' && (
+                          <Button size="sm" variant="warning" onClick={() => updateKitchenOrderStatus(order.id, 'SentToKitchen')}>
+                            Cook
+                          </Button>
+                        )}
+                        {order.status === 'SentToKitchen' && (
+                          <Button size="sm" variant="success" onClick={() => updateKitchenOrderStatus(order.id, 'Served')}>
+                            Serve
+                          </Button>
+                        )}
+                        {order.status === 'Served' && (
+                          <Button size="sm" variant="success" onClick={() => quickCheckoutOrder(order)}>
+                            Checkout
+                          </Button>
+                        )}
+                        {(order.status === 'Open' || order.status === 'SentToKitchen' || order.status === 'Served') && (
+                          <Button size="sm" variant="danger" onClick={() => voidOrderWithReason(order)}>
+                            Void
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
         </motion.div>
       );
     }
@@ -529,20 +1663,279 @@ const PremiumRestaurantPOS: React.FC = () => {
       return (
         <motion.div key="tables" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
           <Card>
-            <CardHeader><CardTitle>Floor Plan</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>Floor Plan</CardTitle>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <input
+                  className="w-44 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs"
+                  placeholder="Search table/status"
+                  value={tableSearch}
+                  onChange={(e) => setTableSearch(e.target.value)}
+                />
+                {(['all', 'Available', 'Occupied', 'Reserved'] as const).map((item) => (
+                  <button
+                    key={item}
+                    className={`touch-btn px-3 py-1.5 text-xs ${tableStatusFilter === item ? 'bg-brand-indigo text-white' : 'bg-slate-100 text-slate-700'}`}
+                    onClick={() => setTableStatusFilter(item)}
+                  >
+                    {item}
+                  </button>
+                ))}
+                {canManageTables && (
+                  <div className="ml-auto flex flex-wrap items-center gap-2">
+                    <input
+                      className="w-28 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs"
+                      placeholder="Table #"
+                      value={newTableNumber}
+                      onChange={(e) => setNewTableNumber(e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      min={1}
+                      className="w-20 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs"
+                      placeholder="Seats"
+                      value={newTableCapacity}
+                      onChange={(e) => setNewTableCapacity(e.target.value)}
+                    />
+                    <Button size="sm" onClick={handleCreateTable}>Add Table</Button>
+                  </div>
+                )}
+              </div>
+            </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
-                {tables.map((table) => {
-                  const linked = orders.find((o) => o.tableId === table.id && o.status !== 'Closed');
-                  const tone = linked ? 'bg-red-100 text-red-700' : table.status === 'Reserved' ? 'bg-yellow-100 text-yellow-700' : 'bg-emerald-100 text-emerald-700';
+                {tableBoard.map((table) => {
+                  const linked = table.activeOrder;
+                  const tone = linked
+                    ? 'bg-red-100 text-red-700'
+                    : table.derivedStatus === 'Reserved'
+                    ? 'bg-yellow-100 text-yellow-700'
+                    : 'bg-emerald-100 text-emerald-700';
                   return (
-                    <div key={table.id} className={`rounded-2xl p-5 ${tone}`}>
+                    <div key={table.id} className={`rounded-2xl p-4 ${tone}`}>
                       <p className="text-sm font-semibold">Table {table.number}</p>
-                      <p className="text-xs">{linked ? 'Occupied' : table.status || 'Available'}</p>
+                      <p className="text-xs">{table.derivedStatus}</p>
+                      <div className="mt-1 text-[11px]">
+                        {editingTableId === table.id ? (
+                          <div className="flex items-center gap-1">
+                            <span>Seats:</span>
+                            <input
+                              type="number"
+                              min={1}
+                              className="w-16 rounded border border-slate-300 bg-white px-1 py-0.5 text-[11px] text-slate-900"
+                              value={editTableCapacity}
+                              onChange={(e) => setEditTableCapacity(e.target.value)}
+                            />
+                            <button className="rounded bg-slate-900 px-1.5 py-0.5 text-[10px] text-white" onClick={() => saveTableCapacity(table.id)}>
+                              Save
+                            </button>
+                            <button className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-700" onClick={() => setEditingTableId(null)}>
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <span>Capacity: {table.capacity || '-'}</span>
+                        )}
+                      </div>
+                      {linked && (
+                        <p className="mt-1 text-[11px]">
+                          {linked.items.length} items · {currency(linked.total)}
+                        </p>
+                      )}
+                      {table.reservation && (
+                        <p className="mt-1 text-[11px]">
+                          Reserved: {table.reservation.customerName}
+                        </p>
+                      )}
+                      <div className="mt-3 flex gap-2">
+                        <Button
+                          size="sm"
+                          variant={linked ? 'warning' : 'secondary'}
+                          onClick={() => seatTableToPos(table.id, table.reservation?.id)}
+                        >
+                          {linked ? 'Open Order' : 'Seat Table'}
+                        </Button>
+                        {linked && (
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => closeTableOrder(linked.id)}
+                          >
+                            Close Table
+                          </Button>
+                        )}
+                        {!linked && table.reservation && table.reservation.status !== 'Cancelled' && table.reservation.status !== 'NoShow' && (
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => cancelReservation(table.reservation!.id)}
+                          >
+                            Cancel Reservation
+                          </Button>
+                        )}
+                        {canManageTables && editingTableId !== table.id && (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => beginEditTable(table)}
+                          >
+                            Edit Seats
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
               </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      );
+    }
+
+    if (activeScreen === 'reservations') {
+      return (
+        <motion.div key="reservations" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+            <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"><span className="text-slate-500">Total</span><p className="text-base font-semibold">{reservationStats.total}</p></div>
+            <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs"><span className="text-blue-700">Booked</span><p className="text-base font-semibold text-blue-800">{reservationStats.booked}</p></div>
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs"><span className="text-amber-700">Arrived</span><p className="text-base font-semibold text-amber-800">{reservationStats.arrived}</p></div>
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs"><span className="text-emerald-700">Seated</span><p className="text-base font-semibold text-emerald-800">{reservationStats.seated}</p></div>
+            <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs"><span className="text-rose-700">No-show</span><p className="text-base font-semibold text-rose-800">{reservationStats.noShow}</p></div>
+          </div>
+
+          <Card>
+            <CardHeader><CardTitle>Create Reservation</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+              <select
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={reservationForm.tableId}
+                onChange={(e) => setReservationForm((prev) => ({ ...prev, tableId: e.target.value }))}
+              >
+                <option value="">Select table</option>
+                {availableReservationTables.map((table) => (
+                  <option key={table.id} value={table.id}>Table {table.number}</option>
+                ))}
+              </select>
+              <input
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                placeholder="Customer name"
+                value={reservationForm.customerName}
+                onChange={(e) => setReservationForm((prev) => ({ ...prev, customerName: e.target.value }))}
+              />
+              <input
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                placeholder="Phone"
+                value={reservationForm.phone}
+                onChange={(e) => setReservationForm((prev) => ({ ...prev, phone: e.target.value }))}
+              />
+              <input
+                type="number"
+                min={1}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                placeholder="Pax"
+                value={reservationForm.pax}
+                onChange={(e) => setReservationForm((prev) => ({ ...prev, pax: e.target.value }))}
+              />
+              <input
+                type="datetime-local"
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={reservationForm.reservedAt}
+                onChange={(e) => setReservationForm((prev) => ({ ...prev, reservedAt: e.target.value }))}
+              />
+              <input
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                placeholder="Notes (optional)"
+                value={reservationForm.notes}
+                onChange={(e) => setReservationForm((prev) => ({ ...prev, notes: e.target.value }))}
+              />
+              <div className="md:col-span-2 xl:col-span-3">
+                <Button onClick={createReservation}>Save Reservation</Button>
+              </div>
+              {availableReservationTables.length === 0 && (
+                <div className="md:col-span-2 xl:col-span-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
+                  No tables available for the selected time. Adjust the reservation time or clear conflicting bookings.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>Upcoming Reservations</CardTitle></CardHeader>
+            <CardContent className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  className="w-52 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                  placeholder="Search name/phone/table"
+                  value={reservationSearch}
+                  onChange={(e) => setReservationSearch(e.target.value)}
+                />
+                {(['all', 'Booked', 'Arrived', 'Seated', 'NoShow', 'Cancelled'] as const).map((item) => (
+                  <button
+                    key={item}
+                    className={`touch-btn px-3 py-1.5 text-xs ${reservationStatusFilter === item ? 'bg-brand-indigo text-white' : 'bg-slate-100 text-slate-700'}`}
+                    onClick={() => setReservationStatusFilter(item)}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+
+              {filteredReservations.length === 0 && <p className="text-sm text-slate-500">No reservations match current filter.</p>}
+              {filteredReservations.map((reservation) => {
+                const table = tables.find((t) => t.id === reservation.tableId);
+                const reservationTimeMs = new Date(reservation.reservedAt).getTime();
+                const nowMs = Date.now();
+                const timeToReservationMs = reservationTimeMs - nowMs;
+                const isActiveReservation = reservation.status === 'Booked' || reservation.status === 'Arrived';
+                const isOverdue = isActiveReservation && timeToReservationMs < 0;
+                const isDueSoon = isActiveReservation && timeToReservationMs >= 0 && timeToReservationMs <= 30 * 60 * 1000;
+
+                const urgencyClass = isOverdue
+                  ? 'border-rose-300 bg-rose-50'
+                  : isDueSoon
+                  ? 'border-amber-300 bg-amber-50'
+                  : 'border-slate-100 bg-white';
+
+                return (
+                  <div key={reservation.id} className={`flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3 ${urgencyClass}`}>
+                    <div className="text-sm">
+                      <p className="font-semibold">{reservation.customerName}</p>
+                      <p className="text-xs text-slate-500">
+                        Table {table?.number || '-'} · {reservation.pax} pax · {new Date(reservation.reservedAt).toLocaleString()}
+                      </p>
+                      <p className="text-xs text-slate-500">Status: {reservation.status}</p>
+                      {(isDueSoon || isOverdue) && (
+                        <p className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${isOverdue ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'}`}>
+                          {isOverdue ? 'Overdue' : 'Due in 30 min'}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      {(reservation.status === 'Booked' || reservation.status === 'Arrived') && (
+                        <Button size="sm" variant="success" onClick={() => seatTableToPos(reservation.tableId, reservation.id)}>
+                          Seat
+                        </Button>
+                      )}
+                      {reservation.status === 'Booked' && (
+                        <Button size="sm" variant="warning" onClick={() => upsertReservationStatus(reservation.id, 'Arrived')}>
+                          Arrived
+                        </Button>
+                      )}
+                      {(reservation.status === 'Booked' || reservation.status === 'Arrived') && (
+                        <Button size="sm" variant="danger" onClick={() => upsertReservationStatus(reservation.id, 'NoShow')}>
+                          No-show
+                        </Button>
+                      )}
+                      {(reservation.status === 'Booked' || reservation.status === 'Arrived') && (
+                        <Button size="sm" variant="danger" onClick={() => cancelReservation(reservation.id)}>
+                          Cancel
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
         </motion.div>
@@ -558,13 +1951,99 @@ const PremiumRestaurantPOS: React.FC = () => {
               <Card key={lane}>
                 <CardHeader><CardTitle>{lane}</CardTitle></CardHeader>
                 <CardContent className="space-y-2">
-                  {orders.filter((o) => o.status === lane).map((order) => (
-                    <div key={order.id} className="rounded-lg border border-slate-100 p-3">
-                      <p className="text-sm font-semibold">#{order.id.slice(0, 8)}</p>
-                      <p className="text-xs text-slate-500">{order.table?.number || 'Takeaway'}</p>
-                      <p className="text-xs">{order.items.length} items</p>
-                    </div>
-                  ))}
+                  {orders.filter((o) => o.status === lane).length === 0 && (
+                    <p className="rounded-lg border border-dashed border-slate-200 p-3 text-xs text-slate-500">
+                      No tickets in this lane.
+                    </p>
+                  )}
+                  {orders
+                    .filter((o) => o.status === lane)
+                    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+                    .map((order) => {
+                    const elapsedMinutes = Math.max(
+                      0,
+                      Math.floor((Date.now() - new Date(order.createdAt).getTime()) / 60000),
+                    );
+
+                    const urgencyTone =
+                      elapsedMinutes >= 20
+                        ? 'border-red-300 bg-red-50'
+                        : elapsedMinutes >= 10
+                        ? 'border-amber-300 bg-amber-50'
+                        : 'border-slate-100 bg-white';
+
+                    const urgencyBadge =
+                      elapsedMinutes >= 20
+                        ? 'Urgent'
+                        : elapsedMinutes >= 10
+                        ? 'Attention'
+                        : 'On Time';
+
+                    const urgencyBadgeTone =
+                      elapsedMinutes >= 20
+                        ? 'bg-red-100 text-red-700'
+                        : elapsedMinutes >= 10
+                        ? 'bg-amber-100 text-amber-700'
+                        : 'bg-emerald-100 text-emerald-700';
+
+                    return (
+                      <div key={order.id} className={`rounded-lg border p-3 ${urgencyTone}`}>
+                        <div className="mb-2 flex items-start justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-semibold">#{order.id.slice(0, 8)}</p>
+                            <p className="text-xs text-slate-500">
+                              Table {order.table?.number || order.tableId || 'Takeaway'}
+                            </p>
+                          </div>
+                          <div className="flex flex-col items-end gap-1">
+                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${urgencyBadgeTone} ${elapsedMinutes >= 20 ? 'animate-pulse' : ''}`}>
+                              {urgencyBadge}
+                            </span>
+                            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600">
+                              {elapsedMinutes}m ago
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1 rounded-md bg-slate-50 p-2">
+                          {order.items.slice(0, 4).map((item, idx) => (
+                            <div key={`${order.id}-${item.productId}-${idx}`} className="flex items-center justify-between text-xs">
+                              <span className="truncate pr-2">
+                                {productNameById.get(item.productId) || item.productId}
+                              </span>
+                              <span className="font-semibold">x{item.quantity}</span>
+                            </div>
+                          ))}
+                          {order.items.length > 4 && (
+                            <p className="text-[11px] text-slate-500">+{order.items.length - 4} more items</p>
+                          )}
+                        </div>
+
+                        <div className="mt-2 flex items-center justify-between text-xs">
+                          <span className="text-slate-500">{order.items.length} items</span>
+                          <span className="font-semibold text-slate-800">{currency(order.total)}</span>
+                        </div>
+
+                        <div className="mt-2 flex gap-2">
+                          {lane === 'Open' && (
+                            <Button size="sm" variant="warning" onClick={() => updateKitchenOrderStatus(order.id, 'SentToKitchen')}>
+                              Start Cooking
+                            </Button>
+                          )}
+                          {lane === 'SentToKitchen' && (
+                            <Button size="sm" variant="success" onClick={() => updateKitchenOrderStatus(order.id, 'Served')}>
+                              Mark Served
+                            </Button>
+                          )}
+                          {lane === 'Served' && (
+                            <Button size="sm" variant="secondary" onClick={() => updateKitchenOrderStatus(order.id, 'Closed')}>
+                              Close Ticket
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </CardContent>
               </Card>
             ))}
@@ -573,17 +2052,233 @@ const PremiumRestaurantPOS: React.FC = () => {
       );
     }
 
+    if (activeScreen === 'employees') {
+      const staffList = staffUsers
+        .filter((member) => {
+          const role = staffRoleName(member);
+          return ['owner', 'admin', 'waiter', 'cashier', 'manager'].includes(role);
+        })
+        .sort((a, b) => (a.name || a.email || '').localeCompare(b.name || b.email || ''));
+
+      return (
+        <motion.div key="employees" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Staff Accounts</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {canManageStaff ? (
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-5">
+                  <input
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                    placeholder="Full name"
+                    value={staffForm.name}
+                    onChange={(e) => setStaffForm((prev) => ({ ...prev, name: e.target.value }))}
+                  />
+                  <input
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                    placeholder="Email"
+                    value={staffForm.email}
+                    onChange={(e) => setStaffForm((prev) => ({ ...prev, email: e.target.value }))}
+                  />
+                  <input
+                    type="password"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                    placeholder="Temporary password"
+                    value={staffForm.password}
+                    onChange={(e) => setStaffForm((prev) => ({ ...prev, password: e.target.value }))}
+                  />
+                  <select
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                    value={staffForm.role}
+                    onChange={(e) => setStaffForm((prev) => ({ ...prev, role: e.target.value }))}
+                  >
+                    <option value="waiter">Waiter</option>
+                    <option value="cashier">Cashier</option>
+                    <option value="manager">Manager</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                  <Button onClick={createStaffAccount}>Create Account</Button>
+                </div>
+              ) : (
+                <p className="text-sm text-slate-600">Only owner/admin can create staff accounts.</p>
+              )}
+
+              <div className="rounded-lg border border-slate-200">
+                <div className="grid grid-cols-12 border-b border-slate-200 bg-slate-50 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                  <span className="col-span-3">Name</span>
+                  <span className="col-span-3">Email</span>
+                  <span className="col-span-2">Role</span>
+                  <span className="col-span-2">PIN</span>
+                  <span className="col-span-2">Actions</span>
+                </div>
+                {staffList.length === 0 && <div className="px-3 py-3 text-sm text-slate-500">No staff accounts found.</div>}
+                {staffList.map((member) => (
+                  <div key={member.id} className="grid grid-cols-12 border-b border-slate-100 px-3 py-2 text-sm">
+                    <span className="col-span-3 truncate">{member.name || '-'}</span>
+                    <span className="col-span-3 truncate text-slate-600">{member.email || '-'}</span>
+                    <span className="col-span-2 capitalize">{staffRoleName(member)}</span>
+                    <span className="col-span-2 text-slate-600">{member.hasPosPin ? 'Set' : 'Not Set'}</span>
+                    <span className="col-span-2">
+                      {canManageStaff && (
+                        <Button size="sm" variant="secondary" onClick={() => setStaffPosPin(member)}>
+                          Set PIN
+                        </Button>
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      );
+    }
+
     if (activeScreen === 'inventory') {
       return (
         <motion.div key="inventory" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            <Card>
+              <CardHeader><CardTitle>BOM Recipe Builder</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-1 gap-2 lg:grid-cols-12">
+                  <select
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm lg:col-span-7"
+                    value={bomForm.productId}
+                    onChange={(e) => setBomForm((prev) => ({ ...prev, productId: e.target.value }))}
+                  >
+                    <option value="">Select menu item/product</option>
+                    {menuProductsForBom
+                      .slice()
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((product) => (
+                        <option key={product.id} value={product.id}>{product.name}</option>
+                      ))}
+                  </select>
+                  <div className="grid min-w-0 grid-cols-2 gap-2 lg:col-span-5">
+                    <input
+                      type="number"
+                      min={0.0001}
+                      step="0.01"
+                      className="w-full min-w-0 rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm"
+                      placeholder="Yield"
+                      value={bomForm.yieldQty}
+                      onChange={(e) => setBomForm((prev) => ({ ...prev, yieldQty: e.target.value }))}
+                    />
+                    <input
+                      className="w-full min-w-0 rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm"
+                      placeholder="Yield unit"
+                      value={bomForm.yieldUnit}
+                      onChange={(e) => setBomForm((prev) => ({ ...prev, yieldUnit: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  {bomLines.map((line) => (
+                    <div key={line.localId} className="grid grid-cols-12 gap-2 rounded-lg border border-slate-100 p-2">
+                      <select
+                        className="col-span-12 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs md:col-span-5"
+                        value={line.ingredientProductId}
+                        onChange={(e) => updateBomLine(line.localId, { ingredientProductId: e.target.value })}
+                      >
+                        <option value="">Ingredient product</option>
+                        {currentBomIngredientOptions
+                          .slice()
+                          .sort((a, b) => a.name.localeCompare(b.name))
+                          .map((product) => (
+                            <option key={product.id} value={product.id}>{product.name}</option>
+                          ))}
+                      </select>
+                      <input
+                        type="number"
+                        min={0.0001}
+                        step="0.01"
+                        className="col-span-4 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs md:col-span-2"
+                        placeholder="Qty"
+                        value={line.quantity}
+                        onChange={(e) => updateBomLine(line.localId, { quantity: e.target.value })}
+                      />
+                      <input
+                        className="col-span-4 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs md:col-span-2"
+                        placeholder="Unit"
+                        value={line.unit}
+                        onChange={(e) => updateBomLine(line.localId, { unit: e.target.value })}
+                      />
+                      <input
+                        type="number"
+                        min={0}
+                        step="0.1"
+                        className="col-span-4 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs md:col-span-2"
+                        placeholder="Waste %"
+                        value={line.wastePercent}
+                        onChange={(e) => updateBomLine(line.localId, { wastePercent: e.target.value })}
+                      />
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        className="col-span-12 h-8 px-3 text-xs md:col-span-1 md:justify-self-end"
+                        onClick={() => removeBomLine(line.localId)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-100 bg-slate-50 p-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                  <Button size="sm" variant="secondary" onClick={addBomLine}>Add Ingredient</Button>
+                  <Button size="sm" onClick={saveBomRecipe} disabled={bomSaving}>{bomSaving ? 'Saving...' : 'Save BOM'}</Button>
+                  </div>
+                  <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-700">
+                    Estimated recipe cost: {currency(bomDraftCost)}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader><CardTitle>Saved BOM Recipes</CardTitle></CardHeader>
+              <CardContent className="space-y-2">
+                <input
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                  placeholder="Search recipe by product"
+                  value={bomSearch}
+                  onChange={(e) => setBomSearch(e.target.value)}
+                />
+                {filteredBomRecipes.length === 0 && (
+                  <p className="text-sm text-slate-500">No BOM recipes yet.</p>
+                )}
+                {filteredBomRecipes.slice(0, 30).map((recipe) => (
+                  <button
+                    key={recipe.id}
+                    className="w-full rounded-lg border border-slate-100 p-3 text-left hover:bg-slate-50"
+                    onClick={() => setBomForm((prev) => ({ ...prev, productId: recipe.productId }))}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm font-semibold">{recipe.product?.name || productNameById.get(recipe.productId) || 'Unknown product'}</p>
+                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] text-indigo-700">v{recipe.version}</span>
+                    </div>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {recipe.lines.length} ingredients · Yield {recipe.yieldQty} {recipe.yieldUnit}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-600">Estimated cost: {currency(recipeCost(recipe.lines || []))}</p>
+                  </button>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
           <Card>
-            <CardHeader><CardTitle>Inventory Module</CardTitle></CardHeader>
+            <CardHeader><CardTitle>Stock Snapshot</CardTitle></CardHeader>
             <CardContent className="space-y-2">
-              {products.slice(0, 20).map((product) => (
+              {ingredientProductsForBom.slice(0, 20).map((product) => (
                 <div key={product.id} className="flex items-center justify-between rounded-lg border border-slate-100 p-3 text-sm">
                   <div>
                     <p className="font-medium">{product.name}</p>
-                    <p className="text-xs text-slate-500">Supplier: Main Warehouse</p>
+                    <p className="text-xs text-slate-500">Cost: {currency(Number(productCostById.get(product.id) || 0))}</p>
                   </div>
                   <span className={`rounded-full px-2 py-1 text-xs ${Number(product.stock || 0) < 5 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}`}>
                     Stock {product.stock ?? 0}
@@ -631,7 +2326,7 @@ const PremiumRestaurantPOS: React.FC = () => {
   return (
     <div className="flex min-h-screen bg-brand-bg">
       <motion.aside
-        animate={{ width: sidebarCollapsed ? 88 : 250 }}
+        animate={{ width: sidebarCollapsed ? 72 : 208 }}
         className="sticky top-0 h-screen border-r border-slate-800 bg-brand-sidebar px-3 py-4 text-slate-100"
       >
         <div className="mb-4 flex items-center justify-between">
@@ -655,7 +2350,7 @@ const PremiumRestaurantPOS: React.FC = () => {
           {SIDEBAR_ITEMS.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveScreen(item.id)}
+              onClick={() => handleSidebarItemClick(item.id)}
               className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm transition ${
                 activeScreen === item.id ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
               }`}
@@ -681,6 +2376,39 @@ const PremiumRestaurantPOS: React.FC = () => {
                 <input className="h-8 w-full rounded-lg border border-slate-200 pl-8 pr-2 text-xs" placeholder="Search" />
               </div>
               <Button variant="secondary" size="icon" className="h-8 w-8"><Bell size={14} /></Button>
+              {activeWaiter ? (
+                <>
+                  <button
+                    className="h-8 rounded-lg border border-emerald-200 bg-emerald-50 px-2 text-[11px] text-emerald-700"
+                    onClick={() => setWaiterCheckinOpen(true)}
+                    title="Waiter session"
+                  >
+                    Waiter: {activeWaiter.name || activeWaiter.email || activeWaiter.id.slice(0, 8)}
+                  </button>
+                  <Button
+                    variant="secondary"
+                    className="h-8 px-2 text-xs"
+                    onClick={() => setWaiterCheckinOpen(true)}
+                  >
+                    Switch Waiter
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="h-8 px-2 text-xs"
+                    onClick={() => lockWaiterSession()}
+                  >
+                    Lock Waiter
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="warning"
+                  className="h-8 px-2 text-xs"
+                  onClick={() => setWaiterCheckinOpen(true)}
+                >
+                  Check In Waiter
+                </Button>
+              )}
               <div className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] leading-none">
                 {clock.toLocaleDateString()} · {clock.toLocaleTimeString()}
               </div>
@@ -704,6 +2432,115 @@ const PremiumRestaurantPOS: React.FC = () => {
           <AnimatePresence mode="wait">{screenContent()}</AnimatePresence>
         </main>
       </div>
+
+      {waiterCheckinOpen && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/45 px-3">
+          <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-4 shadow-xl">
+            <h3 className="text-base font-semibold text-slate-900">Waiter Check-In</h3>
+            <p className="mt-1 text-xs text-slate-500">
+              Select waiter and enter PIN before processing restaurant orders.
+            </p>
+
+            <div className="mt-3 space-y-2">
+              <select
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={waiterCandidateId}
+                onChange={(e) => setWaiterCandidateId(e.target.value)}
+              >
+                <option value="">Select waiter</option>
+                {selectableWaiters.map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.name || member.email || member.id.slice(0, 8)}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={8}
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={waiterPinInput}
+                onChange={(e) => setWaiterPinInput(e.target.value.replace(/\D/g, ''))}
+                placeholder="Enter waiter PIN (4-8 digits)"
+                autoFocus
+              />
+
+              <p className="text-[11px] text-slate-500">Digits entered: {waiterPinInput.length}</p>
+
+              {waiterCheckinError && (
+                <p className="rounded border border-red-200 bg-red-50 px-2 py-1 text-xs text-red-700">
+                  {waiterCheckinError}
+                </p>
+              )}
+
+              <div className="flex justify-end gap-2 pt-1">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setWaiterCheckinOpen(false);
+                    setWaiterCheckinError('');
+                    setWaiterPinInput('');
+                  }}
+                >
+                  Close
+                </Button>
+                <Button onClick={verifyAndActivateWaiter}>Check In</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {staffPinModalOpen && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/45 px-3">
+          <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-4 shadow-xl">
+            <h3 className="text-base font-semibold text-slate-900">Set Staff POS PIN</h3>
+            <p className="mt-1 text-xs text-slate-500">
+              {staffPinTarget?.name || staffPinTarget?.email || 'Staff member'}: enter a 4-8 digit PIN.
+            </p>
+
+            <div className="mt-3 space-y-2">
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={8}
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={staffPinValue}
+                onChange={(e) => {
+                  setStaffPinValue(e.target.value.replace(/\D/g, ''));
+                  if (staffPinError) setStaffPinError('');
+                }}
+                placeholder="Enter new PIN (4-8 digits)"
+                autoFocus
+              />
+
+              <p className="text-[11px] text-slate-500">Digits entered: {staffPinValue.length}</p>
+
+              {staffPinError && (
+                <p className="rounded border border-red-200 bg-red-50 px-2 py-1 text-xs text-red-700">
+                  {staffPinError}
+                </p>
+              )}
+
+              <div className="flex justify-end gap-2 pt-1">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setStaffPinModalOpen(false);
+                    setStaffPinTarget(null);
+                    setStaffPinValue('');
+                    setStaffPinError('');
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={confirmSetStaffPosPin}>Save PIN</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <AnimatePresence>
         {paymentModalOpen && (

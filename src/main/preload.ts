@@ -41,10 +41,21 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Restaurant Mode IPCs
   printKitchenTicket: (ticket: any) => ipcRenderer.invoke('printKitchenTicket', ticket),
   getRestaurantConfig: () => ipcRenderer.invoke('getRestaurantConfig'),
+  getBomRecipes: () => ipcRenderer.invoke('getBomRecipes'),
+  saveBomRecipe: (data: any) => ipcRenderer.invoke('saveBomRecipe', data),
+  getUsers: () => ipcRenderer.invoke('getUsers'),
+  createUser: (data: any) => ipcRenderer.invoke('createUser', data),
+  setUserPosPin: (userId: string, pin: string) => ipcRenderer.invoke('setUserPosPin', { userId, pin }),
+  verifyUserPosPin: (userId: string, pin: string) => ipcRenderer.invoke('verifyUserPosPin', { userId, pin }),
   getDiningTables: () => ipcRenderer.invoke('getDiningTables'),
+  createDiningTable: (data: { number: string; capacity?: number }) => ipcRenderer.invoke('createDiningTable', data),
+  updateDiningTable: (id: string, data: { number?: string; capacity?: number }) => ipcRenderer.invoke('updateDiningTable', id, data),
   getRestaurantOrders: () => ipcRenderer.invoke('getRestaurantOrders'),
+  getRestaurantOrderHistory: (filters?: { from?: string; to?: string; waiterId?: string; status?: string }) =>
+    ipcRenderer.invoke('getRestaurantOrderHistory', filters),
   createRestaurantOrder: (data: any) => ipcRenderer.invoke('createRestaurantOrder', data),
   addRestaurantOrderItems: (id: string, items: any[]) => ipcRenderer.invoke('addRestaurantOrderItems', { id, items }),
-  updateRestaurantOrderStatus: (id: string, status: string) => ipcRenderer.invoke('updateRestaurantOrderStatus', { id, status }),
+  updateRestaurantOrderStatus: (id: string, status: string, voidReason?: string) =>
+    ipcRenderer.invoke('updateRestaurantOrderStatus', { id, status, voidReason }),
   checkoutRestaurantOrder: (id: string, payload: any) => ipcRenderer.invoke('checkoutRestaurantOrder', { id, payload }),
 });
