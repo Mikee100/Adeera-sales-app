@@ -1,274 +1,150 @@
-# SaaS POS - Desktop Point of Sale Application
+# SaaS POS
 
-A desktop Electron application that serves as a dedicated Point of Sale system for the SaaS Platform, providing a native-like experience for retail operations.
+Desktop Point of Sale application built with Electron and React for the Adeera SaaS platform.
 
-## Features
+## Quick Start
 
-### Core POS Functionality
-- **Product Management**: Browse and search products with real-time inventory
-- **Shopping Cart**: Add, remove, and modify items with quantity controls
-- **Payment Processing**: Support for cash and M-Pesa payments
-- **Receipt Generation**: Automatic receipt printing capabilities
-- **Multi-branch Support**: Switch between different store locations
+### I want to download and install the POS
 
-### Advanced Features
-- **Real-time Updates**: Live inventory synchronization with main SaaS
-- **Offline Mode**: Continue operations during connectivity issues
-- **Keyboard Shortcuts**: Efficient operation for busy retail environments
-- **Barcode Scanning**: Quick product lookup via barcode
-- **Sales Analytics**: Real-time sales tracking and reporting
+Use the latest GitHub Release:
 
-### Technical Features
-- **Cross-platform**: Windows, macOS, and Linux support
-- **Auto-updates**: Seamless application updates
-- **Hardware Integration**: Receipt printers, barcode scanners
-- **Data Synchronization**: Conflict resolution for offline/online sync
+- Releases page: https://github.com/Mikee100/Adeera-sales-app/releases
 
-## Architecture
+Download the installer file:
 
-### Main Process (Electron Main)
-- Window management and system integration
-- IPC communication with renderer
-- API calls to main SaaS backend
-- Hardware device communication
+- SaaS POS Setup <version>.exe
 
-### Renderer Process (React)
-- Modern React-based UI
-- Component-based architecture
-- Real-time state management
-- Responsive design for touch screens
+Then:
 
-### Shared Configuration
-- Centralized configuration management
-- Environment-specific settings
-- Feature flags and capabilities
+1. Run the installer.
+2. Allow Windows permissions if prompted.
+3. Launch Adeera POS from Start Menu or Desktop.
 
-## Project Structure
+## For Maintainers: Publish a Click-to-Download Link
 
-```
-sales-app/
-├── src/
-│   ├── main/           # Electron main process
-│   │   ├── main.ts     # Main application entry
-│   │   └── preload.ts  # IPC preload script
-│   ├── renderer/       # React renderer process
-│   │   ├── index.tsx   # React entry point
-│   │   ├── App.tsx     # Main application component
-│   │   ├── styles.css  # Global styles
-│   │   ├── components/ # React components
-│   │   │   ├── Login.tsx
-│   │   │   └── POS.tsx
-│   │   └── contexts/   # React contexts
-│   │       └── AuthContext.tsx
-│   └── shared/         # Shared utilities
-│       └── config.ts   # Configuration constants
-├── dist/               # Build output
-├── package.json        # Dependencies and scripts
-├── tsconfig.json       # TypeScript configuration
-└── webpack.config.js   # Webpack bundler config
-```
+This repo has an automated release workflow:
 
-## Development Setup
+- .github/workflows/release-windows.yml
 
-### Prerequisites
-- Node.js 16+ and npm
-- Git
+When a release is created, GitHub hosts downloadable assets automatically.
 
-### Installation
-
-1. **Clone and navigate to the sales-app directory**
-   ```bash
-   cd sales-app
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start development mode**
-   ```bash
-   npm run dev
-   ```
-
-This will start the development server with hot reloading.
-
-### Build for Production
-
-```bash
-# Build the application
-npm run build
-
-# Package for current platform
-npm run package
-
-# Package for Windows installer (NSIS .exe)
-npm run package:win
-```
-
-## Windows EXE Distribution (Recommended)
-
-Use this flow to generate an installer you can share with clients.
-
-### 1. Build the installer
-
-```bash
-cd sales-app
-npm install
-npm run package:win
-```
-
-Or build and publish update artifacts in one step:
-
-```bash
-npm run release:win
-```
-
-### 2. Share these generated files
-
-After packaging completes, use artifacts from `release/`:
-- `SaaS POS Setup <version>.exe` (installer to share)
-- `latest.yml` and `*.blockmap` (required for auto-updates)
-
-### 3. Install on client machine
-
-1. Run the setup `.exe`
-2. Allow installer permissions if prompted
-3. Launch from Start Menu shortcut `Adeera POS`
-
-### 4. Publish updates (optional but recommended)
-
-If you host updates on your backend path, run:
-
-```bash
-npm run deploy:updates
-```
-
-This copies `latest.yml`, `*.exe`, and `*.blockmap` files to `../backend/uploads/pos-updates/`.
-
-### 5. Publish a click-to-download link on GitHub
-
-This repository includes a GitHub Actions workflow at `.github/workflows/release-windows.yml`.
-
-Use either method:
-
-1. Push a version tag:
+### Option A: Release by Git tag (recommended)
 
 ```bash
 git tag v1.0.1
 git push origin v1.0.1
 ```
 
-2. Or run the workflow manually from the GitHub Actions tab and enter a tag (for example `v1.0.1`).
+### Option B: Release manually from GitHub Actions
 
-After the workflow completes, GitHub creates a Release with attached installer assets (`.exe`, `.blockmap`, `latest.yml`). The workflow aligns app version to the release tag so filenames match the tag version.
+1. Open Actions in GitHub.
+2. Run workflow Release Windows Installer.
+3. Enter a tag, for example v1.0.1.
 
-Share these URLs:
+### What gets uploaded to the GitHub Release
 
-- Releases page: `https://github.com/Mikee100/Adeera-sales-app/releases`
-- Direct installer pattern: `https://github.com/Mikee100/Adeera-sales-app/releases/download/v1.0.1/SaaS%20POS%20Setup%201.0.1.exe`
+- release/SaaS POS Setup <version>.exe
+- release/SaaS POS Setup <version>.exe.blockmap
+- release/latest.yml
 
-### 6. Production hardening checklist
+### Shareable link pattern
 
-- Configure a stable HTTPS update URL in `package.json` build config
-- Sign Windows binaries with a code-signing certificate
-- Test install and update on a clean Windows machine
-- Increment app version before each release
+Use this direct link format after release:
 
-## Integration with Main SaaS
+https://github.com/Mikee100/Adeera-sales-app/releases/download/v1.0.1/SaaS%20POS%20Setup%201.0.1.exe
 
-### Authentication
-- SSO integration with main SaaS platform
-- JWT token management with automatic refresh
-- Role-based permissions maintained
+## Local Build and Packaging
 
-### API Communication
-- RESTful API calls to main backend
-- WebSocket connections for real-time updates
-- Error handling and retry logic
+Run commands inside the sales-app folder.
 
-### Data Synchronization
-- Real-time sync for inventory changes
-- Offline queue for sales during connectivity issues
-- Conflict resolution algorithms
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Run development mode
+
+```bash
+npm run dev
+```
+
+### Build production bundles
+
+```bash
+npm run build
+```
+
+### Build Windows installer
+
+```bash
+npm run package:win
+```
+
+### Build and copy update artifacts to backend
+
+```bash
+npm run release:win
+```
+
+This command runs packaging, then copies latest.yml, exe, and blockmap files to:
+
+- ../backend/uploads/pos-updates/
+
+## Common Commands
+
+- npm run start: Launch built app
+- npm run dev: Run Electron in dev mode
+- npm run build: Build production bundles
+- npm run package: Package for current platform
+- npm run package:win: Build Windows installer
+- npm run package:mac: Build macOS package
+- npm run package:linux: Build Linux package
+- npm run deploy:updates: Copy update artifacts to backend folder
+- npm run release:win: Build Windows installer and copy update artifacts
 
 ## Configuration
 
-### Environment Variables
-- `API_BASE_URL`: Main SaaS API endpoint
-- `WS_BASE_URL`: WebSocket endpoint for real-time updates
-- `NODE_ENV`: Development/production mode
+Set these environment values as needed:
 
-### Feature Flags
-- `offlineMode`: Enable/disable offline capabilities
-- `multiBranch`: Enable/disable multi-branch support
-- `receiptPrinting`: Enable/disable receipt printing
+- API_BASE_URL: Base URL of backend API
+- WS_BASE_URL: Base URL of websocket server
+- NODE_ENV: development or production
 
-## Deployment
+## Architecture Summary
 
-### Auto-updates
-The application includes auto-update functionality using Electron Builder. Updates are distributed through:
-- GitHub Releases
-- Private update servers
-- CDN distribution
-
-### Platform-specific Builds
-- **Windows**: MSI/EXE installers with auto-updater
-- **macOS**: DMG packages with code signing
-- **Linux**: AppImage and DEB packages
-
-## Hardware Integration
-
-### Supported Devices
-- **Receipt Printers**: ESC/POS compatible printers
-- **Barcode Scanners**: USB and Bluetooth scanners
-- **Cash Drawers**: Standard POS cash drawer interfaces
-- **Card Readers**: Integration with payment terminals
-
-### Configuration
-Hardware settings are configured through the main SaaS platform and synchronized to the POS application.
-
-## Security
-
-### Data Protection
-- Encrypted local storage for sensitive data
-- Secure IPC communication between processes
-- Certificate pinning for API communications
-
-### Authentication
-- Multi-factor authentication support
-- Session timeout and automatic logout
-- Secure token storage and management
-
-## Contributing
-
-1. Follow the existing code style and architecture patterns
-2. Write comprehensive tests for new features
-3. Update documentation for API changes
-4. Ensure cross-platform compatibility
+- src/main: Electron main process
+- src/renderer: React UI
+- src/shared: Shared config and utilities
 
 ## Troubleshooting
 
-### Common Issues
+### Installer build hangs or fails
 
-**Application won't start**
-- Check Node.js version compatibility
-- Verify all dependencies are installed
-- Check for port conflicts (default: 3000)
+1. Delete old build output in the release folder.
+2. Run npm install again.
+3. Run npm run package:win and wait for completion.
 
-**API connection fails**
-- Verify API_BASE_URL configuration
-- Check network connectivity
-- Validate authentication tokens
+### App cannot connect to backend
 
-**Hardware not detected**
-- Ensure device drivers are installed
-- Check USB permissions on Linux/macOS
-- Verify device compatibility
+1. Verify API_BASE_URL and WS_BASE_URL.
+2. Check backend server is reachable.
+3. Confirm firewall or proxy is not blocking traffic.
+
+### Auto-update not working
+
+1. Ensure latest.yml and blockmap are published with the exe.
+2. Confirm update URL in package.json build.win.publish.url is correct.
+3. Ensure hosted files are reachable over HTTPS.
+
+## Production Checklist
+
+1. Bump app version before release.
+2. Build and publish through GitHub Release workflow.
+3. Test install on a clean Windows machine.
+4. Test update from previous version to new version.
+5. Code-sign installer for better Windows trust prompts.
 
 ## License
 
-This project is part of the SaaS Platform and follows the same licensing terms.
-#   A d e e r a - s a l e s - a p p 
- 
- 
+Part of the SaaS Platform project and follows the same licensing terms.
