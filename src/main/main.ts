@@ -103,16 +103,28 @@ const devRendererWatchers: FSWatcher[] = [];
 // Global ElectronStore instance for reading configuration values such as backendBaseUrl.
 const globalStore = new ElectronStore();
 
+const HOSTED_BACKEND_URL = 'https://saas-business.duckdns.org';
+
 function normalizeHostedBackendUrl(url: string): string {
   const trimmed = url.trim().replace(/\/$/, '');
-  if (
-    trimmed.startsWith('http://127.0.0.1') ||
-    trimmed.startsWith('http://localhost') ||
-    trimmed.startsWith('https://127.0.0.1') ||
-    trimmed.startsWith('https://localhost')
-  ) {
-    return 'https://saas-business.duckdns.org';
+  if (!trimmed) return HOSTED_BACKEND_URL;
+
+  // Accept plain host values like "localhost:7000" by prepending a scheme for parsing.
+  const parseCandidate = trimmed.includes('://') ? trimmed : `http://${trimmed}`;
+
+  try {
+    const parsed = new URL(parseCandidate);
+    const hostname = parsed.hostname.toLowerCase();
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      const hosted = new URL(HOSTED_BACKEND_URL);
+      parsed.protocol = hosted.protocol;
+      parsed.host = hosted.host;
+      return parsed.toString().replace(/\/$/, '');
+    }
+  } catch {
+    // If parsing fails, fall through and return the original value.
   }
+
   return trimmed;
 }
 
@@ -135,19 +147,31 @@ const BACKEND_BASE_URL = (() => {
 
   if (typeof process.env.BACKEND_BASE_URL === 'string' && process.env.BACKEND_BASE_URL.trim().length > 0) {
     const normalized = normalizeHostedBackendUrl(process.env.BACKEND_BASE_URL);
+    globalStore.set('backendBaseUrl', normalized);
     console.log(`Backend URL configured from BACKEND_BASE_URL env: ${normalized}`);
     return normalized;
   }
 
-  console.log(`Backend URL falling back to API_BASE_URL from shared config: ${API_BASE_URL}`);
-  return API_BASE_URL;
+  const normalizedFallback = normalizeHostedBackendUrl(API_BASE_URL);
+  globalStore.set('backendBaseUrl', normalizedFallback);
+  console.log(`Backend URL falling back to API_BASE_URL from shared config: ${normalizedFallback}`);
+  return normalizedFallback;
 })();
 
 // Log backend URL on startup for debugging
 console.log(`Backend URL resolved at startup: ${BACKEND_BASE_URL}`);
 
-const BACKEND_HEALTH_URL =
-  process.env.BACKEND_HEALTH_URL || `${BACKEND_BASE_URL.replace(/\/$/, '')}/health`;
+const BACKEND_HEALTH_URL = (() => {
+  if (typeof process.env.BACKEND_HEALTH_URL === 'string' && process.env.BACKEND_HEALTH_URL.trim().length > 0) {
+    const normalized = normalizeHostedBackendUrl(process.env.BACKEND_HEALTH_URL);
+    if (normalized !== process.env.BACKEND_HEALTH_URL.trim()) {
+      console.log(`BACKEND_HEALTH_URL env was localhost and was remapped to: ${normalized}`);
+    }
+    return normalized;
+  }
+
+  return `${BACKEND_BASE_URL.replace(/\/$/, '')}/health`;
+})();
 
 // ---- GLOBAL AXIOS INTERCEPTOR FOR AUTOMATIC TOKEN REFRESH ----
 let isRefreshing = false;

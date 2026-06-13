@@ -653,3 +653,118 @@
 {"component":"sales","errorMessage":"\nInvalid `prisma.saleItem.create()` invocation:\n\n\nError occurred during query execution:\nConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: \"22P03\", message: \"incorrect binary data format in bind parameter 5\", severity: \"ERROR\", detail: None, column: None, hint: None }), transient: false })","fieldErrors":{},"level":"error","message":"Extracted error message","parsedError":{"fieldErrors":{},"message":"\nInvalid `prisma.saleItem.create()` invocation:\n\n\nError occurred during query execution:\nConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: \"22P03\", message: \"incorrect binary data format in bind parameter 5\", severity: \"ERROR\", detail: None, column: None, hint: None }), transient: false })","statusCode":500},"rawData":"{\"message\":\"\\nInvalid `prisma.saleItem.create()` invocation:\\n\\n\\nError occurred during query execution:\\nConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: \\\"22P03\\\", message: \\\"incorrect binary data format in bind parameter 5\\\", severity: \\\"ERROR\\\", detail: None, column: None, hint: None }), transient: false })\",\"error\":\"Internal Server Error\",\"statusCode\":500}","requestSummary":{"branchId":"e22bce83-31d0-4708-addb-0d546e7d060e","hasIdempotencyKey":true,"itemsCount":3,"paymentMethod":"cash"},"service":"saas-pos","status":500,"stockConflict":null,"timestamp":"2026-06-05T17:06:31.425Z"}
 {"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-06-05T17:18:40.339Z"}
 {"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-06-06T07:01:56.110Z"}
+{"component":"products","error":{"error":"Unauthorized","message":"Invalid or expired refresh token","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-06-13T18:59:24.383Z"}
+{"component":"products","error":{"error":"Unauthorized","message":"Invalid or expired refresh token","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-06-13T18:59:24.390Z"}
+{"component":"products","error":{"error":"Unauthorized","message":"Invalid or expired refresh token","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-06-13T18:59:24.408Z"}
+{"component":"products","error":{"message":"Unauthorized","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-06-13T18:59:25.141Z"}
+{"component":"products","error":{"error":"Unauthorized","message":"Invalid or expired refresh token","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-06-13T18:59:26.586Z"}
+{"component":"products","error":{"error":"Unauthorized","message":"Invalid or expired refresh token","statusCode":401},"level":"error","message":"Error fetching products from backend","service":"saas-pos","status":401,"timestamp":"2026-06-13T18:59:26.593Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-13T18:59:43.734Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T18:59:43.792Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T18:59:49.531Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T18:59:55.609Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:00:02.771Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:00:09.744Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:00:18.954Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:00:25.158Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:00:31.240Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:00:37.180Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:00:57.891Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-13T19:00:57.903Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-13T19:08:30.924Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:08:30.929Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:08:37.547Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:08:43.299Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:08:50.277Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-13T19:22:38.247Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:22:38.253Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:22:44.085Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:22:49.906Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:22:55.719Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:01.517Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:07.297Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:13.096Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:18.853Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:24.842Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:30.774Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:36.928Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:42.665Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:48.389Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:54.140Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:23:59.956Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:24:05.712Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:24:11.441Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:24:17.170Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:24:22.907Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:24:28.622Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:24:34.370Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:24:40.393Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:24:46.129Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:24:51.898Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:24:57.619Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:25:03.350Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:25:09.068Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:25:14.851Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:25:20.584Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:25:26.333Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:25:32.066Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:25:37.776Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:25:43.781Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:25:49.497Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:25:55.199Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:26:00.920Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to create dining table","service":"saas-pos","timestamp":"2026-06-13T19:26:04.337Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:26:10.308Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:26:16.056Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:26:21.796Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:26:27.533Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:26:33.287Z"}
+{"error":"Request failed with status code 502","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:26:38.998Z"}
+{"error":"Request failed with status code 502","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:26:44.994Z"}
+{"error":"Request failed with status code 502","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:26:50.692Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:26:56.453Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:27:02.209Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:27:07.930Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:27:13.676Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:27:19.425Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:27:25.135Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:27:30.852Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:27:36.562Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:27:42.299Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:27:48.334Z"}
+{"error":"Request failed with status code 502","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:28:00.031Z"}
+{"error":"Request failed with status code 502","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-13T19:28:00.033Z"}
+{"error":"Request failed with status code 502","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:28:05.779Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-13T19:35:36.163Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:35:36.235Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:35:42.228Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:35:48.270Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:35:54.311Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-13T19:36:05.021Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:36:05.026Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:36:11.005Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:37:54.960Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-13T19:37:54.964Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:38:00.986Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:38:06.755Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:38:12.511Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:38:18.357Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:38:24.131Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:38:30.068Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:38:36.004Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:38:41.893Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-13T19:38:53.618Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:38:53.627Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:38:59.399Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:39:05.187Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:39:11.046Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:39:17.169Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:39:23.089Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-13T19:43:59.459Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:44:00.830Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:48:44.119Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-13T19:48:44.124Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:48:49.849Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T19:48:55.582Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to create dining table","service":"saas-pos","timestamp":"2026-06-13T19:48:58.964Z"}
+{"error":"Request failed with status code 400","level":"error","message":"Failed to checkout restaurant order","service":"saas-pos","timestamp":"2026-06-13T20:01:52.158Z"}

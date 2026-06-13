@@ -700,7 +700,7 @@ const PremiumRestaurantPOS: React.FC = () => {
     };
   }, [orders]);
 
-  const resolvedCategory = (product: Product) => {
+  function resolvedCategory(product: Product) {
     const categoryFromObject =
       typeof product.category === 'object' && product.category
         ? product.category.name
@@ -712,7 +712,7 @@ const PremiumRestaurantPOS: React.FC = () => {
     if (typeof raw === 'string' && raw.trim()) return raw.trim();
 
     return 'Meals';
-  };
+  }
 
   const posCategories = useMemo(() => {
     const unique = Array.from(
