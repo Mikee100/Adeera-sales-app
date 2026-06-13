@@ -22,6 +22,27 @@ interface CatalogSyncStatus {
   isStale: boolean;
 }
 
+type UpdateChannel = 'stable' | 'beta';
+
+interface UpdateSettings {
+  success: boolean;
+  channel: UpdateChannel;
+  feedUrl: string;
+  currentVersion: string;
+  isPackaged: boolean;
+}
+
+interface UpdateEventStatus {
+  status: string;
+  channel?: UpdateChannel;
+  feedUrl?: string;
+  currentVersion?: string;
+  availableVersion?: string;
+  progressPercent?: number | null;
+  message?: string;
+  checkedAt?: string;
+}
+
 const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> = ({ onClose, onUnauthorized }) => {
   const { enterSleepMode } = useSleepMode();
   const [activeTab, setActiveTab] = useState<'printer' | 'system'>('printer');
@@ -34,13 +55,60 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
   const [syncing, setSyncing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [catalogStatus, setCatalogStatus] = useState<CatalogSyncStatus | null>(null);
+  const [updateSettings, setUpdateSettings] = useState<UpdateSettings | null>(null);
+  const [selectedUpdateChannel, setSelectedUpdateChannel] = useState<UpdateChannel>('stable');
+  const [checkingUpdates, setCheckingUpdates] = useState(false);
+  const [installingUpdate, setInstallingUpdate] = useState(false);
+  const [updateStatus, setUpdateStatus] = useState<UpdateEventStatus | null>(null);
 
   useEffect(() => {
     loadConfig();
     loadCatalogStatus();
+    loadUpdateSettings();
     // Refresh catalog status every 30 seconds
     const statusInterval = setInterval(loadCatalogStatus, 30000);
-    return () => clearInterval(statusInterval);
+
+    const unsubscribeUpdateStatus = (window as any).electronAPI.onAppUpdateStatus((status: UpdateEventStatus) => {
+      setUpdateStatus(status);
+      if (status.channel) {
+        setSelectedUpdateChannel(status.channel);
+      }
+      if (status.currentVersion || status.feedUrl || status.channel) {
+        setUpdateSettings((prev) => {
+          if (!prev) {
+            return {
+              success: true,
+              channel: status.channel || 'stable',
+              feedUrl: status.feedUrl || '',
+              currentVersion: status.currentVersion || 'unknown',
+              isPackaged: true,
+            };
+          }
+          return {
+            ...prev,
+            channel: status.channel || prev.channel,
+            feedUrl: status.feedUrl || prev.feedUrl,
+            currentVersion: status.currentVersion || prev.currentVersion,
+          };
+        });
+      }
+
+      if (status.status === 'checking') {
+        setCheckingUpdates(true);
+      } else if (
+        status.status === 'up-to-date' ||
+        status.status === 'update-available' ||
+        status.status === 'downloaded' ||
+        status.status === 'error'
+      ) {
+        setCheckingUpdates(false);
+      }
+    });
+
+    return () => {
+      clearInterval(statusInterval);
+      unsubscribeUpdateStatus();
+    };
   }, []);
 
   const loadConfig = async () => {
@@ -140,6 +208,82 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
       setCatalogStatus(status);
     } catch (error) {
       console.error('Failed to load catalog status:', error);
+    }
+  };
+
+  const loadUpdateSettings = async () => {
+    try {
+      const settings = await (window as any).electronAPI.getUpdateSettings() as UpdateSettings;
+      if (settings?.success) {
+        setUpdateSettings(settings);
+        setSelectedUpdateChannel(settings.channel);
+      }
+    } catch (error) {
+      console.error('Failed to load update settings:', error);
+    }
+  };
+
+  const handleChangeUpdateChannel = async (channel: UpdateChannel) => {
+    setSelectedUpdateChannel(channel);
+    try {
+      const response = await (window as any).electronAPI.setUpdateChannel(channel);
+      if (response?.success) {
+        setUpdateSettings((prev: UpdateSettings | null) => {
+          if (!prev) {
+            return {
+              success: true,
+              channel: response.channel,
+              feedUrl: response.feedUrl,
+              currentVersion: response.currentVersion,
+              isPackaged: true,
+            };
+          }
+          return {
+            ...prev,
+            channel: response.channel,
+            feedUrl: response.feedUrl,
+            currentVersion: response.currentVersion,
+          };
+        });
+        setUpdateStatus({
+          status: 'channel-updated',
+          channel: response.channel,
+          feedUrl: response.feedUrl,
+          currentVersion: response.currentVersion,
+          checkedAt: new Date().toISOString(),
+        });
+      }
+    } catch (error: any) {
+      setMessage({ type: 'error', text: error.message || 'Failed to set update channel' });
+      setTimeout(() => setMessage(null), 5000);
+      setSelectedUpdateChannel(updateSettings?.channel || 'stable');
+    }
+  };
+
+  const handleCheckForUpdates = async () => {
+    setCheckingUpdates(true);
+    try {
+      const response = await (window as any).electronAPI.checkForAppUpdates();
+      if (!response?.success) {
+        setCheckingUpdates(false);
+        setMessage({ type: 'error', text: response?.error || 'Failed to check for updates' });
+        setTimeout(() => setMessage(null), 5000);
+      }
+    } catch (error: any) {
+      setCheckingUpdates(false);
+      setMessage({ type: 'error', text: error.message || 'Failed to check for updates' });
+      setTimeout(() => setMessage(null), 5000);
+    }
+  };
+
+  const handleInstallUpdate = async () => {
+    setInstallingUpdate(true);
+    try {
+      await (window as any).electronAPI.installUpdate();
+    } catch (error: any) {
+      setInstallingUpdate(false);
+      setMessage({ type: 'error', text: error.message || 'Failed to install update' });
+      setTimeout(() => setMessage(null), 5000);
     }
   };
 
@@ -523,6 +667,122 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
                       <p className="settings-field-hint" style={{ marginTop: '8px' }}>
                         Products are automatically synced every 5 minutes. Use this button to sync manually.
                       </p>
+                    </div>
+                  </div>
+
+                  {/* App Updates */}
+                  <div className="settings-card">
+                    <div className="settings-card-header">
+                      <h3 className="settings-card-title">App Updates</h3>
+                      <p className="settings-card-description">Control remote update channel and check for new POS releases</p>
+                    </div>
+                    <div className="settings-card-body">
+                      <div className="settings-field">
+                        <label className="settings-label">
+                          <span className="settings-label-text">Update Channel</span>
+                          <select
+                            value={selectedUpdateChannel}
+                            onChange={(e) => handleChangeUpdateChannel(e.target.value as UpdateChannel)}
+                            className="settings-select"
+                          >
+                            <option value="stable">Stable (recommended for clients)</option>
+                            <option value="beta">Beta (pilot clients only)</option>
+                          </select>
+                        </label>
+                        <p className="settings-field-hint" style={{ marginTop: '8px' }}>
+                          Stable is safest for all shops. Beta is for staged rollouts and early testing.
+                        </p>
+                      </div>
+
+                      <div className="settings-field" style={{ marginTop: '16px' }}>
+                        <div style={{ fontSize: '14px', color: '#6b7280', lineHeight: '1.6' }}>
+                          <div>
+                            <strong>Current Version:</strong> {updateSettings?.currentVersion || 'Unknown'}
+                          </div>
+                          <div>
+                            <strong>Feed URL:</strong> {updateSettings?.feedUrl || 'Not configured'}
+                          </div>
+                          <div>
+                            <strong>Runtime:</strong> {updateSettings?.isPackaged ? 'Installed app' : 'Development mode'}
+                          </div>
+                        </div>
+                      </div>
+
+                      {updateStatus && (
+                        <div className="settings-field" style={{ marginTop: '16px' }}>
+                          <div style={{ fontSize: '14px', color: '#374151', lineHeight: '1.6' }}>
+                            <div>
+                              <strong>Status:</strong> {updateStatus.status}
+                            </div>
+                            {updateStatus.availableVersion && (
+                              <div>
+                                <strong>Available Version:</strong> {updateStatus.availableVersion}
+                              </div>
+                            )}
+                            {typeof updateStatus.progressPercent === 'number' && (
+                              <div>
+                                <strong>Download Progress:</strong> {updateStatus.progressPercent}%
+                              </div>
+                            )}
+                            {updateStatus.message && (
+                              <div>
+                                <strong>Details:</strong> {updateStatus.message}
+                              </div>
+                            )}
+                            {updateStatus.checkedAt && (
+                              <div>
+                                <strong>Last Check:</strong> {new Date(updateStatus.checkedAt).toLocaleString()}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="settings-actions-grid" style={{ marginTop: '16px' }}>
+                        <button
+                          onClick={handleCheckForUpdates}
+                          disabled={checkingUpdates}
+                          className="settings-action-btn settings-action-btn-primary"
+                        >
+                          {checkingUpdates ? (
+                            <>
+                              <div className="settings-btn-spinner"></div>
+                              <span>Checking...</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                              </svg>
+                              <span>Check for Updates</span>
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          onClick={handleInstallUpdate}
+                          disabled={installingUpdate || updateStatus?.status !== 'downloaded'}
+                          className="settings-action-btn settings-action-btn-secondary"
+                        >
+                          {installingUpdate ? (
+                            <>
+                              <div className="settings-btn-spinner"></div>
+                              <span>Installing...</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                              </svg>
+                              <span>Install Downloaded Update</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </div>
 

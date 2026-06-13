@@ -2,42 +2,100 @@ import log from 'electron-log';
 import winston from 'winston';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 
-// Helper to get a writable log directory
-const getLogDirectory = () => {
-  // In development, keep logs local
+const ensureWritableDir = (dirPath: string): string | null => {
+  try {
+    fs.mkdirSync(dirPath, { recursive: true });
+    fs.accessSync(dirPath, fs.constants.W_OK);
+    return dirPath;
+  } catch {
+    return null;
+  }
+};
+
+// Resolve a writable log directory without assuming Electron app lifecycle state.
+const getLogDirectory = (): string => {
+  const candidates: string[] = [];
+
   if (process.env.NODE_ENV === 'development') {
-    return 'logs';
+    candidates.push(path.resolve(process.cwd(), 'logs'));
   }
 
-  // In production, we MUST use a writerable directory (AppData)
-  // We can only access the 'app' module in the main process
-  if (process.type === 'browser') {
-    try {
+  try {
+    if (process.type === 'browser') {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { app } = require('electron');
-      const userDataPath = app.getPath('userData');
-      const prodLogDir = path.join(userDataPath, 'logs');
-      
-      // Ensure the directory exists
-      if (!fs.existsSync(prodLogDir)) {
-        fs.mkdirSync(prodLogDir, { recursive: true });
+      if (app) {
+        candidates.push(path.join(app.getPath('userData'), 'logs'));
       }
-      return prodLogDir;
-    } catch (e) {
-      console.error('Failed to resolve production log directory:', e);
+    }
+  } catch {
+    // Ignore and continue with environment-based fallbacks.
+  }
+
+  if (process.platform === 'win32' && process.env.APPDATA) {
+    candidates.push(path.join(process.env.APPDATA, 'SaaS POS', 'logs'));
+  }
+
+  if (process.env.LOCALAPPDATA) {
+    candidates.push(path.join(process.env.LOCALAPPDATA, 'SaaS POS', 'logs'));
+  }
+
+  if (process.env.HOME) {
+    candidates.push(path.join(process.env.HOME, '.saas-pos', 'logs'));
+  }
+
+  candidates.push(path.join(os.tmpdir(), 'saas-pos-logs'));
+
+  for (const candidate of candidates) {
+    const writable = ensureWritableDir(candidate);
+    if (writable) {
+      return writable;
     }
   }
 
-  // Fallback for renderer or if something failed
-  return 'logs';
+  return os.tmpdir();
 };
 
 const LOG_DIR = getLogDirectory();
+const FALLBACK_LOG_DIR = path.join(os.tmpdir(), 'saas-pos-logs');
+
+const resolveSafeLogDirectory = (): string => {
+  if (ensureWritableDir(LOG_DIR)) {
+    return LOG_DIR;
+  }
+  if (ensureWritableDir(FALLBACK_LOG_DIR)) {
+    return FALLBACK_LOG_DIR;
+  }
+  return os.tmpdir();
+};
+
+const EFFECTIVE_LOG_DIR = resolveSafeLogDirectory();
 
 // Configure electron-log for file output
 log.transports.file.level = 'info';
 log.transports.file.maxSize = 10 * 1024 * 1024; // 10MB
 log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
+log.transports.file.resolvePathFn = () => path.join(EFFECTIVE_LOG_DIR, 'main.log');
+
+const createFileTransports = (): winston.transport[] => {
+  try {
+    return [
+      new winston.transports.File({
+        filename: path.join(EFFECTIVE_LOG_DIR, 'error.log'),
+        level: 'error',
+      }),
+      new winston.transports.File({
+        filename: path.join(EFFECTIVE_LOG_DIR, 'combined.log'),
+      }),
+    ];
+  } catch (error) {
+    // Never crash app startup due to logging path issues.
+    console.error('Failed to initialize file log transports:', error);
+    return [];
+  }
+};
 
 // Configure winston for structured logging
 const winstonLogger = winston.createLogger({
@@ -48,17 +106,7 @@ const winstonLogger = winston.createLogger({
     winston.format.json()
   ),
   defaultMeta: { service: 'saas-pos' },
-  transports: [
-    // Write all logs with importance level of `error` or less to `error.log`
-    new winston.transports.File({ 
-      filename: path.join(LOG_DIR, 'error.log'), 
-      level: 'error' 
-    }),
-    // Write all logs with importance level of `info` or less to `combined.log`
-    new winston.transports.File({ 
-      filename: path.join(LOG_DIR, 'combined.log') 
-    }),
-  ],
+  transports: createFileTransports(),
 });
 
 // If we're not in production then log to the console with a simple format

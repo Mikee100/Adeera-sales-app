@@ -1,4 +1,10 @@
 interface ElectronAPI {
+  getUpdateSettings: () => Promise<{ success: boolean; channel: 'stable' | 'beta'; feedUrl: string; currentVersion: string; isPackaged: boolean }>;
+  setUpdateChannel: (channel: 'stable' | 'beta') => Promise<{ success: boolean; channel: 'stable' | 'beta'; feedUrl: string; currentVersion: string }>;
+  checkForAppUpdates: () => Promise<{ success: boolean; message?: string; error?: string; channel: 'stable' | 'beta'; feedUrl: string; currentVersion: string }>;
+  installUpdate: () => Promise<void>;
+  onAppUpdateStatus: (callback: (status: { status: string; channel?: 'stable' | 'beta'; feedUrl?: string; currentVersion?: string; availableVersion?: string; progressPercent?: number | null; message?: string; checkedAt?: string }) => void) => () => void;
+
   authenticate: (credentials: { email: string; password: string }) => Promise<{ success: boolean; token?: string; user?: any; error?: string }>;
   getAuthToken: () => Promise<string | null>;
   getUserData: () => Promise<any | null>;

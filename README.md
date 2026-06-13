@@ -53,6 +53,23 @@ Use this direct link format after release:
 
 https://github.com/Mikee100/Adeera-sales-app/releases/download/v1.0.1/SaaS%20POS%20Setup%201.0.1.exe
 
+## Remote Updates (Stable and Beta)
+
+The POS now supports update channels in Settings > System > App Updates:
+
+- stable: Production clients
+- beta: Pilot clients
+
+Recommended flow:
+
+1. Publish to beta feed first.
+2. Validate with pilot clients.
+3. Promote same build to stable feed.
+
+See full operational guide:
+
+- REMOTE_UPDATE_ROLLOUT_PLAYBOOK.md
+
 ## Local Build and Packaging
 
 Run commands inside the sales-app folder.

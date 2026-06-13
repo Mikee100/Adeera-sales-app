@@ -474,6 +474,69 @@ function stopPeriodicProductSync() {
 // today and plug in a real update channel later without code changes.
 // Auto-updater instance
 let autoUpdaterInstance: any;
+type UpdateChannel = 'stable' | 'beta';
+
+const DEFAULT_UPDATE_FEEDS: Record<UpdateChannel, string> = {
+  stable: `${HOSTED_BACKEND_URL}/updates/pos`,
+  beta: `${HOSTED_BACKEND_URL}/updates/pos-beta`,
+};
+
+let activeUpdateChannel: UpdateChannel = 'stable';
+let activeUpdateFeedUrl = DEFAULT_UPDATE_FEEDS.stable;
+
+function sendUpdateStatus(payload: Record<string, unknown>) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('app-update-status', payload);
+  }
+}
+
+function normalizeUpdateChannel(value: unknown): UpdateChannel {
+  return value === 'beta' ? 'beta' : 'stable';
+}
+
+function resolveFeedUrl(channel: UpdateChannel): string {
+  const stableOverride = globalStore.get('stableUpdateFeedUrl') as string | undefined;
+  const betaOverride = globalStore.get('betaUpdateFeedUrl') as string | undefined;
+
+  const configured = channel === 'beta' ? betaOverride : stableOverride;
+  const fallback = DEFAULT_UPDATE_FEEDS[channel];
+  const raw = (configured && configured.trim().length > 0 ? configured : fallback).trim();
+  return raw.replace(/\/$/, '');
+}
+
+function getStoredUpdateChannel(): UpdateChannel {
+  return normalizeUpdateChannel(globalStore.get('updateChannel', 'stable'));
+}
+
+function applyUpdateChannel(channel: UpdateChannel, announce = true) {
+  const normalized = normalizeUpdateChannel(channel);
+  const feedUrl = resolveFeedUrl(normalized);
+
+  activeUpdateChannel = normalized;
+  activeUpdateFeedUrl = feedUrl;
+  globalStore.set('updateChannel', normalized);
+
+  if (autoUpdaterInstance) {
+    autoUpdaterInstance.setFeedURL({
+      provider: 'generic',
+      url: feedUrl,
+    });
+  }
+
+  if (announce) {
+    sendUpdateStatus({
+      status: 'channel-updated',
+      channel: activeUpdateChannel,
+      feedUrl: activeUpdateFeedUrl,
+      currentVersion: app.getVersion(),
+    });
+  }
+
+  return {
+    channel: activeUpdateChannel,
+    feedUrl: activeUpdateFeedUrl,
+  };
+}
 
 function setupAutoUpdater() {
   if (!app.isPackaged) {
@@ -499,22 +562,80 @@ function setupAutoUpdater() {
     // Ignore if logger cannot be attached
   }
 
+  const channel = getStoredUpdateChannel();
+  applyUpdateChannel(channel, false);
+
+  autoUpdaterInstance.on('checking-for-update', () => {
+    sendUpdateStatus({
+      status: 'checking',
+      channel: activeUpdateChannel,
+      feedUrl: activeUpdateFeedUrl,
+      currentVersion: app.getVersion(),
+      checkedAt: new Date().toISOString(),
+    });
+  });
+
   autoUpdaterInstance.on('error', (error: Error) => {
     logger.warn('Auto-update error', {
       component: 'autoUpdater',
       errorMessage: error.message,
     });
+    sendUpdateStatus({
+      status: 'error',
+      channel: activeUpdateChannel,
+      feedUrl: activeUpdateFeedUrl,
+      currentVersion: app.getVersion(),
+      message: error.message,
+      checkedAt: new Date().toISOString(),
+    });
   });
 
-  autoUpdaterInstance.on('update-available', () => {
+  autoUpdaterInstance.on('update-available', (info: any) => {
     logger.info('Update available', { component: 'autoUpdater' });
+    sendUpdateStatus({
+      status: 'update-available',
+      channel: activeUpdateChannel,
+      feedUrl: activeUpdateFeedUrl,
+      currentVersion: app.getVersion(),
+      availableVersion: info?.version,
+      checkedAt: new Date().toISOString(),
+    });
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('update-available');
     }
   });
 
-  autoUpdaterInstance.on('update-downloaded', () => {
+  autoUpdaterInstance.on('update-not-available', () => {
+    sendUpdateStatus({
+      status: 'up-to-date',
+      channel: activeUpdateChannel,
+      feedUrl: activeUpdateFeedUrl,
+      currentVersion: app.getVersion(),
+      checkedAt: new Date().toISOString(),
+    });
+  });
+
+  autoUpdaterInstance.on('download-progress', (progress: any) => {
+    sendUpdateStatus({
+      status: 'downloading',
+      channel: activeUpdateChannel,
+      feedUrl: activeUpdateFeedUrl,
+      currentVersion: app.getVersion(),
+      progressPercent: typeof progress?.percent === 'number' ? Number(progress.percent.toFixed(1)) : null,
+      checkedAt: new Date().toISOString(),
+    });
+  });
+
+  autoUpdaterInstance.on('update-downloaded', (info: any) => {
     logger.info('Update downloaded', { component: 'autoUpdater' });
+    sendUpdateStatus({
+      status: 'downloaded',
+      channel: activeUpdateChannel,
+      feedUrl: activeUpdateFeedUrl,
+      currentVersion: app.getVersion(),
+      availableVersion: info?.version,
+      checkedAt: new Date().toISOString(),
+    });
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('update-downloaded');
     }
@@ -597,6 +718,75 @@ ipcMain.handle('installUpdate', () => {
     autoUpdaterInstance.quitAndInstall();
   } else {
     logger.warn('installUpdate requested but autoUpdater is not initialized', { component: 'autoUpdater' });
+  }
+});
+
+ipcMain.handle('getUpdateSettings', () => {
+  const channel = getStoredUpdateChannel();
+  const feedUrl = resolveFeedUrl(channel);
+
+  return {
+    success: true,
+    channel,
+    feedUrl,
+    currentVersion: app.getVersion(),
+    isPackaged: app.isPackaged,
+  };
+});
+
+ipcMain.handle('setUpdateChannel', async (_event, channel: UpdateChannel) => {
+  const normalized = normalizeUpdateChannel(channel);
+  const result = applyUpdateChannel(normalized, true);
+
+  return {
+    success: true,
+    ...result,
+    currentVersion: app.getVersion(),
+  };
+});
+
+ipcMain.handle('checkForAppUpdates', async () => {
+  if (!app.isPackaged) {
+    return {
+      success: false,
+      error: 'Update checks only run in packaged builds.',
+      channel: getStoredUpdateChannel(),
+      feedUrl: resolveFeedUrl(getStoredUpdateChannel()),
+      currentVersion: app.getVersion(),
+    };
+  }
+
+  if (!autoUpdaterInstance) {
+    return {
+      success: false,
+      error: 'Auto-updater is not available in this build.',
+      channel: getStoredUpdateChannel(),
+      feedUrl: resolveFeedUrl(getStoredUpdateChannel()),
+      currentVersion: app.getVersion(),
+    };
+  }
+
+  try {
+    await autoUpdaterInstance.checkForUpdates();
+    return {
+      success: true,
+      message: 'Update check started.',
+      channel: activeUpdateChannel,
+      feedUrl: activeUpdateFeedUrl,
+      currentVersion: app.getVersion(),
+    };
+  } catch (error: any) {
+    logger.warn('Manual update check failed', {
+      component: 'autoUpdater',
+      errorMessage: error?.message,
+    });
+    return {
+      success: false,
+      error: error?.message || 'Update check failed.',
+      channel: activeUpdateChannel,
+      feedUrl: activeUpdateFeedUrl,
+      currentVersion: app.getVersion(),
+    };
   }
 });
 

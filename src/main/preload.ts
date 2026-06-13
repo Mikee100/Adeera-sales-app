@@ -37,6 +37,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getApiBaseUrl: () => ipcRenderer.invoke('getApiBaseUrl'),
   isOnline: () => navigator.onLine,
   quitApp: () => ipcRenderer.invoke('quitApp'),
+  getUpdateSettings: () => ipcRenderer.invoke('getUpdateSettings'),
+  setUpdateChannel: (channel: 'stable' | 'beta') => ipcRenderer.invoke('setUpdateChannel', channel),
+  checkForAppUpdates: () => ipcRenderer.invoke('checkForAppUpdates'),
+  installUpdate: () => ipcRenderer.invoke('installUpdate'),
+  onAppUpdateStatus: (callback: (status: any) => void) => {
+    const handler = (_event: unknown, status: any) => callback(status);
+    ipcRenderer.on('app-update-status', handler);
+    return () => ipcRenderer.removeListener('app-update-status', handler);
+  },
   
   // Restaurant Mode IPCs
   printKitchenTicket: (ticket: any) => ipcRenderer.invoke('printKitchenTicket', ticket),
