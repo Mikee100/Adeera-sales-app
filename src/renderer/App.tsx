@@ -25,10 +25,13 @@ const queryClient = new QueryClient({
 
 const AppContent: React.FC = () => {
   const { isAuthenticated, loading, initialSyncComplete, onInitialSyncComplete } = useAuth();
-  const { toasts, removeToast } = useToast();
+  const { toasts, removeToast, showToast } = useToast();
   const { syncProgress, performInitialSync } = useInitialSync();
   const { isSleepMode, exitSleepMode, enterSleepMode } = useSleepMode();
   const idleTimerRef = useRef<{ reset: () => void } | null>(null);
+  const shownAvailableVersionRef = useRef<string | null>(null);
+  const downloadedNotifiedRef = useRef(false);
+  const lastUpdateErrorRef = useRef<string | null>(null);
   const [restaurantEnabled, setRestaurantEnabled] = useState(false);
 
   // Debug: Log sleep mode state changes
@@ -91,6 +94,66 @@ const AppContent: React.FC = () => {
 
     loadRestaurantConfig();
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !initialSyncComplete) return;
+
+    let active = true;
+    let isPackagedBuild = false;
+
+    const initializeUpdateNotifications = async () => {
+      try {
+        const settings = await window.electronAPI.getUpdateSettings();
+        isPackagedBuild = !!settings?.isPackaged;
+
+        if (!isPackagedBuild) return;
+
+        // Trigger a foreground check when a user session is active.
+        await window.electronAPI.checkForAppUpdates();
+      } catch {
+        // No-op to avoid interrupting normal POS flow.
+      }
+    };
+
+    const unsubscribe = window.electronAPI.onAppUpdateStatus((status: any) => {
+      if (!active || !status) return;
+
+      if (status.status === 'update-available') {
+        const version = status.availableVersion || 'new version';
+        if (shownAvailableVersionRef.current === version) return;
+        shownAvailableVersionRef.current = version;
+
+        showToast(`Update available: ${version}. Downloading in background...`, 'info', 7000);
+      }
+
+      if (status.status === 'downloaded') {
+        if (downloadedNotifiedRef.current) return;
+        downloadedNotifiedRef.current = true;
+
+        showToast('Update ready. Click Install Now to restart and apply.', 'success', 12000, {
+          label: 'Install Now',
+          onClick: () => {
+            window.electronAPI.installUpdate();
+          },
+        });
+      }
+
+      if (status.status === 'error') {
+        const errorMessage = String(status.message || 'Update check failed');
+        if (lastUpdateErrorRef.current === errorMessage) return;
+        lastUpdateErrorRef.current = errorMessage;
+
+        showToast(`Update error: ${errorMessage}`, 'warning', 8000);
+      }
+    });
+
+    initializeUpdateNotifications();
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, [isAuthenticated, initialSyncComplete, showToast]);
 
   // Show sleep screen if sleep mode is active (highest priority)
   if (isSleepMode) {
