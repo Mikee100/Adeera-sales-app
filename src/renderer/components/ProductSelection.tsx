@@ -29,6 +29,7 @@ interface Product {
     sku: string;
     price?: number | null;
     stock: number;
+    images?: string[];
     attributes?: Record<string, string>;
   }>;
 }
@@ -123,7 +124,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   const [loading, setLoading] = useState(false);
   const [showVariationModal, setShowVariationModal] = useState(false);
   const [selectedProductForVariation, setSelectedProductForVariation] = useState<Product | null>(null);
-  const [modalVariations, setModalVariations] = useState<Array<{ id: string; sku: string; price?: number | null; stock: number; attributes?: Record<string, string> }>>([]);
+  const [modalVariations, setModalVariations] = useState<Array<{ id: string; sku: string; price?: number | null; stock: number; images?: string[]; attributes?: Record<string, string> }>>([]);
   const [loadingVariations, setLoadingVariations] = useState(false);
   const [variationSearchTerm, setVariationSearchTerm] = useState('');
   const [showSettings, setShowSettings] = useState(false);
@@ -330,11 +331,14 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
 
   type Variation = { id: string; sku: string; price?: number | null; stock: number; attributes?: Record<string, string> };
 
-  const mapVariation = (v: any) => ({
+  type VariationWithImage = Variation & { images?: string[] };
+
+  const mapVariation = (v: any): VariationWithImage => ({
     id: v.id,
     sku: v.sku,
     price: v.price != null ? parseFloat(v.price) : null,
     stock: parseInt(v.stock) || 0,
+    images: Array.isArray(v.images) ? v.images : [],
     attributes: v.attributes || {},
   });
 
@@ -388,6 +392,9 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
       sku: variation.sku,
       price: variation.price ?? product.price,
       stock: variation.stock,
+      images: Array.isArray((variation as any).images) && (variation as any).images.length > 0
+        ? (variation as any).images
+        : (product.images || []),
       variationAttributes: variation.attributes,
       baseProductId: product.id,
       variationId: variation.id,
@@ -636,6 +643,10 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                   : variation.sku;
                 const price = variation.price ?? selectedProductForVariation!.price;
                 const hasStock = variation.stock > 0;
+                const variationImage =
+                  (Array.isArray((variation as any).images) && (variation as any).images.length > 0
+                    ? (variation as any).images[0]
+                    : (selectedProductForVariation?.images?.[0] || ''));
                 return (
                   <button
                     key={variation.id}
@@ -644,6 +655,18 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                     className={`variation-card ${hasStock ? '' : 'variation-card-out-of-stock'}`}
                     onClick={() => hasStock && selectedProductForVariation && handleAddVariationToCart(selectedProductForVariation, variation)}
                   >
+                    {variationImage && (
+                      <div className="variation-card-image">
+                        <img
+                          src={variationImage}
+                          alt={attrsLabel || variation.sku}
+                          loading="lazy"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
                     <div className="variation-card-main">
                       <span className="variation-card-label">{attrsLabel || variation.sku}</span>
                       <span className="variation-card-sku">SKU: {variation.sku}</span>
@@ -779,6 +802,19 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                     {product.category && (
                       <div className="product-category">
                         {product.category.name}
+                      </div>
+                    )}
+
+                    {product.images && product.images.length > 0 && (
+                      <div className="product-card-image">
+                        <img
+                          src={product.images[0]}
+                          alt={product.name || 'Product'}
+                          loading="lazy"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
                       </div>
                     )}
 

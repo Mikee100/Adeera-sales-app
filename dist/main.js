@@ -63029,12 +63029,38 @@ function isCashierOrStaffUser(user) {
 function shouldLockUserToAssignedBranch(user) {
     return !!(user?.branchId && isCashierOrStaffUser(user));
 }
+function normalizeBackendImageUrl(imagePath) {
+    if (!imagePath)
+        return '';
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        return imagePath;
+    }
+    const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+    return `${BACKEND_BASE_URL.replace(/\/$/, '')}${normalizedPath}`;
+}
+function normalizeBackendImageUrls(images) {
+    if (!Array.isArray(images))
+        return [];
+    return images
+        .map((img) => normalizeBackendImageUrl(typeof img === 'string' ? img : ''))
+        .filter(Boolean);
+}
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 const devRendererWatchers = [];
 // Global ElectronStore instance for reading configuration values such as backendBaseUrl.
 const globalStore = new electron_store_1.default();
+function normalizeHostedBackendUrl(url) {
+    const trimmed = url.trim().replace(/\/$/, '');
+    if (trimmed.startsWith('http://127.0.0.1') ||
+        trimmed.startsWith('http://localhost') ||
+        trimmed.startsWith('https://127.0.0.1') ||
+        trimmed.startsWith('https://localhost')) {
+        return 'https://saas-business.duckdns.org';
+    }
+    return trimmed;
+}
 // Backend configuration: prefer a value set in local config (ElectronStore) when present,
 // then explicit environment variables, and finally the shared API_BASE_URL default.
 // This allows IT to change the backend API URL on an installed machine without rebuilding,
@@ -63042,12 +63068,20 @@ const globalStore = new electron_store_1.default();
 const BACKEND_BASE_URL = (() => {
     const fromStore = globalStore.get('backendBaseUrl');
     if (typeof fromStore === 'string' && fromStore.trim().length > 0) {
-        console.log(`Backend URL configured from local store: ${fromStore}`);
-        return fromStore.trim();
+        const normalized = normalizeHostedBackendUrl(fromStore);
+        if (normalized !== fromStore.trim()) {
+            globalStore.set('backendBaseUrl', normalized);
+            console.log(`Backend URL in local store was localhost and was remapped to: ${normalized}`);
+        }
+        else {
+            console.log(`Backend URL configured from local store: ${normalized}`);
+        }
+        return normalized;
     }
     if (typeof process.env.BACKEND_BASE_URL === 'string' && process.env.BACKEND_BASE_URL.trim().length > 0) {
-        console.log(`Backend URL configured from BACKEND_BASE_URL env: ${process.env.BACKEND_BASE_URL}`);
-        return process.env.BACKEND_BASE_URL.trim();
+        const normalized = normalizeHostedBackendUrl(process.env.BACKEND_BASE_URL);
+        console.log(`Backend URL configured from BACKEND_BASE_URL env: ${normalized}`);
+        return normalized;
     }
     console.log(`Backend URL falling back to API_BASE_URL from shared config: ${config_1.API_BASE_URL}`);
     return config_1.API_BASE_URL;
@@ -63280,7 +63314,7 @@ function startPeriodicProductSync() {
                                 description: product.description || '',
                                 cost: product.cost ? parseFloat(product.cost) : 0,
                                 supplier: product.supplier ? product.supplier.name : null,
-                                images: product.images || [],
+                                images: normalizeBackendImageUrls(product.images),
                                 branchId: product.branchId,
                                 tenantId: product.tenantId,
                                 category: product.category || null,
@@ -63293,6 +63327,7 @@ function startPeriodicProductSync() {
                                     sku: v.sku,
                                     price: v.price != null ? parseFloat(v.price) : null,
                                     stock: parseInt(v.stock) || 0,
+                                    images: normalizeBackendImageUrls(v.images),
                                     attributes: v.attributes || {},
                                 }));
                             }
@@ -63744,7 +63779,7 @@ electron_1.ipcMain.handle('getProducts', async (_event, branchId) => {
                         description: product.description || '',
                         cost: product.cost ? parseFloat(product.cost) : 0,
                         supplier: product.supplier ? product.supplier.name : null,
-                        images: product.images || [],
+                        images: normalizeBackendImageUrls(product.images),
                         branchId: product.branchId,
                         tenantId: product.tenantId,
                         category: product.category || null,
@@ -63758,6 +63793,7 @@ electron_1.ipcMain.handle('getProducts', async (_event, branchId) => {
                             sku: v.sku,
                             price: v.price != null ? parseFloat(v.price) : null,
                             stock: parseInt(v.stock) || 0,
+                            images: normalizeBackendImageUrls(v.images),
                             attributes: v.attributes || {},
                         }));
                     }
@@ -63896,7 +63932,7 @@ electron_1.ipcMain.handle('syncProducts', async () => {
                 description: product.description || '',
                 cost: product.cost ? parseFloat(product.cost) : 0,
                 supplier: product.supplier ? product.supplier.name : null,
-                images: product.images || [],
+                images: normalizeBackendImageUrls(product.images),
                 branchId: product.branchId,
                 tenantId: product.tenantId,
                 category: product.category || null,
@@ -63909,6 +63945,7 @@ electron_1.ipcMain.handle('syncProducts', async () => {
                     sku: v.sku,
                     price: v.price != null ? parseFloat(v.price) : null,
                     stock: parseInt(v.stock) || 0,
+                    images: normalizeBackendImageUrls(v.images),
                     attributes: v.attributes || {},
                 }));
             }
@@ -63979,7 +64016,14 @@ electron_1.ipcMain.handle('getProductVariations', async (_event, productId) => {
             },
             timeout: 10000,
         }), endpoint);
-        const variations = Array.isArray(response.data) ? response.data : [];
+        const variations = Array.isArray(response.data)
+            ? response.data.map((variation) => ({
+                ...variation,
+                stock: parseInt(variation.stock) || 0,
+                price: variation.price != null ? parseFloat(variation.price) : null,
+                images: normalizeBackendImageUrls(variation.images),
+            }))
+            : [];
         return { success: true, variations };
     }
     catch (error) {
@@ -64121,7 +64165,7 @@ electron_1.ipcMain.handle('createSale', async (event, saleData) => {
                                     description: product.description || '',
                                     cost: product.cost ? parseFloat(product.cost) : 0,
                                     supplier: product.supplier ? product.supplier.name : null,
-                                    images: product.images || [],
+                                    images: normalizeBackendImageUrls(product.images),
                                     branchId: product.branchId,
                                     tenantId: product.tenantId,
                                     category: product.category || null,
@@ -64134,6 +64178,7 @@ electron_1.ipcMain.handle('createSale', async (event, saleData) => {
                                         sku: v.sku,
                                         price: v.price != null ? parseFloat(v.price) : null,
                                         stock: parseInt(v.stock) || 0,
+                                        images: normalizeBackendImageUrls(v.images),
                                         attributes: v.attributes || {},
                                     }));
                                 }
@@ -66289,13 +66334,10 @@ SecureTokenStorage.TOKEN_EXPIRY_KEY = 'tokenExpiry';
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.APP_CONFIG = exports.WS_BASE_URL = exports.API_BASE_URL = void 0;
-// Configuration constants for the POS application
-// Use localhost backend for development; override via env vars.
-// Use 127.0.0.1:7000 instead of localhost to avoid IPv6 (::1) connection issues on Windows
-// 'https://saas-business.duckdns.org'
-// 'http://127.0.0.1:7000'
-exports.API_BASE_URL = 'http://127.0.0.1:7000';
-exports.WS_BASE_URL = 'ws://127.0.0.1:7000';
+// Configuration constants for the POS application.
+// Default to hosted backend so sales can be posted directly in production.
+exports.API_BASE_URL = 'https://saas-business.duckdns.org';
+exports.WS_BASE_URL = 'wss://saas-business.duckdns.org';
 exports.APP_CONFIG = {
     name: 'SaaS POS',
     version: '1.0.0',

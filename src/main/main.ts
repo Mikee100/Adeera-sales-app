@@ -79,6 +79,22 @@ function shouldLockUserToAssignedBranch(user: Partial<User> | undefined): boolea
   return !!(user?.branchId && isCashierOrStaffUser(user));
 }
 
+function normalizeBackendImageUrl(imagePath: string | null | undefined): string {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+  return `${BACKEND_BASE_URL.replace(/\/$/, '')}${normalizedPath}`;
+}
+
+function normalizeBackendImageUrls(images: unknown): string[] {
+  if (!Array.isArray(images)) return [];
+  return images
+    .map((img) => normalizeBackendImageUrl(typeof img === 'string' ? img : ''))
+    .filter(Boolean);
+}
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null;
@@ -87,6 +103,19 @@ const devRendererWatchers: FSWatcher[] = [];
 // Global ElectronStore instance for reading configuration values such as backendBaseUrl.
 const globalStore = new ElectronStore();
 
+function normalizeHostedBackendUrl(url: string): string {
+  const trimmed = url.trim().replace(/\/$/, '');
+  if (
+    trimmed.startsWith('http://127.0.0.1') ||
+    trimmed.startsWith('http://localhost') ||
+    trimmed.startsWith('https://127.0.0.1') ||
+    trimmed.startsWith('https://localhost')
+  ) {
+    return 'https://saas-business.duckdns.org';
+  }
+  return trimmed;
+}
+
 // Backend configuration: prefer a value set in local config (ElectronStore) when present,
 // then explicit environment variables, and finally the shared API_BASE_URL default.
 // This allows IT to change the backend API URL on an installed machine without rebuilding,
@@ -94,13 +123,20 @@ const globalStore = new ElectronStore();
 const BACKEND_BASE_URL = (() => {
   const fromStore = globalStore.get('backendBaseUrl') as string | undefined;
   if (typeof fromStore === 'string' && fromStore.trim().length > 0) {
-    console.log(`Backend URL configured from local store: ${fromStore}`);
-    return fromStore.trim();
+    const normalized = normalizeHostedBackendUrl(fromStore);
+    if (normalized !== fromStore.trim()) {
+      globalStore.set('backendBaseUrl', normalized);
+      console.log(`Backend URL in local store was localhost and was remapped to: ${normalized}`);
+    } else {
+      console.log(`Backend URL configured from local store: ${normalized}`);
+    }
+    return normalized;
   }
 
   if (typeof process.env.BACKEND_BASE_URL === 'string' && process.env.BACKEND_BASE_URL.trim().length > 0) {
-    console.log(`Backend URL configured from BACKEND_BASE_URL env: ${process.env.BACKEND_BASE_URL}`);
-    return process.env.BACKEND_BASE_URL.trim();
+    const normalized = normalizeHostedBackendUrl(process.env.BACKEND_BASE_URL);
+    console.log(`Backend URL configured from BACKEND_BASE_URL env: ${normalized}`);
+    return normalized;
   }
 
   console.log(`Backend URL falling back to API_BASE_URL from shared config: ${API_BASE_URL}`);
@@ -366,7 +402,7 @@ function startPeriodicProductSync() {
                 description: product.description || '',
                 cost: product.cost ? parseFloat(product.cost) : 0,
                 supplier: product.supplier ? product.supplier.name : null,
-                images: product.images || [],
+                images: normalizeBackendImageUrls(product.images),
                 branchId: product.branchId,
                 tenantId: product.tenantId,
                 category: product.category || null,
@@ -379,6 +415,7 @@ function startPeriodicProductSync() {
                   sku: v.sku,
                   price: v.price != null ? parseFloat(v.price) : null,
                   stock: parseInt(v.stock) || 0,
+                  images: normalizeBackendImageUrls(v.images),
                   attributes: v.attributes || {},
                 }));
               }
@@ -888,7 +925,7 @@ ipcMain.handle('getProducts', async (_event, branchId?: string) => {
             description: product.description || '',
             cost: product.cost ? parseFloat(product.cost) : 0,
             supplier: product.supplier ? product.supplier.name : null,
-            images: product.images || [],
+            images: normalizeBackendImageUrls(product.images),
             branchId: product.branchId,
             tenantId: product.tenantId,
             category: product.category || null,
@@ -902,6 +939,7 @@ ipcMain.handle('getProducts', async (_event, branchId?: string) => {
               sku: v.sku,
               price: v.price != null ? parseFloat(v.price) : null,
               stock: parseInt(v.stock) || 0,
+              images: normalizeBackendImageUrls(v.images),
               attributes: v.attributes || {},
             }));
           }
@@ -1048,7 +1086,7 @@ ipcMain.handle('syncProducts', async () => {
         description: product.description || '',
         cost: product.cost ? parseFloat(product.cost) : 0,
         supplier: product.supplier ? product.supplier.name : null,
-        images: product.images || [],
+        images: normalizeBackendImageUrls(product.images),
         branchId: product.branchId,
         tenantId: product.tenantId,
         category: product.category || null,
@@ -1061,6 +1099,7 @@ ipcMain.handle('syncProducts', async () => {
           sku: v.sku,
           price: v.price != null ? parseFloat(v.price) : null,
           stock: parseInt(v.stock) || 0,
+          images: normalizeBackendImageUrls(v.images),
           attributes: v.attributes || {},
         }));
       }
@@ -1141,7 +1180,14 @@ ipcMain.handle('getProductVariations', async (_event, productId: string) => {
       }),
       endpoint
     );
-    const variations = Array.isArray(response.data) ? response.data : [];
+    const variations = Array.isArray(response.data)
+      ? response.data.map((variation: any) => ({
+          ...variation,
+          stock: parseInt(variation.stock) || 0,
+          price: variation.price != null ? parseFloat(variation.price) : null,
+          images: normalizeBackendImageUrls(variation.images),
+        }))
+      : [];
     return { success: true, variations };
   } catch (error: any) {
     const status = error.response?.status;
@@ -1298,7 +1344,7 @@ ipcMain.handle('createSale', async (event, saleData) => {
                   description: product.description || '',
                   cost: product.cost ? parseFloat(product.cost) : 0,
                   supplier: product.supplier ? product.supplier.name : null,
-                  images: product.images || [],
+                  images: normalizeBackendImageUrls(product.images),
                   branchId: product.branchId,
                   tenantId: product.tenantId,
                   category: product.category || null,
@@ -1311,6 +1357,7 @@ ipcMain.handle('createSale', async (event, saleData) => {
                     sku: v.sku,
                     price: v.price != null ? parseFloat(v.price) : null,
                     stock: parseInt(v.stock) || 0,
+                    images: normalizeBackendImageUrls(v.images),
                     attributes: v.attributes || {},
                   }));
                 }
