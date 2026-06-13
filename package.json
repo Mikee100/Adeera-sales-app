@@ -70,7 +70,9 @@
   },
   "build": {
     "appId": "com.saasplatform.pos",
-    "productName": "SaaS POS",
+    "productName": "Adeera POS",
+    "artifactName": "AdeeraPOS-${version}-Setup.${ext}",
+    "executableName": "AdeeraPOS",
     "directories": {
       "output": "release"
     },
@@ -82,6 +84,7 @@
     ],
     "win": {
       "target": "nsis",
+      "icon": "assets/adeera.ico",
       "publish": [
         {
           "provider": "generic",
@@ -94,7 +97,11 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,
-      "shortcutName": "Adeera POS"
+      "shortcutName": "Adeera POS",
+      "installerIcon": "assets/adeera.ico",
+      "uninstallerIcon": "assets/adeera.ico",
+      "installerHeaderIcon": "assets/adeera.ico",
+      "runAfterFinish": true
     },
     "mac": {
       "target": "dmg"

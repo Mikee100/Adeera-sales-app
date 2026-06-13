@@ -286,7 +286,7 @@ const createWindow = (): void => {
       nodeIntegration: false,
       contextIsolation: true,
     },
-    icon: path.join(__dirname, '..', 'assets', 'favicon.ico'),
+    icon: path.join(__dirname, '..', 'assets', 'adeera.ico'),
     show: false, // Don't show until ready
   });
 
