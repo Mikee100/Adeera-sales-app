@@ -656,6 +656,9 @@ function setupAutoUpdater() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  // Ensure Windows taskbar/shortcut identity maps to this app and its icon.
+  app.setAppUserModelId('com.saasplatform.pos');
+
   // Start POS at login when packaged (not in dev mode)
   if (app.isPackaged) {
     try {

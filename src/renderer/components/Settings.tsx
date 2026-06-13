@@ -333,6 +333,8 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
   };
 
   const { logout } = useAuth();
+  const isPackagedBuild = !!updateSettings?.isPackaged;
+
   return (
     <div className="settings-modal-overlay" onClick={onClose}>
       <div className="settings-modal" onClick={(e) => e.stopPropagation()}>
@@ -739,9 +741,15 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
                       )}
 
                       <div className="settings-actions-grid" style={{ marginTop: '16px' }}>
+                        {!isPackagedBuild && (
+                          <p className="settings-field-hint" style={{ marginTop: '0', marginBottom: '8px', gridColumn: '1 / -1' }}>
+                            Update checks are disabled in development mode. Install and run the packaged EXE to test real updates.
+                          </p>
+                        )}
+
                         <button
                           onClick={handleCheckForUpdates}
-                          disabled={checkingUpdates}
+                          disabled={checkingUpdates || !isPackagedBuild}
                           className="settings-action-btn settings-action-btn-primary"
                         >
                           {checkingUpdates ? (
@@ -763,7 +771,7 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
 
                         <button
                           onClick={handleInstallUpdate}
-                          disabled={installingUpdate || updateStatus?.status !== 'downloaded'}
+                          disabled={installingUpdate || updateStatus?.status !== 'downloaded' || !isPackagedBuild}
                           className="settings-action-btn settings-action-btn-secondary"
                         >
                           {installingUpdate ? (

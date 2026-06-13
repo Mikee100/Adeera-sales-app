@@ -33,6 +33,26 @@ type OrderStatus = 'Open' | 'SentToKitchen' | 'Served' | 'Closed' | 'Voided';
 
 type PaymentMethod = 'cash' | 'card' | 'mobile-money' | 'split';
 type ReservationStatus = 'Booked' | 'Arrived' | 'Seated' | 'NoShow' | 'Cancelled';
+type UpdateChannel = 'stable' | 'beta';
+
+interface UpdateSettings {
+  success: boolean;
+  channel: UpdateChannel;
+  feedUrl: string;
+  currentVersion: string;
+  isPackaged: boolean;
+}
+
+interface UpdateEventStatus {
+  status: string;
+  channel?: UpdateChannel;
+  feedUrl?: string;
+  currentVersion?: string;
+  availableVersion?: string;
+  progressPercent?: number | null;
+  message?: string;
+  checkedAt?: string;
+}
 
 interface DiningTable {
   id: string;
@@ -200,6 +220,11 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [waiterCandidateId, setWaiterCandidateId] = useState('');
   const [waiterPinInput, setWaiterPinInput] = useState('');
   const [waiterCheckinError, setWaiterCheckinError] = useState('');
+  const [updateSettings, setUpdateSettings] = useState<UpdateSettings | null>(null);
+  const [selectedUpdateChannel, setSelectedUpdateChannel] = useState<UpdateChannel>('stable');
+  const [updateStatus, setUpdateStatus] = useState<UpdateEventStatus | null>(null);
+  const [checkingUpdates, setCheckingUpdates] = useState(false);
+  const [installingUpdate, setInstallingUpdate] = useState(false);
   const [waiterLastActivityAt, setWaiterLastActivityAt] = useState<number>(Date.now());
   const [newTableNumber, setNewTableNumber] = useState('');
   const [newTableCapacity, setNewTableCapacity] = useState('4');
@@ -256,6 +281,66 @@ const PremiumRestaurantPOS: React.FC = () => {
   useEffect(() => {
     const timer = setInterval(() => setClock(new Date()), 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const loadUpdateSettings = async () => {
+      try {
+        if (typeof window.electronAPI.getUpdateSettings !== 'function') return;
+        const settings = await window.electronAPI.getUpdateSettings();
+        if (settings?.success) {
+          setUpdateSettings(settings);
+          setSelectedUpdateChannel(settings.channel);
+        }
+      } catch {
+        // No-op for unsupported builds.
+      }
+    };
+
+    loadUpdateSettings();
+
+    const unsubscribe =
+      typeof window.electronAPI.onAppUpdateStatus === 'function'
+        ? window.electronAPI.onAppUpdateStatus((status) => {
+            setUpdateStatus(status);
+            if (status.channel) setSelectedUpdateChannel(status.channel);
+
+            if (status.currentVersion || status.feedUrl || status.channel) {
+              setUpdateSettings((prev) => {
+                if (!prev) {
+                  return {
+                    success: true,
+                    channel: status.channel || 'stable',
+                    feedUrl: status.feedUrl || '',
+                    currentVersion: status.currentVersion || 'unknown',
+                    isPackaged: true,
+                  };
+                }
+                return {
+                  ...prev,
+                  channel: status.channel || prev.channel,
+                  feedUrl: status.feedUrl || prev.feedUrl,
+                  currentVersion: status.currentVersion || prev.currentVersion,
+                };
+              });
+            }
+
+            if (status.status === 'checking') {
+              setCheckingUpdates(true);
+            } else if (
+              status.status === 'up-to-date' ||
+              status.status === 'update-available' ||
+              status.status === 'downloaded' ||
+              status.status === 'error'
+            ) {
+              setCheckingUpdates(false);
+            }
+          })
+        : () => {};
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -1169,7 +1254,74 @@ const PremiumRestaurantPOS: React.FC = () => {
     return 'bg-slate-100 text-slate-700';
   };
 
+  const handleChangeUpdateChannel = async (channel: UpdateChannel) => {
+    setSelectedUpdateChannel(channel);
+    try {
+      if (typeof window.electronAPI.setUpdateChannel !== 'function') {
+        window.alert('Update channel control is not available in this build.');
+        return;
+      }
+
+      const response = await window.electronAPI.setUpdateChannel(channel);
+      if (response?.success) {
+        setUpdateSettings((prev) => {
+          if (!prev) {
+            return {
+              success: true,
+              channel: response.channel,
+              feedUrl: response.feedUrl,
+              currentVersion: response.currentVersion,
+              isPackaged: true,
+            };
+          }
+          return {
+            ...prev,
+            channel: response.channel,
+            feedUrl: response.feedUrl,
+            currentVersion: response.currentVersion,
+          };
+        });
+      }
+    } catch (error: any) {
+      window.alert(error?.message || 'Failed to set update channel.');
+      setSelectedUpdateChannel(updateSettings?.channel || 'stable');
+    }
+  };
+
+  const handleCheckForUpdates = async () => {
+    setCheckingUpdates(true);
+    try {
+      if (typeof window.electronAPI.checkForAppUpdates !== 'function') {
+        throw new Error('Update check is not available in this build.');
+      }
+
+      const response = await window.electronAPI.checkForAppUpdates();
+      if (!response?.success) {
+        setCheckingUpdates(false);
+        window.alert(response?.error || 'Failed to check for updates.');
+      }
+    } catch (error: any) {
+      setCheckingUpdates(false);
+      window.alert(error?.message || 'Failed to check for updates.');
+    }
+  };
+
+  const handleInstallUpdate = async () => {
+    setInstallingUpdate(true);
+    try {
+      if (typeof window.electronAPI.installUpdate !== 'function') {
+        throw new Error('Install update is not available in this build.');
+      }
+      await window.electronAPI.installUpdate();
+    } catch (error: any) {
+      setInstallingUpdate(false);
+      window.alert(error?.message || 'Failed to install update.');
+    }
+  };
+
   const screenContent = () => {
+    const isPackagedBuild = !!updateSettings?.isPackaged;
+
     if (activeScreen === 'dashboard') {
       return (
         <motion.div key="dashboard" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
@@ -2303,6 +2455,80 @@ const PremiumRestaurantPOS: React.FC = () => {
                   <p className="text-xs text-slate-500">Generate export and chart view</p>
                 </button>
               ))}
+            </CardContent>
+          </Card>
+        </motion.div>
+      );
+    }
+
+    if (activeScreen === 'settings') {
+      return (
+        <motion.div key="settings" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>App Updates</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Update Channel</p>
+                  <select
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                    value={selectedUpdateChannel}
+                    onChange={(e) => handleChangeUpdateChannel(e.target.value as UpdateChannel)}
+                  >
+                    <option value="stable">Stable (recommended for clients)</option>
+                    <option value="beta">Beta (pilot rollout)</option>
+                  </select>
+                </div>
+
+                <div className="rounded-lg border border-slate-100 bg-slate-50 p-3 text-xs text-slate-700">
+                  <p><span className="font-semibold">Current Version:</span> {updateSettings?.currentVersion || 'Unknown'}</p>
+                  <p><span className="font-semibold">Feed URL:</span> {updateSettings?.feedUrl || 'Not configured'}</p>
+                  <p><span className="font-semibold">Runtime:</span> {updateSettings?.isPackaged ? 'Installed app' : 'Development mode'}</p>
+                </div>
+              </div>
+
+              {updateStatus && (
+                <div className="rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700">
+                  <p><span className="font-semibold">Status:</span> {updateStatus.status}</p>
+                  {updateStatus.availableVersion && (
+                    <p><span className="font-semibold">Available Version:</span> {updateStatus.availableVersion}</p>
+                  )}
+                  {typeof updateStatus.progressPercent === 'number' && (
+                    <p><span className="font-semibold">Download Progress:</span> {updateStatus.progressPercent}%</p>
+                  )}
+                  {updateStatus.message && (
+                    <p><span className="font-semibold">Details:</span> {updateStatus.message}</p>
+                  )}
+                  {updateStatus.checkedAt && (
+                    <p><span className="font-semibold">Last Check:</span> {new Date(updateStatus.checkedAt).toLocaleString()}</p>
+                  )}
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                {!isPackagedBuild && (
+                  <p className="w-full text-xs text-amber-700">
+                    Update checks are disabled in development mode. Install and run the packaged EXE to test updates.
+                  </p>
+                )}
+
+                <Button onClick={handleCheckForUpdates} disabled={checkingUpdates || !isPackagedBuild}>
+                  {checkingUpdates ? 'Checking...' : 'Check for Updates'}
+                </Button>
+                <Button
+                  variant="success"
+                  onClick={handleInstallUpdate}
+                  disabled={installingUpdate || updateStatus?.status !== 'downloaded' || !isPackagedBuild}
+                >
+                  {installingUpdate ? 'Installing...' : 'Install Downloaded Update'}
+                </Button>
+              </div>
+
+              <p className="text-xs text-slate-500">
+                Stable is safest for all stores. Use Beta only for pilot devices before promoting to Stable.
+              </p>
             </CardContent>
           </Card>
         </motion.div>
