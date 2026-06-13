@@ -4,6 +4,7 @@ export type RestaurantScreen =
   | 'dashboard'
   | 'pos'
   | 'orders'
+  | 'activity'
   | 'kitchen'
   | 'tables'
   | 'reservations'

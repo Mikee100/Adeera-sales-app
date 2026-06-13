@@ -2413,6 +2413,55 @@ ipcMain.handle(
   },
 );
 
+ipcMain.handle(
+  'getRestaurantActivity',
+  async (
+    _event,
+    filters?: {
+      from?: string;
+      to?: string;
+      actorUserId?: string;
+      actionType?: string;
+      orderId?: string;
+      limit?: number;
+    },
+  ) => {
+    const store = new ElectronStore();
+    const token = getAuthToken(store);
+    const user = store.get('user') as User | undefined;
+    if (!token) return { success: false, events: [] };
+
+    try {
+      const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/activity`);
+      await apiRateLimiter.waitIfNeeded(endpoint);
+      const response = await rateLimitedAxios(
+        () =>
+          axios.get(`${BACKEND_BASE_URL}/restaurant/activity`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            params: {
+              ...(filters?.from ? { from: filters.from } : {}),
+              ...(filters?.to ? { to: filters.to } : {}),
+              ...(filters?.actorUserId ? { actorUserId: filters.actorUserId } : {}),
+              ...(filters?.actionType ? { actionType: filters.actionType } : {}),
+              ...(filters?.orderId ? { orderId: filters.orderId } : {}),
+              ...(typeof filters?.limit === 'number' ? { limit: filters.limit } : {}),
+            },
+            timeout: 10000,
+          }),
+        endpoint,
+      );
+
+      return { success: true, events: response.data || [] };
+    } catch (error: any) {
+      logger.error('Failed to get restaurant activity', { error: error.message });
+      return { success: false, events: [], error: error.message };
+    }
+  },
+);
+
 ipcMain.handle('createRestaurantOrder', async (event, data) => {
   const store = new ElectronStore();
   const token = getAuthToken(store);

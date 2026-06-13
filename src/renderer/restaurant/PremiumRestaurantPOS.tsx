@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Bell,
@@ -9,6 +9,7 @@ import {
   ClipboardList,
   CookingPot,
   DollarSign,
+  History,
   LayoutDashboard,
   Package,
   PieChart,
@@ -26,12 +27,13 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import MpesaPayment from '../components/MpesaPayment';
 import { useRestaurantUiStore, type RestaurantScreen } from './useRestaurantUiStore';
 import { useAuth } from '../contexts/AuthContext';
 
 type OrderStatus = 'Open' | 'SentToKitchen' | 'Served' | 'Closed' | 'Voided';
 
-type PaymentMethod = 'cash' | 'card' | 'mobile-money' | 'split';
+type PaymentMethod = 'cash' | 'card' | 'mpesa' | 'split';
 type ReservationStatus = 'Booked' | 'Arrived' | 'Seated' | 'NoShow' | 'Cancelled';
 type UpdateChannel = 'stable' | 'beta';
 
@@ -154,6 +156,30 @@ interface ActiveWaiterSession {
   email?: string;
 }
 
+interface RestaurantActivityEvent {
+  id: string;
+  tenantId: string;
+  branchId: string;
+  orderId?: string | null;
+  actorUserId?: string | null;
+  actionType: string;
+  fromStatus?: string | null;
+  toStatus?: string | null;
+  details?: Record<string, unknown>;
+  createdAt: string;
+  actor?: {
+    id: string;
+    name?: string;
+    email?: string;
+  } | null;
+  order?: {
+    id: string;
+    status?: string;
+    tableId?: string | null;
+    total?: number;
+  } | null;
+}
+
 const ALL_CATEGORY = 'All';
 const RESERVATION_STORAGE_KEY = 'restaurant-pos-reservations';
 const ACTIVE_WAITER_STORAGE_KEY = 'restaurant-active-waiter-session';
@@ -162,6 +188,7 @@ const SIDEBAR_ITEMS: Array<{ id: RestaurantScreen; label: string; icon: React.Re
   { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
   { id: 'pos', label: 'POS', icon: <ShoppingCart size={18} /> },
   { id: 'orders', label: 'Orders', icon: <ClipboardList size={18} /> },
+  { id: 'activity', label: 'Activity', icon: <History size={18} /> },
   { id: 'kitchen', label: 'Kitchen', icon: <CookingPot size={18} /> },
   { id: 'tables', label: 'Tables', icon: <Table2 size={18} /> },
   { id: 'reservations', label: 'Reservations', icon: <CalendarDays size={18} /> },
@@ -171,6 +198,8 @@ const SIDEBAR_ITEMS: Array<{ id: RestaurantScreen; label: string; icon: React.Re
   { id: 'reports', label: 'Reports', icon: <PieChart size={18} /> },
   { id: 'settings', label: 'Settings', icon: <Settings size={18} /> },
 ];
+
+const HIDDEN_SIDEBAR_SCREENS: RestaurantScreen[] = ['dashboard', 'customers', 'reports'];
 
 const currency = (value: number) => `KES ${Number(value || 0).toFixed(2)}`;
 
@@ -194,6 +223,11 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
   const [receivedAmount, setReceivedAmount] = useState('');
+  const [paymentCustomerName, setPaymentCustomerName] = useState('');
+  const [paymentCustomerPhone, setPaymentCustomerPhone] = useState('');
+  const [mpesaTransactionId, setMpesaTransactionId] = useState('');
+  const [mpesaReceipt, setMpesaReceipt] = useState('');
+  const [showMpesaPaymentModal, setShowMpesaPaymentModal] = useState(false);
   const [discountValue, setDiscountValue] = useState('0');
   const [clock, setClock] = useState(new Date());
   const [tableSearch, setTableSearch] = useState('');
@@ -204,6 +238,11 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [historyFrom, setHistoryFrom] = useState('');
   const [historyTo, setHistoryTo] = useState('');
   const [orderWaiterFilter, setOrderWaiterFilter] = useState('');
+  const [activityFrom, setActivityFrom] = useState('');
+  const [activityTo, setActivityTo] = useState('');
+  const [activityActorFilter, setActivityActorFilter] = useState('');
+  const [activityOrderFilter, setActivityOrderFilter] = useState('');
+  const [activityActionFilter, setActivityActionFilter] = useState('');
   const [useHistoryView, setUseHistoryView] = useState(true);
   const [staffForm, setStaffForm] = useState({
     name: '',
@@ -226,6 +265,7 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [checkingUpdates, setCheckingUpdates] = useState(false);
   const [installingUpdate, setInstallingUpdate] = useState(false);
   const [waiterLastActivityAt, setWaiterLastActivityAt] = useState<number>(Date.now());
+  const waiterActivityThrottleRef = useRef(0);
   const [newTableNumber, setNewTableNumber] = useState('');
   const [newTableCapacity, setNewTableCapacity] = useState('4');
   const [editingTableId, setEditingTableId] = useState<string | null>(null);
@@ -259,6 +299,8 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [bomLines, setBomLines] = useState<BomLineDraft[]>([
     { localId: `bom-line-${Date.now()}`, ingredientProductId: '', quantity: '1', unit: 'unit', wastePercent: '0' },
   ]);
+  const receivedAmountInputRef = useRef<HTMLInputElement | null>(null);
+  const paymentCustomerNameInputRef = useRef<HTMLInputElement | null>(null);
 
   const {
     activeScreen,
@@ -272,6 +314,22 @@ const PremiumRestaurantPOS: React.FC = () => {
   const normalizedRoles: string[] = Array.isArray(user?.roles)
     ? user.roles.map((role: string) => String(role).toLowerCase())
     : [];
+  const canViewRestaurantActivity =
+    Boolean(user?.isSuperadmin) ||
+    normalizedRoles.includes('owner') ||
+    normalizedRoles.includes('admin') ||
+    normalizedRoles.includes('manager');
+
+  const visibleSidebarItems = useMemo(
+    () =>
+      SIDEBAR_ITEMS.filter(
+        (item) =>
+          !HIDDEN_SIDEBAR_SCREENS.includes(item.id) &&
+          (item.id !== 'activity' || canViewRestaurantActivity),
+      ),
+    [canViewRestaurantActivity],
+  );
+
   const canManageTables =
     Boolean(user?.isSuperadmin) ||
     normalizedRoles.includes('owner') ||
@@ -282,6 +340,12 @@ const PremiumRestaurantPOS: React.FC = () => {
     const timer = setInterval(() => setClock(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (HIDDEN_SIDEBAR_SCREENS.includes(activeScreen)) {
+      setActiveScreen('pos');
+    }
+  }, [activeScreen, setActiveScreen]);
 
   useEffect(() => {
     const loadUpdateSettings = async () => {
@@ -420,6 +484,32 @@ const PremiumRestaurantPOS: React.FC = () => {
     refetchInterval: 10000,
   });
 
+  const { data: restaurantActivity = [] } = useQuery({
+    queryKey: [
+      'restaurant',
+      'activity',
+      activityFrom,
+      activityTo,
+      activityActorFilter,
+      activityOrderFilter,
+      activityActionFilter,
+    ],
+    queryFn: async (): Promise<RestaurantActivityEvent[]> => {
+      if (typeof window.electronAPI.getRestaurantActivity !== 'function') return [];
+      const res = await window.electronAPI.getRestaurantActivity({
+        from: activityFrom || undefined,
+        to: activityTo || undefined,
+        actorUserId: activityActorFilter.trim() || undefined,
+        orderId: activityOrderFilter.trim() || undefined,
+        actionType: activityActionFilter.trim() || undefined,
+        limit: 200,
+      });
+      return res.success ? (res.events || []) : [];
+    },
+    enabled: activeScreen === 'activity' && canViewRestaurantActivity,
+    refetchInterval: 7000,
+  });
+
   const staffNameById = useMemo(() => {
     const map = new Map<string, string>();
     for (const member of staffUsers) {
@@ -486,9 +576,39 @@ const PremiumRestaurantPOS: React.FC = () => {
     return false;
   };
 
-  const markWaiterActivity = () => {
-    setWaiterLastActivityAt(Date.now());
-  };
+  const markWaiterActivity = useCallback(() => {
+    const now = Date.now();
+    if (now - waiterActivityThrottleRef.current < 1000) return;
+    waiterActivityThrottleRef.current = now;
+    setWaiterLastActivityAt(now);
+  }, []);
+
+  useEffect(() => {
+    if (!activeWaiter?.id) return;
+
+    const handleActivity = () => {
+      markWaiterActivity();
+    };
+
+    const events: Array<keyof WindowEventMap> = [
+      'mousedown',
+      'mousemove',
+      'keydown',
+      'touchstart',
+      'click',
+      'wheel',
+    ];
+
+    events.forEach((event) => {
+      window.addEventListener(event, handleActivity, { passive: true });
+    });
+
+    return () => {
+      events.forEach((event) => {
+        window.removeEventListener(event, handleActivity);
+      });
+    };
+  }, [activeWaiter?.id, markWaiterActivity]);
 
   const verifyAndActivateWaiter = async () => {
     const targetUserId = waiterCandidateId.trim();
@@ -908,11 +1028,18 @@ const PremiumRestaurantPOS: React.FC = () => {
     if (!activeOrder) return;
     if (!requireWaiterSession('completing payment')) return;
 
+    if (paymentMethod === 'mpesa' && !mpesaTransactionId.trim()) {
+      window.alert('M-Pesa transaction ID is required.');
+      return;
+    }
+
     await window.electronAPI.checkoutRestaurantOrder(activeOrder.id, {
       paymentMethod,
       amountReceived: paymentMethod === 'cash' ? Number(receivedAmount || 0) : undefined,
-      customerName: activeOrder.customerName || undefined,
-      customerPhone: activeOrder.customerPhone || undefined,
+      mpesaTransactionId: paymentMethod === 'mpesa' ? mpesaTransactionId.trim() : undefined,
+      mpesaReceipt: paymentMethod === 'mpesa' ? mpesaReceipt.trim() || undefined : undefined,
+      customerName: paymentCustomerName.trim() || activeOrder.customerName || undefined,
+      customerPhone: paymentCustomerPhone.trim() || activeOrder.customerPhone || undefined,
       idempotencyKey: `checkout:${activeOrder.id}:${Date.now()}`,
     });
 
@@ -921,11 +1048,78 @@ const PremiumRestaurantPOS: React.FC = () => {
     await queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] });
   };
 
+  const openPaymentModal = () => {
+    if (!requireWaiterSession('opening payment modal')) return;
+    setPaymentCustomerName(activeOrder?.customerName || '');
+    setPaymentCustomerPhone(activeOrder?.customerPhone || '');
+    setPaymentModalOpen(true);
+    markWaiterActivity();
+  };
+
+  const openMpesaPrompt = () => {
+    if (!activeOrder) return;
+    if (!paymentCustomerName.trim()) {
+      window.alert('Enter customer name before sending M-Pesa prompt.');
+      return;
+    }
+    // Keep only one modal active at a time to avoid focus/input conflicts.
+    setPaymentModalOpen(false);
+    setShowMpesaPaymentModal(true);
+  };
+
+  const handleMpesaSuccess = (transactionId: string, receipt?: string) => {
+    setShowMpesaPaymentModal(false);
+    setPaymentModalOpen(true);
+    setMpesaTransactionId(transactionId);
+    setMpesaReceipt(receipt || '');
+    markWaiterActivity();
+  };
+
+  const handleMpesaCancel = () => {
+    setShowMpesaPaymentModal(false);
+    setPaymentModalOpen(true);
+  };
+
+  useEffect(() => {
+    if (!paymentModalOpen) return;
+
+    // Keep keyboard focus inside the active field so typing is not hijacked by background handlers.
+    const targetInput = paymentMethod === 'mpesa' ? paymentCustomerNameInputRef.current : receivedAmountInputRef.current;
+    targetInput?.focus();
+  }, [paymentModalOpen, paymentMethod]);
+
   const upsertReservationStatus = (id: string, status: ReservationStatus) => {
     setReservations((prev) => prev.map((item) => (item.id === id ? { ...item, status } : item)));
   };
 
-  const seatTableToPos = (tableId: string, reservationId?: string) => {
+  const seatTableToPos = (tableId: string, reservationId?: string, orderId?: string) => {
+    const orderForTable = orderId
+      ? orders.find((order) => order.id === orderId)
+      : orders.find(
+          (order) =>
+            order.tableId === tableId &&
+            order.status !== 'Closed' &&
+            order.status !== 'Voided',
+        );
+
+    if (orderForTable) {
+      const hydratedDraftItems: DraftItem[] = orderForTable.items.map((item, index) => ({
+        localId: `order-${orderForTable.id}-${item.id || item.productId}-${index}`,
+        id: item.id,
+        productId: item.productId,
+        productName: productNameById.get(item.productId) || `Item ${index + 1}`,
+        quantity: Number(item.quantity || 0),
+        price: Number(item.price || 0),
+        notes: item.notes || '',
+        modifierSelections: Array.isArray(item.modifierSelections) ? item.modifierSelections : [],
+      }));
+
+      setDraftItems(hydratedDraftItems);
+    } else {
+      // No linked order: start with a clean draft for this table.
+      setDraftItems([]);
+    }
+
     setSelectedTableId(tableId);
     if (reservationId) {
       upsertReservationStatus(reservationId, 'Seated');
@@ -1512,7 +1706,7 @@ const PremiumRestaurantPOS: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-2">
                   <Button className="w-full" onClick={createOrder} disabled={!canSendOrder}>Send Order</Button>
-                  <Button variant="success" onClick={() => setPaymentModalOpen(true)} disabled={!activeOrder}>Complete Payment</Button>
+                  <Button variant="success" onClick={openPaymentModal} disabled={!activeOrder}>Complete Payment</Button>
                 </div>
 
                 <details className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5">
@@ -1524,7 +1718,7 @@ const PremiumRestaurantPOS: React.FC = () => {
                       variant="warning"
                       onClick={() => {
                         setPaymentMethod('split');
-                        setPaymentModalOpen(true);
+                        openPaymentModal();
                       }}
                       disabled={!activeOrder}
                     >
@@ -1776,7 +1970,7 @@ const PremiumRestaurantPOS: React.FC = () => {
 
                       <div className="flex flex-wrap justify-start gap-1 md:col-span-1 md:justify-end">
                         {order.tableId && (
-                          <Button size="sm" variant="secondary" onClick={() => seatTableToPos(order.tableId!)}>
+                          <Button size="sm" variant="secondary" onClick={() => seatTableToPos(order.tableId!, undefined, order.id)}>
                             Open
                           </Button>
                         )}
@@ -1804,6 +1998,113 @@ const PremiumRestaurantPOS: React.FC = () => {
                     </div>
                   );
                 })}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      );
+    }
+
+    if (activeScreen === 'activity') {
+      if (!canViewRestaurantActivity) {
+        return (
+          <motion.div key="activity-denied" variants={screenVariants} initial="initial" animate="animate" exit="exit">
+            <Card>
+              <CardHeader><CardTitle>Restaurant Activity</CardTitle></CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600">Only owner/admin/manager roles can view the restaurant activity log.</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        );
+      }
+
+      return (
+        <motion.div key="activity" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
+          <Card>
+            <CardHeader><CardTitle>Restaurant Activity Log</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-5">
+                <input
+                  type="datetime-local"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                  value={activityFrom}
+                  onChange={(e) => setActivityFrom(e.target.value)}
+                />
+                <input
+                  type="datetime-local"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                  value={activityTo}
+                  onChange={(e) => setActivityTo(e.target.value)}
+                />
+                <input
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                  placeholder="Actor user ID"
+                  value={activityActorFilter}
+                  onChange={(e) => setActivityActorFilter(e.target.value)}
+                />
+                <input
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                  placeholder="Order ID"
+                  value={activityOrderFilter}
+                  onChange={(e) => setActivityOrderFilter(e.target.value)}
+                />
+                <input
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                  placeholder="Action (e.g. order_status_changed)"
+                  value={activityActionFilter}
+                  onChange={(e) => setActivityActionFilter(e.target.value)}
+                />
+              </div>
+
+              <div className="overflow-auto rounded-xl border border-slate-200">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                    <tr>
+                      <th className="px-3 py-2">Time</th>
+                      <th className="px-3 py-2">Actor</th>
+                      <th className="px-3 py-2">Action</th>
+                      <th className="px-3 py-2">Order</th>
+                      <th className="px-3 py-2">Status</th>
+                      <th className="px-3 py-2">Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {restaurantActivity.length === 0 && (
+                      <tr>
+                        <td className="px-3 py-4 text-slate-500" colSpan={6}>No activity found for selected filters.</td>
+                      </tr>
+                    )}
+                    {restaurantActivity.map((event) => {
+                      const details = event.details || {};
+                      const actorName =
+                        event.actor?.name ||
+                        event.actor?.email ||
+                        (typeof details.actorName === 'string' ? details.actorName : '') ||
+                        event.actorUserId ||
+                        'System';
+                      const detailsSummary =
+                        (typeof details.voidReason === 'string' && details.voidReason.trim())
+                          ? `Reason: ${details.voidReason}`
+                          : (typeof details.paymentMethod === 'string' ? `Payment: ${details.paymentMethod}` : '-');
+
+                      return (
+                        <tr key={event.id} className="border-t border-slate-100 align-top">
+                          <td className="px-3 py-2 text-xs text-slate-600">{new Date(event.createdAt).toLocaleString()}</td>
+                          <td className="px-3 py-2 text-xs">{actorName}</td>
+                          <td className="px-3 py-2 text-xs font-medium">{event.actionType.replace(/_/g, ' ')}</td>
+                          <td className="px-3 py-2 text-xs">{event.orderId ? event.orderId.slice(0, 8) : '-'}</td>
+                          <td className="px-3 py-2 text-xs">
+                            {event.fromStatus || '-'}
+                            <span className="mx-1 text-slate-400">→</span>
+                            {event.toStatus || '-'}
+                          </td>
+                          <td className="px-3 py-2 text-xs text-slate-600">{detailsSummary}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>
@@ -2573,7 +2874,7 @@ const PremiumRestaurantPOS: React.FC = () => {
         </div>
 
         <nav className="space-y-1">
-          {SIDEBAR_ITEMS.map((item) => (
+          {visibleSidebarItems.map((item) => (
             <button
               key={item.id}
               onClick={() => handleSidebarItemClick(item.id)}
@@ -2781,6 +3082,8 @@ const PremiumRestaurantPOS: React.FC = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.98 }}
               className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl"
+              onKeyDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="text-xl font-semibold">Complete Payment</h3>
@@ -2793,33 +3096,86 @@ const PremiumRestaurantPOS: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
-                  {(['cash', 'card', 'mobile-money', 'split'] as PaymentMethod[]).map((method) => (
+                  {(['cash', 'card', 'mpesa', 'split'] as PaymentMethod[]).map((method) => (
                     <button
                       key={method}
-                      onClick={() => setPaymentMethod(method)}
+                      onClick={() => {
+                        setPaymentMethod(method);
+                        if (method !== 'mpesa') {
+                          setMpesaTransactionId('');
+                          setMpesaReceipt('');
+                        }
+                      }}
                       className={`touch-btn border ${paymentMethod === method ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white'}`}
                     >
-                      {method}
+                      {method === 'mpesa' ? 'M-Pesa' : method}
                     </button>
                   ))}
                 </div>
 
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <input
+                    ref={paymentCustomerNameInputRef}
+                    className="rounded-xl border border-slate-200 px-3 py-3 text-sm"
+                    placeholder="Customer name"
+                    value={paymentCustomerName}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    onChange={(e) => setPaymentCustomerName(e.target.value)}
+                  />
+                  <input
+                    className="rounded-xl border border-slate-200 px-3 py-3 text-sm"
+                    placeholder="Customer phone (optional)"
+                    value={paymentCustomerPhone}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    onChange={(e) => setPaymentCustomerPhone(e.target.value)}
+                  />
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <input
+                    ref={receivedAmountInputRef}
                     className="rounded-xl border border-slate-200 px-3 py-3 text-sm"
                     placeholder="Amount received"
                     value={receivedAmount}
-                    onChange={(e) => setReceivedAmount(e.target.value)}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    onChange={(e) => {
+                      setReceivedAmount(e.target.value);
+                      markWaiterActivity();
+                    }}
                   />
                   <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm">
                     Change: {currency(Math.max(0, Number(receivedAmount || 0) - grandTotal))}
                   </div>
                 </div>
 
+                {paymentMethod === 'mpesa' && (
+                  <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-semibold text-slate-800">M-Pesa STK Prompt</p>
+                        <p className="text-xs text-slate-600">Send payment prompt to customer phone, then confirm payment.</p>
+                      </div>
+                      <Button size="sm" onClick={openMpesaPrompt}>Send Prompt</Button>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                      <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
+                        <p className="font-semibold text-slate-900">Transaction ID</p>
+                        <p className="mt-1 break-all">{mpesaTransactionId || 'Not received yet'}</p>
+                      </div>
+                      <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
+                        <p className="font-semibold text-slate-900">Receipt</p>
+                        <p className="mt-1 break-all">{mpesaReceipt || 'Waiting for callback'}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="rounded-xl border border-slate-200 p-3 text-sm">
                   <p className="mb-1 font-semibold">Receipt Preview</p>
                   <p className="text-slate-500">Items: {draftItems.length}</p>
-                  <p className="text-slate-500">Method: {paymentMethod}</p>
+                  <p className="text-slate-500">Method: {paymentMethod === 'mpesa' ? 'M-Pesa' : paymentMethod}</p>
+                  <p className="text-slate-500">Customer: {paymentCustomerName || activeOrder?.customerName || '-'}</p>
                   <p className="text-slate-500">Total: {currency(grandTotal)}</p>
                 </div>
 
@@ -2829,6 +3185,22 @@ const PremiumRestaurantPOS: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {showMpesaPaymentModal && paymentMethod === 'mpesa' && (
+        <MpesaPayment
+          amount={grandTotal}
+          saleData={{
+            orderId: activeOrder?.id,
+            customerName: paymentCustomerName,
+            customerPhone: paymentCustomerPhone,
+            tableId: activeOrder?.tableId,
+            total: grandTotal,
+            source: 'restaurant-pos',
+          }}
+          onSuccess={handleMpesaSuccess}
+          onCancel={handleMpesaCancel}
+        />
+      )}
 
       {tablesFetching && (
         <div className="fixed bottom-4 right-4 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs text-indigo-700">

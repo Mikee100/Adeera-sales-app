@@ -62,6 +62,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getRestaurantOrders: () => ipcRenderer.invoke('getRestaurantOrders'),
   getRestaurantOrderHistory: (filters?: { from?: string; to?: string; waiterId?: string; status?: string }) =>
     ipcRenderer.invoke('getRestaurantOrderHistory', filters),
+  getRestaurantActivity: (filters?: { from?: string; to?: string; actorUserId?: string; actionType?: string; orderId?: string; limit?: number }) =>
+    ipcRenderer.invoke('getRestaurantActivity', filters),
   createRestaurantOrder: (data: any) => ipcRenderer.invoke('createRestaurantOrder', data),
   addRestaurantOrderItems: (id: string, items: any[]) => ipcRenderer.invoke('addRestaurantOrderItems', { id, items }),
   updateRestaurantOrderStatus: (id: string, status: string, voidReason?: string) =>

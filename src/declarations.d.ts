@@ -15,6 +15,11 @@ declare global {
         products?: any[];
         error?: string;
       }>;
+      getRestaurantActivity?: (filters?: { from?: string; to?: string; actorUserId?: string; actionType?: string; orderId?: string; limit?: number }) => Promise<{
+        success: boolean;
+        events?: any[];
+        error?: string;
+      }>;
       isOnline: () => boolean;
       createSale: (saleData: CreateSaleData) => Promise<{ success: boolean; sale?: any; receipt?: any; error?: string }>;
       getReceipt: (saleId: string) => Promise<{ success: boolean; receipt?: any; error?: string }>;

@@ -41,6 +41,7 @@ interface ElectronAPI {
   getDiningTables: () => Promise<{ success: boolean; tables: any[]; error?: string }>;
   getRestaurantOrders: () => Promise<{ success: boolean; orders: any[]; error?: string }>;
   getRestaurantOrderHistory: (filters?: { from?: string; to?: string; waiterId?: string; status?: string }) => Promise<{ success: boolean; orders: any[]; error?: string }>;
+  getRestaurantActivity: (filters?: { from?: string; to?: string; actorUserId?: string; actionType?: string; orderId?: string; limit?: number }) => Promise<{ success: boolean; events: any[]; error?: string }>;
   createRestaurantOrder: (data: any) => Promise<{ success: boolean; order?: any; error?: string }>;
   addRestaurantOrderItems: (id: string, items: any[]) => Promise<{ success: boolean; result?: any; error?: string }>;
   updateRestaurantOrderStatus: (id: string, status: string, voidReason?: string) => Promise<{ success: boolean; order?: any; error?: string }>;

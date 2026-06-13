@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { validatePhoneNumber } from '../utils/validation';
 import { sanitizeCustomerName, sanitizePhoneNumber, sanitizeNotes } from '../utils/sanitization';
 import '../checkout.css';
@@ -14,7 +14,7 @@ interface MpesaTransaction {
   id: string;
   phoneNumber: string;
   amount: number;
-  status: 'pending' | 'success' | 'failed' | 'cancelled' | 'timeout';
+  status: 'pending' | 'success' | 'failed' | 'cancelled' | 'timeout' | string;
   checkoutRequestId: string;
   mpesaReceipt?: string;
   message?: string;
@@ -27,6 +27,13 @@ const MpesaPayment: React.FC<MpesaPaymentProps> = ({ amount, saleData, onSuccess
   const [currentTransaction, setCurrentTransaction] = useState<MpesaTransaction | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState('');
+  const phoneInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (!currentTransaction && !isProcessing) {
+      phoneInputRef.current?.focus();
+    }
+  }, [currentTransaction, isProcessing]);
 
   // Status polling with exponential backoff
   useEffect(() => {
@@ -80,12 +87,17 @@ const MpesaPayment: React.FC<MpesaPaymentProps> = ({ amount, saleData, onSuccess
             setCurrentTransaction(updatedTransaction);
           }
 
-          switch (updatedTransaction.status) {
+          const normalizedStatus = String(updatedTransaction.status || '').toLowerCase();
+
+          switch (normalizedStatus) {
             case 'success':
+            case 'completed':
+            case 'paid':
               setStatusMessage('Payment successful! Processing your order...');
               if (interval) clearTimeout(interval);
               setTimeout(() => {
                 if (isMounted) {
+                  updatedTransaction.status = 'success';
                   setStatusMessage('✅ Payment completed successfully!');
                   setTimeout(() => {
                     if (isMounted) {
@@ -97,6 +109,7 @@ const MpesaPayment: React.FC<MpesaPaymentProps> = ({ amount, saleData, onSuccess
               return;
 
             case 'failed':
+            case 'error':
               setError(updatedTransaction.message || 'Payment was not completed');
               setIsProcessing(false);
               return;
@@ -107,13 +120,14 @@ const MpesaPayment: React.FC<MpesaPaymentProps> = ({ amount, saleData, onSuccess
               return;
 
             case 'timeout':
+            case 'timed_out':
               setError('Payment request timed out. Please try again.');
               setIsProcessing(false);
               return;
           }
 
           // Continue polling if still pending
-          if (updatedTransaction.status === 'pending' && attempt < maxAttempts) {
+          if (normalizedStatus === 'pending' && attempt < maxAttempts) {
             attempt++;
             const delay = baseDelay * Math.pow(2, Math.min(attempt - 1, 4)); // Exponential backoff, max 48s
             interval = setTimeout(checkPaymentStatus, delay);
@@ -287,7 +301,7 @@ const MpesaPayment: React.FC<MpesaPaymentProps> = ({ amount, saleData, onSuccess
 
   return (
     <div className="mpesa-payment-modal">
-      <div className="mpesa-payment-content">
+      <div className="mpesa-payment-content" onKeyDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
         <div className="mpesa-payment-header">
           <h2>📱 M-Pesa Payment</h2>
           <button className="close-btn" onClick={onCancel} disabled={isProcessing}>
@@ -308,12 +322,14 @@ const MpesaPayment: React.FC<MpesaPaymentProps> = ({ amount, saleData, onSuccess
                 Phone Number
               </label>
               <input
+                ref={phoneInputRef}
                 type="tel"
                 value={phoneNumber}
                 onChange={(e) => {
                   setPhoneNumber(e.target.value);
                   setError(null);
                 }}
+                onKeyDown={(e) => e.stopPropagation()}
                 placeholder="07XXXXXXXX or 2547XXXXXXXX"
                 className={`text-input ${error ? 'error' : ''}`}
                 disabled={isProcessing}
