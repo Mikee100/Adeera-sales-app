@@ -16,7 +16,8 @@
     "package:win": "electron-builder --win",
     "package:mac": "electron-builder --mac",
     "package:linux": "electron-builder --linux",
-    "deploy:updates": "powershell -Command \"Copy-Item release/latest.yml ../backend/uploads/pos-updates/ -Force; Copy-Item release/*.exe ../backend/uploads/pos-updates/ -Force\""
+    "deploy:updates": "powershell -Command \"New-Item -ItemType Directory -Path ../backend/uploads/pos-updates -Force | Out-Null; Copy-Item release/latest.yml ../backend/uploads/pos-updates/ -Force; Copy-Item release/*.exe ../backend/uploads/pos-updates/ -Force; Copy-Item release/*.blockmap ../backend/uploads/pos-updates/ -Force\"",
+    "release:win": "npm run package:win; npm run deploy:updates"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",

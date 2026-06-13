@@ -12716,3 +12716,26 @@
 {"component":"token-storage","level":"info","message":"Refresh token stored securely","service":"saas-pos","timestamp":"2026-06-13T20:10:13.537Z"}
 {"component":"auth","level":"info","message":"Silent token refresh successful! Retrying original request.","service":"saas-pos","timestamp":"2026-06-13T20:10:13.540Z"}
 {"component":"products","level":"info","message":"Periodic sync completed: 49 products","service":"saas-pos","timestamp":"2026-06-13T20:10:14.401Z"}
+{"component":"products","level":"info","message":"Running periodic product sync","service":"saas-pos","timestamp":"2026-06-13T20:15:10.923Z"}
+{"component":"products","level":"info","message":"Periodic sync completed: 49 products","service":"saas-pos","timestamp":"2026-06-13T20:15:12.688Z"}
+{"component":"app","level":"info","message":"User session found on app start, starting periodic sync","service":"saas-pos","timestamp":"2026-06-13T20:16:54.997Z"}
+{"component":"products","level":"info","message":"Periodic product sync started (every 5 minutes)","service":"saas-pos","timestamp":"2026-06-13T20:16:55.012Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-06-13T20:16:57.658Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-06-13T20:16:57.695Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-06-13T20:16:57.722Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-06-13T20:16:57.730Z"}
+{"component":"products","level":"info","message":"Force syncing products from backend","service":"saas-pos","timestamp":"2026-06-13T20:16:58.880Z"}
+{"component":"products","level":"info","message":"Received 49 products from backend","service":"saas-pos","timestamp":"2026-06-13T20:16:59.403Z"}
+{"branchId":"222655de-18f0-49c1-9581-163ccc5f761f","component":"products","level":"debug","message":"Products cached successfully","productCount":49,"service":"saas-pos","timestamp":"2026-06-13T20:17:00.144Z"}
+{"component":"products","level":"info","message":"Received 49 products from backend","service":"saas-pos","timestamp":"2026-06-13T20:17:00.147Z"}
+{"branchId":"222655de-18f0-49c1-9581-163ccc5f761f","component":"products","level":"debug","message":"Products cached successfully","productCount":49,"service":"saas-pos","timestamp":"2026-06-13T20:17:00.851Z"}
+{"component":"branches","level":"info","message":"Fetched 1 branches","service":"saas-pos","timestamp":"2026-06-13T20:17:00.857Z"}
+{"component":"branches","level":"info","message":"Fetched 1 branches","service":"saas-pos","timestamp":"2026-06-13T20:17:00.884Z"}
+{"component":"products","level":"info","message":"Received 49 products from backend","service":"saas-pos","timestamp":"2026-06-13T20:17:00.944Z"}
+{"branchId":"222655de-18f0-49c1-9581-163ccc5f761f","component":"products","level":"debug","message":"Products cached successfully","productCount":49,"service":"saas-pos","timestamp":"2026-06-13T20:17:00.988Z"}
+{"component":"products","level":"info","message":"Received 49 products from backend","service":"saas-pos","timestamp":"2026-06-13T20:17:00.990Z"}
+{"branchId":"222655de-18f0-49c1-9581-163ccc5f761f","component":"products","level":"debug","message":"Products cached successfully","productCount":49,"service":"saas-pos","timestamp":"2026-06-13T20:17:01.046Z"}
+{"component":"products","level":"info","message":"Products synced successfully: 49 products","service":"saas-pos","timestamp":"2026-06-13T20:17:01.679Z"}
+{"component":"products","level":"info","message":"Fetching products from backend","service":"saas-pos","timestamp":"2026-06-13T20:17:01.696Z"}
+{"component":"products","level":"info","message":"Received 49 products from backend","service":"saas-pos","timestamp":"2026-06-13T20:17:03.144Z"}
+{"branchId":"222655de-18f0-49c1-9581-163ccc5f761f","component":"products","level":"debug","message":"Products cached successfully","productCount":49,"service":"saas-pos","timestamp":"2026-06-13T20:17:03.170Z"}
