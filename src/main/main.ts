@@ -104,10 +104,12 @@ const devRendererWatchers: FSWatcher[] = [];
 const globalStore = new ElectronStore();
 
 const HOSTED_BACKEND_URL = 'https://saas-business.duckdns.org';
+const LOCAL_DEV_BACKEND_URL = 'http://127.0.0.1:7000';
+const IS_DEVELOPMENT = !app.isPackaged || process.env.NODE_ENV === 'development';
 
 function normalizeHostedBackendUrl(url: string): string {
   const trimmed = url.trim().replace(/\/$/, '');
-  if (!trimmed) return HOSTED_BACKEND_URL;
+  if (!trimmed) return IS_DEVELOPMENT ? LOCAL_DEV_BACKEND_URL : HOSTED_BACKEND_URL;
 
   // Accept plain host values like "localhost:7000" by prepending a scheme for parsing.
   const parseCandidate = trimmed.includes('://') ? trimmed : `http://${trimmed}`;
@@ -115,7 +117,7 @@ function normalizeHostedBackendUrl(url: string): string {
   try {
     const parsed = new URL(parseCandidate);
     const hostname = parsed.hostname.toLowerCase();
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    if (!IS_DEVELOPMENT && (hostname === 'localhost' || hostname === '127.0.0.1')) {
       const hosted = new URL(HOSTED_BACKEND_URL);
       parsed.protocol = hosted.protocol;
       parsed.host = hosted.host;
@@ -133,6 +135,20 @@ function normalizeHostedBackendUrl(url: string): string {
 // This allows IT to change the backend API URL on an installed machine without rebuilding,
 // by setting "backendBaseUrl" in the app's ElectronStore config.
 const BACKEND_BASE_URL = (() => {
+  if (IS_DEVELOPMENT) {
+    if (typeof process.env.BACKEND_BASE_URL === 'string' && process.env.BACKEND_BASE_URL.trim().length > 0) {
+      const normalized = normalizeHostedBackendUrl(process.env.BACKEND_BASE_URL);
+      globalStore.set('backendBaseUrl', normalized);
+      console.log(`Backend URL configured from BACKEND_BASE_URL env: ${normalized}`);
+      return normalized;
+    }
+
+    const normalizedDev = normalizeHostedBackendUrl(LOCAL_DEV_BACKEND_URL);
+    globalStore.set('backendBaseUrl', normalizedDev);
+    console.log(`Backend URL resolved for development: ${normalizedDev}`);
+    return normalizedDev;
+  }
+
   const fromStore = globalStore.get('backendBaseUrl') as string | undefined;
   if (typeof fromStore === 'string' && fromStore.trim().length > 0) {
     const normalized = normalizeHostedBackendUrl(fromStore);
@@ -154,7 +170,7 @@ const BACKEND_BASE_URL = (() => {
 
   const normalizedFallback = normalizeHostedBackendUrl(API_BASE_URL);
   globalStore.set('backendBaseUrl', normalizedFallback);
-  console.log(`Backend URL falling back to API_BASE_URL from shared config: ${normalizedFallback}`);
+  console.log(`Backend URL falling back to environment default: ${normalizedFallback}`);
   return normalizedFallback;
 })();
 
