@@ -1015,8 +1015,13 @@ const PremiumRestaurantPOS: React.FC = () => {
       })),
     };
 
-    await window.electronAPI.createRestaurantOrder(payload);
-  markWaiterActivity();
+    const result = await window.electronAPI.createRestaurantOrder(payload);
+    if (!result?.success) {
+      window.alert(result?.error || 'Failed to create order.');
+      return;
+    }
+
+    markWaiterActivity();
     setDraftItems([]);
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] }),
@@ -2077,16 +2082,34 @@ const PremiumRestaurantPOS: React.FC = () => {
                     )}
                     {restaurantActivity.map((event) => {
                       const details = event.details || {};
-                      const actorName =
+                      const resolvedActorName =
                         event.actor?.name ||
                         event.actor?.email ||
                         (typeof details.actorName === 'string' ? details.actorName : '') ||
                         event.actorUserId ||
                         'System';
+
+                      const waiterId =
+                        typeof details.waiterId === 'string' && details.waiterId.trim().length > 0
+                          ? details.waiterId.trim()
+                          : '';
+                      const waiterName = waiterId
+                        ? staffNameById.get(waiterId) || waiterId.slice(0, 8)
+                        : '';
+
+                      const actorName =
+                        event.actionType === 'order_created' && waiterName
+                          ? `${waiterName} (waiter)`
+                          : resolvedActorName;
+
                       const detailsSummary =
                         (typeof details.voidReason === 'string' && details.voidReason.trim())
                           ? `Reason: ${details.voidReason}`
-                          : (typeof details.paymentMethod === 'string' ? `Payment: ${details.paymentMethod}` : '-');
+                          : (typeof details.paymentMethod === 'string'
+                              ? `Payment: ${details.paymentMethod}`
+                              : (event.actionType === 'order_created' && waiterName && waiterName !== resolvedActorName)
+                                  ? `Recorded by: ${resolvedActorName}`
+                                  : '-');
 
                       return (
                         <tr key={event.id} className="border-t border-slate-100 align-top">

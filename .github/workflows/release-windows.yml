@@ -36,7 +36,13 @@ jobs:
         shell: pwsh
         run: |
           $version = "${env:RELEASE_TAG}".TrimStart('v')
-          npm version $version --no-git-tag-version
+          $currentVersion = node -p "require('./package.json').version"
+
+          if ($currentVersion -eq $version) {
+            Write-Host "package.json already at version $version, skipping npm version"
+          } else {
+            npm version $version --no-git-tag-version
+          }
 
       - name: Build Windows installer
         run: npm run package:win

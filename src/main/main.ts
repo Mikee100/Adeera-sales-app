@@ -103,11 +103,14 @@ const devRendererWatchers: FSWatcher[] = [];
 // Global ElectronStore instance for reading configuration values such as backendBaseUrl.
 const globalStore = new ElectronStore();
 
-const HOSTED_BACKEND_URL = 'https://saas-business.duckdns.org';
+const PROD_BACKEND_URL = 'https://saas-business.duckdns.org';
+const DEV_BACKEND_URL = 'http://127.0.0.1:7000';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const TARGET_BACKEND_URL = IS_PRODUCTION ? PROD_BACKEND_URL : DEV_BACKEND_URL;
 
 function normalizeHostedBackendUrl(url: string): string {
   const trimmed = url.trim().replace(/\/$/, '');
-  if (!trimmed) return HOSTED_BACKEND_URL;
+  if (!trimmed) return TARGET_BACKEND_URL;
 
   // Accept plain host values like "localhost:7000" by prepending a scheme for parsing.
   const parseCandidate = trimmed.includes('://') ? trimmed : `http://${trimmed}`;
@@ -115,10 +118,19 @@ function normalizeHostedBackendUrl(url: string): string {
   try {
     const parsed = new URL(parseCandidate);
     const hostname = parsed.hostname.toLowerCase();
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      const hosted = new URL(HOSTED_BACKEND_URL);
-      parsed.protocol = hosted.protocol;
-      parsed.host = hosted.host;
+    const isLoopbackHost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+
+    if (IS_PRODUCTION && isLoopbackHost) {
+      const target = new URL(TARGET_BACKEND_URL);
+      parsed.protocol = target.protocol;
+      parsed.host = target.host;
+      return parsed.toString().replace(/\/$/, '');
+    }
+
+    if (!IS_PRODUCTION && (hostname === 'saas-business.duckdns.org' || isLoopbackHost)) {
+      const target = new URL(TARGET_BACKEND_URL);
+      parsed.protocol = target.protocol;
+      parsed.host = target.host;
       return parsed.toString().replace(/\/$/, '');
     }
   } catch {
@@ -477,8 +489,8 @@ let autoUpdaterInstance: any;
 type UpdateChannel = 'stable' | 'beta';
 
 const DEFAULT_UPDATE_FEEDS: Record<UpdateChannel, string> = {
-  stable: `${HOSTED_BACKEND_URL}/updates/pos`,
-  beta: `${HOSTED_BACKEND_URL}/updates/pos-beta`,
+  stable: `${PROD_BACKEND_URL}/updates/pos`,
+  beta: `${PROD_BACKEND_URL}/updates/pos-beta`,
 };
 
 let activeUpdateChannel: UpdateChannel = 'stable';
@@ -2480,8 +2492,34 @@ ipcMain.handle('createRestaurantOrder', async (event, data) => {
     }), endpoint);
     return { success: true, order: response.data };
   } catch (error: any) {
-    logger.error('Failed to create order', { error: error.message });
-    return { success: false, error: error.message };
+    const status = error.response?.status;
+    const backendMessage = error.response?.data?.message;
+    const backendDetail = Array.isArray(backendMessage)
+      ? backendMessage.join(', ')
+      : typeof backendMessage === 'string'
+        ? backendMessage
+        : undefined;
+
+    logger.error('Failed to create order', {
+      component: 'restaurant',
+      status,
+      error: error.response?.data || error.message,
+      branchId: user?.branchId,
+    });
+
+    const parsedError = enhanceErrorMessage(parseAxiosError(error));
+    const waiterSessionHint =
+      status === 400 && typeof backendDetail === 'string' && backendDetail.toLowerCase().includes('invalid waiter')
+        ? 'Selected waiter is invalid for this tenant/branch. Please check in the waiter again and retry.'
+        : '';
+
+    const errorMessage =
+      waiterSessionHint ||
+      getUserFriendlyMessage(parsedError) ||
+      backendDetail ||
+      'Failed to create order';
+
+    return { success: false, error: errorMessage };
   }
 });
 
