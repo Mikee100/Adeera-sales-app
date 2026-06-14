@@ -1448,6 +1448,13 @@ const PremiumRestaurantPOS: React.FC = () => {
     return 'bg-slate-100 text-slate-700';
   };
 
+  const openOrderInOrdersView = (order: RestaurantOrder) => {
+    setUseHistoryView(true);
+    setOrderStatusFilter(order.status);
+    setOrderSearch(order.id.slice(0, 8));
+    setActiveScreen('orders');
+  };
+
   const handleChangeUpdateChannel = async (channel: UpdateChannel) => {
     setSelectedUpdateChannel(channel);
     try {
@@ -2439,8 +2446,26 @@ const PremiumRestaurantPOS: React.FC = () => {
                         ? 'bg-amber-100 text-amber-700'
                         : 'bg-emerald-100 text-emerald-700';
 
+                    const isClosedLane = lane === 'Closed';
+
                     return (
-                      <div key={order.id} className={`rounded-lg border p-3 ${urgencyTone}`}>
+                      <div
+                        key={order.id}
+                        className={`rounded-lg border p-3 ${urgencyTone} ${isClosedLane ? 'cursor-pointer hover:border-slate-300' : ''}`}
+                        onClick={isClosedLane ? () => openOrderInOrdersView(order) : undefined}
+                        role={isClosedLane ? 'button' : undefined}
+                        tabIndex={isClosedLane ? 0 : undefined}
+                        onKeyDown={
+                          isClosedLane
+                            ? (event) => {
+                                if (event.key === 'Enter' || event.key === ' ') {
+                                  event.preventDefault();
+                                  openOrderInOrdersView(order);
+                                }
+                              }
+                            : undefined
+                        }
+                      >
                         <div className="mb-2 flex items-start justify-between gap-2">
                           <div>
                             <p className="text-sm font-semibold">#{order.id.slice(0, 8)}</p>
@@ -2491,6 +2516,18 @@ const PremiumRestaurantPOS: React.FC = () => {
                           {lane === 'Served' && (
                             <Button size="sm" variant="secondary" onClick={() => updateKitchenOrderStatus(order.id, 'Closed')}>
                               Close Ticket
+                            </Button>
+                          )}
+                          {lane === 'Closed' && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                openOrderInOrdersView(order);
+                              }}
+                            >
+                              View Ticket
                             </Button>
                           )}
                         </div>

@@ -117,8 +117,15 @@ function normalizeHostedBackendUrl(url: string): string {
   try {
     const parsed = new URL(parseCandidate);
     const hostname = parsed.hostname.toLowerCase();
+    const hosted = new URL(HOSTED_BACKEND_URL);
+
+    // In production, always force requests to the exact hosted backend root.
+    // This prevents stale local overrides like http scheme, custom ports, or extra path segments.
+    if (!IS_DEVELOPMENT && hostname === hosted.hostname.toLowerCase()) {
+      return hosted.toString().replace(/\/$/, '');
+    }
+
     if (!IS_DEVELOPMENT && (hostname === 'localhost' || hostname === '127.0.0.1')) {
-      const hosted = new URL(HOSTED_BACKEND_URL);
       parsed.protocol = hosted.protocol;
       parsed.host = hosted.host;
       return parsed.toString().replace(/\/$/, '');
@@ -128,6 +135,24 @@ function normalizeHostedBackendUrl(url: string): string {
   }
 
   return trimmed;
+}
+
+function isAllowedProductionBackendUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url.includes('://') ? url : `https://${url}`);
+    const hostname = parsed.hostname.toLowerCase();
+    const hostedHostname = new URL(HOSTED_BACKEND_URL).hostname.toLowerCase();
+
+    // In production, allow the hosted backend (default) and localhost entries
+    // that are immediately remapped by normalizeHostedBackendUrl.
+    return (
+      hostname === hostedHostname ||
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1'
+    );
+  } catch {
+    return false;
+  }
 }
 
 // Backend configuration: prefer a value set in local config (ElectronStore) when present,
@@ -149,23 +174,29 @@ const BACKEND_BASE_URL = (() => {
     return normalizedDev;
   }
 
-  const fromStore = globalStore.get('backendBaseUrl') as string | undefined;
-  if (typeof fromStore === 'string' && fromStore.trim().length > 0) {
-    const normalized = normalizeHostedBackendUrl(fromStore);
-    if (normalized !== fromStore.trim()) {
-      globalStore.set('backendBaseUrl', normalized);
-      console.log(`Backend URL in local store was localhost and was remapped to: ${normalized}`);
-    } else {
-      console.log(`Backend URL configured from local store: ${normalized}`);
-    }
-    return normalized;
-  }
-
   if (typeof process.env.BACKEND_BASE_URL === 'string' && process.env.BACKEND_BASE_URL.trim().length > 0) {
     const normalized = normalizeHostedBackendUrl(process.env.BACKEND_BASE_URL);
     globalStore.set('backendBaseUrl', normalized);
     console.log(`Backend URL configured from BACKEND_BASE_URL env: ${normalized}`);
     return normalized;
+  }
+
+  const fromStore = globalStore.get('backendBaseUrl') as string | undefined;
+  if (typeof fromStore === 'string' && fromStore.trim().length > 0) {
+    if (!isAllowedProductionBackendUrl(fromStore)) {
+      console.warn(
+        `Ignoring unsupported production backendBaseUrl from local store: ${fromStore}`,
+      );
+    } else {
+      const normalized = normalizeHostedBackendUrl(fromStore);
+      if (normalized !== fromStore.trim()) {
+        globalStore.set('backendBaseUrl', normalized);
+        console.log(`Backend URL in local store was localhost and was remapped to: ${normalized}`);
+      } else {
+        console.log(`Backend URL configured from local store: ${normalized}`);
+      }
+      return normalized;
+    }
   }
 
   const normalizedFallback = normalizeHostedBackendUrl(API_BASE_URL);
