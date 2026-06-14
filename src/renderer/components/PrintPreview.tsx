@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../receipt.css';
 import './PrintPreview.css';
+import { API_BASE_URL } from '../../shared/config';
 
 interface PrintPreviewProps {
   receipt: any;
@@ -29,7 +30,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
       } catch (error) {
         console.error('Failed to get API base URL:', error);
         // Fallback to default
-        setApiBaseUrl('https://saas-business.duckdns.org');
+        setApiBaseUrl(API_BASE_URL);
       }
     };
     fetchApiUrl();

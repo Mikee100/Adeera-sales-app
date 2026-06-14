@@ -4,7 +4,7 @@ import './SleepScreen.css';
 // Background image path - served by webpack dev server from /images
 // In development, use full URL; in production, use relative path
 const backgroundImage = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:3001/images/pexels-karola-g-4968635.jpg'
+  ? 'http://127.0.0.1:7000/images/pexels-karola-g-4968635.jpg'
   : '/images/pexels-karola-g-4968635.jpg';
 
 interface SleepScreenProps {

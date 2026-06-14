@@ -1,8 +1,14 @@
 // Configuration constants for the POS application.
-// Default to hosted backend so sales can be posted directly in production.
-export const API_BASE_URL = 'https://saas-business.duckdns.org';
+// Use IPv4 localhost during development/testing and hosted endpoints in production.
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const PROD_API_BASE_URL = 'https://saas-business.duckdns.org';
+const DEV_API_BASE_URL = 'http://127.0.0.1:7000';
+const PROD_WS_BASE_URL = 'wss://saas-business.duckdns.org';
+const DEV_WS_BASE_URL = 'ws://127.0.0.1:7000';
 
-export const WS_BASE_URL = 'wss://saas-business.duckdns.org';
+export const API_BASE_URL = IS_PRODUCTION ? PROD_API_BASE_URL : DEV_API_BASE_URL;
+
+export const WS_BASE_URL = IS_PRODUCTION ? PROD_WS_BASE_URL : DEV_WS_BASE_URL;
 
 export const APP_CONFIG = {
   name: 'SaaS POS',

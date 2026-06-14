@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../receipt.css';
 import { showToast } from './Toast';
+import { API_BASE_URL } from '../../shared/config';
 
 interface ReceiptProps {
   receipt: any;
@@ -33,7 +34,7 @@ const Receipt: React.FC<ReceiptProps> = ({
       } catch (error) {
         console.error('Failed to get API base URL:', error);
         // Fallback to default
-        setApiBaseUrl('https://saas-business.duckdns.org');
+        setApiBaseUrl(API_BASE_URL);
       }
     };
     fetchApiUrl();
