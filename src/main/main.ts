@@ -105,7 +105,7 @@ const globalStore = new ElectronStore();
 
 const HOSTED_BACKEND_URL = 'https://saas-business.duckdns.org';
 const LOCAL_DEV_BACKEND_URL = 'http://127.0.0.1:7000';
-const IS_DEVELOPMENT = !app.isPackaged || process.env.NODE_ENV === 'development';
+const IS_DEVELOPMENT = !app.isPackaged;
 
 function normalizeHostedBackendUrl(url: string): string {
   const trimmed = url.trim().replace(/\/$/, '');
