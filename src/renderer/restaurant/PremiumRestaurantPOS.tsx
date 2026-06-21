@@ -259,6 +259,10 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [waiterCandidateId, setWaiterCandidateId] = useState('');
   const [waiterPinInput, setWaiterPinInput] = useState('');
   const [waiterCheckinError, setWaiterCheckinError] = useState('');
+  const [managerSignoutOpen, setManagerSignoutOpen] = useState(false);
+  const [managerCandidateId, setManagerCandidateId] = useState('');
+  const [managerPinInput, setManagerPinInput] = useState('');
+  const [managerSignoutError, setManagerSignoutError] = useState('');
   const [updateSettings, setUpdateSettings] = useState<UpdateSettings | null>(null);
   const [selectedUpdateChannel, setSelectedUpdateChannel] = useState<UpdateChannel>('stable');
   const [updateStatus, setUpdateStatus] = useState<UpdateEventStatus | null>(null);
@@ -314,26 +318,120 @@ const PremiumRestaurantPOS: React.FC = () => {
   const normalizedRoles: string[] = Array.isArray(user?.roles)
     ? user.roles.map((role: string) => String(role).toLowerCase())
     : [];
-  const canViewRestaurantActivity =
-    Boolean(user?.isSuperadmin) ||
+  const rawIsSuperadmin = (user as { isSuperadmin?: unknown } | null | undefined)?.isSuperadmin;
+  const isSuperadmin =
+    rawIsSuperadmin === true ||
+    rawIsSuperadmin === 1 ||
+    rawIsSuperadmin === '1' ||
+    (typeof rawIsSuperadmin === 'string' && rawIsSuperadmin.trim().toLowerCase() === 'true');
+  const isOwnerLike =
+    isSuperadmin ||
     normalizedRoles.includes('owner') ||
     normalizedRoles.includes('admin') ||
     normalizedRoles.includes('manager');
+
+  const grantedPermissions = useMemo(() => {
+    const rawPermissions = [
+      ...(Array.isArray(user?.permissions) ? user.permissions : []),
+      ...(Array.isArray((user as any)?.effectivePermissions)
+        ? (user as any).effectivePermissions
+        : []),
+    ];
+
+    return new Set(
+      rawPermissions
+        .map((permission: unknown) => String(permission || '').trim().toLowerCase())
+        .filter(Boolean),
+    );
+  }, [user]);
+
+  const hasRestaurantPermission = useCallback(
+    (permission: string) => isSuperadmin || grantedPermissions.has(permission),
+    [grantedPermissions, isSuperadmin],
+  );
+  const hasPermissionKey = useCallback(
+    (permission: string) => isSuperadmin || grantedPermissions.has(permission),
+    [grantedPermissions, isSuperadmin],
+  );
+  const isKitchenOnly =
+    !isOwnerLike &&
+    (normalizedRoles.includes('kitchen') || normalizedRoles.includes('chef'));
+  const isWaiterLike =
+    isOwnerLike ||
+    normalizedRoles.includes('waiter') ||
+    normalizedRoles.includes('cashier');
+  const needsWaiterSession =
+    !isOwnerLike &&
+    (normalizedRoles.includes('waiter') || normalizedRoles.includes('cashier'));
+
+  const canAccessPos =
+    isWaiterLike &&
+    (hasRestaurantPermission('restaurant_view') ||
+      hasRestaurantPermission('restaurant_orders_manage') ||
+      hasRestaurantPermission('restaurant_checkout'));
+  const canAccessOrders =
+    isWaiterLike &&
+    (hasRestaurantPermission('restaurant_orders_manage') ||
+      hasRestaurantPermission('restaurant_checkout'));
+  const canAccessKitchen =
+    (isOwnerLike || isKitchenOnly) && hasRestaurantPermission('restaurant_kitchen_manage');
+  const canAccessTables = hasRestaurantPermission('restaurant_tables_manage');
+  const canAccessReservations = hasRestaurantPermission('restaurant_tables_manage');
+  const canAccessInventory = hasRestaurantPermission('restaurant_bom_manage');
+  const canAccessEmployees = hasPermissionKey('view_users') || hasPermissionKey('edit_users');
+  const canAccessSettings = hasPermissionKey('view_settings') || hasPermissionKey('edit_settings');
+  const canSendOrdersToKitchen = isWaiterLike && hasRestaurantPermission('restaurant_orders_manage');
+  const canCheckoutOrders = isWaiterLike && hasRestaurantPermission('restaurant_checkout');
+  const canMarkOrdersServed =
+    (isOwnerLike || isKitchenOnly) && hasRestaurantPermission('restaurant_kitchen_manage');
+  const canVoidOrders = isOwnerLike;
+  const canCloseKitchenTickets = isOwnerLike;
+  const canViewRestaurantActivity = hasRestaurantPermission('restaurant_activity_view');
+
+  const allowedScreens = useMemo<RestaurantScreen[]>(() => {
+    const screens: RestaurantScreen[] = [];
+
+    if (canAccessPos) screens.push('pos');
+    if (canAccessOrders) screens.push('orders');
+    if (canAccessKitchen) screens.push('kitchen');
+    if (canAccessTables) screens.push('tables');
+    if (canAccessReservations) screens.push('reservations');
+    if (canAccessInventory) screens.push('inventory');
+
+    if (canAccessEmployees) screens.push('employees');
+    if (canAccessSettings) screens.push('settings');
+
+    if (canViewRestaurantActivity) {
+      screens.push('activity');
+    }
+
+    const unique = Array.from(new Set(screens));
+    return unique.length > 0 ? unique : ['settings'];
+  }, [
+    canAccessInventory,
+    canAccessKitchen,
+    canAccessSettings,
+    canAccessEmployees,
+    canAccessOrders,
+    canAccessPos,
+    canAccessReservations,
+    canAccessTables,
+    canViewRestaurantActivity,
+  ]);
 
   const visibleSidebarItems = useMemo(
     () =>
       SIDEBAR_ITEMS.filter(
         (item) =>
+          allowedScreens.includes(item.id) &&
           !HIDDEN_SIDEBAR_SCREENS.includes(item.id) &&
           (item.id !== 'activity' || canViewRestaurantActivity),
       ),
-    [canViewRestaurantActivity],
+    [allowedScreens, canViewRestaurantActivity],
   );
 
   const canManageTables =
-    Boolean(user?.isSuperadmin) ||
-    normalizedRoles.includes('owner') ||
-    normalizedRoles.includes('admin');
+    isSuperadmin || normalizedRoles.includes('owner') || normalizedRoles.includes('admin');
   const canManageStaff = canManageTables;
 
   useEffect(() => {
@@ -346,6 +444,11 @@ const PremiumRestaurantPOS: React.FC = () => {
       setActiveScreen('pos');
     }
   }, [activeScreen, setActiveScreen]);
+
+  useEffect(() => {
+    if (allowedScreens.includes(activeScreen)) return;
+    setActiveScreen(allowedScreens[0] || 'settings');
+  }, [activeScreen, allowedScreens, setActiveScreen]);
 
   useEffect(() => {
     const loadUpdateSettings = async () => {
@@ -480,7 +583,11 @@ const PremiumRestaurantPOS: React.FC = () => {
       const res = await window.electronAPI.getUsers();
       return res.success ? (res.users || []) : [];
     },
-    enabled: activeScreen === 'orders' || activeScreen === 'employees' || waiterCheckinOpen,
+    enabled:
+      activeScreen === 'orders' ||
+      activeScreen === 'employees' ||
+      waiterCheckinOpen ||
+      managerSignoutOpen,
     refetchInterval: 10000,
   });
 
@@ -537,6 +644,13 @@ const PremiumRestaurantPOS: React.FC = () => {
     return filtered.length > 0 ? filtered : staffUsers;
   }, [staffUsers]);
 
+  const managerApprovers = useMemo(() => {
+    return staffUsers.filter((member) => {
+      const role = staffRoleName(member);
+      return ['owner', 'admin', 'manager'].includes(role);
+    });
+  }, [staffUsers]);
+
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(ACTIVE_WAITER_STORAGE_KEY);
@@ -570,6 +684,7 @@ const PremiumRestaurantPOS: React.FC = () => {
   };
 
   const requireWaiterSession = (actionLabel: string) => {
+    if (!needsWaiterSession) return true;
     if (activeWaiter?.id) return true;
     setWaiterCheckinError(`Check in a waiter before ${actionLabel}.`);
     setWaiterCheckinOpen(true);
@@ -656,10 +771,10 @@ const PremiumRestaurantPOS: React.FC = () => {
 
   useEffect(() => {
     if (activeWaiter) return;
-    if (activeScreen === 'pos' || activeScreen === 'orders' || activeScreen === 'kitchen') {
+    if (needsWaiterSession && (activeScreen === 'pos' || activeScreen === 'orders')) {
       setWaiterCheckinOpen(true);
     }
-  }, [activeScreen, activeWaiter]);
+  }, [activeScreen, activeWaiter, needsWaiterSession]);
 
   const productNameById = useMemo(() => {
     const map = new Map<string, string>();
@@ -886,8 +1001,7 @@ const PremiumRestaurantPOS: React.FC = () => {
   );
 
   const subtotalAfterDiscount = Math.max(0, draftTotal - discountAmount);
-  const tax = subtotalAfterDiscount * 0.16;
-  const grandTotal = subtotalAfterDiscount + tax;
+  const grandTotal = subtotalAfterDiscount;
   const canSendOrder = Boolean(selectedTableId) && draftItems.length > 0;
 
   const metrics = useMemo(() => {
@@ -1343,11 +1457,45 @@ const PremiumRestaurantPOS: React.FC = () => {
       .sort((a, b) => a.number.localeCompare(b.number, undefined, { numeric: true }));
   }, [tables, activeOrdersByTable, activeReservationsByTable, tableSearch, tableStatusFilter]);
 
-  const handleLogout = async () => {
-    const hasDraft = draftItems.length > 0;
-    if (hasDraft && !window.confirm('Logout now? Current draft order will be lost.')) {
+  const handleLogout = () => {
+    setManagerSignoutError('');
+    setManagerPinInput('');
+    setManagerCandidateId('');
+    setManagerSignoutOpen(true);
+  };
+
+  const confirmManagerSignOut = async () => {
+    const managerId = managerCandidateId.trim();
+    const pin = managerPinInput.trim();
+
+    if (!managerId || !pin) {
+      setManagerSignoutError('Select manager/admin and enter PIN.');
       return;
     }
+
+    const selectedManager = managerApprovers.find((member) => member.id === managerId);
+    if (!selectedManager) {
+      setManagerSignoutError('Selected user is not authorized for terminal sign-out.');
+      return;
+    }
+
+    if (typeof window.electronAPI.verifyUserPosPin !== 'function') {
+      setManagerSignoutError('POS update not fully loaded. Restart the POS app and try again.');
+      return;
+    }
+
+    const pinResult = await window.electronAPI.verifyUserPosPin(managerId, pin);
+    if (!pinResult?.success) {
+      setManagerSignoutError(pinResult?.reason || pinResult?.error || 'Invalid manager/admin PIN.');
+      return;
+    }
+
+    const hasDraft = draftItems.length > 0;
+    if (hasDraft && !window.confirm('Sign out terminal now? Current draft order will be lost.')) {
+      return;
+    }
+
+    setManagerSignoutOpen(false);
     await logout();
   };
 
@@ -1701,10 +1849,6 @@ const PremiumRestaurantPOS: React.FC = () => {
                     <p className="text-[10px] uppercase tracking-wide text-slate-500">Discount</p>
                     <p className="font-semibold text-slate-800">-{currency(discountAmount)}</p>
                   </div>
-                  <div className="rounded border border-slate-200 bg-white px-2 py-1">
-                    <p className="text-[10px] uppercase tracking-wide text-slate-500">Tax 16%</p>
-                    <p className="font-semibold text-slate-800">{currency(tax)}</p>
-                  </div>
                   <div className="rounded border border-indigo-200 bg-indigo-50 px-2 py-1">
                     <p className="text-[10px] uppercase tracking-wide text-indigo-600">Total</p>
                     <p className="font-semibold text-indigo-700">{currency(grandTotal)}</p>
@@ -1790,6 +1934,10 @@ const PremiumRestaurantPOS: React.FC = () => {
       };
 
       const voidOrderWithReason = async (order: RestaurantOrder) => {
+        if (!canVoidOrders) {
+          window.alert('Only owner/admin/manager can void orders.');
+          return;
+        }
         const reason = window.prompt(`Void reason for order #${order.id.slice(0, 8)} (required):`, '');
         if (reason === null) return;
 
@@ -1806,6 +1954,13 @@ const PremiumRestaurantPOS: React.FC = () => {
       };
 
       const quickCheckoutOrder = async (order: RestaurantOrder) => {
+        if (!canCheckoutOrders) {
+          window.alert('You are not allowed to checkout orders.');
+          return;
+        }
+
+        if (!requireWaiterSession('checking out orders')) return;
+
         if (order.status !== 'Served') {
           window.alert('Only served orders can be checked out.');
           return;
@@ -1981,22 +2136,22 @@ const PremiumRestaurantPOS: React.FC = () => {
                             Open
                           </Button>
                         )}
-                        {order.status === 'Open' && (
+                        {order.status === 'Open' && canSendOrdersToKitchen && (
                           <Button size="sm" variant="warning" onClick={() => updateKitchenOrderStatus(order.id, 'SentToKitchen')}>
                             Cook
                           </Button>
                         )}
-                        {order.status === 'SentToKitchen' && (
+                        {order.status === 'SentToKitchen' && canMarkOrdersServed && (
                           <Button size="sm" variant="success" onClick={() => updateKitchenOrderStatus(order.id, 'Served')}>
                             Serve
                           </Button>
                         )}
-                        {order.status === 'Served' && (
+                        {order.status === 'Served' && canCheckoutOrders && (
                           <Button size="sm" variant="success" onClick={() => quickCheckoutOrder(order)}>
                             Checkout
                           </Button>
                         )}
-                        {(order.status === 'Open' || order.status === 'SentToKitchen' || order.status === 'Served') && (
+                        {canVoidOrders && (order.status === 'Open' || order.status === 'SentToKitchen' || order.status === 'Served') && (
                           <Button size="sm" variant="danger" onClick={() => voidOrderWithReason(order)}>
                             Void
                           </Button>
@@ -2403,7 +2558,9 @@ const PremiumRestaurantPOS: React.FC = () => {
     }
 
     if (activeScreen === 'kitchen') {
-      const lanes: OrderStatus[] = ['Open', 'SentToKitchen', 'Served', 'Closed'];
+      const lanes: OrderStatus[] = isKitchenOnly
+        ? ['SentToKitchen']
+        : ['Open', 'SentToKitchen', 'Served', 'Closed'];
       return (
         <motion.div key="kitchen" variants={screenVariants} initial="initial" animate="animate" exit="exit">
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-4">
@@ -2503,17 +2660,17 @@ const PremiumRestaurantPOS: React.FC = () => {
                         </div>
 
                         <div className="mt-2 flex gap-2">
-                          {lane === 'Open' && (
+                          {lane === 'Open' && canSendOrdersToKitchen && (
                             <Button size="sm" variant="warning" onClick={() => updateKitchenOrderStatus(order.id, 'SentToKitchen')}>
                               Start Cooking
                             </Button>
                           )}
-                          {lane === 'SentToKitchen' && (
+                          {lane === 'SentToKitchen' && canMarkOrdersServed && (
                             <Button size="sm" variant="success" onClick={() => updateKitchenOrderStatus(order.id, 'Served')}>
                               Mark Served
                             </Button>
                           )}
-                          {lane === 'Served' && (
+                          {lane === 'Served' && canCloseKitchenTickets && (
                             <Button size="sm" variant="secondary" onClick={() => updateKitchenOrderStatus(order.id, 'Closed')}>
                               Close Ticket
                             </Button>
@@ -2982,7 +3139,7 @@ const PremiumRestaurantPOS: React.FC = () => {
               </Button>
               <Button variant="secondary" className="h-8 gap-1.5 px-2 text-xs" onClick={handleLogout}>
                 <LogOut size={14} />
-                Logout
+                Manager Sign-out
               </Button>
               <Button variant="danger" className="h-8 gap-1.5 px-2 text-xs" onClick={handleExit}>
                 <Power size={14} />
@@ -3050,6 +3207,72 @@ const PremiumRestaurantPOS: React.FC = () => {
                   Close
                 </Button>
                 <Button onClick={verifyAndActivateWaiter}>Check In</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {managerSignoutOpen && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/45 px-3">
+          <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-4 shadow-xl">
+            <h3 className="text-base font-semibold text-slate-900">Manager Terminal Sign-out</h3>
+            <p className="mt-1 text-xs text-slate-500">
+              Only owner/admin/manager can sign out this kiosk terminal.
+            </p>
+
+            <div className="mt-3 space-y-2">
+              <select
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={managerCandidateId}
+                onChange={(e) => setManagerCandidateId(e.target.value)}
+              >
+                <option value="">Select manager/admin</option>
+                {managerApprovers.map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.name || member.email || member.id.slice(0, 8)}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={8}
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={managerPinInput}
+                onChange={(e) => setManagerPinInput(e.target.value.replace(/\D/g, ''))}
+                placeholder="Enter manager/admin PIN"
+                autoFocus
+              />
+
+              <p className="text-[11px] text-slate-500">Digits entered: {managerPinInput.length}</p>
+
+              {managerSignoutError && (
+                <p className="rounded border border-red-200 bg-red-50 px-2 py-1 text-xs text-red-700">
+                  {managerSignoutError}
+                </p>
+              )}
+
+              {managerApprovers.length === 0 && (
+                <p className="rounded border border-amber-200 bg-amber-50 px-2 py-1 text-xs text-amber-700">
+                  No manager/admin users found with POS access in this branch.
+                </p>
+              )}
+
+              <div className="flex justify-end gap-2 pt-1">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setManagerSignoutOpen(false);
+                    setManagerSignoutError('');
+                    setManagerPinInput('');
+                    setManagerCandidateId('');
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={confirmManagerSignOut}>Sign Out Terminal</Button>
               </div>
             </div>
           </div>

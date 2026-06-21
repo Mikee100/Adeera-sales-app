@@ -14,6 +14,8 @@ import { useIdleTimer } from './hooks/useIdleTimer';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './error-boundary.css';
 
+const POS_KIOSK_MODE = true;
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -32,7 +34,7 @@ const AppContent: React.FC = () => {
   const shownAvailableVersionRef = useRef<string | null>(null);
   const downloadedNotifiedRef = useRef(false);
   const lastUpdateErrorRef = useRef<string | null>(null);
-  const [restaurantEnabled, setRestaurantEnabled] = useState(false);
+  const [restaurantEnabled, setRestaurantEnabled] = useState(true);
 
   // Debug: Log sleep mode state changes
   useEffect(() => {
@@ -80,7 +82,7 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     const loadRestaurantConfig = async () => {
       if (!isAuthenticated) {
-        setRestaurantEnabled(false);
+        setRestaurantEnabled(true);
         return;
       }
 
@@ -88,7 +90,7 @@ const AppContent: React.FC = () => {
         const config = await window.electronAPI.getRestaurantConfig();
         setRestaurantEnabled(!!(config.success && config.enabled));
       } catch {
-        setRestaurantEnabled(false);
+        setRestaurantEnabled(true);
       }
     };
 
@@ -187,7 +189,22 @@ const AppContent: React.FC = () => {
   return (
     <ErrorBoundary>
       <div className="app">
-        {isAuthenticated ? (restaurantEnabled ? <RestaurantRenderer /> : <POS />) : <Login />}
+        {POS_KIOSK_MODE ? (
+          isAuthenticated ? (
+            restaurantEnabled ? <RestaurantRenderer /> : <POS />
+          ) : (
+            <div>
+              <div className="mx-auto mt-4 mb-2 max-w-4xl rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+                Kiosk mode enabled. Manager/Admin sign-in is only required for initial device provisioning. Staff will use PIN check-in inside POS.
+              </div>
+              <Login />
+            </div>
+          )
+        ) : isAuthenticated ? (
+          restaurantEnabled ? <RestaurantRenderer /> : <POS />
+        ) : (
+          <Login />
+        )}
         <ToastContainer toasts={toasts} onRemove={removeToast} />
       </div>
     </ErrorBoundary>

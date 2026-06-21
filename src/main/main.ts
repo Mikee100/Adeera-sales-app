@@ -60,6 +60,59 @@ interface AuthResponse {
   error?: string;
 }
 
+interface ProvisionedDeviceBinding {
+  tenantId: string;
+  branchId?: string;
+  tenantName?: string | null;
+  branchName?: string | null;
+  provisionedAt?: string;
+}
+
+function getProvisionedDeviceBinding(store: ElectronStore): ProvisionedDeviceBinding | null {
+  const tenantId = store.get('deviceBinding.tenantId') as string | undefined;
+  if (!tenantId) return null;
+
+  const branchId = store.get('deviceBinding.branchId') as string | undefined;
+  const tenantName = store.get('deviceBinding.tenantName') as string | undefined;
+  const branchName = store.get('deviceBinding.branchName') as string | undefined;
+  const provisionedAt = store.get('deviceBinding.provisionedAt') as string | undefined;
+
+  return {
+    tenantId,
+    ...(branchId ? { branchId } : {}),
+    ...(tenantName ? { tenantName } : {}),
+    ...(branchName ? { branchName } : {}),
+    ...(provisionedAt ? { provisionedAt } : {}),
+  };
+}
+
+function bindDeviceToTenant(store: ElectronStore, user: Partial<User> & Record<string, any>): void {
+  if (!user?.tenantId) return;
+
+  store.set('deviceBinding.tenantId', user.tenantId);
+  if (user.branchId) {
+    store.set('deviceBinding.branchId', user.branchId);
+  }
+  if (typeof user.tenantName === 'string') {
+    store.set('deviceBinding.tenantName', user.tenantName);
+  }
+  if (typeof user.branchName === 'string') {
+    store.set('deviceBinding.branchName', user.branchName);
+  }
+  store.set('deviceBinding.provisionedAt', new Date().toISOString());
+}
+
+function isDeviceBindingCompatible(binding: ProvisionedDeviceBinding, user: Partial<User>): boolean {
+  if (!user?.tenantId) return false;
+  if (binding.tenantId !== user.tenantId) return false;
+
+  if (binding.branchId && user.branchId && binding.branchId !== user.branchId) {
+    return false;
+  }
+
+  return true;
+}
+
 function isCashierOrStaffUser(user: Partial<User> | undefined): boolean {
   if (!user) return false;
   const roleNames = Array.isArray(user.roles)
@@ -842,6 +895,7 @@ ipcMain.handle('checkForAppUpdates', async () => {
 
 ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Credentials) => {
   const store = new ElectronStore();
+  const existingDeviceBinding = getProvisionedDeviceBinding(store);
 
   logger.info('Authentication attempt', { component: 'auth', email: credentials.email });
 
@@ -878,6 +932,32 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
       logger.debug('Backend response received', { component: 'auth', status: response.status });
 
       if (response.data.access_token && response.data.user) {
+        const incomingUser = response.data.user as User;
+        if (existingDeviceBinding && !isDeviceBindingCompatible(existingDeviceBinding, incomingUser)) {
+          logger.warn('Blocked provisioning login due to tenant/branch binding mismatch', {
+            component: 'auth',
+            boundTenantId: existingDeviceBinding.tenantId,
+            boundBranchId: existingDeviceBinding.branchId,
+            loginTenantId: incomingUser.tenantId,
+            loginBranchId: incomingUser.branchId,
+          });
+          const boundTenantLabel = existingDeviceBinding.tenantName || existingDeviceBinding.tenantId;
+          const boundBranchLabel = existingDeviceBinding.branchName || existingDeviceBinding.branchId || 'assigned branch';
+          return {
+            success: false,
+            error: `This POS terminal is locked to tenant ${boundTenantLabel} (${boundBranchLabel}). Ask an administrator to reset device enrollment before signing in to another tenant or branch.`,
+          };
+        }
+
+        if (!existingDeviceBinding) {
+          bindDeviceToTenant(store, incomingUser);
+          logger.info('Device binding established from provisioning login', {
+            component: 'auth',
+            tenantId: incomingUser.tenantId,
+            branchId: incomingUser.branchId,
+          });
+        }
+
         logger.info('Login successful, caching data', { component: 'auth' });
         
         // SECURE: Store token using encrypted storage
@@ -940,6 +1020,17 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
     const cachedToken = store.get('authToken') as string | undefined;
 
     if (cachedUser && cachedToken) {
+      if (existingDeviceBinding && !isDeviceBindingCompatible(existingDeviceBinding, cachedUser)) {
+        logger.warn('Blocked offline login due to tenant/branch binding mismatch', {
+          component: 'auth',
+          boundTenantId: existingDeviceBinding.tenantId,
+          boundBranchId: existingDeviceBinding.branchId,
+          cachedTenantId: cachedUser.tenantId,
+          cachedBranchId: cachedUser.branchId,
+        });
+        return { success: false, error: 'Offline login blocked: terminal enrollment does not match cached tenant/branch.' };
+      }
+
       // Optionally, verify credentials match cached user email
       if (credentials.email === cachedUser.email) {
         logger.info('Offline login successful', { component: 'auth' });
@@ -2559,13 +2650,17 @@ ipcMain.handle('addRestaurantOrderItems', async (event, { id, items }) => {
 ipcMain.handle('updateRestaurantOrderStatus', async (event, { id, status, voidReason }) => {
   const store = new ElectronStore();
   const token = getAuthToken(store);
+  const user = store.get('user') as User | undefined;
   if (!token) return { success: false };
 
   try {
     const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${id}/status`);
     await apiRateLimiter.waitIfNeeded(endpoint);
     const response = await rateLimitedAxios(() => axios.put(`${BACKEND_BASE_URL}/restaurant/orders/${id}/status`, { status, voidReason }, {
-      headers: { 'Authorization': `Bearer ${token}` },
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        ...(user?.branchId && { 'x-branch-id': user.branchId }),
+      },
       timeout: 10000,
     }), endpoint);
     return { success: true, order: response.data };
@@ -2577,6 +2672,7 @@ ipcMain.handle('updateRestaurantOrderStatus', async (event, { id, status, voidRe
 ipcMain.handle('checkoutRestaurantOrder', async (event, { id, payload }) => {
   const store = new ElectronStore();
   const token = getAuthToken(store);
+  const user = store.get('user') as User | undefined;
   if (!token) return { success: false, error: 'No token' };
 
   try {
@@ -2585,6 +2681,7 @@ ipcMain.handle('checkoutRestaurantOrder', async (event, { id, payload }) => {
     const response = await rateLimitedAxios(() => axios.post(`${BACKEND_BASE_URL}/restaurant/orders/${id}/checkout`, payload, {
       headers: {
         'Authorization': `Bearer ${token}`,
+        ...(user?.branchId && { 'x-branch-id': user.branchId }),
       },
       timeout: 15000,
     }), endpoint);
