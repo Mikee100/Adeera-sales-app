@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   authenticate: (credentials: Credentials) => ipcRenderer.invoke('authenticate', credentials),
   getAuthToken: () => ipcRenderer.invoke('getAuthToken'),
   getUserData: () => ipcRenderer.invoke('getUserData'),
+  getDeviceBinding: () => ipcRenderer.invoke('getDeviceBinding'),
+  resetDeviceBinding: (payload?: { approvedByUserId?: string }) => ipcRenderer.invoke('resetDeviceBinding', payload),
   getBranches: () => ipcRenderer.invoke('getBranches'),
   logout: () => ipcRenderer.invoke('logout'),
   getProducts: (branchId?: string) => ipcRenderer.invoke('getProducts', branchId),

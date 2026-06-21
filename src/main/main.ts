@@ -113,6 +113,28 @@ function isDeviceBindingCompatible(binding: ProvisionedDeviceBinding, user: Part
   return true;
 }
 
+function clearDeviceBinding(store: ElectronStore): void {
+  store.delete('deviceBinding.tenantId');
+  store.delete('deviceBinding.branchId');
+  store.delete('deviceBinding.tenantName');
+  store.delete('deviceBinding.branchName');
+  store.delete('deviceBinding.provisionedAt');
+}
+
+function clearAuthSession(store: ElectronStore): void {
+  const { SecureTokenStorage } = require('./secure-token-storage');
+  SecureTokenStorage.deleteToken();
+
+  store.delete('authToken');
+  store.delete('refreshToken');
+  store.delete('user');
+  store.delete('cachedProducts');
+  store.delete('cachedBranches');
+  store.delete('catalogLastSynced');
+
+  stopPeriodicProductSync();
+}
+
 function isCashierOrStaffUser(user: Partial<User> | undefined): boolean {
   if (!user) return false;
   const roleNames = Array.isArray(user.roles)
@@ -1081,6 +1103,12 @@ ipcMain.handle('getUserData', () => {
   return store.get('user', null);
 });
 
+ipcMain.handle('getDeviceBinding', () => {
+  const store = new ElectronStore();
+  const binding = getProvisionedDeviceBinding(store);
+  return { success: true, binding };
+});
+
 ipcMain.handle('getBranches', async () => {
   const store = new ElectronStore();
   const token = getAuthToken(store);
@@ -1167,24 +1195,67 @@ ipcMain.handle('getBranches', async () => {
 
 ipcMain.handle('logout', () => {
   const store = new ElectronStore();
-  
-  // SECURE: Delete encrypted token
-  const { SecureTokenStorage } = require('./secure-token-storage');
-  SecureTokenStorage.deleteToken();
-  
-  // Also delete plain text token (for migration/compatibility)
-  store.delete('authToken');
-  store.delete('refreshToken');
-  store.delete('user');
-  store.delete('cachedProducts'); // Clear cached products on logout
-  store.delete('cachedBranches'); // Clear cached branches on logout
-  store.delete('catalogLastSynced'); // Clear catalog sync timestamp
-  
-  // Stop periodic product sync on logout
-  stopPeriodicProductSync();
+  clearAuthSession(store);
   
   logger.info('User logged out, cleared all cached data', { component: 'auth' });
   return { success: true };
+});
+
+ipcMain.handle('resetDeviceBinding', async (_event, payload?: { approvedByUserId?: string }) => {
+  const store = new ElectronStore();
+  const existingBinding = getProvisionedDeviceBinding(store);
+  const token = getAuthToken(store);
+  const currentUser = store.get('user') as User | undefined;
+
+  let auditLogged = false;
+  if (token) {
+    try {
+      const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/audit-logs/terminal-enrollment-reset`);
+      apiRateLimiter.recordRequest(endpoint);
+      await rateLimitedAxios(
+        () =>
+          axios.post(
+            `${BACKEND_BASE_URL}/audit-logs/terminal-enrollment-reset`,
+            {
+              approvedByUserId: payload?.approvedByUserId || null,
+              previousTenantId: existingBinding?.tenantId || null,
+              previousBranchId: existingBinding?.branchId || null,
+              previousTenantName: existingBinding?.tenantName || null,
+              previousBranchName: existingBinding?.branchName || null,
+              reason: 'manual_terminal_reenrollment',
+              triggeredAt: new Date().toISOString(),
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                ...(currentUser?.branchId && { 'x-branch-id': currentUser.branchId }),
+              },
+              timeout: 8000,
+            },
+          ),
+        endpoint,
+      );
+      auditLogged = true;
+    } catch (error: any) {
+      logger.warn('Failed to submit terminal enrollment reset audit event', {
+        component: 'auth',
+        errorMessage: error?.message,
+      });
+    }
+  }
+
+  clearAuthSession(store);
+  clearDeviceBinding(store);
+
+  logger.warn('Device enrollment reset executed', {
+    component: 'auth',
+    approvedByUserId: payload?.approvedByUserId || null,
+    previousTenantId: existingBinding?.tenantId || null,
+    previousBranchId: existingBinding?.branchId || null,
+  });
+
+  return { success: true, auditLogged };
 });
 
 ipcMain.handle('getProducts', async (_event, branchId?: string) => {

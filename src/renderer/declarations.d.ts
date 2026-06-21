@@ -8,6 +8,8 @@ interface ElectronAPI {
   authenticate: (credentials: { email: string; password: string }) => Promise<{ success: boolean; token?: string; user?: any; error?: string }>;
   getAuthToken: () => Promise<string | null>;
   getUserData: () => Promise<any | null>;
+  getDeviceBinding: () => Promise<{ success: boolean; binding: { tenantId: string; branchId?: string; tenantName?: string | null; branchName?: string | null; provisionedAt?: string } | null }>;
+  resetDeviceBinding: (payload?: { approvedByUserId?: string }) => Promise<{ success: boolean; error?: string }>;
   getBranches: () => Promise<{ success: boolean; branches?: any[]; error?: string; unauthorized?: boolean }>;
   logout: () => Promise<{ success: boolean }>;
   getProducts: (branchId?: string) => Promise<{ success: boolean; products?: any[]; error?: string }>;

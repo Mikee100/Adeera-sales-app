@@ -56,6 +56,14 @@ interface UpdateEventStatus {
   checkedAt?: string;
 }
 
+interface DeviceBindingInfo {
+  tenantId: string;
+  branchId?: string;
+  tenantName?: string | null;
+  branchName?: string | null;
+  provisionedAt?: string;
+}
+
 interface DiningTable {
   id: string;
   number: string;
@@ -263,6 +271,11 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [managerCandidateId, setManagerCandidateId] = useState('');
   const [managerPinInput, setManagerPinInput] = useState('');
   const [managerSignoutError, setManagerSignoutError] = useState('');
+  const [managerResetOpen, setManagerResetOpen] = useState(false);
+  const [managerResetCandidateId, setManagerResetCandidateId] = useState('');
+  const [managerResetPinInput, setManagerResetPinInput] = useState('');
+  const [managerResetError, setManagerResetError] = useState('');
+  const [deviceBindingInfo, setDeviceBindingInfo] = useState<DeviceBindingInfo | null>(null);
   const [updateSettings, setUpdateSettings] = useState<UpdateSettings | null>(null);
   const [selectedUpdateChannel, setSelectedUpdateChannel] = useState<UpdateChannel>('stable');
   const [updateStatus, setUpdateStatus] = useState<UpdateEventStatus | null>(null);
@@ -510,6 +523,27 @@ const PremiumRestaurantPOS: React.FC = () => {
     };
   }, []);
 
+  const loadDeviceBindingInfo = useCallback(async () => {
+    if (typeof window.electronAPI.getDeviceBinding !== 'function') return;
+    try {
+      const result = await window.electronAPI.getDeviceBinding();
+      if (result?.success) {
+        setDeviceBindingInfo(result.binding || null);
+      }
+    } catch {
+      // Keep current cached display if reading binding fails.
+    }
+  }, []);
+
+  useEffect(() => {
+    loadDeviceBindingInfo();
+  }, [loadDeviceBindingInfo]);
+
+  useEffect(() => {
+    if (activeScreen !== 'settings') return;
+    loadDeviceBindingInfo();
+  }, [activeScreen, loadDeviceBindingInfo]);
+
   useEffect(() => {
     window.localStorage.setItem(RESERVATION_STORAGE_KEY, JSON.stringify(reservations));
   }, [reservations]);
@@ -587,7 +621,8 @@ const PremiumRestaurantPOS: React.FC = () => {
       activeScreen === 'orders' ||
       activeScreen === 'employees' ||
       waiterCheckinOpen ||
-      managerSignoutOpen,
+      managerSignoutOpen ||
+      managerResetOpen,
     refetchInterval: 10000,
   });
 
@@ -1496,6 +1531,60 @@ const PremiumRestaurantPOS: React.FC = () => {
     }
 
     setManagerSignoutOpen(false);
+    await logout();
+  };
+
+  const openManagerResetEnrollment = () => {
+    setManagerResetError('');
+    setManagerResetPinInput('');
+    setManagerResetCandidateId('');
+    setManagerResetOpen(true);
+  };
+
+  const confirmManagerResetEnrollment = async () => {
+    const managerId = managerResetCandidateId.trim();
+    const pin = managerResetPinInput.trim();
+
+    if (!managerId || !pin) {
+      setManagerResetError('Select manager/admin and enter PIN.');
+      return;
+    }
+
+    const selectedManager = managerApprovers.find((member) => member.id === managerId);
+    if (!selectedManager) {
+      setManagerResetError('Selected user is not authorized to reset enrollment.');
+      return;
+    }
+
+    if (typeof window.electronAPI.verifyUserPosPin !== 'function') {
+      setManagerResetError('POS update not fully loaded. Restart the POS app and try again.');
+      return;
+    }
+
+    const pinResult = await window.electronAPI.verifyUserPosPin(managerId, pin);
+    if (!pinResult?.success) {
+      setManagerResetError(pinResult?.reason || pinResult?.error || 'Invalid manager/admin PIN.');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      'Reset terminal enrollment now? This signs out the kiosk and requires fresh manager provisioning login.',
+    );
+    if (!confirmed) return;
+
+    if (typeof window.electronAPI.resetDeviceBinding !== 'function') {
+      setManagerResetError('Reset enrollment API is unavailable in this build.');
+      return;
+    }
+
+    const result = await window.electronAPI.resetDeviceBinding({ approvedByUserId: managerId });
+    if (!result?.success) {
+      setManagerResetError(result?.error || 'Failed to reset terminal enrollment.');
+      return;
+    }
+
+    setManagerResetOpen(false);
+    await loadDeviceBindingInfo();
     await logout();
   };
 
@@ -3026,6 +3115,33 @@ const PremiumRestaurantPOS: React.FC = () => {
               </p>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Terminal Enrollment</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="rounded-lg border border-slate-100 bg-slate-50 p-3 text-xs text-slate-700">
+                <p><span className="font-semibold">Tenant:</span> {deviceBindingInfo?.tenantName || deviceBindingInfo?.tenantId || 'Not bound'}</p>
+                <p><span className="font-semibold">Branch:</span> {deviceBindingInfo?.branchName || deviceBindingInfo?.branchId || 'Not bound'}</p>
+                <p>
+                  <span className="font-semibold">Provisioned At:</span>{' '}
+                  {deviceBindingInfo?.provisionedAt ? new Date(deviceBindingInfo.provisionedAt).toLocaleString() : 'Unknown'}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Button variant="secondary" onClick={loadDeviceBindingInfo}>Refresh Binding</Button>
+                <Button variant="danger" onClick={openManagerResetEnrollment}>
+                  Reset Enrollment (Manager PIN)
+                </Button>
+              </div>
+
+              <p className="text-xs text-slate-500">
+                Use reset only when moving this terminal to another tenant/branch. This action signs out the kiosk and requires fresh provisioning login.
+              </p>
+            </CardContent>
+          </Card>
         </motion.div>
       );
     }
@@ -3273,6 +3389,66 @@ const PremiumRestaurantPOS: React.FC = () => {
                   Cancel
                 </Button>
                 <Button onClick={confirmManagerSignOut}>Sign Out Terminal</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {managerResetOpen && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/45 px-3">
+          <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-4 shadow-xl">
+            <h3 className="text-base font-semibold text-slate-900">Reset Terminal Enrollment</h3>
+            <p className="mt-1 text-xs text-slate-500">
+              Owner/admin/manager approval is required. The kiosk will sign out and require fresh provisioning login.
+            </p>
+
+            <div className="mt-3 space-y-2">
+              <select
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={managerResetCandidateId}
+                onChange={(e) => setManagerResetCandidateId(e.target.value)}
+              >
+                <option value="">Select manager/admin</option>
+                {managerApprovers.map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.name || member.email || member.id.slice(0, 8)}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={8}
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={managerResetPinInput}
+                onChange={(e) => setManagerResetPinInput(e.target.value.replace(/\D/g, ''))}
+                placeholder="Enter manager/admin PIN"
+                autoFocus
+              />
+
+              <p className="text-[11px] text-slate-500">Digits entered: {managerResetPinInput.length}</p>
+
+              {managerResetError && (
+                <p className="rounded border border-red-200 bg-red-50 px-2 py-1 text-xs text-red-700">
+                  {managerResetError}
+                </p>
+              )}
+
+              <div className="flex justify-end gap-2 pt-1">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setManagerResetOpen(false);
+                    setManagerResetError('');
+                    setManagerResetPinInput('');
+                    setManagerResetCandidateId('');
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button variant="danger" onClick={confirmManagerResetEnrollment}>Reset Enrollment</Button>
               </div>
             </div>
           </div>
