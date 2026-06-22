@@ -278,10 +278,9 @@ const Receipt: React.FC<ReceiptProps> = ({
               </div>
             )}
             {/* KRA – show when enabled or when any KRA data is present (defensive for POS) */}
-            {(receipt.businessInfo?.kraEnabled || receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && (receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && (
+            {(receipt.businessInfo?.kraEnabled || receipt.businessInfo?.kraPin) && receipt.businessInfo?.kraPin && (
               <div className="business-kra" style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(0,0,0,0.1)', fontSize: '12px', color: '#374151' }}>
                 {receipt.businessInfo?.kraPin && <div><strong>KRA PIN:</strong> {receipt.businessInfo.kraPin}</div>}
-                {receipt.businessInfo?.vatNumber && <div><strong>VAT No:</strong> {receipt.businessInfo.vatNumber}</div>}
               </div>
             )}
             {(receipt.businessInfo?.kraEnabled || receipt.businessInfo?.etimsQrUrl) && receipt.businessInfo?.etimsQrUrl && (

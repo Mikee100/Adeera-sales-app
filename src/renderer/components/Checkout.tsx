@@ -53,7 +53,7 @@ interface PaymentData {
   creditAmount?: number;
   creditDueDate?: string;
   creditNotes?: string;
-  /** Fixed discount amount applied to subtotal (before VAT). */
+  /** Fixed discount amount applied to subtotal. */
   discountAmount?: number;
   /** Split payments - multiple payment methods */
   splitPayments?: SplitPayment[];

@@ -1,6 +1,6 @@
 {
   "name": "saas-pos",
-  "version": "1.0.10",
+  "version": "1.0.12",
   "description": "Point of Sale application for SaaS Platform",
   "author": "Adeera",
   "main": "dist/main.js",
@@ -17,7 +17,8 @@
     "package:mac": "electron-builder --mac",
     "package:linux": "electron-builder --linux",
     "deploy:updates": "powershell -Command \"New-Item -ItemType Directory -Path ../backend/uploads/pos-updates -Force | Out-Null; Copy-Item release/latest.yml ../backend/uploads/pos-updates/ -Force; Copy-Item release/AdeeraPOS-*-Setup.exe ../backend/uploads/pos-updates/ -Force; Copy-Item release/AdeeraPOS-*-Setup.exe.blockmap ../backend/uploads/pos-updates/ -Force\"",
-    "release:win": "npm run package:win && npm run deploy:updates"
+    "release:win": "npm run package:win && npm run deploy:updates",
+    "generate:api-types": "openapi-typescript http://127.0.0.1:7000/api-json -o src/openapi.generated.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",
@@ -59,6 +60,7 @@
     "electron-builder": "^24.13.3",
     "html-webpack-plugin": "^5.5.3",
     "nodemon": "^3.1.10",
+    "openapi-typescript": "^7.10.1",
     "style-loader": "^3.3.3",
     "tailwindcss": "^3.4.17",
     "ts-loader": "^9.5.1",

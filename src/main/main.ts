@@ -60,6 +60,314 @@ interface AuthResponse {
   error?: string;
 }
 
+type RestaurantOfflineOperationType =
+  | 'create-order'
+  | 'add-items'
+  | 'update-status'
+  | 'checkout-order';
+
+interface RestaurantOfflineOperation {
+  id: string;
+  type: RestaurantOfflineOperationType;
+  orderId?: string;
+  localOrderId?: string;
+  payload: any;
+  timestamp: string;
+  retryCount: number;
+  status: 'pending' | 'syncing' | 'failed';
+  error?: string;
+  finalFailureAt?: string;
+}
+
+type RestaurantOfflineFailureCategory =
+  | 'conflict'
+  | 'validation'
+  | 'authorization'
+  | 'network'
+  | 'server'
+  | 'unknown';
+
+interface RestaurantOfflineFailure {
+  operationId: string;
+  operationType: RestaurantOfflineOperationType;
+  orderId?: string;
+  localOrderId?: string;
+  message: string;
+  category: RestaurantOfflineFailureCategory;
+  statusCode?: number;
+  suggestion: string;
+}
+
+interface ShiftSession {
+  id: string;
+  openedAt: string;
+  openedBy?: string;
+  openingCash: number;
+  status: 'open' | 'closed';
+  closedAt?: string;
+  closingCash?: number;
+  notes?: string;
+  summary?: {
+    salesCount: number;
+    grossSales: number;
+    expectedCash: number;
+    variance: number;
+  };
+  offline: boolean;
+  pendingSync: boolean;
+}
+
+interface OfflineShiftOperation {
+  id: string;
+  type: 'open-shift' | 'close-shift';
+  payload: any;
+  timestamp: string;
+  retryCount: number;
+  status: 'pending' | 'syncing' | 'failed';
+  error?: string;
+}
+
+const RESTAURANT_OFFLINE_QUEUE_KEY = 'offlineRestaurantOps';
+const RESTAURANT_OFFLINE_ID_MAP_KEY = 'offlineRestaurantIdMap';
+const RESTAURANT_CACHED_ORDERS_KEY = 'cachedRestaurantOrders';
+const RESTAURANT_CACHED_TABLES_KEY = 'cachedDiningTables';
+const RESTAURANT_MAX_QUEUE_SIZE = 2000;
+const RESTAURANT_WARNING_QUEUE_SIZE = 200;
+const OFFLINE_SHIFT_QUEUE_KEY = 'offlineShiftOps';
+const CURRENT_SHIFT_KEY = 'currentShiftSession';
+
+async function isBackendReachable(): Promise<boolean> {
+  try {
+    await axios.get(BACKEND_HEALTH_URL, { timeout: 5000 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function isLikelyOfflineError(error: any): boolean {
+  if (!error) return false;
+  const code = String(error.code || '').toUpperCase();
+  if (['ECONNREFUSED', 'ENOTFOUND', 'ETIMEDOUT', 'ECONNABORTED', 'EHOSTUNREACH', 'ENETUNREACH'].includes(code)) {
+    return true;
+  }
+  return !error.response;
+}
+
+function getRestaurantFailureCategory(error: any): RestaurantOfflineFailureCategory {
+  if (!error) return 'unknown';
+  if (isLikelyOfflineError(error)) return 'network';
+
+  const statusCode = Number(error?.response?.status || 0);
+  if (statusCode === 400 || statusCode === 422) return 'validation';
+  if (statusCode === 401 || statusCode === 403) return 'authorization';
+  if (statusCode === 409) return 'conflict';
+  if (statusCode >= 500) return 'server';
+  return 'unknown';
+}
+
+function getRestaurantFailureSuggestion(category: RestaurantOfflineFailureCategory): string {
+  if (category === 'network') return 'Keep serving offline and sync when connection is stable.';
+  if (category === 'conflict') return 'Refresh orders/tables and manually reconcile this order action.';
+  if (category === 'validation') return 'Review order payload (status, items, payment fields) and retry.';
+  if (category === 'authorization') return 'Re-login manager/waiter session and retry sync.';
+  if (category === 'server') return 'Retry in a few minutes; backend error occurred.';
+  return 'Inspect error details and retry this operation.';
+}
+
+function buildRestaurantIdempotencyKey(type: RestaurantOfflineOperationType, seed: string): string {
+  const normalizedSeed = String(seed || Date.now()).replace(/[^a-zA-Z0-9:-]/g, '-');
+  return `restaurant:${type}:${normalizedSeed}`;
+}
+
+function getRestaurantQueue(store: ElectronStore): RestaurantOfflineOperation[] {
+  const queue = store.get(RESTAURANT_OFFLINE_QUEUE_KEY, []) as RestaurantOfflineOperation[];
+  return Array.isArray(queue) ? queue : [];
+}
+
+function setRestaurantQueue(store: ElectronStore, queue: RestaurantOfflineOperation[]): void {
+  store.set(RESTAURANT_OFFLINE_QUEUE_KEY, queue);
+}
+
+function getRestaurantOrderIdMap(store: ElectronStore): Record<string, string> {
+  const map = store.get(RESTAURANT_OFFLINE_ID_MAP_KEY, {}) as Record<string, string>;
+  return map && typeof map === 'object' ? map : {};
+}
+
+function setRestaurantOrderIdMap(store: ElectronStore, map: Record<string, string>): void {
+  store.set(RESTAURANT_OFFLINE_ID_MAP_KEY, map);
+}
+
+function getCachedRestaurantOrders(store: ElectronStore): any[] {
+  const orders = store.get(RESTAURANT_CACHED_ORDERS_KEY, []) as any[];
+  return Array.isArray(orders) ? orders : [];
+}
+
+function setCachedRestaurantOrders(store: ElectronStore, orders: any[]): void {
+  store.set(RESTAURANT_CACHED_ORDERS_KEY, Array.isArray(orders) ? orders : []);
+}
+
+function getCachedDiningTables(store: ElectronStore): any[] {
+  const tables = store.get(RESTAURANT_CACHED_TABLES_KEY, []) as any[];
+  return Array.isArray(tables) ? tables : [];
+}
+
+function setCachedDiningTables(store: ElectronStore, tables: any[]): void {
+  store.set(RESTAURANT_CACHED_TABLES_KEY, Array.isArray(tables) ? tables : []);
+}
+
+function resolveRestaurantOrderId(orderId: string | undefined, orderIdMap: Record<string, string>): string | undefined {
+  if (!orderId) return undefined;
+  return orderIdMap[orderId] || orderId;
+}
+
+function getCachedProducts(store: ElectronStore, branchId?: string): any[] {
+  const branchKey = branchId ? `cachedProducts:${branchId}` : 'cachedProducts';
+  const branchProducts = store.get(branchKey) as any[] | undefined;
+  if (Array.isArray(branchProducts)) return branchProducts;
+  const fallback = store.get('cachedProducts') as any[] | undefined;
+  return Array.isArray(fallback) ? fallback : [];
+}
+
+function setCachedProducts(store: ElectronStore, products: any[], branchId?: string): void {
+  const safeProducts = Array.isArray(products) ? products : [];
+  const branchKey = branchId ? `cachedProducts:${branchId}` : 'cachedProducts';
+  store.set(branchKey, safeProducts);
+  if (!branchId) {
+    store.set('cachedProducts', safeProducts);
+  }
+}
+
+function summarizeItemQuantities(items: any[]): Map<string, number> {
+  const summary = new Map<string, number>();
+  for (const item of Array.isArray(items) ? items : []) {
+    const productId = String(item?.productId || '').trim();
+    const quantity = Number(item?.quantity || 0);
+    if (!productId || !Number.isFinite(quantity) || quantity <= 0) continue;
+    summary.set(productId, (summary.get(productId) || 0) + quantity);
+  }
+  return summary;
+}
+
+function validateOfflineStockReservation(
+  store: ElectronStore,
+  items: any[],
+  branchId?: string,
+): { ok: boolean; conflicts?: Array<{ productId: string; requested: number; available: number; name?: string }> } {
+  const products = getCachedProducts(store, branchId);
+  const productsById = new Map<string, any>();
+  for (const product of products) {
+    if (product?.id) productsById.set(String(product.id), product);
+  }
+
+  const qtyByProduct = summarizeItemQuantities(items);
+  const conflicts: Array<{ productId: string; requested: number; available: number; name?: string }> = [];
+
+  qtyByProduct.forEach((requestedQty, productId) => {
+    const product = productsById.get(productId);
+    const available = Number(product?.stock ?? 0);
+    if (!product || requestedQty > Math.max(0, available)) {
+      conflicts.push({
+        productId,
+        requested: requestedQty,
+        available: Math.max(0, available),
+        name: product?.name,
+      });
+    }
+  });
+
+  return { ok: conflicts.length === 0, conflicts };
+}
+
+function applyOfflineStockReservation(store: ElectronStore, items: any[], branchId?: string): void {
+  const products = getCachedProducts(store, branchId);
+  const qtyByProduct = summarizeItemQuantities(items);
+  const updated = products.map((product) => {
+    const productId = String(product?.id || '');
+    const reservedQty = qtyByProduct.get(productId) || 0;
+    if (!reservedQty) return product;
+    const currentStock = Number(product?.stock ?? 0);
+    return { ...product, stock: Math.max(0, currentStock - reservedQty) };
+  });
+  setCachedProducts(store, updated, branchId);
+}
+
+function releaseOfflineStockReservation(store: ElectronStore, items: any[], branchId?: string): void {
+  const products = getCachedProducts(store, branchId);
+  const qtyByProduct = summarizeItemQuantities(items);
+  const updated = products.map((product) => {
+    const productId = String(product?.id || '');
+    const releasedQty = qtyByProduct.get(productId) || 0;
+    if (!releasedQty) return product;
+    const currentStock = Number(product?.stock ?? 0);
+    return { ...product, stock: currentStock + releasedQty };
+  });
+  setCachedProducts(store, updated, branchId);
+}
+
+function getOfflineShiftQueue(store: ElectronStore): OfflineShiftOperation[] {
+  const queue = store.get(OFFLINE_SHIFT_QUEUE_KEY, []) as OfflineShiftOperation[];
+  return Array.isArray(queue) ? queue : [];
+}
+
+function setOfflineShiftQueue(store: ElectronStore, queue: OfflineShiftOperation[]): void {
+  store.set(OFFLINE_SHIFT_QUEUE_KEY, Array.isArray(queue) ? queue : []);
+}
+
+function getCurrentShiftSession(store: ElectronStore): ShiftSession | null {
+  const shift = store.get(CURRENT_SHIFT_KEY) as ShiftSession | undefined;
+  if (!shift || typeof shift !== 'object') return null;
+  return shift;
+}
+
+function setCurrentShiftSession(store: ElectronStore, shift: ShiftSession | null): void {
+  if (!shift) {
+    store.delete(CURRENT_SHIFT_KEY);
+    return;
+  }
+  store.set(CURRENT_SHIFT_KEY, shift);
+}
+
+function appendRestaurantOfflineOperation(
+  store: ElectronStore,
+  operation: Omit<RestaurantOfflineOperation, 'id' | 'timestamp' | 'retryCount' | 'status'>,
+): { ok: boolean; queueSize: number; error?: string; queued?: RestaurantOfflineOperation } {
+  const queue = getRestaurantQueue(store);
+
+  const cleanedQueue = queue.filter((op) => {
+    if (op.status === 'failed' && op.finalFailureAt) {
+      const failedAt = new Date(op.finalFailureAt);
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      return failedAt >= sevenDaysAgo;
+    }
+    return true;
+  });
+
+  if (cleanedQueue.length >= RESTAURANT_MAX_QUEUE_SIZE) {
+    return {
+      ok: false,
+      queueSize: cleanedQueue.length,
+      error: `Restaurant offline queue is full (${RESTAURANT_MAX_QUEUE_SIZE} operations). Please reconnect and sync.`,
+    };
+  }
+
+  const queued: RestaurantOfflineOperation = {
+    id: `restaurant-offline-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+    type: operation.type,
+    orderId: operation.orderId,
+    localOrderId: operation.localOrderId,
+    payload: operation.payload,
+    timestamp: new Date().toISOString(),
+    retryCount: 0,
+    status: 'pending',
+  };
+
+  cleanedQueue.push(queued);
+  setRestaurantQueue(store, cleanedQueue);
+  return { ok: true, queueSize: cleanedQueue.length, queued };
+}
+
 interface ProvisionedDeviceBinding {
   tenantId: string;
   branchId?: string;
@@ -605,6 +913,7 @@ const DEFAULT_UPDATE_FEEDS: Record<UpdateChannel, string> = {
 
 let activeUpdateChannel: UpdateChannel = 'stable';
 let activeUpdateFeedUrl = DEFAULT_UPDATE_FEEDS.stable;
+let isInstallingDownloadedUpdate = false;
 
 function sendUpdateStatus(payload: Record<string, unknown>) {
   if (mainWindow && !mainWindow.isDestroyed()) {
@@ -660,6 +969,57 @@ function applyUpdateChannel(channel: UpdateChannel, announce = true) {
   };
 }
 
+function installDownloadedUpdate(reason: 'auto' | 'manual') {
+  if (!autoUpdaterInstance) {
+    logger.warn('installDownloadedUpdate called without updater instance', {
+      component: 'autoUpdater',
+      reason,
+    });
+    return;
+  }
+
+  if (isInstallingDownloadedUpdate) {
+    return;
+  }
+
+  isInstallingDownloadedUpdate = true;
+
+  logger.info('Installing downloaded update', {
+    component: 'autoUpdater',
+    reason,
+  });
+
+  sendUpdateStatus({
+    status: 'installing',
+    channel: activeUpdateChannel,
+    feedUrl: activeUpdateFeedUrl,
+    currentVersion: app.getVersion(),
+    reason,
+    checkedAt: new Date().toISOString(),
+  });
+
+  setTimeout(() => {
+    try {
+      autoUpdaterInstance.quitAndInstall();
+    } catch (error: any) {
+      isInstallingDownloadedUpdate = false;
+      logger.warn('Failed to install downloaded update', {
+        component: 'autoUpdater',
+        reason,
+        errorMessage: error?.message,
+      });
+      sendUpdateStatus({
+        status: 'error',
+        channel: activeUpdateChannel,
+        feedUrl: activeUpdateFeedUrl,
+        currentVersion: app.getVersion(),
+        message: error?.message || 'Failed to install downloaded update',
+        checkedAt: new Date().toISOString(),
+      });
+    }
+  }, 1500);
+}
+
 function setupAutoUpdater() {
   if (!app.isPackaged) {
     // Do not run auto-updates in development mode.
@@ -683,6 +1043,9 @@ function setupAutoUpdater() {
   } catch {
     // Ignore if logger cannot be attached
   }
+
+  autoUpdaterInstance.autoDownload = true;
+  autoUpdaterInstance.autoInstallOnAppQuit = true;
 
   const channel = getStoredUpdateChannel();
   applyUpdateChannel(channel, false);
@@ -761,6 +1124,8 @@ function setupAutoUpdater() {
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('update-downloaded');
     }
+
+    installDownloadedUpdate('auto');
   });
 
   // Initial check; will download and notify when configured with a publish target.
@@ -840,7 +1205,7 @@ ipcMain.handle('quitApp', () => {
 ipcMain.handle('installUpdate', () => {
   if (autoUpdaterInstance) {
     logger.info('User requested installUpdate; quitting and installing', { component: 'autoUpdater' });
-    autoUpdaterInstance.quitAndInstall();
+    installDownloadedUpdate('manual');
   } else {
     logger.warn('installUpdate requested but autoUpdater is not initialized', { component: 'autoUpdater' });
   }
@@ -1103,10 +1468,113 @@ ipcMain.handle('getUserData', () => {
   return store.get('user', null);
 });
 
+ipcMain.handle('refreshCurrentUser', async () => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  const cachedUser = (store.get('user') as Record<string, any> | undefined) || {};
+
+  if (!token) {
+    return { success: false, user: null, error: 'Not authenticated' };
+  }
+
+  try {
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/user/me`);
+    await authRateLimiter.waitIfNeeded(endpoint);
+    const response = await rateLimitedAxios(
+      () =>
+        axios.get(`${BACKEND_BASE_URL}/user/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          timeout: 8000,
+        }),
+      endpoint,
+      authRateLimiter,
+    );
+
+    const freshUser = (response.data || {}) as Record<string, any>;
+    const mergedUser = {
+      ...cachedUser,
+      ...freshUser,
+    };
+
+    store.set('user', mergedUser);
+
+    if (mergedUser?.tenantId) {
+      bindDeviceToTenant(store, mergedUser);
+    }
+
+    logger.info('Refreshed current user and permissions from backend', {
+      component: 'auth',
+      userId: mergedUser?.id || mergedUser?.userId || null,
+    });
+
+    return { success: true, user: mergedUser };
+  } catch (error: any) {
+    const parsed = enhanceErrorMessage(parseAxiosError(error));
+    const message = getUserFriendlyMessage(parsed) || 'Failed to refresh session';
+
+    logger.warn('Failed to refresh current user session', {
+      component: 'auth',
+      error: error?.message || 'Unknown error',
+      status: error?.response?.status,
+    });
+
+    return {
+      success: false,
+      user: store.get('user', null),
+      error: message,
+    };
+  }
+});
+
 ipcMain.handle('getDeviceBinding', () => {
   const store = new ElectronStore();
   const binding = getProvisionedDeviceBinding(store);
   return { success: true, binding };
+});
+
+ipcMain.handle('getPosDisplayName', async () => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  const binding = getProvisionedDeviceBinding(store);
+  const user = store.get('user') as (User & { tenantName?: string | null }) | undefined;
+  const fallbackName = (binding?.tenantName || user?.tenantName || '').trim();
+
+  if (!token) {
+    return { success: false, displayName: '', fallbackName };
+  }
+
+  try {
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/tenant/configurations/POS_DISPLAY_NAME`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    const response = await rateLimitedAxios(
+      () =>
+        axios.get(`${BACKEND_BASE_URL}/tenant/configurations/POS_DISPLAY_NAME`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          timeout: 7000,
+        }),
+      endpoint,
+    );
+
+    const value = typeof response.data?.value === 'string' ? response.data.value.trim() : '';
+    return { success: true, displayName: value, fallbackName };
+  } catch (error: any) {
+    const status = error?.response?.status;
+    if (status === 404 || status === 403) {
+      return { success: true, displayName: '', fallbackName };
+    }
+    logger.warn('Failed to fetch POS display name', {
+      component: 'restaurant-pos',
+      error: error?.message || 'Unknown error',
+      status,
+    });
+    return { success: false, displayName: '', fallbackName };
+  }
 });
 
 ipcMain.handle('getBranches', async () => {
@@ -2269,6 +2737,72 @@ ipcMain.handle('getBomRecipes', async () => {
   }
 });
 
+ipcMain.handle('createBomIngredientProduct', async (_event, data: any) => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  const user = store.get('user') as User | undefined;
+  if (!token) return { success: false, error: 'No token' };
+
+  const name = String(data?.name || '').trim();
+  const unit = String(data?.unit || '').trim() || 'unit';
+  const cost = Number(data?.cost || 0);
+  const stock = Number(data?.stock || 0);
+
+  if (!name) {
+    return { success: false, error: 'Ingredient name is required.' };
+  }
+
+  if (!Number.isFinite(cost) || cost < 0) {
+    return { success: false, error: 'Ingredient cost must be 0 or higher.' };
+  }
+
+  const skuSeed = name
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 18) || 'ING';
+  const sku = `ING-${skuSeed}-${Date.now().toString().slice(-6)}`;
+
+  const payload = {
+    name,
+    sku,
+    price: cost,
+    cost,
+    stock: Math.max(0, Math.floor(Number.isFinite(stock) ? stock : 0)),
+    category: 'ingredients',
+    unitAbbreviation: unit,
+    unitName: unit,
+    pricePerUnit: true,
+    customFieldValues: {
+      isIngredient: true,
+      ingredient: true,
+      source: 'pos-bom-builder',
+      unit,
+    },
+  };
+
+  try {
+    const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/products`);
+    await apiRateLimiter.waitIfNeeded(endpoint);
+    const response = await rateLimitedAxios(
+      () =>
+        axios.post(`${BACKEND_BASE_URL}/products`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            ...(user?.branchId && { 'x-branch-id': user.branchId }),
+          },
+          timeout: 10000,
+        }),
+      endpoint,
+    );
+
+    return { success: true, product: response.data };
+  } catch (error: any) {
+    logger.error('Failed to create BOM ingredient product', { error: error.message });
+    return { success: false, error: error.message };
+  }
+});
+
 ipcMain.handle('saveBomRecipe', async (_event, data: any) => {
   const store = new ElectronStore();
   const token = getAuthToken(store);
@@ -2301,7 +2835,9 @@ ipcMain.handle('getDiningTables', async () => {
   const store = new ElectronStore();
   const token = getAuthToken(store);
   const user = store.get('user') as User | undefined;
-  if (!token) return { success: false, tables: [] };
+  if (!token) {
+    return { success: false, tables: getCachedDiningTables(store), error: 'No token' };
+  }
   
   try {
     const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/tables`);
@@ -2376,12 +2912,18 @@ ipcMain.handle('getDiningTables', async () => {
         ? refreshedRaw.tables
         : [];
 
+      setCachedDiningTables(store, refreshedTables);
       return { success: true, tables: refreshedTables };
     }
 
+    setCachedDiningTables(store, tables);
     return { success: true, tables };
   } catch (error: any) {
-    logger.error('Failed to get tables', { error: error.message });
+    logger.warn('Failed to get tables, returning cached fallback when available', { error: error.message });
+    const cachedTables = getCachedDiningTables(store);
+    if (cachedTables.length > 0) {
+      return { success: true, tables: cachedTables, offline: true };
+    }
     return { success: false, tables: [], error: error.message };
   }
 });
@@ -2564,7 +3106,9 @@ ipcMain.handle('getRestaurantOrders', async () => {
   const store = new ElectronStore();
   const token = getAuthToken(store);
   const user = store.get('user') as User | undefined;
-  if (!token) return { success: false, orders: [] };
+  if (!token) {
+    return { success: false, orders: getCachedRestaurantOrders(store), error: 'No token' };
+  }
 
   try {
     const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders`);
@@ -2576,9 +3120,15 @@ ipcMain.handle('getRestaurantOrders', async () => {
       },
       timeout: 5000,
     }), endpoint);
-    return { success: true, orders: response.data };
+    const orders = Array.isArray(response.data) ? response.data : [];
+    setCachedRestaurantOrders(store, orders);
+    return { success: true, orders };
   } catch (error: any) {
-    logger.error('Failed to get restaurant orders', { error: error.message });
+    logger.warn('Failed to get restaurant orders, using cached fallback when available', { error: error.message });
+    const cachedOrders = getCachedRestaurantOrders(store);
+    if (cachedOrders.length > 0) {
+      return { success: true, orders: cachedOrders, offline: true };
+    }
     return { success: false, orders: [], error: error.message };
   }
 });
@@ -2677,18 +3227,116 @@ ipcMain.handle('createRestaurantOrder', async (event, data) => {
   const user = store.get('user') as User | undefined;
   if (!token) return { success: false, error: 'No token' };
 
+  const queueCreateOrderOffline = () => {
+    const localOrderId = `local-order-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const createPayload = {
+      ...data,
+      idempotencyKey:
+        data?.idempotencyKey ||
+        buildRestaurantIdempotencyKey('create-order', localOrderId),
+    };
+    const stockValidation = validateOfflineStockReservation(
+      store,
+      createPayload?.items,
+      user?.branchId,
+    );
+
+    if (!stockValidation.ok) {
+      const items = (stockValidation.conflicts || [])
+        .map((item) => `${item.name || item.productId} (need ${item.requested}, have ${item.available})`)
+        .join(', ');
+      return {
+        success: false,
+        error: `Insufficient offline stock: ${items}`,
+      };
+    }
+
+    const queued = appendRestaurantOfflineOperation(store, {
+      type: 'create-order',
+      localOrderId,
+      payload: createPayload,
+    });
+
+    if (!queued.ok) {
+      return {
+        success: false,
+        error: queued.error || 'Unable to queue restaurant order offline',
+        queueSize: queued.queueSize,
+      };
+    }
+
+    const cachedOrders = getCachedRestaurantOrders(store);
+    const localOrder = {
+      id: localOrderId,
+      status: 'Open',
+      total: Number(createPayload?.total || 0),
+      waiterId: createPayload?.waiterId,
+      tableId: createPayload?.tableId,
+      items: Array.isArray(createPayload?.items) ? createPayload.items : [],
+      createdAt: new Date().toISOString(),
+      offline: true,
+      pendingSync: true,
+    };
+    setCachedRestaurantOrders(store, [...cachedOrders, localOrder]);
+    applyOfflineStockReservation(store, createPayload?.items, user?.branchId);
+
+    if (createPayload?.tableId) {
+      const cachedTables = getCachedDiningTables(store);
+      if (cachedTables.length > 0) {
+        const updatedTables = cachedTables.map((table) =>
+          table?.id === createPayload.tableId ? { ...table, status: 'Occupied' } : table,
+        );
+        setCachedDiningTables(store, updatedTables);
+      }
+    }
+
+    return {
+      success: true,
+      queued: true,
+      queueSize: queued.queueSize,
+      warningThreshold: RESTAURANT_WARNING_QUEUE_SIZE,
+      isWarning: queued.queueSize >= RESTAURANT_WARNING_QUEUE_SIZE,
+      order: localOrder,
+    };
+  };
+
+  const backendOnline = await isBackendReachable();
+  if (!backendOnline) {
+    logger.info('Backend offline, queueing restaurant order', { component: 'restaurant' });
+    return queueCreateOrderOffline();
+  }
+
   try {
+    const createPayload = {
+      ...data,
+      idempotencyKey:
+        data?.idempotencyKey ||
+        buildRestaurantIdempotencyKey('create-order', `online-${Date.now()}`),
+    };
     const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders`);
     await apiRateLimiter.waitIfNeeded(endpoint);
-    const response = await rateLimitedAxios(() => axios.post(`${BACKEND_BASE_URL}/restaurant/orders`, data, {
+    const response = await rateLimitedAxios(() => axios.post(`${BACKEND_BASE_URL}/restaurant/orders`, createPayload, {
       headers: { 
         'Authorization': `Bearer ${token}`,
         ...(user?.branchId && { 'x-branch-id': user.branchId }),
       },
       timeout: 10000,
     }), endpoint);
-    return { success: true, order: response.data };
+    const order = response.data;
+    const cachedOrders = getCachedRestaurantOrders(store);
+    const nextOrders = Array.isArray(cachedOrders)
+      ? [...cachedOrders.filter((item) => item?.id !== order?.id), order]
+      : [order];
+    setCachedRestaurantOrders(store, nextOrders);
+    return { success: true, order };
   } catch (error: any) {
+    if (isLikelyOfflineError(error)) {
+      logger.info('Restaurant order create failed due to connectivity, queueing offline', {
+        component: 'restaurant',
+        error: error.message,
+      });
+      return queueCreateOrderOffline();
+    }
     logger.error('Failed to create order', { error: error.message });
     return { success: false, error: error.message };
   }
@@ -2699,6 +3347,66 @@ ipcMain.handle('addRestaurantOrderItems', async (event, { id, items }) => {
   const token = getAuthToken(store);
   const user = store.get('user') as User | undefined;
   if (!token) return { success: false, error: 'No token' };
+
+  const queueAddItemsOffline = () => {
+    const stockValidation = validateOfflineStockReservation(
+      store,
+      items,
+      user?.branchId,
+    );
+
+    if (!stockValidation.ok) {
+      const details = (stockValidation.conflicts || [])
+        .map((item) => `${item.name || item.productId} (need ${item.requested}, have ${item.available})`)
+        .join(', ');
+      return {
+        success: false,
+        error: `Insufficient offline stock: ${details}`,
+      };
+    }
+
+    const queued = appendRestaurantOfflineOperation(store, {
+      type: 'add-items',
+      orderId: id,
+      payload: { items },
+    });
+
+    if (!queued.ok) {
+      return {
+        success: false,
+        error: queued.error || 'Unable to queue order items offline',
+        queueSize: queued.queueSize,
+      };
+    }
+
+    const cachedOrders = getCachedRestaurantOrders(store);
+    const updatedOrders = cachedOrders.map((order) => {
+      if (order?.id !== id) return order;
+      const existingItems = Array.isArray(order.items) ? order.items : [];
+      return {
+        ...order,
+        items: [...existingItems, ...(Array.isArray(items) ? items : [])],
+        pendingSync: true,
+        offline: true,
+      };
+    });
+    setCachedRestaurantOrders(store, updatedOrders);
+    applyOfflineStockReservation(store, items, user?.branchId);
+
+    return {
+      success: true,
+      queued: true,
+      queueSize: queued.queueSize,
+      warningThreshold: RESTAURANT_WARNING_QUEUE_SIZE,
+      isWarning: queued.queueSize >= RESTAURANT_WARNING_QUEUE_SIZE,
+    };
+  };
+
+  const backendOnline = await isBackendReachable();
+  if (!backendOnline) {
+    logger.info('Backend offline, queueing addRestaurantOrderItems', { component: 'restaurant', orderId: id });
+    return queueAddItemsOffline();
+  }
 
   try {
     const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${id}/items`);
@@ -2711,8 +3419,29 @@ ipcMain.handle('addRestaurantOrderItems', async (event, { id, items }) => {
       timeout: 10000,
     }), endpoint);
 
+    const cachedOrders = getCachedRestaurantOrders(store);
+    const updatedOrders = cachedOrders.map((order) => {
+      if (order?.id !== id) return order;
+      const existingItems = Array.isArray(order.items) ? order.items : [];
+      return {
+        ...order,
+        items: [...existingItems, ...(Array.isArray(items) ? items : [])],
+        pendingSync: false,
+        offline: false,
+      };
+    });
+    setCachedRestaurantOrders(store, updatedOrders);
+
     return { success: true, result: response.data };
   } catch (error: any) {
+    if (isLikelyOfflineError(error)) {
+      logger.info('Add restaurant items failed due to connectivity, queueing offline', {
+        component: 'restaurant',
+        orderId: id,
+        error: error.message,
+      });
+      return queueAddItemsOffline();
+    }
     logger.error('Failed to add restaurant order items', { error: error.message });
     return { success: false, error: error.message };
   }
@@ -2724,6 +3453,57 @@ ipcMain.handle('updateRestaurantOrderStatus', async (event, { id, status, voidRe
   const user = store.get('user') as User | undefined;
   if (!token) return { success: false };
 
+  const queueStatusUpdateOffline = () => {
+    const cachedOrders = getCachedRestaurantOrders(store);
+    const targetOrder = cachedOrders.find((order) => order?.id === id);
+
+    if (status === 'Voided' && Array.isArray(targetOrder?.items) && targetOrder.items.length > 0) {
+      releaseOfflineStockReservation(store, targetOrder.items, user?.branchId);
+    }
+
+    const queued = appendRestaurantOfflineOperation(store, {
+      type: 'update-status',
+      orderId: id,
+      payload: { status, voidReason },
+    });
+
+    if (!queued.ok) {
+      return {
+        success: false,
+        error: queued.error || 'Unable to queue order status change offline',
+        queueSize: queued.queueSize,
+      };
+    }
+
+    const updatedOrders = cachedOrders.map((order) =>
+      order?.id === id
+        ? {
+            ...order,
+            status,
+            voidReason,
+            pendingSync: true,
+            offline: true,
+          }
+        : order,
+    );
+    setCachedRestaurantOrders(store, updatedOrders);
+
+    return {
+      success: true,
+      queued: true,
+      queueSize: queued.queueSize,
+      warningThreshold: RESTAURANT_WARNING_QUEUE_SIZE,
+      isWarning: queued.queueSize >= RESTAURANT_WARNING_QUEUE_SIZE,
+      order: updatedOrders.find((order) => order?.id === id),
+    };
+  };
+
+  const backendOnline = await isBackendReachable();
+  if (!backendOnline) {
+    logger.info('Backend offline, queueing restaurant status update', { component: 'restaurant', orderId: id, status });
+    return queueStatusUpdateOffline();
+  }
+
   try {
     const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${id}/status`);
     await apiRateLimiter.waitIfNeeded(endpoint);
@@ -2734,8 +3514,26 @@ ipcMain.handle('updateRestaurantOrderStatus', async (event, { id, status, voidRe
       },
       timeout: 10000,
     }), endpoint);
-    return { success: true, order: response.data };
+    const order = response.data;
+    const cachedOrders = getCachedRestaurantOrders(store);
+    const previousOrder = cachedOrders.find((existing) => existing?.id === id);
+    if (status === 'Voided' && Array.isArray(previousOrder?.items) && previousOrder.items.length > 0) {
+      releaseOfflineStockReservation(store, previousOrder.items, user?.branchId);
+    }
+    const updatedOrders = cachedOrders.map((existing) =>
+      existing?.id === order?.id ? { ...order, pendingSync: false, offline: false } : existing,
+    );
+    setCachedRestaurantOrders(store, updatedOrders);
+    return { success: true, order };
   } catch (error: any) {
+    if (isLikelyOfflineError(error)) {
+      logger.info('Restaurant status update failed due to connectivity, queueing offline', {
+        component: 'restaurant',
+        orderId: id,
+        error: error.message,
+      });
+      return queueStatusUpdateOffline();
+    }
     return { success: false, error: error.message };
   }
 });
@@ -2746,19 +3544,100 @@ ipcMain.handle('checkoutRestaurantOrder', async (event, { id, payload }) => {
   const user = store.get('user') as User | undefined;
   if (!token) return { success: false, error: 'No token' };
 
+  const queueCheckoutOffline = () => {
+    const checkoutPayload = {
+      ...payload,
+      idempotencyKey:
+        payload?.idempotencyKey ||
+        buildRestaurantIdempotencyKey('checkout-order', id),
+    };
+    const queued = appendRestaurantOfflineOperation(store, {
+      type: 'checkout-order',
+      orderId: id,
+      payload: checkoutPayload,
+    });
+
+    if (!queued.ok) {
+      return {
+        success: false,
+        error: queued.error || 'Unable to queue checkout offline',
+        queueSize: queued.queueSize,
+      };
+    }
+
+    const cachedOrders = getCachedRestaurantOrders(store);
+    const updatedOrders = cachedOrders.map((order) =>
+      order?.id === id
+        ? {
+            ...order,
+            status: 'Closed',
+            closedAt: new Date().toISOString(),
+            pendingSync: true,
+            offline: true,
+          }
+        : order,
+    );
+    setCachedRestaurantOrders(store, updatedOrders);
+
+    const offlineReceipt = {
+      orderId: id,
+      timestamp: new Date().toISOString(),
+      paymentMethod: checkoutPayload?.paymentMethod,
+      amountReceived: checkoutPayload?.amountReceived,
+      mpesaTransactionId: checkoutPayload?.mpesaTransactionId,
+      offline: true,
+      pendingSync: true,
+    };
+
+    return {
+      success: true,
+      queued: true,
+      queueSize: queued.queueSize,
+      warningThreshold: RESTAURANT_WARNING_QUEUE_SIZE,
+      isWarning: queued.queueSize >= RESTAURANT_WARNING_QUEUE_SIZE,
+      receipt: offlineReceipt,
+    };
+  };
+
+  const backendOnline = await isBackendReachable();
+  if (!backendOnline) {
+    logger.info('Backend offline, queueing restaurant checkout', { component: 'restaurant', orderId: id });
+    return queueCheckoutOffline();
+  }
+
   try {
+    const checkoutPayload = {
+      ...payload,
+      idempotencyKey:
+        payload?.idempotencyKey ||
+        buildRestaurantIdempotencyKey('checkout-order', id),
+    };
     const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${id}/checkout`);
     await apiRateLimiter.waitIfNeeded(endpoint);
-    const response = await rateLimitedAxios(() => axios.post(`${BACKEND_BASE_URL}/restaurant/orders/${id}/checkout`, payload, {
+    const response = await rateLimitedAxios(() => axios.post(`${BACKEND_BASE_URL}/restaurant/orders/${id}/checkout`, checkoutPayload, {
       headers: {
         'Authorization': `Bearer ${token}`,
         ...(user?.branchId && { 'x-branch-id': user.branchId }),
       },
       timeout: 15000,
     }), endpoint);
+    const receipt = response.data;
+    const cachedOrders = getCachedRestaurantOrders(store);
+    const updatedOrders = cachedOrders.map((order) =>
+      order?.id === id ? { ...order, status: 'Closed', pendingSync: false, offline: false } : order,
+    );
+    setCachedRestaurantOrders(store, updatedOrders);
 
-    return { success: true, receipt: response.data };
+    return { success: true, receipt };
   } catch (error: any) {
+    if (isLikelyOfflineError(error)) {
+      logger.info('Restaurant checkout failed due to connectivity, queueing offline', {
+        component: 'restaurant',
+        orderId: id,
+        error: error.message,
+      });
+      return queueCheckoutOffline();
+    }
     logger.error('Failed to checkout restaurant order', { error: error.message });
     return { success: false, error: error.message };
   }
@@ -3307,19 +4186,608 @@ function getErrorSuggestion(error: any): string {
   return 'Please try again or contact support if the issue persists.';
 }
 
+let restaurantSyncCancelled = false;
+
+ipcMain.handle('getOfflineRestaurantOps', () => {
+  const store = new ElectronStore();
+  const queue = getRestaurantQueue(store);
+  return {
+    success: true,
+    operations: queue,
+    queueSize: queue.length,
+    maxQueueSize: RESTAURANT_MAX_QUEUE_SIZE,
+    warningThreshold: RESTAURANT_WARNING_QUEUE_SIZE,
+    isWarning: queue.length >= RESTAURANT_WARNING_QUEUE_SIZE,
+  };
+});
+
+ipcMain.handle('cancelSyncOfflineRestaurantOps', async () => {
+  restaurantSyncCancelled = true;
+  logger.info('Restaurant offline sync cancellation requested', { component: 'restaurant-offline' });
+  return { success: true };
+});
+
+ipcMain.handle('retryOfflineRestaurantOp', async (_event, operationId: string) => {
+  const store = new ElectronStore();
+
+  try {
+    const token = getAuthToken(store);
+    const user = store.get('user') as User | undefined;
+    if (!token) {
+      return { success: false, error: 'No authentication token found' };
+    }
+
+    const queue = getRestaurantQueue(store);
+    const target = queue.find((operation) => operation.id === operationId);
+    if (!target) {
+      return { success: false, error: 'Operation not found in offline queue' };
+    }
+
+    const orderIdMap = getRestaurantOrderIdMap(store);
+    const resolvedOrderId = resolveRestaurantOrderId(target.orderId || target.localOrderId, orderIdMap);
+    target.status = 'syncing';
+    target.retryCount = Number(target.retryCount || 0) + 1;
+
+    if (target.type === 'create-order') {
+      const replayPayload = {
+        ...target.payload,
+        idempotencyKey:
+          target?.payload?.idempotencyKey ||
+          buildRestaurantIdempotencyKey('create-order', target.localOrderId || target.id),
+      };
+      const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders`);
+      await syncRateLimiter.waitIfNeeded(endpoint);
+      const response = await rateLimitedAxios(
+        () =>
+          axios.post(`${BACKEND_BASE_URL}/restaurant/orders`, replayPayload, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 15000,
+          }),
+        endpoint,
+        syncRateLimiter,
+      );
+
+      const createdOrderId = response?.data?.id;
+      if (target.localOrderId && createdOrderId) {
+        orderIdMap[target.localOrderId] = createdOrderId;
+      }
+      setRestaurantOrderIdMap(store, orderIdMap);
+    } else if (target.type === 'add-items') {
+      if (!resolvedOrderId) {
+        throw new Error('Cannot resolve order ID for queued add-items operation.');
+      }
+      const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/items`);
+      await syncRateLimiter.waitIfNeeded(endpoint);
+      await rateLimitedAxios(
+        () =>
+          axios.post(`${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/items`, target.payload, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 15000,
+          }),
+        endpoint,
+        syncRateLimiter,
+      );
+    } else if (target.type === 'update-status') {
+      if (!resolvedOrderId) {
+        throw new Error('Cannot resolve order ID for queued status update.');
+      }
+      const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/status`);
+      await syncRateLimiter.waitIfNeeded(endpoint);
+      await rateLimitedAxios(
+        () =>
+          axios.put(`${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/status`, target.payload, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 15000,
+          }),
+        endpoint,
+        syncRateLimiter,
+      );
+    } else if (target.type === 'checkout-order') {
+      if (!resolvedOrderId) {
+        throw new Error('Cannot resolve order ID for queued checkout.');
+      }
+      const replayPayload = {
+        ...target.payload,
+        idempotencyKey:
+          target?.payload?.idempotencyKey ||
+          buildRestaurantIdempotencyKey('checkout-order', resolvedOrderId || target.id),
+      };
+      const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/checkout`);
+      await syncRateLimiter.waitIfNeeded(endpoint);
+      await rateLimitedAxios(
+        () =>
+          axios.post(`${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/checkout`, replayPayload, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 15000,
+          }),
+        endpoint,
+        syncRateLimiter,
+      );
+    }
+
+    const remainingQueue = getRestaurantQueue(store).filter((operation) => operation.id !== operationId);
+    setRestaurantQueue(store, remainingQueue);
+
+    return {
+      success: true,
+      operationId,
+      remainingQueueSize: remainingQueue.length,
+    };
+  } catch (error: any) {
+    const queue = getRestaurantQueue(store);
+    const target = queue.find((operation) => operation.id === operationId);
+    if (target) {
+      target.status = 'failed';
+      target.error = error?.message || 'Retry failed';
+      if (target.retryCount >= 5) {
+        target.finalFailureAt = new Date().toISOString();
+      }
+      setRestaurantQueue(store, queue);
+    }
+
+    const category = getRestaurantFailureCategory(error);
+    return {
+      success: false,
+      error: error?.message || 'Retry failed',
+      failedOperation: {
+        operationId,
+        operationType: target?.type,
+        orderId: target?.orderId,
+        localOrderId: target?.localOrderId,
+        message: error?.message || 'Retry failed',
+        category,
+        statusCode: Number(error?.response?.status || 0) || undefined,
+        suggestion: getRestaurantFailureSuggestion(category),
+      },
+    };
+  }
+});
+
+ipcMain.handle('dismissOfflineRestaurantOp', async (_event, operationId: string) => {
+  const store = new ElectronStore();
+  const user = store.get('user') as User | undefined;
+  const queue = getRestaurantQueue(store);
+  const target = queue.find((operation) => operation.id === operationId);
+
+  if (!target) {
+    return { success: false, error: 'Operation not found in offline queue' };
+  }
+
+  if (target.type === 'create-order' || target.type === 'add-items') {
+    releaseOfflineStockReservation(
+      store,
+      target.type === 'create-order' ? target.payload?.items : target.payload?.items,
+      user?.branchId,
+    );
+  }
+
+  const remainingQueue = queue.filter((operation) => operation.id !== operationId);
+  setRestaurantQueue(store, remainingQueue);
+
+  return { success: true, remainingQueueSize: remainingQueue.length };
+});
+
+ipcMain.handle('getShiftStatus', () => {
+  const store = new ElectronStore();
+  const currentShift = getCurrentShiftSession(store);
+  const offlineShiftQueue = getOfflineShiftQueue(store);
+
+  return {
+    success: true,
+    currentShift,
+    queueSize: offlineShiftQueue.length,
+  };
+});
+
+ipcMain.handle('openShift', async (_event, payload: { openingCash: number; openedBy?: string }) => {
+  const store = new ElectronStore();
+  const existing = getCurrentShiftSession(store);
+  if (existing && existing.status === 'open') {
+    return { success: false, error: 'A shift is already open.' };
+  }
+
+  const shift: ShiftSession = {
+    id: `shift-${Date.now()}`,
+    openedAt: new Date().toISOString(),
+    openedBy: payload?.openedBy,
+    openingCash: Number(payload?.openingCash || 0),
+    status: 'open',
+    offline: true,
+    pendingSync: true,
+  };
+
+  const op: OfflineShiftOperation = {
+    id: `shift-op-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    type: 'open-shift',
+    payload: shift,
+    timestamp: new Date().toISOString(),
+    retryCount: 0,
+    status: 'pending',
+  };
+
+  const queue = getOfflineShiftQueue(store);
+  queue.push(op);
+  setOfflineShiftQueue(store, queue);
+  setCurrentShiftSession(store, shift);
+
+  return { success: true, queued: true, shift, queueSize: queue.length };
+});
+
+ipcMain.handle('closeShift', async (_event, payload: { closingCash: number; notes?: string }) => {
+  const store = new ElectronStore();
+  const current = getCurrentShiftSession(store);
+
+  if (!current || current.status !== 'open') {
+    return { success: false, error: 'No active shift to close.' };
+  }
+
+  const orders = getCachedRestaurantOrders(store);
+  const shiftOpenedAt = new Date(current.openedAt).getTime();
+  const relevantOrders = orders.filter((order) => {
+    const createdAt = new Date(order?.createdAt || 0).getTime();
+    return createdAt >= shiftOpenedAt;
+  });
+
+  const grossSales = relevantOrders.reduce((sum, order) => sum + Number(order?.total || 0), 0);
+  const salesCount = relevantOrders.length;
+  const openingCash = Number(current.openingCash || 0);
+  const expectedCash = openingCash + grossSales;
+  const closingCash = Number(payload?.closingCash || 0);
+  const variance = closingCash - expectedCash;
+
+  const closedShift: ShiftSession = {
+    ...current,
+    status: 'closed',
+    closedAt: new Date().toISOString(),
+    closingCash,
+    notes: payload?.notes,
+    summary: {
+      salesCount,
+      grossSales,
+      expectedCash,
+      variance,
+    },
+    offline: true,
+    pendingSync: true,
+  };
+
+  const op: OfflineShiftOperation = {
+    id: `shift-op-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    type: 'close-shift',
+    payload: closedShift,
+    timestamp: new Date().toISOString(),
+    retryCount: 0,
+    status: 'pending',
+  };
+
+  const queue = getOfflineShiftQueue(store);
+  queue.push(op);
+  setOfflineShiftQueue(store, queue);
+  setCurrentShiftSession(store, closedShift);
+
+  return {
+    success: true,
+    queued: true,
+    shift: closedShift,
+    summary: closedShift.summary,
+    queueSize: queue.length,
+  };
+});
+
+ipcMain.handle('getOfflineShiftOps', () => {
+  const store = new ElectronStore();
+  const queue = getOfflineShiftQueue(store);
+  return { success: true, operations: queue, queueSize: queue.length };
+});
+
+ipcMain.handle('syncOfflineShiftOps', async () => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  const user = store.get('user') as User | undefined;
+  if (!token) return { success: false, error: 'No authentication token found' };
+
+  const queue = getOfflineShiftQueue(store);
+  if (queue.length === 0) {
+    return { success: true, syncedCount: 0, remainingQueueSize: 0 };
+  }
+
+  const remaining: OfflineShiftOperation[] = [];
+  let syncedCount = 0;
+  const errors: string[] = [];
+
+  for (const op of queue) {
+    try {
+      op.status = 'syncing';
+      op.retryCount = Number(op.retryCount || 0) + 1;
+
+      const endpoint = op.type === 'open-shift'
+        ? extractEndpoint(`${BACKEND_BASE_URL}/restaurant/shifts/open`)
+        : extractEndpoint(`${BACKEND_BASE_URL}/restaurant/shifts/close`);
+
+      await syncRateLimiter.waitIfNeeded(endpoint);
+      await rateLimitedAxios(
+        () =>
+          axios.post(
+            op.type === 'open-shift'
+              ? `${BACKEND_BASE_URL}/restaurant/shifts/open`
+              : `${BACKEND_BASE_URL}/restaurant/shifts/close`,
+            op.payload,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+              },
+              timeout: 15000,
+            },
+          ),
+        endpoint,
+        syncRateLimiter,
+      );
+
+      syncedCount++;
+    } catch (error: any) {
+      op.status = 'failed';
+      op.error = error?.message || 'Failed to sync shift operation';
+      remaining.push(op);
+      errors.push(`${op.type}:${op.id}:${op.error}`);
+    }
+  }
+
+  setOfflineShiftQueue(store, remaining);
+
+  const currentShift = getCurrentShiftSession(store);
+  if (currentShift && remaining.length === 0) {
+    if (currentShift.status === 'closed') {
+      setCurrentShiftSession(store, null);
+    } else {
+      setCurrentShiftSession(store, {
+        ...currentShift,
+        offline: false,
+        pendingSync: false,
+      });
+    }
+  }
+
+  return {
+    success: errors.length === 0,
+    syncedCount,
+    failedCount: errors.length,
+    errors,
+    remainingQueueSize: remaining.length,
+  };
+});
+
+ipcMain.handle('syncOfflineRestaurantOps', async () => {
+  const store = new ElectronStore();
+  restaurantSyncCancelled = false;
+
+  try {
+    const token = getAuthToken(store);
+    const user = store.get('user') as User | undefined;
+    if (!token) {
+      return { success: false, error: 'No authentication token found' };
+    }
+
+    const backendOnline = await isBackendReachable();
+    if (!backendOnline) {
+      return { success: false, error: 'Backend offline. Cannot sync restaurant operations right now.' };
+    }
+
+    const queue = getRestaurantQueue(store);
+    if (queue.length === 0) {
+      return { success: true, syncedCount: 0, failedCount: 0, remainingQueueSize: 0 };
+    }
+
+    const orderIdMap = getRestaurantOrderIdMap(store);
+    const remaining: RestaurantOfflineOperation[] = [];
+    let syncedCount = 0;
+    const errors: string[] = [];
+    const failedOperations: RestaurantOfflineFailure[] = [];
+
+    for (const operation of queue) {
+      if (restaurantSyncCancelled) {
+        remaining.push(operation);
+        continue;
+      }
+
+      const resolvedOrderId = resolveRestaurantOrderId(operation.orderId || operation.localOrderId, orderIdMap);
+
+      try {
+        operation.status = 'syncing';
+        operation.retryCount = Number(operation.retryCount || 0) + 1;
+
+        if (operation.type === 'create-order') {
+          const replayPayload = {
+            ...operation.payload,
+            idempotencyKey:
+              operation?.payload?.idempotencyKey ||
+              buildRestaurantIdempotencyKey('create-order', operation.localOrderId || operation.id),
+          };
+          const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders`);
+          await syncRateLimiter.waitIfNeeded(endpoint);
+          const response = await rateLimitedAxios(
+            () =>
+              axios.post(`${BACKEND_BASE_URL}/restaurant/orders`, replayPayload, {
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  ...(user?.branchId && { 'x-branch-id': user.branchId }),
+                },
+                timeout: 15000,
+              }),
+            endpoint,
+            syncRateLimiter,
+          );
+
+          const createdOrderId = response?.data?.id;
+          if (operation.localOrderId && createdOrderId) {
+            orderIdMap[operation.localOrderId] = createdOrderId;
+          }
+        } else if (operation.type === 'add-items') {
+          if (!resolvedOrderId) {
+            throw new Error('Cannot resolve order ID for queued add-items operation.');
+          }
+
+          const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/items`);
+          await syncRateLimiter.waitIfNeeded(endpoint);
+          await rateLimitedAxios(
+            () =>
+              axios.post(
+                `${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/items`,
+                operation.payload,
+                {
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    ...(user?.branchId && { 'x-branch-id': user.branchId }),
+                  },
+                  timeout: 15000,
+                },
+              ),
+            endpoint,
+            syncRateLimiter,
+          );
+        } else if (operation.type === 'update-status') {
+          if (!resolvedOrderId) {
+            throw new Error('Cannot resolve order ID for queued status update.');
+          }
+
+          const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/status`);
+          await syncRateLimiter.waitIfNeeded(endpoint);
+          await rateLimitedAxios(
+            () =>
+              axios.put(
+                `${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/status`,
+                operation.payload,
+                {
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    ...(user?.branchId && { 'x-branch-id': user.branchId }),
+                  },
+                  timeout: 15000,
+                },
+              ),
+            endpoint,
+            syncRateLimiter,
+          );
+        } else if (operation.type === 'checkout-order') {
+          if (!resolvedOrderId) {
+            throw new Error('Cannot resolve order ID for queued checkout.');
+          }
+
+          const replayPayload = {
+            ...operation.payload,
+            idempotencyKey:
+              operation?.payload?.idempotencyKey ||
+              buildRestaurantIdempotencyKey('checkout-order', resolvedOrderId || operation.id),
+          };
+
+          const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/checkout`);
+          await syncRateLimiter.waitIfNeeded(endpoint);
+          await rateLimitedAxios(
+            () =>
+              axios.post(
+                `${BACKEND_BASE_URL}/restaurant/orders/${resolvedOrderId}/checkout`,
+                replayPayload,
+                {
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    ...(user?.branchId && { 'x-branch-id': user.branchId }),
+                  },
+                  timeout: 15000,
+                },
+              ),
+            endpoint,
+            syncRateLimiter,
+          );
+        }
+
+        syncedCount++;
+      } catch (error: any) {
+        operation.status = 'failed';
+        operation.error = error?.message || 'Unknown sync error';
+        if (operation.retryCount >= 5) {
+          operation.finalFailureAt = new Date().toISOString();
+        }
+        remaining.push(operation);
+        errors.push(`${operation.type}:${operation.id}:${operation.error}`);
+
+        const category = getRestaurantFailureCategory(error);
+        failedOperations.push({
+          operationId: operation.id,
+          operationType: operation.type,
+          orderId: operation.orderId,
+          localOrderId: operation.localOrderId,
+          message: operation.error,
+          category,
+          statusCode: Number(error?.response?.status || 0) || undefined,
+          suggestion: getRestaurantFailureSuggestion(category),
+        });
+      }
+    }
+
+    setRestaurantQueue(store, remaining);
+    setRestaurantOrderIdMap(store, orderIdMap);
+
+    try {
+      const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/restaurant/orders`);
+      await apiRateLimiter.waitIfNeeded(endpoint);
+      const ordersResponse = await rateLimitedAxios(
+        () =>
+          axios.get(`${BACKEND_BASE_URL}/restaurant/orders`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            },
+            timeout: 10000,
+          }),
+        endpoint,
+      );
+      setCachedRestaurantOrders(store, Array.isArray(ordersResponse.data) ? ordersResponse.data : []);
+    } catch (refreshError: any) {
+      logger.warn('Could not refresh restaurant orders after offline sync', {
+        component: 'restaurant-offline',
+        error: refreshError?.message,
+      });
+    }
+
+    return {
+      success: errors.length === 0,
+      cancelled: restaurantSyncCancelled,
+      syncedCount,
+      failedCount: errors.length,
+      errors,
+      failedOperations,
+      remainingQueueSize: remaining.length,
+    };
+  } catch (error: any) {
+    logger.error('Error syncing offline restaurant operations', {
+      component: 'restaurant-offline',
+      error: error.message,
+    });
+    return { success: false, error: error.message || 'Failed to sync offline restaurant operations' };
+  } finally {
+    restaurantSyncCancelled = false;
+  }
+});
+
 ipcMain.handle('getSyncStatus', async () => {
   const store = new ElectronStore();
 
-  // Check online status by testing internet connectivity to an external service
-  let online = false;
-  try {
-    await axios.get('https://www.google.com', { timeout: 5000 });
-    online = true;
-  } catch {
-    online = false;
-  }
+  const online = await isBackendReachable();
 
   let offlineSales = store.get('offlineSales', []) as any[];
+  const offlineRestaurantOps = getRestaurantQueue(store);
   
   // Clean up old failed syncs (older than 7 days) when checking status
   const sevenDaysAgo = new Date();
@@ -3340,18 +4808,22 @@ ipcMain.handle('getSyncStatus', async () => {
     store.set('offlineSales', offlineSales); // Update store with cleaned list
   }
   
-  const pendingSyncs = offlineSales.filter((sale: any) => sale.status === 'pending').length;
+  const pendingSalesSyncs = offlineSales.filter((sale: any) => sale.status === 'pending').length;
+  const pendingRestaurantSyncs = offlineRestaurantOps.filter((op) => op.status === 'pending').length;
+  const pendingSyncs = pendingSalesSyncs + pendingRestaurantSyncs;
   const lastSync = store.get('lastSync') as string | undefined;
   
   const MAX_QUEUE_SIZE = 1000;
   const WARNING_THRESHOLD = 100;
-  const queueSize = offlineSales.length;
+  const queueSize = offlineSales.length + offlineRestaurantOps.length;
   const isWarning = queueSize >= WARNING_THRESHOLD;
   const isCritical = queueSize >= MAX_QUEUE_SIZE;
 
   return {
     online,
     pendingSyncs,
+    pendingSalesSyncs,
+    pendingRestaurantSyncs,
     lastSync,
     queueSize,
     maxQueueSize: MAX_QUEUE_SIZE,

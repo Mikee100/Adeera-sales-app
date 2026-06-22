@@ -209,10 +209,6 @@ class PrinterService {
         this.addText(commands, `KRA PIN: ${receiptData.businessInfo.kraPin}`);
         commands.push(0x0A);
       }
-      if (receiptData.businessInfo.vatNumber) {
-        this.addText(commands, `VAT No: ${receiptData.businessInfo.vatNumber}`);
-        commands.push(0x0A);
-      }
     }
 
     // Branch info

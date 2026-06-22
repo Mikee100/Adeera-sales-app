@@ -5,6 +5,7 @@ interface AuthContextType {
   user: any | null;
   login: (credentials: { email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
+  refreshSession: () => Promise<{ success: boolean; user?: any | null; error?: string }>;
   loading: boolean;
   initialSyncComplete: boolean;
   onInitialSyncComplete: () => void;
@@ -113,12 +114,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onInitialS
     }
   };
 
+  const refreshSession = async (): Promise<{ success: boolean; user?: any | null; error?: string }> => {
+    try {
+      if (typeof window.electronAPI.refreshCurrentUser === 'function') {
+        const refreshed = await window.electronAPI.refreshCurrentUser();
+        if (refreshed?.success && refreshed.user) {
+          setUser(refreshed.user);
+          setIsAuthenticated(true);
+          localStorage.setItem('isAuthenticated', 'true');
+          return { success: true, user: refreshed.user };
+        }
+
+        if (refreshed?.success && !refreshed.user) {
+          const fallbackUser = await window.electronAPI.getUserData();
+          setUser(fallbackUser || null);
+          return { success: true, user: fallbackUser || null };
+        }
+
+        return { success: false, user: user || null, error: refreshed?.error || 'Failed to refresh session' };
+      }
+
+      const fallbackUser = await window.electronAPI.getUserData();
+      setUser(fallbackUser || null);
+      setIsAuthenticated(!!fallbackUser);
+      return { success: !!fallbackUser, user: fallbackUser || null, error: fallbackUser ? undefined : 'No active session' };
+    } catch (error: any) {
+      return {
+        success: false,
+        user: user || null,
+        error: error?.message || 'Failed to refresh session',
+      };
+    }
+  };
+
   return (
     <AuthContext.Provider value={{ 
       isAuthenticated, 
       user, 
       login, 
       logout, 
+      refreshSession,
       loading,
       initialSyncComplete,
       onInitialSyncComplete: handleInitialSyncComplete,

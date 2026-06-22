@@ -33,6 +33,7 @@ const AppContent: React.FC = () => {
   const idleTimerRef = useRef<{ reset: () => void } | null>(null);
   const shownAvailableVersionRef = useRef<string | null>(null);
   const downloadedNotifiedRef = useRef(false);
+  const installingNotifiedRef = useRef(false);
   const lastUpdateErrorRef = useRef<string | null>(null);
   const [restaurantEnabled, setRestaurantEnabled] = useState(true);
 
@@ -132,12 +133,13 @@ const AppContent: React.FC = () => {
         if (downloadedNotifiedRef.current) return;
         downloadedNotifiedRef.current = true;
 
-        showToast('Update ready. Click Install Now to restart and apply.', 'success', 12000, {
-          label: 'Install Now',
-          onClick: () => {
-            window.electronAPI.installUpdate();
-          },
-        });
+        showToast('Update downloaded. POS will restart automatically to install.', 'success', 8000);
+      }
+
+      if (status.status === 'installing') {
+        if (installingNotifiedRef.current) return;
+        installingNotifiedRef.current = true;
+        showToast('Installing update now. POS is restarting...', 'info', 10000);
       }
 
       if (status.status === 'error') {

@@ -153,10 +153,9 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
               </div>
             )}
             {/* KRA (only when enabled for this tenant) */}
-            {(receipt.businessInfo?.kraEnabled || receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && (receipt.businessInfo?.kraPin || receipt.businessInfo?.vatNumber) && (
+            {(receipt.businessInfo?.kraEnabled || receipt.businessInfo?.kraPin) && receipt.businessInfo?.kraPin && (
               <div className="print-kra" style={{ marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed #ccc', fontSize: '10px' }}>
                 {receipt.businessInfo?.kraPin && <div><strong>KRA PIN:</strong> {receipt.businessInfo.kraPin}</div>}
-                {receipt.businessInfo?.vatNumber && <div><strong>VAT No:</strong> {receipt.businessInfo.vatNumber}</div>}
               </div>
             )}
             {(receipt.businessInfo?.kraEnabled || receipt.businessInfo?.etimsQrUrl) && receipt.businessInfo?.etimsQrUrl && (

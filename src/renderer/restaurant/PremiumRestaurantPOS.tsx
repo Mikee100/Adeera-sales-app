@@ -13,13 +13,13 @@ import {
   LayoutDashboard,
   Package,
   PieChart,
+  RefreshCw,
   Search,
   Settings,
   ShoppingCart,
   Table2,
   LogOut,
   Power,
-  UserCircle2,
   Users,
   UtensilsCrossed,
   UserRoundCog,
@@ -156,6 +156,9 @@ interface StaffUser {
   hasPosPin?: boolean;
   userRoles?: Array<{ role?: { name?: string } }>;
   roles?: string[];
+  permissions?: string[];
+  effectivePermissions?: string[];
+  inheritedPermissions?: string[];
 }
 
 interface ActiveWaiterSession {
@@ -186,6 +189,38 @@ interface RestaurantActivityEvent {
     tableId?: string | null;
     total?: number;
   } | null;
+}
+
+interface RestaurantOfflineFailureItem {
+  operationId: string;
+  operationType: 'create-order' | 'add-items' | 'update-status' | 'checkout-order';
+  orderId?: string;
+  localOrderId?: string;
+  message: string;
+  category: 'conflict' | 'validation' | 'authorization' | 'network' | 'server' | 'unknown';
+  statusCode?: number;
+  suggestion: string;
+}
+
+interface OfflineShiftSummary {
+  salesCount: number;
+  grossSales: number;
+  expectedCash: number;
+  variance: number;
+}
+
+interface OfflineShiftSession {
+  id: string;
+  openedAt: string;
+  openedBy?: string;
+  openingCash: number;
+  status: 'open' | 'closed';
+  closedAt?: string;
+  closingCash?: number;
+  notes?: string;
+  summary?: OfflineShiftSummary;
+  offline: boolean;
+  pendingSync: boolean;
 }
 
 const ALL_CATEGORY = 'All';
@@ -224,7 +259,7 @@ const screenVariants = {
 
 const PremiumRestaurantPOS: React.FC = () => {
   const queryClient = useQueryClient();
-  const { logout, user } = useAuth();
+  const { logout, refreshSession, user } = useAuth();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState(ALL_CATEGORY);
   const [selectedTableId, setSelectedTableId] = useState('');
@@ -275,14 +310,32 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [managerResetCandidateId, setManagerResetCandidateId] = useState('');
   const [managerResetPinInput, setManagerResetPinInput] = useState('');
   const [managerResetError, setManagerResetError] = useState('');
+  const [posDisplayName, setPosDisplayName] = useState('');
+  const [fallbackBusinessName, setFallbackBusinessName] = useState('');
   const [deviceBindingInfo, setDeviceBindingInfo] = useState<DeviceBindingInfo | null>(null);
   const [updateSettings, setUpdateSettings] = useState<UpdateSettings | null>(null);
   const [selectedUpdateChannel, setSelectedUpdateChannel] = useState<UpdateChannel>('stable');
   const [updateStatus, setUpdateStatus] = useState<UpdateEventStatus | null>(null);
   const [checkingUpdates, setCheckingUpdates] = useState(false);
   const [installingUpdate, setInstallingUpdate] = useState(false);
+  const [syncingSession, setSyncingSession] = useState(false);
+  const [lastLiveSyncAt, setLastLiveSyncAt] = useState<number | null>(null);
+  const [restaurantOfflineQueueSize, setRestaurantOfflineQueueSize] = useState(0);
+  const [restaurantOfflineWarning, setRestaurantOfflineWarning] = useState(false);
+  const [restaurantQueueSyncing, setRestaurantQueueSyncing] = useState(false);
+  const [restaurantOfflineFailedOps, setRestaurantOfflineFailedOps] = useState<RestaurantOfflineFailureItem[]>([]);
+  const [showOfflineQueuePanel, setShowOfflineQueuePanel] = useState(false);
+  const [offlineShiftSession, setOfflineShiftSession] = useState<OfflineShiftSession | null>(null);
+  const [offlineShiftQueueSize, setOfflineShiftQueueSize] = useState(0);
+  const [offlineShiftSyncing, setOfflineShiftSyncing] = useState(false);
+  const [failedOpActionInProgressId, setFailedOpActionInProgressId] = useState<string | null>(null);
   const [waiterLastActivityAt, setWaiterLastActivityAt] = useState<number>(Date.now());
   const waiterActivityThrottleRef = useRef(0);
+  const liveRefreshLockRef = useRef(false);
+  const waiterPinInputRef = useRef<HTMLInputElement | null>(null);
+  const managerPinInputRef = useRef<HTMLInputElement | null>(null);
+  const managerResetPinInputRef = useRef<HTMLInputElement | null>(null);
+  const staffPinInputRef = useRef<HTMLInputElement | null>(null);
   const [newTableNumber, setNewTableNumber] = useState('');
   const [newTableCapacity, setNewTableCapacity] = useState('4');
   const [editingTableId, setEditingTableId] = useState<string | null>(null);
@@ -316,6 +369,13 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [bomLines, setBomLines] = useState<BomLineDraft[]>([
     { localId: `bom-line-${Date.now()}`, ingredientProductId: '', quantity: '1', unit: 'unit', wastePercent: '0' },
   ]);
+  const [quickIngredientDraft, setQuickIngredientDraft] = useState({
+    name: '',
+    cost: '',
+    unit: 'kg',
+    stock: '0',
+  });
+  const [quickIngredientCreating, setQuickIngredientCreating] = useState(false);
   const receivedAmountInputRef = useRef<HTMLInputElement | null>(null);
   const paymentCustomerNameInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -328,22 +388,89 @@ const PremiumRestaurantPOS: React.FC = () => {
     setPaymentModalOpen,
   } = useRestaurantUiStore();
 
-  const normalizedRoles: string[] = Array.isArray(user?.roles)
-    ? user.roles.map((role: string) => String(role).toLowerCase())
-    : [];
+  const { data: staffUsers = [] } = useQuery({
+    queryKey: ['restaurant', 'staff-users'],
+    queryFn: async (): Promise<StaffUser[]> => {
+      const res = await window.electronAPI.getUsers();
+      return res.success ? (res.users || []) : [];
+    },
+    enabled:
+      activeScreen === 'orders' ||
+      activeScreen === 'employees' ||
+      waiterCheckinOpen ||
+      managerSignoutOpen ||
+      managerResetOpen ||
+      !!activeWaiter?.id,
+    refetchInterval: 10000,
+  });
+
+  const sessionLockedToWaiter = !!activeWaiter?.id;
+
+  const activeWaiterProfile = useMemo(
+    () =>
+      sessionLockedToWaiter
+        ? staffUsers.find((member) => member.id === activeWaiter?.id) || null
+        : null,
+    [activeWaiter?.id, sessionLockedToWaiter, staffUsers],
+  );
+
+  const normalizedRoles: string[] = useMemo(() => {
+    if (sessionLockedToWaiter) {
+      const waiterRolesFromArray = Array.isArray(activeWaiterProfile?.roles)
+        ? activeWaiterProfile.roles
+        : [];
+      const waiterRolesFromUserRoles = Array.isArray(activeWaiterProfile?.userRoles)
+        ? activeWaiterProfile.userRoles
+            .map((entry) => String(entry?.role?.name || '').toLowerCase())
+            .filter(Boolean)
+        : [];
+
+      const resolved = [...waiterRolesFromArray, ...waiterRolesFromUserRoles]
+        .map((role) => String(role || '').toLowerCase().trim())
+        .filter(Boolean);
+
+      return resolved.length > 0 ? Array.from(new Set(resolved)) : ['waiter'];
+    }
+
+    return Array.isArray(user?.roles)
+      ? user.roles.map((role: string) => String(role).toLowerCase())
+      : [];
+  }, [activeWaiterProfile, sessionLockedToWaiter, user?.roles]);
+
   const rawIsSuperadmin = (user as { isSuperadmin?: unknown } | null | undefined)?.isSuperadmin;
-  const isSuperadmin =
+  const isSuperadminForSession =
+    !sessionLockedToWaiter &&
     rawIsSuperadmin === true ||
-    rawIsSuperadmin === 1 ||
-    rawIsSuperadmin === '1' ||
-    (typeof rawIsSuperadmin === 'string' && rawIsSuperadmin.trim().toLowerCase() === 'true');
+    (!sessionLockedToWaiter && rawIsSuperadmin === 1) ||
+    (!sessionLockedToWaiter && rawIsSuperadmin === '1') ||
+    (!sessionLockedToWaiter && typeof rawIsSuperadmin === 'string' && rawIsSuperadmin.trim().toLowerCase() === 'true');
   const isOwnerLike =
-    isSuperadmin ||
+    isSuperadminForSession ||
     normalizedRoles.includes('owner') ||
     normalizedRoles.includes('admin') ||
     normalizedRoles.includes('manager');
 
   const grantedPermissions = useMemo(() => {
+    if (sessionLockedToWaiter) {
+      const waiterPermissions = [
+        ...(Array.isArray(activeWaiterProfile?.permissions)
+          ? activeWaiterProfile.permissions
+          : []),
+        ...(Array.isArray(activeWaiterProfile?.effectivePermissions)
+          ? activeWaiterProfile.effectivePermissions
+          : []),
+        ...(Array.isArray(activeWaiterProfile?.inheritedPermissions)
+          ? activeWaiterProfile.inheritedPermissions
+          : []),
+      ];
+
+      return new Set(
+        waiterPermissions
+          .map((permission: unknown) => String(permission || '').trim().toLowerCase())
+          .filter(Boolean),
+      );
+    }
+
     const rawPermissions = [
       ...(Array.isArray(user?.permissions) ? user.permissions : []),
       ...(Array.isArray((user as any)?.effectivePermissions)
@@ -356,15 +483,15 @@ const PremiumRestaurantPOS: React.FC = () => {
         .map((permission: unknown) => String(permission || '').trim().toLowerCase())
         .filter(Boolean),
     );
-  }, [user]);
+  }, [activeWaiterProfile, sessionLockedToWaiter, user]);
 
   const hasRestaurantPermission = useCallback(
-    (permission: string) => isSuperadmin || grantedPermissions.has(permission),
-    [grantedPermissions, isSuperadmin],
+    (permission: string) => isSuperadminForSession || grantedPermissions.has(permission),
+    [grantedPermissions, isSuperadminForSession],
   );
   const hasPermissionKey = useCallback(
-    (permission: string) => isSuperadmin || grantedPermissions.has(permission),
-    [grantedPermissions, isSuperadmin],
+    (permission: string) => isSuperadminForSession || grantedPermissions.has(permission),
+    [grantedPermissions, isSuperadminForSession],
   );
   const isKitchenOnly =
     !isOwnerLike &&
@@ -444,7 +571,7 @@ const PremiumRestaurantPOS: React.FC = () => {
   );
 
   const canManageTables =
-    isSuperadmin || normalizedRoles.includes('owner') || normalizedRoles.includes('admin');
+    isSuperadminForSession || normalizedRoles.includes('owner') || normalizedRoles.includes('admin');
   const canManageStaff = canManageTables;
 
   useEffect(() => {
@@ -507,6 +634,7 @@ const PremiumRestaurantPOS: React.FC = () => {
 
             if (status.status === 'checking') {
               setCheckingUpdates(true);
+              setInstallingUpdate(false);
             } else if (
               status.status === 'up-to-date' ||
               status.status === 'update-available' ||
@@ -514,6 +642,14 @@ const PremiumRestaurantPOS: React.FC = () => {
               status.status === 'error'
             ) {
               setCheckingUpdates(false);
+              if (status.status !== 'downloaded') {
+                setInstallingUpdate(false);
+              }
+            }
+
+            if (status.status === 'installing') {
+              setCheckingUpdates(false);
+              setInstallingUpdate(true);
             }
           })
         : () => {};
@@ -521,6 +657,21 @@ const PremiumRestaurantPOS: React.FC = () => {
     return () => {
       unsubscribe();
     };
+  }, []);
+
+  const loadPosDisplayName = useCallback(async () => {
+    if (typeof window.electronAPI.getPosDisplayName !== 'function') return;
+    try {
+      const result = await window.electronAPI.getPosDisplayName();
+      if (typeof result?.displayName === 'string') {
+        setPosDisplayName(result.displayName.trim());
+      }
+      if (typeof result?.fallbackName === 'string') {
+        setFallbackBusinessName(result.fallbackName.trim());
+      }
+    } catch {
+      // Keep current label when backend config lookup is not available.
+    }
   }, []);
 
   const loadDeviceBindingInfo = useCallback(async () => {
@@ -537,12 +688,31 @@ const PremiumRestaurantPOS: React.FC = () => {
 
   useEffect(() => {
     loadDeviceBindingInfo();
-  }, [loadDeviceBindingInfo]);
+    loadPosDisplayName();
+  }, [loadDeviceBindingInfo, loadPosDisplayName]);
 
   useEffect(() => {
     if (activeScreen !== 'settings') return;
     loadDeviceBindingInfo();
   }, [activeScreen, loadDeviceBindingInfo]);
+
+  useEffect(() => {
+    if (activeScreen !== 'settings') return;
+    loadPosDisplayName();
+  }, [activeScreen, loadPosDisplayName]);
+
+  const restaurantHeaderTitle = useMemo(() => {
+    const configuredName = posDisplayName.trim();
+    if (configuredName) return configuredName;
+
+    const storedFallback = fallbackBusinessName.trim();
+    if (storedFallback) return storedFallback;
+
+    const boundTenantName = (deviceBindingInfo?.tenantName || '').trim();
+    if (boundTenantName) return boundTenantName;
+
+    return 'Business';
+  }, [deviceBindingInfo?.tenantName, fallbackBusinessName, posDisplayName]);
 
   useEffect(() => {
     window.localStorage.setItem(RESERVATION_STORAGE_KEY, JSON.stringify(reservations));
@@ -609,21 +779,6 @@ const PremiumRestaurantPOS: React.FC = () => {
       return res.success ? (res.recipes || []) : [];
     },
     enabled: activeScreen === 'inventory',
-  });
-
-  const { data: staffUsers = [] } = useQuery({
-    queryKey: ['restaurant', 'staff-users'],
-    queryFn: async (): Promise<StaffUser[]> => {
-      const res = await window.electronAPI.getUsers();
-      return res.success ? (res.users || []) : [];
-    },
-    enabled:
-      activeScreen === 'orders' ||
-      activeScreen === 'employees' ||
-      waiterCheckinOpen ||
-      managerSignoutOpen ||
-      managerResetOpen,
-    refetchInterval: 10000,
   });
 
   const { data: restaurantActivity = [] } = useQuery({
@@ -994,6 +1149,70 @@ const PremiumRestaurantPOS: React.FC = () => {
     }
   };
 
+  const createIngredientFromPos = async () => {
+    if (typeof window.electronAPI.createBomIngredientProduct !== 'function') {
+      window.alert('POS update not fully loaded. Restart the app and try again.');
+      return;
+    }
+
+    const name = quickIngredientDraft.name.trim();
+    const cost = Number(quickIngredientDraft.cost || 0);
+    const unit = quickIngredientDraft.unit.trim() || 'unit';
+    const stock = Number(quickIngredientDraft.stock || 0);
+
+    if (!name) {
+      window.alert('Enter ingredient name.');
+      return;
+    }
+
+    if (!Number.isFinite(cost) || cost < 0) {
+      window.alert('Ingredient cost must be 0 or higher.');
+      return;
+    }
+
+    setQuickIngredientCreating(true);
+    try {
+      const result = await window.electronAPI.createBomIngredientProduct({
+        name,
+        cost,
+        unit,
+        stock: Number.isFinite(stock) && stock >= 0 ? stock : 0,
+      });
+
+      if (!result?.success || !result.product?.id) {
+        window.alert(result?.error || 'Failed to create ingredient product.');
+        return;
+      }
+
+      const createdProductId = String(result.product.id);
+      setBomLines((prev) => {
+        if (prev.length === 0) {
+          return [
+            {
+              localId: `bom-line-${Date.now()}`,
+              ingredientProductId: createdProductId,
+              quantity: '1',
+              unit,
+              wastePercent: '0',
+            },
+          ];
+        }
+
+        const targetIndex = prev.findIndex((line) => !line.ingredientProductId);
+        const indexToUse = targetIndex >= 0 ? targetIndex : 0;
+        return prev.map((line, index) =>
+          index === indexToUse ? { ...line, ingredientProductId: createdProductId, unit: line.unit || unit } : line,
+        );
+      });
+
+      setQuickIngredientDraft({ name: '', cost: '', unit, stock: quickIngredientDraft.stock });
+      await queryClient.invalidateQueries({ queryKey: ['restaurant', 'products'] });
+      window.alert('Ingredient added. You can now save the BOM.');
+    } finally {
+      setQuickIngredientCreating(false);
+    }
+  };
+
   const activeOrder = useMemo(
     () =>
       orders.find(
@@ -1156,6 +1375,7 @@ const PremiumRestaurantPOS: React.FC = () => {
       tableId: selectedTableId,
       waiterId: activeWaiter?.id,
       total: grandTotal,
+      idempotencyKey: `restaurant:create:${selectedTableId}:${Date.now()}`,
       items: draftItems.map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
@@ -1164,8 +1384,20 @@ const PremiumRestaurantPOS: React.FC = () => {
       })),
     };
 
-    await window.electronAPI.createRestaurantOrder(payload);
-  markWaiterActivity();
+    const result = await window.electronAPI.createRestaurantOrder(payload);
+    if (!result?.success) {
+      window.alert(result?.error || 'Failed to create order.');
+      return;
+    }
+
+    if (result.queued) {
+      const queueNote = result.isWarning
+        ? `Queue size ${result.queueSize}/${result.warningThreshold}. Reconnect and sync soon.`
+        : 'Order queued offline and will sync automatically when online.';
+      window.alert(queueNote);
+    }
+
+    markWaiterActivity();
     setDraftItems([]);
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] }),
@@ -1182,7 +1414,7 @@ const PremiumRestaurantPOS: React.FC = () => {
       return;
     }
 
-    await window.electronAPI.checkoutRestaurantOrder(activeOrder.id, {
+    const result = await window.electronAPI.checkoutRestaurantOrder(activeOrder.id, {
       paymentMethod,
       amountReceived: paymentMethod === 'cash' ? Number(receivedAmount || 0) : undefined,
       mpesaTransactionId: paymentMethod === 'mpesa' ? mpesaTransactionId.trim() : undefined,
@@ -1192,7 +1424,18 @@ const PremiumRestaurantPOS: React.FC = () => {
       idempotencyKey: `checkout:${activeOrder.id}:${Date.now()}`,
     });
 
+    if (!result?.success) {
+      window.alert(result?.error || 'Failed to complete payment.');
+      return;
+    }
+
     setPaymentModalOpen(false);
+    if (result.queued) {
+      const queueNote = result.isWarning
+        ? `Checkout queued offline. Queue size ${result.queueSize}/${result.warningThreshold}.`
+        : 'Checkout queued offline and will sync automatically when online.';
+      window.alert(queueNote);
+    }
     markWaiterActivity();
     await queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] });
   };
@@ -1281,7 +1524,15 @@ const PremiumRestaurantPOS: React.FC = () => {
     if (!confirmed) return;
     if (!requireWaiterSession('closing table orders')) return;
 
-    await window.electronAPI.updateRestaurantOrderStatus(orderId, 'Closed');
+    const result = await window.electronAPI.updateRestaurantOrderStatus(orderId, 'Closed');
+    if (!result?.success) {
+      window.alert(result?.error || 'Failed to close order.');
+      return;
+    }
+
+    if (result.queued) {
+      window.alert('Order close queued offline and will sync when online.');
+    }
     markWaiterActivity();
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] }),
@@ -1291,11 +1542,260 @@ const PremiumRestaurantPOS: React.FC = () => {
 
   const updateKitchenOrderStatus = async (orderId: string, status: OrderStatus, voidReason?: string) => {
     if (!requireWaiterSession('updating order status')) return;
-    await window.electronAPI.updateRestaurantOrderStatus(orderId, status, voidReason);
+    const result = await window.electronAPI.updateRestaurantOrderStatus(orderId, status, voidReason);
+    if (!result?.success) {
+      window.alert(result?.error || 'Failed to update order status.');
+      return;
+    }
+
+    if (result.queued) {
+      window.alert('Order status update queued offline and will sync when online.');
+    }
     markWaiterActivity();
     await queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] });
     await queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders', 'history'] });
   };
+
+  const mapFailedQueueOps = useCallback((operations: any[]): RestaurantOfflineFailureItem[] => {
+    const failed = (Array.isArray(operations) ? operations : []).filter(
+      (operation) => operation?.status === 'failed' || Boolean(operation?.error),
+    );
+
+    return failed.map((operation) => ({
+      operationId: String(operation?.id || ''),
+      operationType: operation?.type || 'update-status',
+      orderId: operation?.orderId,
+      localOrderId: operation?.localOrderId,
+      message: String(operation?.error || 'Operation failed to sync'),
+      category: 'unknown',
+      suggestion: 'Retry the operation when connection is stable, or dismiss it if no longer needed.',
+    }));
+  }, []);
+
+  const refreshRestaurantOfflineQueueState = useCallback(async () => {
+    try {
+      const queueResult = await window.electronAPI.getOfflineRestaurantOps();
+      if (queueResult?.success) {
+        setRestaurantOfflineQueueSize(Number(queueResult.queueSize || 0));
+        setRestaurantOfflineWarning(Boolean(queueResult.isWarning));
+        const failed = mapFailedQueueOps(queueResult.operations || []);
+        if (failed.length > 0) {
+          setRestaurantOfflineFailedOps(failed);
+        }
+      }
+    } catch {
+      // Silent fallback; next cycle will retry.
+    }
+  }, [mapFailedQueueOps]);
+
+  const refreshShiftStatus = useCallback(async () => {
+    try {
+      const result = await window.electronAPI.getShiftStatus();
+      if (!result?.success) return;
+      setOfflineShiftSession((result.currentShift as OfflineShiftSession) || null);
+      setOfflineShiftQueueSize(Number(result.queueSize || 0));
+    } catch {
+      // Silent fallback.
+    }
+  }, []);
+
+  const retryFailedRestaurantOperation = useCallback(
+    async (operationId: string) => {
+      if (!operationId) return;
+      setFailedOpActionInProgressId(operationId);
+      try {
+        const result = await window.electronAPI.retryOfflineRestaurantOp(operationId);
+        if (!result?.success) {
+          window.alert(result?.error || 'Failed to retry operation.');
+          return;
+        }
+
+        setRestaurantOfflineFailedOps((prev) => prev.filter((item) => item.operationId !== operationId));
+        await refreshRestaurantOfflineQueueState();
+      } finally {
+        setFailedOpActionInProgressId(null);
+      }
+    },
+    [refreshRestaurantOfflineQueueState],
+  );
+
+  const dismissFailedRestaurantOperation = useCallback(
+    async (operationId: string) => {
+      if (!operationId) return;
+      const confirmed = window.confirm('Dismiss this failed offline operation?');
+      if (!confirmed) return;
+
+      setFailedOpActionInProgressId(operationId);
+      try {
+        const result = await window.electronAPI.dismissOfflineRestaurantOp(operationId);
+        if (!result?.success) {
+          window.alert(result?.error || 'Failed to dismiss operation.');
+          return;
+        }
+
+        setRestaurantOfflineFailedOps((prev) => prev.filter((item) => item.operationId !== operationId));
+        await refreshRestaurantOfflineQueueState();
+      } finally {
+        setFailedOpActionInProgressId(null);
+      }
+    },
+    [refreshRestaurantOfflineQueueState],
+  );
+
+  const openOfflineShift = useCallback(async () => {
+    const openingCashRaw = window.prompt('Opening cash amount (KES):', '0');
+    if (openingCashRaw === null) return;
+    const openingCash = Number(openingCashRaw);
+    if (!Number.isFinite(openingCash) || openingCash < 0) {
+      window.alert('Enter a valid opening cash amount.');
+      return;
+    }
+
+    const result = await window.electronAPI.openShift({
+      openingCash,
+      openedBy: activeWaiter?.id || user?.id,
+    });
+
+    if (!result?.success) {
+      window.alert(result?.error || 'Failed to open shift.');
+      return;
+    }
+
+    await refreshShiftStatus();
+  }, [activeWaiter?.id, refreshShiftStatus, user?.id]);
+
+  const closeOfflineShift = useCallback(async () => {
+    if (!offlineShiftSession || offlineShiftSession.status !== 'open') {
+      window.alert('No active shift to close.');
+      return;
+    }
+
+    const closingCashRaw = window.prompt('Closing cash amount (KES):', '0');
+    if (closingCashRaw === null) return;
+    const closingCash = Number(closingCashRaw);
+    if (!Number.isFinite(closingCash) || closingCash < 0) {
+      window.alert('Enter a valid closing cash amount.');
+      return;
+    }
+
+    const notes = window.prompt('Shift closing notes (optional):', '') || undefined;
+    const result = await window.electronAPI.closeShift({ closingCash, notes });
+    if (!result?.success) {
+      window.alert(result?.error || 'Failed to close shift.');
+      return;
+    }
+
+    if (result?.summary) {
+      window.alert(
+        `Shift closed offline. Sales: ${result.summary.salesCount}, Gross: ${currency(result.summary.grossSales)}, Variance: ${currency(result.summary.variance)}.`,
+      );
+    }
+
+    await refreshShiftStatus();
+  }, [offlineShiftSession, refreshShiftStatus]);
+
+  const syncOfflineShiftQueue = useCallback(async () => {
+    if (offlineShiftSyncing) return;
+    setOfflineShiftSyncing(true);
+    try {
+      const result = await window.electronAPI.syncOfflineShiftOps();
+      if (!result?.success && result?.error) {
+        window.alert(result.error);
+      }
+      await refreshShiftStatus();
+    } finally {
+      setOfflineShiftSyncing(false);
+    }
+  }, [offlineShiftSyncing, refreshShiftStatus]);
+
+  const executeRestaurantQueueSync = useCallback(
+    async (source: 'manual' | 'auto' = 'auto') => {
+      if (restaurantQueueSyncing) return;
+
+      setRestaurantQueueSyncing(true);
+      try {
+        const result = await window.electronAPI.syncOfflineRestaurantOps();
+
+        if (!result?.success && source === 'manual') {
+          window.alert(result?.error || 'Failed to sync restaurant offline queue.');
+        }
+
+        const failedOps = Array.isArray(result?.failedOperations) ? result.failedOperations : [];
+        setRestaurantOfflineFailedOps(failedOps);
+
+        if (source === 'manual') {
+          if (failedOps.length > 0) {
+            const conflictCount = failedOps.filter((item) => item.category === 'conflict').length;
+            const validationCount = failedOps.filter((item) => item.category === 'validation').length;
+            window.alert(
+              `Restaurant sync completed with ${failedOps.length} failed operation(s). ` +
+                `${conflictCount} conflict, ${validationCount} validation. Open Offline Queue panel for details.`,
+            );
+          } else if (result?.syncedCount) {
+            window.alert(`Restaurant offline sync succeeded. Synced ${result.syncedCount} operation(s).`);
+          }
+        }
+
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] }),
+          queryClient.invalidateQueries({ queryKey: ['restaurant', 'tables'] }),
+          queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders', 'history'] }),
+        ]);
+      } catch {
+        if (source === 'manual') {
+          window.alert('Failed to sync restaurant offline queue.');
+        }
+      } finally {
+        setRestaurantQueueSyncing(false);
+        await refreshRestaurantOfflineQueueState();
+      }
+    },
+    [queryClient, refreshRestaurantOfflineQueueState, restaurantQueueSyncing],
+  );
+
+  useEffect(() => {
+    const syncRestaurantQueue = async () => {
+      try {
+        await Promise.all([refreshRestaurantOfflineQueueState(), refreshShiftStatus()]);
+        const status = await window.electronAPI.getSyncStatus();
+        if (!status?.online) {
+          return;
+        }
+
+        if (status.pendingRestaurantSyncs && status.pendingRestaurantSyncs > 0) {
+          await executeRestaurantQueueSync('auto');
+        }
+
+        const shiftQueue = await window.electronAPI.getOfflineShiftOps();
+        if ((shiftQueue?.queueSize || 0) > 0) {
+          await syncOfflineShiftQueue();
+        }
+      } catch {
+        // Silent retry on next online event or polling cycle.
+      }
+    };
+
+    const handleOnline = () => {
+      void syncRestaurantQueue();
+    };
+
+    void syncRestaurantQueue();
+
+    window.addEventListener('online', handleOnline);
+    const timer = window.setInterval(() => {
+      void syncRestaurantQueue();
+    }, 45000);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.clearInterval(timer);
+    };
+  }, [
+    executeRestaurantQueueSync,
+    refreshRestaurantOfflineQueueState,
+    refreshShiftStatus,
+    syncOfflineShiftQueue,
+  ]);
 
   const handleCreateTable = async () => {
     if (!canManageTables) return;
@@ -1491,6 +1991,121 @@ const PremiumRestaurantPOS: React.FC = () => {
       })
       .sort((a, b) => a.number.localeCompare(b.number, undefined, { numeric: true }));
   }, [tables, activeOrdersByTable, activeReservationsByTable, tableSearch, tableStatusFilter]);
+
+  const runLiveRefresh = useCallback(
+    async (source: 'manual' | 'auto' = 'manual') => {
+      const hasBlockingModalOpen =
+        waiterCheckinOpen ||
+        managerSignoutOpen ||
+        managerResetOpen ||
+        staffPinModalOpen ||
+        paymentModalOpen;
+
+      if (source === 'auto' && hasBlockingModalOpen) {
+        return;
+      }
+
+      if (liveRefreshLockRef.current) {
+        if (source === 'manual') {
+          window.alert('Refresh is already running. Please wait a moment.');
+        }
+        return;
+      }
+
+      liveRefreshLockRef.current = true;
+      setSyncingSession(true);
+
+      try {
+        const refreshed = await refreshSession();
+
+        await Promise.all([loadDeviceBindingInfo(), loadPosDisplayName()]);
+
+        await queryClient.invalidateQueries({ queryKey: ['restaurant'] });
+        await queryClient.refetchQueries({ queryKey: ['restaurant'], type: 'active' });
+
+        setLastLiveSyncAt(Date.now());
+
+        if (!refreshed?.success && source === 'manual') {
+          window.alert(
+            refreshed?.error ||
+              'Session refresh could not complete, but POS data was refreshed. Please try again shortly.',
+          );
+        }
+      } catch {
+        if (source === 'manual') {
+          window.alert('Unable to refresh POS right now. Check network and try again.');
+        }
+      } finally {
+        liveRefreshLockRef.current = false;
+        setSyncingSession(false);
+      }
+    },
+    [
+      loadDeviceBindingInfo,
+      loadPosDisplayName,
+      managerResetOpen,
+      managerSignoutOpen,
+      paymentModalOpen,
+      queryClient,
+      refreshSession,
+      staffPinModalOpen,
+      waiterCheckinOpen,
+    ],
+  );
+
+  useEffect(() => {
+    if (waiterCheckinOpen) {
+      waiterPinInputRef.current?.focus();
+    }
+  }, [waiterCheckinOpen]);
+
+  useEffect(() => {
+    if (managerSignoutOpen) {
+      managerPinInputRef.current?.focus();
+    }
+  }, [managerSignoutOpen]);
+
+  useEffect(() => {
+    if (managerResetOpen) {
+      managerResetPinInputRef.current?.focus();
+    }
+  }, [managerResetOpen]);
+
+  useEffect(() => {
+    if (staffPinModalOpen) {
+      staffPinInputRef.current?.focus();
+    }
+  }, [staffPinModalOpen]);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      void runLiveRefresh('auto');
+    }, 30000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [runLiveRefresh]);
+
+  useEffect(() => {
+    const handleFocusRefresh = () => {
+      void runLiveRefresh('auto');
+    };
+
+    const handleVisibilityRefresh = () => {
+      if (document.visibilityState === 'visible') {
+        void runLiveRefresh('auto');
+      }
+    };
+
+    window.addEventListener('focus', handleFocusRefresh);
+    document.addEventListener('visibilitychange', handleVisibilityRefresh);
+
+    return () => {
+      window.removeEventListener('focus', handleFocusRefresh);
+      document.removeEventListener('visibilitychange', handleVisibilityRefresh);
+    };
+  }, [runLiveRefresh]);
 
   const handleLogout = () => {
     setManagerSignoutError('');
@@ -2058,13 +2673,22 @@ const PremiumRestaurantPOS: React.FC = () => {
         const confirmed = window.confirm(`Checkout order #${order.id.slice(0, 8)} with cash now?`);
         if (!confirmed) return;
 
-        await window.electronAPI.checkoutRestaurantOrder(order.id, {
+        const result = await window.electronAPI.checkoutRestaurantOrder(order.id, {
           paymentMethod: 'cash',
           amountReceived: Number(order.total || 0),
           customerName: order.customerName || undefined,
           customerPhone: order.customerPhone || undefined,
           idempotencyKey: `orders:checkout:${order.id}:${Date.now()}`,
         });
+
+        if (!result?.success) {
+          window.alert(result?.error || 'Checkout failed.');
+          return;
+        }
+
+        if (result.queued) {
+          window.alert('Checkout queued offline and will sync when online.');
+        }
 
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] }),
@@ -2076,53 +2700,55 @@ const PremiumRestaurantPOS: React.FC = () => {
         <motion.div key="orders" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Orders Board</CardTitle>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                {(['all', 'Open', 'SentToKitchen', 'Served', 'Closed', 'Voided'] as const).map((item) => (
+              <CardTitle className="flex items-center justify-between gap-2">
+                <span>Orders Board</span>
+                <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">{counts.all} total</span>
+              </CardTitle>
+
+              <div className="mt-2 rounded-lg border border-slate-200 bg-slate-50/70 p-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Status</span>
+                  {(['all', 'Open', 'SentToKitchen', 'Served', 'Closed', 'Voided'] as const).map((item) => {
+                    const label = item === 'all' ? 'All' : item === 'SentToKitchen' ? 'Sent to Kitchen' : item;
+                    const count = item === 'all' ? counts.all : counts[item];
+                    const isActive = orderStatusFilter === item;
+
+                    return (
+                      <button
+                        key={item}
+                        className={`touch-btn inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs ${isActive ? 'bg-brand-indigo text-white' : 'bg-white text-slate-700 border border-slate-200'}`}
+                        onClick={() => setOrderStatusFilter(item)}
+                      >
+                        <span>{label}</span>
+                        <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}`}>{count}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">View</span>
                   <button
-                    key={item}
-                    className={`touch-btn px-3 py-1.5 text-xs ${orderStatusFilter === item ? 'bg-brand-indigo text-white' : 'bg-slate-100 text-slate-700'}`}
-                    onClick={() => setOrderStatusFilter(item)}
-                  >
-                    {item === 'all' ? `All (${counts.all})` : `${item} (${counts[item]})`}
-                  </button>
-                ))}
-                <div className="ml-auto flex items-center gap-2">
-                  <button
-                    className={`touch-btn px-3 py-1.5 text-xs ${useHistoryView ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}`}
+                    className={`touch-btn px-3 py-1.5 text-xs ${useHistoryView ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border border-slate-200'}`}
                     onClick={() => setUseHistoryView((prev) => !prev)}
                   >
-                    {useHistoryView ? 'History View: ON' : 'History View: OFF'}
+                    History {useHistoryView ? 'ON' : 'OFF'}
                   </button>
                   {(['all', 'table', 'takeaway'] as const).map((item) => (
                     <button
                       key={item}
-                      className={`touch-btn px-3 py-1.5 text-xs ${orderTypeFilter === item ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}`}
+                      className={`touch-btn px-3 py-1.5 text-xs ${orderTypeFilter === item ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border border-slate-200'}`}
                       onClick={() => setOrderTypeFilter(item)}
                     >
                       {item === 'all' ? 'All Types' : item === 'table' ? 'Table' : 'Takeaway'}
                     </button>
                   ))}
                 </div>
-              </div>
-              <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
-                <input
-                  type="datetime-local"
-                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
-                  value={historyFrom}
-                  onChange={(e) => setHistoryFrom(e.target.value)}
-                  placeholder="From"
-                />
-                <input
-                  type="datetime-local"
-                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
-                  value={historyTo}
-                  onChange={(e) => setHistoryTo(e.target.value)}
-                  placeholder="To"
-                />
-                <div className="flex gap-2">
+
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Waiter</span>
                   <select
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                    className="min-w-[180px] flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
                     value={orderWaiterFilter}
                     onChange={(e) => setOrderWaiterFilter(e.target.value)}
                   >
@@ -2142,6 +2768,23 @@ const PremiumRestaurantPOS: React.FC = () => {
                     My Orders
                   </Button>
                 </div>
+              </div>
+
+              <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
+                <input
+                  type="datetime-local"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                  value={historyFrom}
+                  onChange={(e) => setHistoryFrom(e.target.value)}
+                  placeholder="From"
+                />
+                <input
+                  type="datetime-local"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                  value={historyTo}
+                  onChange={(e) => setHistoryTo(e.target.value)}
+                  placeholder="To"
+                />
               </div>
               <div className="relative mt-2">
                 <Search size={15} className="absolute left-3 top-2.5 text-slate-400" />
@@ -2368,7 +3011,12 @@ const PremiumRestaurantPOS: React.FC = () => {
         <motion.div key="tables" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Floor Plan</CardTitle>
+              <CardTitle className="flex items-center justify-between gap-2">
+                <span>Floor Plan</span>
+                <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+                  {tableBoard.length} tables
+                </span>
+              </CardTitle>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <input
                   className="w-44 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs"
@@ -2407,18 +3055,59 @@ const PremiumRestaurantPOS: React.FC = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {tableBoard.map((table) => {
                   const linked = table.activeOrder;
-                  const tone = linked
-                    ? 'bg-red-100 text-red-700'
+                  const tableLabelRaw = String(table.number || '').trim();
+                  const tableLabel = /^table\s+/i.test(tableLabelRaw) ? tableLabelRaw : `Table ${tableLabelRaw}`;
+                  const statusTone = linked
+                    ? 'bg-rose-50 text-rose-700 border-rose-200'
                     : table.derivedStatus === 'Reserved'
-                    ? 'bg-yellow-100 text-yellow-700'
-                    : 'bg-emerald-100 text-emerald-700';
+                    ? 'bg-amber-50 text-amber-700 border-amber-200'
+                    : 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                  const chairCount = Math.min(Math.max(Number(table.capacity || 0), 2), 8);
+                  const hiddenChairs = Math.max(0, Number(table.capacity || 0) - chairCount);
+
                   return (
-                    <div key={table.id} className={`rounded-2xl p-4 ${tone}`}>
-                      <p className="text-sm font-semibold">Table {table.number}</p>
-                      <p className="text-xs">{table.derivedStatus}</p>
+                    <div key={table.id} className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 text-slate-100 shadow-[0_8px_24px_rgba(15,23,42,0.2)]">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-semibold text-white">{tableLabel}</p>
+                          <span className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${statusTone}`}>
+                            {table.derivedStatus}
+                          </span>
+                        </div>
+                        <span className="rounded-md bg-white/10 px-2 py-0.5 text-[11px] font-medium text-slate-200">
+                          {table.capacity || '-'} seats
+                        </span>
+                      </div>
+
+                      <div className="mt-3 rounded-xl border border-cyan-300/25 bg-slate-900/70 p-2.5">
+                        <div className="relative mx-auto h-[120px] w-[120px]">
+                          {Array.from({ length: chairCount }).map((_, idx) => {
+                            const angle = (idx / chairCount) * Math.PI * 2 - Math.PI / 2;
+                            const radius = 47;
+                            const x = 60 + radius * Math.cos(angle) - 8;
+                            const y = 60 + radius * Math.sin(angle) - 8;
+                            return (
+                              <span
+                                key={`${table.id}-chair-${idx}`}
+                                className="absolute h-4 w-4 rounded-full border border-cyan-300/60 bg-cyan-300/30 shadow-[0_0_10px_rgba(103,232,249,0.45)]"
+                                style={{ left: `${x}px`, top: `${y}px` }}
+                              />
+                            );
+                          })}
+                          <div className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl border border-cyan-200/40 bg-cyan-500/20 text-xs font-semibold text-cyan-100 shadow-[0_0_16px_rgba(34,211,238,0.35)]">
+                            {tableLabelRaw}
+                          </div>
+                          {hiddenChairs > 0 && (
+                            <span className="absolute -right-1 -top-1 rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold text-slate-100">
+                              +{hiddenChairs}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
                       <div className="mt-1 text-[11px]">
                         {editingTableId === table.id ? (
                           <div className="flex items-center gap-1">
@@ -2438,20 +3127,20 @@ const PremiumRestaurantPOS: React.FC = () => {
                             </button>
                           </div>
                         ) : (
-                          <span>Capacity: {table.capacity || '-'}</span>
+                          <span className="text-slate-300">Capacity: {table.capacity || '-'}</span>
                         )}
                       </div>
                       {linked && (
-                        <p className="mt-1 text-[11px]">
+                        <p className="mt-1 text-[11px] text-slate-200">
                           {linked.items.length} items · {currency(linked.total)}
                         </p>
                       )}
                       {table.reservation && (
-                        <p className="mt-1 text-[11px]">
+                        <p className="mt-1 text-[11px] text-slate-200">
                           Reserved: {table.reservation.customerName}
                         </p>
                       )}
-                      <div className="mt-3 flex gap-2">
+                      <div className="mt-3 flex flex-wrap gap-1.5">
                         <Button
                           size="sm"
                           variant={linked ? 'warning' : 'secondary'}
@@ -2499,147 +3188,172 @@ const PremiumRestaurantPOS: React.FC = () => {
 
     if (activeScreen === 'reservations') {
       return (
-        <motion.div key="reservations" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
-            <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"><span className="text-slate-500">Total</span><p className="text-base font-semibold">{reservationStats.total}</p></div>
-            <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs"><span className="text-blue-700">Booked</span><p className="text-base font-semibold text-blue-800">{reservationStats.booked}</p></div>
-            <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs"><span className="text-amber-700">Arrived</span><p className="text-base font-semibold text-amber-800">{reservationStats.arrived}</p></div>
-            <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs"><span className="text-emerald-700">Seated</span><p className="text-base font-semibold text-emerald-800">{reservationStats.seated}</p></div>
-            <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs"><span className="text-rose-700">No-show</span><p className="text-base font-semibold text-rose-800">{reservationStats.noShow}</p></div>
-          </div>
-
+        <motion.div key="reservations" variants={screenVariants} initial="initial" animate="animate" exit="exit" className="space-y-3">
           <Card>
-            <CardHeader><CardTitle>Create Reservation</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-              <select
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
-                value={reservationForm.tableId}
-                onChange={(e) => setReservationForm((prev) => ({ ...prev, tableId: e.target.value }))}
-              >
-                <option value="">Select table</option>
-                {availableReservationTables.map((table) => (
-                  <option key={table.id} value={table.id}>Table {table.number}</option>
-                ))}
-              </select>
-              <input
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
-                placeholder="Customer name"
-                value={reservationForm.customerName}
-                onChange={(e) => setReservationForm((prev) => ({ ...prev, customerName: e.target.value }))}
-              />
-              <input
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
-                placeholder="Phone"
-                value={reservationForm.phone}
-                onChange={(e) => setReservationForm((prev) => ({ ...prev, phone: e.target.value }))}
-              />
-              <input
-                type="number"
-                min={1}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
-                placeholder="Pax"
-                value={reservationForm.pax}
-                onChange={(e) => setReservationForm((prev) => ({ ...prev, pax: e.target.value }))}
-              />
-              <input
-                type="datetime-local"
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
-                value={reservationForm.reservedAt}
-                onChange={(e) => setReservationForm((prev) => ({ ...prev, reservedAt: e.target.value }))}
-              />
-              <input
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
-                placeholder="Notes (optional)"
-                value={reservationForm.notes}
-                onChange={(e) => setReservationForm((prev) => ({ ...prev, notes: e.target.value }))}
-              />
-              <div className="md:col-span-2 xl:col-span-3">
-                <Button onClick={createReservation}>Save Reservation</Button>
-              </div>
-              {availableReservationTables.length === 0 && (
-                <div className="md:col-span-2 xl:col-span-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
-                  No tables available for the selected time. Adjust the reservation time or clear conflicting bookings.
+            <CardHeader className="pb-3">
+              <CardTitle className="flex flex-wrap items-center justify-between gap-2">
+                <span>Reservations</span>
+                <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-medium">
+                  <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-slate-600">All {reservationStats.total}</span>
+                  <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-slate-600">Booked {reservationStats.booked}</span>
+                  <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-slate-600">Arrived {reservationStats.arrived}</span>
+                  <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-slate-600">Seated {reservationStats.seated}</span>
+                  <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-slate-600">No-show {reservationStats.noShow}</span>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+              </CardTitle>
+            </CardHeader>
 
-          <Card>
-            <CardHeader><CardTitle>Upcoming Reservations</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2">
+            <CardContent className="grid grid-cols-1 gap-3 xl:grid-cols-3">
+              <div className="space-y-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">New Reservation</p>
+                <select
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                  value={reservationForm.tableId}
+                  onChange={(e) => setReservationForm((prev) => ({ ...prev, tableId: e.target.value }))}
+                >
+                  <option value="">Select table</option>
+                  {availableReservationTables.map((table) => (
+                    <option key={table.id} value={table.id}>Table {table.number}</option>
+                  ))}
+                </select>
+
                 <input
-                  className="w-52 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
-                  placeholder="Search name/phone/table"
-                  value={reservationSearch}
-                  onChange={(e) => setReservationSearch(e.target.value)}
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                  placeholder="Customer name"
+                  value={reservationForm.customerName}
+                  onChange={(e) => setReservationForm((prev) => ({ ...prev, customerName: e.target.value }))}
                 />
-                {(['all', 'Booked', 'Arrived', 'Seated', 'NoShow', 'Cancelled'] as const).map((item) => (
-                  <button
-                    key={item}
-                    className={`touch-btn px-3 py-1.5 text-xs ${reservationStatusFilter === item ? 'bg-brand-indigo text-white' : 'bg-slate-100 text-slate-700'}`}
-                    onClick={() => setReservationStatusFilter(item)}
-                  >
-                    {item}
-                  </button>
-                ))}
+
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                    placeholder="Phone"
+                    value={reservationForm.phone}
+                    onChange={(e) => setReservationForm((prev) => ({ ...prev, phone: e.target.value }))}
+                  />
+                  <input
+                    type="number"
+                    min={1}
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                    placeholder="Pax"
+                    value={reservationForm.pax}
+                    onChange={(e) => setReservationForm((prev) => ({ ...prev, pax: e.target.value }))}
+                  />
+                </div>
+
+                <input
+                  type="datetime-local"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                  value={reservationForm.reservedAt}
+                  onChange={(e) => setReservationForm((prev) => ({ ...prev, reservedAt: e.target.value }))}
+                />
+
+                <input
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                  placeholder="Notes (optional)"
+                  value={reservationForm.notes}
+                  onChange={(e) => setReservationForm((prev) => ({ ...prev, notes: e.target.value }))}
+                />
+
+                <Button className="w-full" onClick={createReservation}>Save Reservation</Button>
+                {availableReservationTables.length === 0 && (
+                  <p className="rounded-lg border border-amber-200 bg-amber-50 px-2 py-1.5 text-[11px] text-amber-800">
+                    No table available for selected time.
+                  </p>
+                )}
               </div>
 
-              {filteredReservations.length === 0 && <p className="text-sm text-slate-500">No reservations match current filter.</p>}
-              {filteredReservations.map((reservation) => {
-                const table = tables.find((t) => t.id === reservation.tableId);
-                const reservationTimeMs = new Date(reservation.reservedAt).getTime();
-                const nowMs = Date.now();
-                const timeToReservationMs = reservationTimeMs - nowMs;
-                const isActiveReservation = reservation.status === 'Booked' || reservation.status === 'Arrived';
-                const isOverdue = isActiveReservation && timeToReservationMs < 0;
-                const isDueSoon = isActiveReservation && timeToReservationMs >= 0 && timeToReservationMs <= 30 * 60 * 1000;
-
-                const urgencyClass = isOverdue
-                  ? 'border-rose-300 bg-rose-50'
-                  : isDueSoon
-                  ? 'border-amber-300 bg-amber-50'
-                  : 'border-slate-100 bg-white';
-
-                return (
-                  <div key={reservation.id} className={`flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3 ${urgencyClass}`}>
-                    <div className="text-sm">
-                      <p className="font-semibold">{reservation.customerName}</p>
-                      <p className="text-xs text-slate-500">
-                        Table {table?.number || '-'} · {reservation.pax} pax · {new Date(reservation.reservedAt).toLocaleString()}
-                      </p>
-                      <p className="text-xs text-slate-500">Status: {reservation.status}</p>
-                      {(isDueSoon || isOverdue) && (
-                        <p className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${isOverdue ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'}`}>
-                          {isOverdue ? 'Overdue' : 'Due in 30 min'}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      {(reservation.status === 'Booked' || reservation.status === 'Arrived') && (
-                        <Button size="sm" variant="success" onClick={() => seatTableToPos(reservation.tableId, reservation.id)}>
-                          Seat
-                        </Button>
-                      )}
-                      {reservation.status === 'Booked' && (
-                        <Button size="sm" variant="warning" onClick={() => upsertReservationStatus(reservation.id, 'Arrived')}>
-                          Arrived
-                        </Button>
-                      )}
-                      {(reservation.status === 'Booked' || reservation.status === 'Arrived') && (
-                        <Button size="sm" variant="danger" onClick={() => upsertReservationStatus(reservation.id, 'NoShow')}>
-                          No-show
-                        </Button>
-                      )}
-                      {(reservation.status === 'Booked' || reservation.status === 'Arrived') && (
-                        <Button size="sm" variant="danger" onClick={() => cancelReservation(reservation.id)}>
-                          Cancel
-                        </Button>
-                      )}
-                    </div>
+              <div className="space-y-2 xl:col-span-2">
+                <div className="rounded-lg border border-slate-200 bg-white p-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      className="min-w-[170px] flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                      placeholder="Search name, phone, table"
+                      value={reservationSearch}
+                      onChange={(e) => setReservationSearch(e.target.value)}
+                    />
+                    {(['all', 'Booked', 'Arrived', 'Seated', 'NoShow', 'Cancelled'] as const).map((item) => {
+                      const label = item === 'NoShow' ? 'No-show' : item;
+                      return (
+                        <button
+                          key={item}
+                          className={`touch-btn rounded-full px-2.5 py-1 text-xs ${reservationStatusFilter === item ? 'bg-brand-indigo text-white' : 'border border-slate-200 bg-white text-slate-700'}`}
+                          onClick={() => setReservationStatusFilter(item)}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+
+                <div className="space-y-2">
+                  {filteredReservations.length === 0 && (
+                    <div className="rounded-lg border border-dashed border-slate-300 bg-white p-4 text-center text-xs text-slate-500">
+                      No reservations match the current filter.
+                    </div>
+                  )}
+
+                  {filteredReservations.map((reservation) => {
+                    const table = tables.find((t) => t.id === reservation.tableId);
+                    const reservationTimeMs = new Date(reservation.reservedAt).getTime();
+                    const nowMs = Date.now();
+                    const timeToReservationMs = reservationTimeMs - nowMs;
+                    const isActiveReservation = reservation.status === 'Booked' || reservation.status === 'Arrived';
+                    const isOverdue = isActiveReservation && timeToReservationMs < 0;
+                    const isDueSoon = isActiveReservation && timeToReservationMs >= 0 && timeToReservationMs <= 30 * 60 * 1000;
+
+                    const rowClass = isOverdue
+                      ? 'border-rose-300 bg-rose-50'
+                      : isDueSoon
+                      ? 'border-amber-300 bg-amber-50'
+                      : 'border-slate-200 bg-white';
+
+                    return (
+                      <div key={reservation.id} className={`rounded-lg border p-2.5 ${rowClass}`}>
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div className="min-w-[220px] text-xs">
+                            <p className="text-sm font-semibold text-slate-900">{reservation.customerName}</p>
+                            <p className="text-slate-600">
+                              Table {table?.number || '-'} · {reservation.pax} pax · {new Date(reservation.reservedAt).toLocaleString()}
+                            </p>
+                            <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-700">
+                                {reservation.status === 'NoShow' ? 'No-show' : reservation.status}
+                              </span>
+                              {isOverdue && <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-medium text-rose-700">Overdue</span>}
+                              {isDueSoon && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">Due soon</span>}
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-1.5">
+                            {(reservation.status === 'Booked' || reservation.status === 'Arrived') && (
+                              <Button size="sm" variant="success" onClick={() => seatTableToPos(reservation.tableId, reservation.id)}>
+                                Seat
+                              </Button>
+                            )}
+                            {reservation.status === 'Booked' && (
+                              <Button size="sm" variant="warning" onClick={() => upsertReservationStatus(reservation.id, 'Arrived')}>
+                                Arrived
+                              </Button>
+                            )}
+                            {(reservation.status === 'Booked' || reservation.status === 'Arrived') && (
+                              <Button size="sm" variant="danger" onClick={() => upsertReservationStatus(reservation.id, 'NoShow')}>
+                                No-show
+                              </Button>
+                            )}
+                            {(reservation.status === 'Booked' || reservation.status === 'Arrived') && (
+                              <Button size="sm" variant="danger" onClick={() => cancelReservation(reservation.id)}>
+                                Cancel
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
@@ -2963,6 +3677,50 @@ const PremiumRestaurantPOS: React.FC = () => {
                   ))}
                 </div>
 
+                <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2">
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-600">Quick Add Ingredient From POS</p>
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-12">
+                    <input
+                      className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs md:col-span-5"
+                      placeholder="Ingredient name (e.g. Beef Raw 1kg)"
+                      value={quickIngredientDraft.name}
+                      onChange={(e) => setQuickIngredientDraft((prev) => ({ ...prev, name: e.target.value }))}
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs md:col-span-2"
+                      placeholder="Cost"
+                      value={quickIngredientDraft.cost}
+                      onChange={(e) => setQuickIngredientDraft((prev) => ({ ...prev, cost: e.target.value }))}
+                    />
+                    <input
+                      className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs md:col-span-2"
+                      placeholder="Unit"
+                      value={quickIngredientDraft.unit}
+                      onChange={(e) => setQuickIngredientDraft((prev) => ({ ...prev, unit: e.target.value }))}
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      step="1"
+                      className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs md:col-span-1"
+                      placeholder="Stock"
+                      value={quickIngredientDraft.stock}
+                      onChange={(e) => setQuickIngredientDraft((prev) => ({ ...prev, stock: e.target.value }))}
+                    />
+                    <Button
+                      size="sm"
+                      className="md:col-span-2"
+                      onClick={createIngredientFromPos}
+                      disabled={quickIngredientCreating}
+                    >
+                      {quickIngredientCreating ? 'Adding...' : 'Add Ingredient'}
+                    </Button>
+                  </div>
+                </div>
+
                 <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-100 bg-slate-50 p-2">
                   <div className="flex flex-wrap items-center gap-2">
                   <Button size="sm" variant="secondary" onClick={addBomLine}>Add Ingredient</Button>
@@ -3104,11 +3862,21 @@ const PremiumRestaurantPOS: React.FC = () => {
                 <Button
                   variant="success"
                   onClick={handleInstallUpdate}
-                  disabled={installingUpdate || updateStatus?.status !== 'downloaded' || !isPackagedBuild}
+                  disabled={
+                    installingUpdate ||
+                    !['downloaded', 'installing'].includes(updateStatus?.status || '') ||
+                    !isPackagedBuild
+                  }
                 >
-                  {installingUpdate ? 'Installing...' : 'Install Downloaded Update'}
+                  {installingUpdate ? 'Installing and Restarting...' : 'Install Downloaded Update'}
                 </Button>
               </div>
+
+              {updateStatus?.status === 'installing' && (
+                <p className="text-xs text-blue-700">
+                  Update is installing automatically. The POS app will restart to finish installation.
+                </p>
+              )}
 
               <p className="text-xs text-slate-500">
                 Stable is safest for all stores. Use Beta only for pilot devices before promoting to Stable.
@@ -3203,15 +3971,52 @@ const PremiumRestaurantPOS: React.FC = () => {
         <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-3 py-2 backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h1 className="text-xl font-semibold leading-tight text-slate-900">Damian Ltd Restaurant</h1>
-              <p className="text-[11px] leading-tight text-slate-500">Current Shift: Afternoon</p>
+              <h1 className="text-xl font-semibold leading-tight text-slate-900">{restaurantHeaderTitle}</h1>
+              <p className="text-[11px] leading-tight text-slate-500">
+                Current Shift:{' '}
+                {offlineShiftSession
+                  ? `${offlineShiftSession.status === 'open' ? 'Open' : 'Closed'} (${currency(offlineShiftSession.openingCash)})`
+                  : 'Not started'}
+                {offlineShiftQueueSize > 0 ? ` · Shift Queue ${offlineShiftQueueSize}` : ''}
+                {lastLiveSyncAt ? ` · Synced ${new Date(lastLiveSyncAt).toLocaleTimeString()}` : ''}
+                {restaurantOfflineQueueSize > 0 ? ` · Offline Queue ${restaurantOfflineQueueSize}` : ''}
+              </p>
             </div>
 
             <div className="flex items-center gap-1.5">
-              <div className="relative w-44">
-                <Search size={14} className="absolute left-2.5 top-2.5 text-slate-400" />
-                <input className="h-8 w-full rounded-lg border border-slate-200 pl-8 pr-2 text-xs" placeholder="Search" />
-              </div>
+              <Button
+                variant="secondary"
+                className="h-8 gap-1.5 px-2 text-xs"
+                disabled={syncingSession}
+                onClick={() => void runLiveRefresh('manual')}
+                title="Refresh session, permissions, and POS data"
+              >
+                <RefreshCw size={14} className={syncingSession ? 'animate-spin' : ''} />
+                {syncingSession ? 'Refreshing' : 'Refresh'}
+              </Button>
+              <Button
+                variant={restaurantOfflineWarning ? 'warning' : 'secondary'}
+                className="h-8 gap-1.5 px-2 text-xs"
+                onClick={() => setShowOfflineQueuePanel((prev) => !prev)}
+                title="Restaurant offline queue"
+              >
+                Queue {restaurantOfflineQueueSize}
+              </Button>
+              <Button
+                variant="secondary"
+                className="h-8 gap-1.5 px-2 text-xs"
+                onClick={() => void (offlineShiftSession?.status === 'open' ? closeOfflineShift() : openOfflineShift())}
+              >
+                {offlineShiftSession?.status === 'open' ? 'Close Shift' : 'Open Shift'}
+              </Button>
+              <Button
+                variant="secondary"
+                className="h-8 gap-1.5 px-2 text-xs"
+                disabled={offlineShiftSyncing || offlineShiftQueueSize === 0}
+                onClick={() => void syncOfflineShiftQueue()}
+              >
+                {offlineShiftSyncing ? 'Syncing Shifts...' : `Sync Shifts ${offlineShiftQueueSize}`}
+              </Button>
               <Button variant="secondary" size="icon" className="h-8 w-8"><Bell size={14} /></Button>
               {activeWaiter ? (
                 <>
@@ -3249,10 +4054,6 @@ const PremiumRestaurantPOS: React.FC = () => {
               <div className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] leading-none">
                 {clock.toLocaleDateString()} · {clock.toLocaleTimeString()}
               </div>
-              <Button variant="secondary" className="h-8 gap-1.5 px-2 text-xs">
-                <UserCircle2 size={14} />
-                Manager
-              </Button>
               <Button variant="secondary" className="h-8 gap-1.5 px-2 text-xs" onClick={handleLogout}>
                 <LogOut size={14} />
                 Manager Sign-out
@@ -3263,6 +4064,101 @@ const PremiumRestaurantPOS: React.FC = () => {
               </Button>
             </div>
           </div>
+
+          {showOfflineQueuePanel && (
+            <div className="mt-2 rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-700">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <p className="font-semibold text-slate-900">Restaurant Offline Queue</p>
+                  <p>
+                    Pending operations: <span className="font-semibold">{restaurantOfflineQueueSize}</span>
+                    {restaurantOfflineFailedOps.length > 0 ? ` · Failed: ${restaurantOfflineFailedOps.length}` : ''}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="h-7 px-2 text-xs"
+                    onClick={() => void refreshRestaurantOfflineQueueState()}
+                  >
+                    Refresh Queue
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={restaurantQueueSyncing || restaurantOfflineQueueSize === 0}
+                    onClick={() => void executeRestaurantQueueSync('manual')}
+                  >
+                    {restaurantQueueSyncing ? 'Syncing...' : 'Sync Now'}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    className="h-7 px-2 text-xs"
+                    disabled={!restaurantQueueSyncing}
+                    onClick={() => void window.electronAPI.cancelSyncOfflineRestaurantOps()}
+                  >
+                    Cancel Sync
+                  </Button>
+                </div>
+              </div>
+
+              {restaurantOfflineFailedOps.length > 0 && (
+                <div className="mt-2 max-h-40 space-y-1 overflow-y-auto rounded border border-amber-200 bg-amber-50 p-2">
+                  {restaurantOfflineFailedOps.map((item) => (
+                    <div key={item.operationId} className="rounded border border-amber-300 bg-white p-1.5">
+                      <p className="font-semibold text-amber-800">
+                        {item.operationType} · {item.category}
+                        {item.statusCode ? ` (${item.statusCode})` : ''}
+                      </p>
+                      <p className="text-slate-700">{item.message}</p>
+                      <p className="text-[11px] text-slate-600">Action: {item.suggestion}</p>
+                      <div className="mt-1 flex items-center gap-1.5">
+                        <Button
+                          size="sm"
+                          className="h-6 px-2 text-[11px]"
+                          disabled={failedOpActionInProgressId === item.operationId}
+                          onClick={() => void retryFailedRestaurantOperation(item.operationId)}
+                        >
+                          Retry
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          className="h-6 px-2 text-[11px]"
+                          disabled={failedOpActionInProgressId === item.operationId}
+                          onClick={() => void dismissFailedRestaurantOperation(item.operationId)}
+                        >
+                          Dismiss
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {offlineShiftSession && (
+                <div className="mt-2 rounded border border-slate-200 bg-white p-2 text-[11px]">
+                  <p className="font-semibold text-slate-900">Offline Shift Status</p>
+                  <p className="text-slate-700">
+                    {offlineShiftSession.status === 'open' ? 'Open' : 'Closed'} · Opened {new Date(offlineShiftSession.openedAt).toLocaleString()}
+                  </p>
+                  <p className="text-slate-600">
+                    Opening cash: {currency(offlineShiftSession.openingCash)}
+                    {typeof offlineShiftSession.closingCash === 'number'
+                      ? ` · Closing cash: ${currency(offlineShiftSession.closingCash)}`
+                      : ''}
+                  </p>
+                  {offlineShiftSession.summary && (
+                    <p className="text-slate-600">
+                      Sales: {offlineShiftSession.summary.salesCount} · Gross: {currency(offlineShiftSession.summary.grossSales)} · Variance: {currency(offlineShiftSession.summary.variance)}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </header>
 
         <main className="p-4">
@@ -3293,11 +4189,13 @@ const PremiumRestaurantPOS: React.FC = () => {
               </select>
 
               <input
+                ref={waiterPinInputRef}
                 type="text"
                 inputMode="numeric"
                 maxLength={8}
                 className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
                 value={waiterPinInput}
+                onKeyDown={(e) => e.stopPropagation()}
                 onChange={(e) => setWaiterPinInput(e.target.value.replace(/\D/g, ''))}
                 placeholder="Enter waiter PIN (4-8 digits)"
                 autoFocus
@@ -3352,11 +4250,13 @@ const PremiumRestaurantPOS: React.FC = () => {
               </select>
 
               <input
+                ref={managerPinInputRef}
                 type="text"
                 inputMode="numeric"
                 maxLength={8}
                 className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
                 value={managerPinInput}
+                onKeyDown={(e) => e.stopPropagation()}
                 onChange={(e) => setManagerPinInput(e.target.value.replace(/\D/g, ''))}
                 placeholder="Enter manager/admin PIN"
                 autoFocus
@@ -3418,11 +4318,13 @@ const PremiumRestaurantPOS: React.FC = () => {
               </select>
 
               <input
+                ref={managerResetPinInputRef}
                 type="text"
                 inputMode="numeric"
                 maxLength={8}
                 className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
                 value={managerResetPinInput}
+                onKeyDown={(e) => e.stopPropagation()}
                 onChange={(e) => setManagerResetPinInput(e.target.value.replace(/\D/g, ''))}
                 placeholder="Enter manager/admin PIN"
                 autoFocus
@@ -3465,11 +4367,13 @@ const PremiumRestaurantPOS: React.FC = () => {
 
             <div className="mt-3 space-y-2">
               <input
+                ref={staffPinInputRef}
                 type="text"
                 inputMode="numeric"
                 maxLength={8}
                 className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
                 value={staffPinValue}
+                onKeyDown={(e) => e.stopPropagation()}
                 onChange={(e) => {
                   setStaffPinValue(e.target.value.replace(/\D/g, ''));
                   if (staffPinError) setStaffPinError('');
