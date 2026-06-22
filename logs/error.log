@@ -769,3 +769,106 @@
 {"error":"Request failed with status code 500","level":"error","message":"Failed to create dining table","service":"saas-pos","timestamp":"2026-06-13T19:48:58.964Z"}
 {"error":"Request failed with status code 400","level":"error","message":"Failed to checkout restaurant order","service":"saas-pos","timestamp":"2026-06-13T20:01:52.158Z"}
 {"error":"Request failed with status code 400","level":"error","message":"Failed to checkout restaurant order","service":"saas-pos","timestamp":"2026-06-13T22:53:18.813Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-13T23:59:11.675Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to create order","service":"saas-pos","timestamp":"2026-06-13T23:59:22.503Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-13T23:59:33.209Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-13T23:59:40.947Z"}
+{"error":"Request failed with status code 502","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T23:59:46.228Z"}
+{"error":"Request failed with status code 502","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-13T23:59:48.646Z"}
+{"error":"Request failed with status code 502","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-13T23:59:51.939Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-14T00:05:56.149Z"}
+{"component":"auth","error":{"error":"Unauthorized","message":"Invalid credentials","statusCode":401},"level":"error","message":"Login error","service":"saas-pos","status":401,"timestamp":"2026-06-14T10:23:31.827Z"}
+{"error":"Request failed with status code 400","level":"error","message":"Failed to create order","service":"saas-pos","timestamp":"2026-06-14T10:59:39.918Z"}
+{"error":"Request failed with status code 400","level":"error","message":"Failed to create order","service":"saas-pos","timestamp":"2026-06-14T11:00:06.073Z"}
+{"branchId":"88badec1-aaf9-4544-a0c4-eec3c8a927cf","component":"restaurant","error":{"message":"Internal server error","statusCode":500},"level":"error","message":"Failed to create order","service":"saas-pos","status":500,"timestamp":"2026-06-14T11:01:53.152Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-14T11:04:29.981Z"}
+{"branchId":"88badec1-aaf9-4544-a0c4-eec3c8a927cf","component":"restaurant","error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to create order","service":"saas-pos","timestamp":"2026-06-14T11:04:30.833Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-14T11:05:29.383Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-14T11:06:18.001Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-14T11:06:18.394Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-14T11:06:23.020Z"}
+{"error":"Request failed with status code 500","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-14T11:15:03.153Z"}
+{"branchId":"88badec1-aaf9-4544-a0c4-eec3c8a927cf","component":"restaurant","error":{"message":"Internal server error","statusCode":500},"level":"error","message":"Failed to create order","service":"saas-pos","status":500,"timestamp":"2026-06-14T11:15:11.332Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-06-15T08:59:27.472Z"}
+{"error":"Request failed with status code 400","level":"error","message":"Failed to create order","service":"saas-pos","timestamp":"2026-06-21T13:56:07.140Z"}
+{"error":"Request failed with status code 400","level":"error","message":"Failed to create order","service":"saas-pos","timestamp":"2026-06-21T13:56:47.422Z"}
+{"error":"read ECONNRESET","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-21T19:21:29.853Z"}
+{"error":"read ECONNRESET","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-21T19:21:29.858Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-21T19:21:34.889Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-21T19:21:39.883Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-21T19:21:39.918Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-21T19:21:44.936Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-21T19:21:49.910Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-21T19:21:49.980Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-21T19:21:54.997Z"}
+{"error":"read ECONNRESET","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-21T19:35:29.975Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-21T21:24:15.496Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-21T21:24:15.499Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-22T14:55:36.032Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-22T14:55:36.037Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-22T14:55:36.041Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-22T14:55:36.113Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-22T14:55:36.117Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-22T14:55:36.121Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-22T14:56:05.991Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-22T14:56:05.993Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-22T14:56:05.996Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-22T14:56:06.040Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-22T14:56:06.042Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-22T14:56:06.046Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-22T14:56:35.994Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-22T14:56:35.996Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-22T14:56:35.999Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get tables","service":"saas-pos","timestamp":"2026-06-22T14:56:36.041Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant orders","service":"saas-pos","timestamp":"2026-06-22T14:56:36.044Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant activity","service":"saas-pos","timestamp":"2026-06-22T14:56:36.047Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:06:27.272Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:27.274Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:32.297Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:06:37.296Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:37.305Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:06:40.169Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:40.177Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:06:40.230Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:40.241Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:42.496Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:42.516Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:45.628Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:45.643Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:49.508Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:06:50.253Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:06:54.530Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:07:12.821Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:07:12.823Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:07:17.032Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:07:17.063Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:07:25.155Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:07:25.171Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:07:25.196Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:07:45.949Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:07:45.982Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:07:46.131Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:07:46.139Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:07:46.205Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:07:46.215Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:07:51.230Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:07:56.224Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:07:56.252Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:08:01.269Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:08:06.243Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:08:06.286Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:08:10.159Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:08:10.213Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:08:10.284Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:08:10.294Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:08:15.324Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:08:26.153Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:08:26.168Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:08:26.257Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:08:26.270Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:08:31.298Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:08:41.040Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:08:41.058Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-06-22T17:08:41.140Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to get restaurant order history","service":"saas-pos","timestamp":"2026-06-22T17:08:41.153Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-06-22T20:06:53.831Z"}
