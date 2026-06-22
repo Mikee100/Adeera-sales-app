@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './SleepScreen.css';
+import loadingBackground from '../../../images/pexels-karola-g-4968635.jpg';
 
-// Background image path - served by webpack dev server from /images
-// In development, use full URL; in production, use relative path
-const backgroundImage = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:3001/images/pexels-karola-g-4968635.jpg'
-  : '/images/pexels-karola-g-4968635.jpg';
+const backgroundImage = loadingBackground;
 
 interface SleepScreenProps {
   onWake?: () => void;
@@ -14,11 +11,6 @@ interface SleepScreenProps {
 const SleepScreen: React.FC<SleepScreenProps> = ({ onWake }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [mouseMoved, setMouseMoved] = useState(false);
-
-  // Debug: Log when sleep screen renders
-  useEffect(() => {
-    console.log('🌙 SleepScreen rendered');
-  }, []);
 
   // Update time every second
   useEffect(() => {
@@ -92,16 +84,6 @@ const SleepScreen: React.FC<SleepScreenProps> = ({ onWake }) => {
       day: 'numeric'
     });
   };
-
-  // Debug: Log the image path and test if it loads
-  React.useEffect(() => {
-    console.log('SleepScreen background image path:', backgroundImage);
-    // Test if image loads
-    const img = new Image();
-    img.onload = () => console.log('✅ SleepScreen background image loaded successfully');
-    img.onerror = () => console.error('❌ SleepScreen background image failed to load:', backgroundImage);
-    img.src = backgroundImage;
-  }, []);
 
   return (
     <div className="sleep-screen">

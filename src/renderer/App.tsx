@@ -13,6 +13,7 @@ import { useInitialSync } from './hooks/useInitialSync';
 import { useIdleTimer } from './hooks/useIdleTimer';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './error-boundary.css';
+import loadingBackground from '../../images/pexels-karola-g-4968635.jpg';
 
 const POS_KIOSK_MODE = true;
 
@@ -181,7 +182,15 @@ const AppContent: React.FC = () => {
   // Show loading screen while checking auth (after sync completes)
   if (loading) {
     return (
-      <div className="loading-screen">
+      <div
+        className="loading-screen"
+        style={{
+          backgroundImage: `linear-gradient(rgba(2, 6, 23, 0.48), rgba(2, 6, 23, 0.62)), url(${loadingBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
         <div className="loading-spinner"></div>
         <p>Loading SaaS POS...</p>
       </div>
@@ -195,12 +204,7 @@ const AppContent: React.FC = () => {
           isAuthenticated ? (
             restaurantEnabled ? <RestaurantRenderer /> : <POS />
           ) : (
-            <div>
-              <div className="mx-auto mt-4 mb-2 max-w-4xl rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-                Kiosk mode enabled. Manager/Admin sign-in is only required for initial device provisioning. Staff will use PIN check-in inside POS.
-              </div>
-              <Login />
-            </div>
+            <Login />
           )
         ) : isAuthenticated ? (
           restaurantEnabled ? <RestaurantRenderer /> : <POS />

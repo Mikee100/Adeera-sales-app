@@ -31,6 +31,7 @@ const SyncStatus: React.FC = () => {
   const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasAutoSyncedRef = useRef(false);
   const lastPendingCountRef = useRef(0);
+  const autoSyncCycleRunningRef = useRef(false);
   const { startSync } = useSyncProgress();
 
   // Listen for sync progress updates
@@ -271,6 +272,36 @@ const SyncStatus: React.FC = () => {
     }
   }, [isSyncing, handleSyncNow]);
 
+  const runSalesQueueAutoSyncCycle = useCallback(async () => {
+    if (autoSyncCycleRunningRef.current) {
+      return;
+    }
+
+    autoSyncCycleRunningRef.current = true;
+    try {
+      const status = await window.electronAPI.getSyncStatus();
+      if (!status) {
+        return;
+      }
+
+      setSyncStatus(status);
+      lastPendingCountRef.current = status.pendingSyncs;
+
+      if (!status.online || isSyncing) {
+        return;
+      }
+
+      if (status.pendingSyncs > 0) {
+        hasAutoSyncedRef.current = true;
+        await handleSyncNow(true);
+      }
+    } catch (error) {
+      console.warn('Auto-sync cycle failed:', error);
+    } finally {
+      autoSyncCycleRunningRef.current = false;
+    }
+  }, [handleSyncNow, isSyncing]);
+
   useEffect(() => {
     let mounted = true;
     
@@ -321,6 +352,24 @@ const SyncStatus: React.FC = () => {
       }
     };
   }, [handleSyncNow, updateSyncStatus, isSyncing, startSync]); // Include dependencies
+
+  useEffect(() => {
+    const handleOnline = () => {
+      void runSalesQueueAutoSyncCycle();
+    };
+
+    void runSalesQueueAutoSyncCycle();
+    window.addEventListener('online', handleOnline);
+
+    const timer = window.setInterval(() => {
+      void runSalesQueueAutoSyncCycle();
+    }, 45000);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.clearInterval(timer);
+    };
+  }, [runSalesQueueAutoSyncCycle]);
 
   const formatLastSync = (lastSync?: string) => {
     if (!lastSync) return 'Never';

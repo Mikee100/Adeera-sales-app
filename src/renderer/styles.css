@@ -19,7 +19,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #0f172a;
   color: white;
 }
 
@@ -392,7 +392,8 @@ body {
 .pos-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
   background: #f5f7fa;
   overflow: hidden;
 }
@@ -1148,6 +1149,9 @@ body {
   padding: 12px;
   min-width: 320px;
   max-width: 400px;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .cart-header {
@@ -1461,6 +1465,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin-top: auto;
+  padding-top: 8px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  background: white;
+  border-top: 1px solid #e1e5e9;
 }
 
 .shortcut-hint {
@@ -1533,12 +1545,16 @@ body {
 @media (max-width: 768px) {
   .pos-content {
     flex-direction: column;
+    overflow-y: auto;
   }
 
   .products-section,
   .cart-section {
     flex: none;
-    height: 50vh;
+    height: auto;
+    min-height: 40vh;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 
   .checkout-section {

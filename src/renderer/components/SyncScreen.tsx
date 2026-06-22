@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './SyncScreen.css';
+import loadingBackground from '../../../images/pexels-karola-g-4968635.jpg';
 
-// Background image path - served by webpack dev server from /images
-// In development, use full URL; in production, use relative path
-const backgroundImage = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:3001/images/pexels-karola-g-4968635.jpg'
-  : '/images/pexels-karola-g-4968635.jpg';
+const backgroundImage = loadingBackground;
 
 interface SyncScreenProps {
   progress: number; // 0-100

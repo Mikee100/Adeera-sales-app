@@ -15,6 +15,9 @@ const Login: React.FC = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [capsLockOn, setCapsLockOn] = useState(false);
+  const [isResettingEnrollment, setIsResettingEnrollment] = useState(false);
+
+  const isDeviceEnrollmentLockError = formError.toLowerCase().includes('reset device enrollment');
 
   const validateEmail = (value: string) => {
     if (!value.trim()) {
@@ -83,7 +86,7 @@ const Login: React.FC = () => {
       setFormError(errorMessage);
 
       handleError(
-        new AppError(errorMessage, 'UNAUTHORIZED', {
+        new AppError(errorMessage, 'OPERATION_FAILED', {
           operation: 'login',
           component: 'Login',
           metadata: { email },
@@ -113,6 +116,38 @@ const Login: React.FC = () => {
 
   const isSubmitting = loading;
 
+  const handleResetEnrollment = async () => {
+    if (typeof window.electronAPI?.resetDeviceBinding !== 'function') {
+      showToast('Terminal enrollment reset is not available in this build.', 'error', 3000);
+      return;
+    }
+
+    const approved = window.confirm(
+      'Reset terminal enrollment now? This signs out the kiosk and allows provisioning for another tenant or branch.'
+    );
+    if (!approved) return;
+
+    setIsResettingEnrollment(true);
+    try {
+      const result = await window.electronAPI.resetDeviceBinding();
+      if (!result?.success) {
+        setFormError(result?.error || 'Failed to reset terminal enrollment.');
+        showToast(result?.error || 'Failed to reset terminal enrollment.', 'error', 3500);
+        return;
+      }
+
+      setFormError('Terminal enrollment reset. Sign in with the manager/admin account for initial provisioning.');
+      setPassword('');
+      showToast('Terminal enrollment reset successfully.', 'success', 2500);
+    } catch (error: any) {
+      const message = error?.message || 'Failed to reset terminal enrollment.';
+      setFormError(message);
+      showToast(message, 'error', 3500);
+    } finally {
+      setIsResettingEnrollment(false);
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="login-shell">
@@ -122,29 +157,29 @@ const Login: React.FC = () => {
             <span className="login-logo-text">SaaS POS</span>
           </div>
           <p className="login-brand-tagline">
-            Modern point-of-sale for growing teams. Secure, fast, and built for multi-branch operations.
+            Offline-first POS for multi-branch retail and restaurant teams, built for fast checkout and resilient sync.
           </p>
 
           <div className="login-brand-highlights">
             <div className="login-highlight">
               <span className="login-highlight-dot" />
               <div>
-                <div className="login-highlight-title">Role-based access</div>
-                <div className="login-highlight-subtitle">Fine-grained control for admins and staff.</div>
+                <div className="login-highlight-title">Kiosk-ready access</div>
+                <div className="login-highlight-subtitle">Provision once with manager/admin, then staff check in with PIN.</div>
               </div>
             </div>
             <div className="login-highlight">
               <span className="login-highlight-dot" />
               <div>
-                <div className="login-highlight-title">Real-time insights</div>
-                <div className="login-highlight-subtitle">Track sales and inventory live across locations.</div>
+                <div className="login-highlight-title">Offline continuity</div>
+                <div className="login-highlight-subtitle">Keep selling during outages and auto-sync when connectivity returns.</div>
               </div>
             </div>
           </div>
 
           <div className="login-environment-pill">
             <span className="login-env-dot" />
-            <span>Secure access</span>
+            <span>Secure multi-tenant operations</span>
           </div>
         </div>
 
@@ -156,7 +191,19 @@ const Login: React.FC = () => {
 
           {formError && (
             <div className="error-message" role="alert">
-              {formError}
+              <div>{formError}</div>
+              {isDeviceEnrollmentLockError && (
+                <div style={{ marginTop: 10 }}>
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={handleResetEnrollment}
+                    disabled={isSubmitting || isResettingEnrollment}
+                  >
+                    {isResettingEnrollment ? 'Resetting terminal enrollment...' : 'Reset terminal enrollment'}
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -240,6 +287,15 @@ const Login: React.FC = () => {
                 }
               >
                 Forgot password?
+              </button>
+
+              <button
+                type="button"
+                className="link-button"
+                onClick={handleResetEnrollment}
+                disabled={isSubmitting || isResettingEnrollment}
+              >
+                {isResettingEnrollment ? 'Resetting terminal...' : 'Reset terminal enrollment'}
               </button>
             </div>
 

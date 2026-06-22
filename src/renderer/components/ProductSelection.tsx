@@ -131,9 +131,35 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
   const [showBarcodeHelp, setShowBarcodeHelp] = useState(false);
   const [showReceiptsMenu, setShowReceiptsMenu] = useState(false);
+  const [apiBaseUrl, setApiBaseUrl] = useState<string>('');
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const receiptsMenuRef = useRef<HTMLDivElement | null>(null);
   const sessionExpiryHandledRef = useRef(false);
+
+  const resolveImageSrc = useCallback((rawImage?: string | null): string => {
+    const image = typeof rawImage === 'string' ? rawImage.trim() : '';
+    if (!image) return '';
+
+    if (/^(https?:|data:|blob:|file:)/i.test(image)) {
+      return image;
+    }
+
+    const safeBase = (apiBaseUrl || '').trim();
+    if (!safeBase) {
+      return image;
+    }
+
+    const normalizedBase = safeBase.replace(/\/+$/, '');
+    const mediaBase = normalizedBase.replace(/\/api$/i, '');
+    const normalizedPath = image.startsWith('/') ? image : `/${image}`;
+    const selectedBase = normalizedPath.startsWith('/uploads/') ? mediaBase : normalizedBase;
+
+    try {
+      return new URL(normalizedPath, `${selectedBase}/`).toString();
+    } catch {
+      return `${selectedBase}${normalizedPath}`;
+    }
+  }, [apiBaseUrl]);
 
   const handleSessionExpired = useCallback(async (message: string) => {
     if (sessionExpiryHandledRef.current) {
@@ -171,6 +197,21 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
+  }, []);
+
+  useEffect(() => {
+    const loadApiBaseUrl = async () => {
+      try {
+        const baseUrl = await window.electronAPI.getApiBaseUrl();
+        if (typeof baseUrl === 'string' && baseUrl.trim().length > 0) {
+          setApiBaseUrl(baseUrl.trim());
+        }
+      } catch {
+        // Keep empty API base URL and fall back to raw image paths
+      }
+    };
+
+    loadApiBaseUrl();
   }, []);
 
   // Barcode scanner hook
@@ -647,6 +688,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                   (Array.isArray((variation as any).images) && (variation as any).images.length > 0
                     ? (variation as any).images[0]
                     : (selectedProductForVariation?.images?.[0] || ''));
+                const variationImageSrc = resolveImageSrc(variationImage);
                 return (
                   <button
                     key={variation.id}
@@ -655,10 +697,10 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                     className={`variation-card ${hasStock ? '' : 'variation-card-out-of-stock'}`}
                     onClick={() => hasStock && selectedProductForVariation && handleAddVariationToCart(selectedProductForVariation, variation)}
                   >
-                    {variationImage && (
+                    {variationImageSrc && (
                       <div className="variation-card-image">
                         <img
-                          src={variationImage}
+                          src={variationImageSrc}
                           alt={attrsLabel || variation.sku}
                           loading="lazy"
                           onError={(e) => {
@@ -789,6 +831,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                 const showInlineVariations =
                   inlineVariations.length > 0 && inlineVariations.length <= 3;
                 const variationCount = mappedVariations.length;
+                const productImageSrc = resolveImageSrc(product.images?.[0]);
 
                 return (
                   <div
@@ -805,10 +848,10 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                       </div>
                     )}
 
-                    {product.images && product.images.length > 0 && (
+                    {productImageSrc && (
                       <div className="product-card-image">
                         <img
-                          src={product.images[0]}
+                          src={productImageSrc}
                           alt={product.name || 'Product'}
                           loading="lazy"
                           onError={(e) => {
@@ -900,10 +943,10 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             ) : (
               cart.map(item => (
                 <div key={item.product.id} className="cart-item">
-                  {item.product.images && item.product.images.length > 0 && (
+                  {resolveImageSrc(item.product.images?.[0]) && (
                     <div className="cart-item-image">
                       <img
-                        src={item.product.images[0]}
+                        src={resolveImageSrc(item.product.images?.[0])}
                         alt={item.product.name || 'Product'}
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = 'none';
@@ -998,29 +1041,6 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             )}
           </div>
 
-          <div className="cart-summary">
-            <div className="summary-row">
-              <span>Subtotal:</span>
-              <span>${getTotal().toFixed(2)}</span>
-            </div>
-            <div className="summary-row total">
-              <span>Total:</span>
-              <span>${getGrandTotal().toFixed(2)}</span>
-            </div>
-          </div>
-
-          <div className="checkout-section">
-            <button
-              onClick={onProceedToCheckout}
-              className="checkout-btn proceed"
-              disabled={cart.length === 0}
-              title="Proceed to Checkout (F2)"
-            >
-              Proceed to Checkout
-            </button>
-            <p className="shortcut-hint">F2 Checkout · Esc Back</p>
-          </div>
-
           {/* Pending Transactions Panel */}
           {pendingTransactions && pendingTransactions.length > 0 && (
             <div className="pending-transactions-panel">
@@ -1033,7 +1053,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                     (sum, item) => sum + (item.product.price * item.quantity), 0
                   );
                   const transactionDate = new Date(transaction.timestamp);
-                  
+
                   return (
                     <div key={transaction.id} className="pending-transaction-item">
                       <div className="pending-transaction-info">
@@ -1080,6 +1100,29 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               </div>
             </div>
           )}
+
+          <div className="cart-summary">
+            <div className="summary-row">
+              <span>Subtotal:</span>
+              <span>${getTotal().toFixed(2)}</span>
+            </div>
+            <div className="summary-row total">
+              <span>Total:</span>
+              <span>${getGrandTotal().toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div className="checkout-section">
+            <button
+              onClick={onProceedToCheckout}
+              className="checkout-btn proceed"
+              disabled={cart.length === 0}
+              title="Proceed to Checkout (F2)"
+            >
+              Proceed to Checkout
+            </button>
+            <p className="shortcut-hint">F2 Checkout · Esc Back</p>
+          </div>
         </div>
       </div>
     </div>

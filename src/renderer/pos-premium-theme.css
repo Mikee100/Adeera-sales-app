@@ -253,6 +253,18 @@
   overflow: hidden;
 }
 
+.pos-shell-body > * {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.pos-shell-body > * > .pos-container {
+  height: 100%;
+  min-height: 0;
+}
+
 .pos-app {
   height: 100vh;
   background:
@@ -588,16 +600,29 @@ select:focus {
 }
 
 .cart-section {
-  position: sticky;
-  top: 6px;
+  position: relative;
+  top: auto;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .cart-items {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+}
+
+.checkout-section {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin-top: auto;
+  padding-top: 8px;
+  background: var(--pos-surface);
+  border-top: 1px solid var(--pos-border);
 }
 
 .checkout-right {
@@ -746,8 +771,15 @@ select:focus {
 
 .receipt-main-content {
   grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
-  overflow-y: auto;
+  overflow: hidden;
   padding-right: 2px;
+}
+
+.receipt-left-column,
+.receipt-right-column {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .receipt-logo {
