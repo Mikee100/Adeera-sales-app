@@ -1,6 +1,6 @@
 {
   "name": "saas-pos",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Point of Sale application for SaaS Platform",
   "author": "Adeera",
   "main": "dist/main.js",
