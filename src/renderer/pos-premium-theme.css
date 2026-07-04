@@ -277,6 +277,25 @@
   overflow: hidden;
 }
 
+.pos-app:has(.settings-page) {
+  padding: 0;
+  overflow: auto;
+}
+
+.pos-app:has(.settings-page) .pos-shell-main {
+  height: auto;
+  min-height: 100vh;
+}
+
+.pos-app:has(.settings-page) .pos-shell-body {
+  overflow: visible;
+}
+
+.pos-app:has(.settings-page) .pos-shell-body > * {
+  height: auto;
+  min-height: 100%;
+}
+
 .pos-container,
 .checkout-page,
 .receipt-page,

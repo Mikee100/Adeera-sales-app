@@ -59,6 +59,23 @@ interface PaymentData {
   splitPayments?: SplitPayment[];
   /** Whether this is a split payment */
   isSplitPayment?: boolean;
+  /** Manager approval for discount overrides */
+  managerOverride?: {
+    approvedByUserId: string;
+    approvedByName?: string;
+    approvalReason: string;
+    approvalPin: string;
+  };
+}
+
+type DiscountMode = 'amount' | 'percent';
+
+interface ManagerApprover {
+  id: string;
+  name?: string;
+  email?: string;
+  roles?: string[];
+  userRoles?: Array<{ role?: { name?: string } }>;
 }
 
 const Checkout: React.FC<CheckoutProps> = ({
@@ -87,6 +104,8 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [creditDueDate, setCreditDueDate] = useState('');
   const [creditNotes, setCreditNotes] = useState('');
   const [discountAmount, setDiscountAmount] = useState<number>(0);
+  const [discountMode, setDiscountMode] = useState<DiscountMode>('amount');
+  const [discountPercent, setDiscountPercent] = useState<number>(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [success, setSuccess] = useState(false);
   
@@ -99,10 +118,66 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [mpesaTransactionId, setMpesaTransactionId] = useState<string | null>(null);
   const [mpesaReceipt, setMpesaReceipt] = useState<string | null>(null);
   const [currentMpesaPaymentIndex, setCurrentMpesaPaymentIndex] = useState<number | null>(null);
+  const [showManagerOverrideModal, setShowManagerOverrideModal] = useState(false);
+  const [managerApprovers, setManagerApprovers] = useState<ManagerApprover[]>([]);
+  const [managerApproverId, setManagerApproverId] = useState('');
+  const [managerPin, setManagerPin] = useState('');
+  const [managerReason, setManagerReason] = useState('');
+  const [managerOverrideError, setManagerOverrideError] = useState('');
+  const [managerOverrideApproval, setManagerOverrideApproval] = useState<{
+    approvedByUserId: string;
+    approvedByName?: string;
+    approvalReason: string;
+    approvalPin: string;
+  } | null>(null);
 
   // Computed totals after discount
-  const subtotalAfterDiscount = Math.max(0, subtotal - discountAmount);
+  const effectiveDiscountAmount = Math.min(
+    subtotal,
+    Math.max(
+      0,
+      discountMode === 'percent' ? (subtotal * discountPercent) / 100 : discountAmount,
+    ),
+  );
+  const subtotalAfterDiscount = Math.max(0, subtotal - effectiveDiscountAmount);
   const totalAfterDiscount = subtotalAfterDiscount;
+
+  const isManagerLike = (user: ManagerApprover): boolean => {
+    const roleNames = new Set<string>();
+    if (Array.isArray(user.roles)) {
+      for (const role of user.roles) {
+        roleNames.add(String(role || '').toLowerCase());
+      }
+    }
+    if (Array.isArray(user.userRoles)) {
+      for (const userRole of user.userRoles) {
+        const roleName = String(userRole?.role?.name || '').toLowerCase();
+        if (roleName) roleNames.add(roleName);
+      }
+    }
+    return roleNames.has('owner') || roleNames.has('admin') || roleNames.has('manager') || roleNames.has('superadmin');
+  };
+
+  useEffect(() => {
+    const loadManagerApprovers = async () => {
+      try {
+        const response = await (window as any).electronAPI?.getUsers?.();
+        const users = Array.isArray(response?.users) ? response.users : [];
+        setManagerApprovers(users.filter((u: ManagerApprover) => isManagerLike(u)));
+      } catch {
+        setManagerApprovers([]);
+      }
+    };
+    loadManagerApprovers();
+  }, []);
+
+  useEffect(() => {
+    setManagerOverrideApproval(null);
+    setManagerApproverId('');
+    setManagerPin('');
+    setManagerReason('');
+    setManagerOverrideError('');
+  }, [effectiveDiscountAmount, discountMode, discountAmount, discountPercent]);
 
   // Progress steps
   const steps = ['Cart Review', 'Payment', 'Confirmation'];
@@ -165,27 +240,30 @@ const Checkout: React.FC<CheckoutProps> = ({
       if (target.closest('input, textarea, select')) return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
         e.preventDefault();
-        // Cycle between 0%, 5%, and 10% discount (currency-based)
-        const current = discountAmount;
+        // Cycle between 0%, 5%, and 10% discount
         const next =
-          current === 0
-            ? subtotal * 0.05
-            : Math.abs(current - subtotal * 0.05) < 0.01
-            ? subtotal * 0.1
+          discountMode !== 'percent' || discountPercent === 0
+            ? 5
+            : Math.abs(discountPercent - 5) < 0.01
+            ? 10
             : 0;
-        setDiscountAmount(Math.round(next * 100) / 100);
+        setDiscountMode('percent');
+        setDiscountPercent(next);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [discountAmount, subtotal]);
+  }, [discountMode, discountPercent]);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
     // Validate discount
-    if (discountAmount < 0 || discountAmount > subtotal) {
+    if (discountMode === 'amount' && (discountAmount < 0 || discountAmount > subtotal)) {
       newErrors.discountAmount = `Discount must be between 0 and ${subtotal.toFixed(2)}`;
+    }
+    if (discountMode === 'percent' && (discountPercent < 0 || discountPercent > 100)) {
+      newErrors.discountAmount = 'Discount percentage must be between 0 and 100';
     }
 
     // Validate split payments
@@ -310,13 +388,20 @@ const Checkout: React.FC<CheckoutProps> = ({
       return;
     }
 
+    if (effectiveDiscountAmount > 0 && !managerOverrideApproval) {
+      setManagerOverrideError('Manager approval is required for discounted sales.');
+      setShowManagerOverrideModal(true);
+      return;
+    }
+
     // SECURITY: Sanitize all user inputs before creating payment data
     const paymentData: PaymentData = {
       paymentMethod: isSplitPayment ? 'split' : paymentMethod,
       customerName: customerName ? sanitizeCustomerName(customerName) : undefined,
       customerPhone: customerPhone ? sanitizePhoneNumber(customerPhone) : undefined,
-      ...(discountAmount > 0 && { discountAmount }),
+      ...(effectiveDiscountAmount > 0 && { discountAmount: Math.round(effectiveDiscountAmount * 100) / 100 }),
       isSplitPayment,
+      ...(managerOverrideApproval && { managerOverride: managerOverrideApproval }),
     };
 
     if (isSplitPayment) {
@@ -350,6 +435,68 @@ const Checkout: React.FC<CheckoutProps> = ({
     setSuccess(true);
   };
 
+  const handleManagerOverrideApprove = async () => {
+    setManagerOverrideError('');
+    const approverId = managerApproverId.trim();
+    const pin = managerPin.trim();
+    const reason = managerReason.trim();
+
+    if (!approverId || !pin || !reason) {
+      setManagerOverrideError('Select approver, enter PIN, and provide an approval reason.');
+      return;
+    }
+
+    if (reason.length < 5) {
+      setManagerOverrideError('Approval reason must be at least 5 characters.');
+      return;
+    }
+
+    const selectedApprover = managerApprovers.find((u) => u.id === approverId);
+    if (!selectedApprover || !isManagerLike(selectedApprover)) {
+      setManagerOverrideError('Selected user is not authorized for manager override.');
+      return;
+    }
+
+    try {
+      const verify = await (window as any).electronAPI.verifyUserPosPin(approverId, pin);
+      if (!verify?.success) {
+        setManagerOverrideError(verify?.reason || verify?.error || 'Invalid manager PIN.');
+        return;
+      }
+
+      const approval = {
+        approvedByUserId: approverId,
+        approvedByName: selectedApprover.name || selectedApprover.email,
+        approvalReason: sanitizeNotes(reason),
+        approvalPin: pin,
+      };
+
+      setManagerOverrideApproval(approval);
+      setShowManagerOverrideModal(false);
+      setManagerPin('');
+      setManagerOverrideError('');
+
+      const actor = await getUserInfo();
+      auditLogger.log(
+        AuditEventType.PRICE_OVERRIDE,
+        {
+          subtotal,
+          discountAmount: Math.round(effectiveDiscountAmount * 100) / 100,
+          discountMode,
+          discountPercent,
+          approvalReason: approval.approvalReason,
+          approvedByUserId: approval.approvedByUserId,
+          approvedByName: approval.approvedByName,
+        },
+        'high',
+        actor?.id,
+        actor?.name,
+      );
+    } catch (error: any) {
+      setManagerOverrideError(error?.message || 'Failed to verify manager approval.');
+    }
+  };
+
   const handleMpesaSuccess = (transactionId: string, receipt?: string) => {
     setShowMpesaModal(false);
 
@@ -375,7 +522,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         paymentMethod: 'mpesa',
         customerName: customerName ? sanitizeCustomerName(customerName) : undefined,
         customerPhone: customerPhone ? sanitizePhoneNumber(customerPhone) : undefined,
-        ...(discountAmount > 0 && { discountAmount }),
+        ...(effectiveDiscountAmount > 0 && { discountAmount: Math.round(effectiveDiscountAmount * 100) / 100 }),
       };
 
       // Add M-Pesa transaction details to split payments format for consistency
@@ -555,10 +702,10 @@ const Checkout: React.FC<CheckoutProps> = ({
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
-              {discountAmount > 0 && (
+              {effectiveDiscountAmount > 0 && (
                 <div className="total-row discount-row">
                   <span>Discount</span>
-                  <span className="discount-amount">−${discountAmount.toFixed(2)}</span>
+                  <span className="discount-amount">−${effectiveDiscountAmount.toFixed(2)}</span>
                 </div>
               )}
               <div className="total-row grand-total">
@@ -572,22 +719,69 @@ const Checkout: React.FC<CheckoutProps> = ({
                 <span className="label-icon">🏷️</span>
                 Discount (optional)
               </label>
-              <div className="input-wrapper">
-                <span className="currency-symbol">$</span>
-                <input
-                  type="number"
-                  step="0.01"
-                  min={0}
-                  max={subtotal}
-                  value={discountAmount === 0 ? '' : discountAmount}
-                  onChange={(e) => setDiscountAmount(Math.max(0, parseFloat(e.target.value) || 0))}
-                  placeholder="0.00"
-                  className={`currency-input ${errors.discountAmount ? 'error' : ''}`}
-                  aria-describedby="discount-error"
-                />
+              <div className="split-preset-row" style={{ marginBottom: 8 }}>
+                <button
+                  type="button"
+                  className={`split-preset-btn ${discountMode === 'amount' ? 'active' : ''}`}
+                  onClick={() => setDiscountMode('amount')}
+                >
+                  Fixed Amount
+                </button>
+                <button
+                  type="button"
+                  className={`split-preset-btn ${discountMode === 'percent' ? 'active' : ''}`}
+                  onClick={() => setDiscountMode('percent')}
+                >
+                  Percentage
+                </button>
+                {discountMode === 'percent' && (
+                  <>
+                    <button type="button" className="split-preset-btn" onClick={() => setDiscountPercent(5)}>5%</button>
+                    <button type="button" className="split-preset-btn" onClick={() => setDiscountPercent(10)}>10%</button>
+                    <button type="button" className="split-preset-btn" onClick={() => setDiscountPercent(15)}>15%</button>
+                  </>
+                )}
               </div>
+              <div className="input-wrapper">
+                <span className="currency-symbol">{discountMode === 'percent' ? '%' : '$'}</span>
+                {discountMode === 'amount' ? (
+                  <input
+                    type="number"
+                    step="0.01"
+                    min={0}
+                    max={subtotal}
+                    value={discountAmount === 0 ? '' : discountAmount}
+                    onChange={(e) => setDiscountAmount(Math.max(0, parseFloat(e.target.value) || 0))}
+                    placeholder="0.00"
+                    className={`currency-input ${errors.discountAmount ? 'error' : ''}`}
+                    aria-describedby="discount-error"
+                  />
+                ) : (
+                  <input
+                    type="number"
+                    step="0.1"
+                    min={0}
+                    max={100}
+                    value={discountPercent === 0 ? '' : discountPercent}
+                    onChange={(e) => setDiscountPercent(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
+                    placeholder="0"
+                    className={`currency-input ${errors.discountAmount ? 'error' : ''}`}
+                    aria-describedby="discount-error"
+                  />
+                )}
+              </div>
+              {discountMode === 'percent' && effectiveDiscountAmount > 0 && (
+                <span className="input-hint">Applies ${effectiveDiscountAmount.toFixed(2)} discount</span>
+              )}
               {errors.discountAmount && (
                 <span id="discount-error" className="error-text">{errors.discountAmount}</span>
+              )}
+              {effectiveDiscountAmount > 0 && (
+                <div className="input-hint" style={{ marginTop: 6 }}>
+                  {managerOverrideApproval
+                    ? `Approved by ${managerOverrideApproval.approvedByName || managerOverrideApproval.approvedByUserId}`
+                    : 'Manager approval required before completing discounted sale.'}
+                </div>
               )}
             </div>
           </div>
@@ -1085,6 +1279,74 @@ const Checkout: React.FC<CheckoutProps> = ({
           onSuccess={handleMpesaSuccess}
           onCancel={handleMpesaCancel}
         />
+      )}
+
+      {showManagerOverrideModal && (
+        <div className="mpesa-payment-modal">
+          <div className="mpesa-payment-content" onKeyDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
+            <div className="mpesa-payment-header">
+              <h2>Manager Override Approval</h2>
+              <button className="close-btn" onClick={() => setShowManagerOverrideModal(false)}>
+                ✕
+              </button>
+            </div>
+
+            <div className="mpesa-payment-body">
+              <div className="payment-amount-display">
+                <div className="amount-label">Discount Requiring Approval</div>
+                <div className="amount-value">KES {effectiveDiscountAmount.toFixed(2)}</div>
+              </div>
+
+              <div className="phone-input-section">
+                <label className="input-label">Approving Manager</label>
+                <select
+                  value={managerApproverId}
+                  onChange={(e) => setManagerApproverId(e.target.value)}
+                  className="phone-input"
+                >
+                  <option value="">Select manager/admin</option>
+                  {managerApprovers.map((approver) => (
+                    <option key={approver.id} value={approver.id}>
+                      {approver.name || approver.email || approver.id}
+                    </option>
+                  ))}
+                </select>
+
+                <label className="input-label" style={{ marginTop: 8 }}>Manager PIN</label>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  value={managerPin}
+                  onChange={(e) => setManagerPin(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                  className="phone-input"
+                  placeholder="Enter manager PIN"
+                />
+
+                <label className="input-label" style={{ marginTop: 8 }}>Approval Reason</label>
+                <textarea
+                  value={managerReason}
+                  onChange={(e) => setManagerReason(e.target.value)}
+                  className="phone-input"
+                  placeholder="Reason for price/discount override"
+                  rows={3}
+                />
+
+                {managerOverrideError && (
+                  <div className="error-message" style={{ marginTop: 8 }}>{managerOverrideError}</div>
+                )}
+
+                <div className="mpesa-actions" style={{ marginTop: 12 }}>
+                  <button type="button" className="secondary-btn" onClick={() => setShowManagerOverrideModal(false)}>
+                    Cancel
+                  </button>
+                  <button type="button" className="primary-btn" onClick={handleManagerOverrideApprove}>
+                    Verify & Approve
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

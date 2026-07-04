@@ -131,10 +131,27 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
   const [showBarcodeHelp, setShowBarcodeHelp] = useState(false);
   const [showReceiptsMenu, setShowReceiptsMenu] = useState(false);
+  const [showQuickMenu, setShowQuickMenu] = useState(false);
   const [apiBaseUrl, setApiBaseUrl] = useState<string>('');
+  const [posDisplayName, setPosDisplayName] = useState('');
+  const [fallbackBusinessName, setFallbackBusinessName] = useState('');
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const receiptsMenuRef = useRef<HTMLDivElement | null>(null);
+  const quickMenuRef = useRef<HTMLDivElement | null>(null);
   const sessionExpiryHandledRef = useRef(false);
+
+  const resolvedPosTitle = useMemo(() => {
+    const configuredName = posDisplayName.trim();
+    if (configuredName) return configuredName;
+
+    const fallbackName = fallbackBusinessName.trim();
+    if (fallbackName) return fallbackName;
+
+    const tenantName = (user?.tenantName || '').trim();
+    if (tenantName) return tenantName;
+
+    return 'Business';
+  }, [fallbackBusinessName, posDisplayName, user?.tenantName]);
 
   const resolveImageSrc = useCallback((rawImage?: string | null): string => {
     const image = typeof rawImage === 'string' ? rawImage.trim() : '';
@@ -186,11 +203,14 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
         })()
       : branches;
 
-  // Close receipts dropdown when clicking outside
+  // Close header dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (receiptsMenuRef.current && !receiptsMenuRef.current.contains(event.target as Node)) {
         setShowReceiptsMenu(false);
+      }
+      if (quickMenuRef.current && !quickMenuRef.current.contains(event.target as Node)) {
+        setShowQuickMenu(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -213,6 +233,25 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
 
     loadApiBaseUrl();
   }, []);
+
+  const loadPosDisplayName = useCallback(async () => {
+    if (typeof window.electronAPI.getPosDisplayName !== 'function') return;
+    try {
+      const result = await window.electronAPI.getPosDisplayName();
+      if (typeof result?.displayName === 'string') {
+        setPosDisplayName(result.displayName.trim());
+      }
+      if (typeof result?.fallbackName === 'string') {
+        setFallbackBusinessName(result.fallbackName.trim());
+      }
+    } catch {
+      // Keep current display title when settings endpoint is unavailable.
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadPosDisplayName();
+  }, [loadPosDisplayName]);
 
   // Barcode scanner hook
   const { isScanning, lastScannedCode, clearScan } = useBarcodeScanner({
@@ -485,11 +524,29 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     })
     .sort((a, b) => Number(b.stock > 0) - Number(a.stock > 0));
 
+  if (showSettings) {
+    return (
+      <Settings
+        onClose={async () => {
+          setShowSettings(false);
+          await loadPosDisplayName();
+          const token = await window.electronAPI.getAuthToken();
+          if (token) {
+            await loadProducts();
+          }
+        }}
+        onUnauthorized={() => {
+          void handleSessionExpired('Session expired. Redirecting to login...');
+        }}
+      />
+    );
+  }
+
   return (
     <div className="pos-container">
       <div className="pos-header improved-navbar">
         <div className="header-left improved-navbar-left" style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 24, minWidth: 0}}>
-          <h1 className="navbar-title" style={{margin: 0, fontSize: 22, fontWeight: 700, letterSpacing: 0.5, whiteSpace: 'nowrap', flexShrink: 0}}>SaaS POS</h1>
+          <h1 className="navbar-title" style={{margin: 0, fontSize: 22, fontWeight: 700, letterSpacing: 0.5, whiteSpace: 'nowrap', flexShrink: 0}}>{resolvedPosTitle}</h1>
           <SyncStatus />
         </div>
         <div className="header-center improved-navbar-center">
@@ -514,7 +571,10 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                 <button
                   type="button"
                   className="icon-btn receipts-btn"
-                  onClick={() => setShowReceiptsMenu(prev => !prev)}
+                  onClick={() => {
+                    setShowQuickMenu(false);
+                    setShowReceiptsMenu(prev => !prev);
+                  }}
                   title="Receipts"
                   aria-label="Receipts menu"
                 >
@@ -566,73 +626,90 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                 </option>
               ))}
             </select>
-            <button 
-              className="icon-btn theme-toggle-btn" 
-              onClick={toggleTheme}
-              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {theme === 'dark' ? '☀️' : '🌙'}
-            </button>
-            {onToggleUltraCompact && (
+            <div className="receipts-menu quick-menu" ref={quickMenuRef}>
               <button
-                className={`icon-btn pos-density-toggle ${isUltraCompact ? 'is-active' : ''}`}
-                onClick={onToggleUltraCompact}
-                title="Toggle ultra compact density"
-                aria-pressed={isUltraCompact}
-              >
-                <span className="pos-density-dot" aria-hidden="true" />
-                <span>Compact</span>
-              </button>
-            )}
-            {user && (
-              <button
-                className="icon-btn logout-btn"
-                onClick={async () => {
-                  if (cart.length > 0 && !window.confirm('Logout now? Current sale will be lost.')) return;
-                  await logout();
+                type="button"
+                className="icon-btn receipts-btn"
+                onClick={() => {
+                  setShowReceiptsMenu(false);
+                  setShowQuickMenu((prev) => !prev);
                 }}
-                title="Logout"
+                title="Menu"
+                aria-label="Quick actions menu"
               >
-                ⇥
+                ⋯
+                <span className="receipts-menu-label">Menu</span>
+                <span className="receipts-menu-caret">▾</span>
               </button>
-            )}
-            {user && (
-              <button 
-                className="icon-btn settings-btn" 
-                onClick={() => setShowSettings(true)}
-                title="Settings"
-              >
-                ⚙️
-              </button>
-            )}
-            <button
-              className="icon-btn exit-btn" 
-              onClick={() => {
-                if (cart.length > 0 && !window.confirm('Exit POS? Current sale will be lost.')) return;
-                window.electronAPI.quitApp();
-              }}
-              title="Exit / Quit"
-            >
-              ⏻
-            </button>
+
+              {showQuickMenu && (
+                <div className="receipts-menu-dropdown">
+                  <button
+                    type="button"
+                    className="receipts-menu-item"
+                    onClick={() => {
+                      setShowQuickMenu(false);
+                      setShowSettings(true);
+                    }}
+                  >
+                    Open Settings
+                  </button>
+
+                  <button
+                    type="button"
+                    className="receipts-menu-item"
+                    onClick={() => {
+                      setShowQuickMenu(false);
+                      toggleTheme();
+                    }}
+                  >
+                    {theme === 'dark' ? 'Use Light Theme' : 'Use Dark Theme'}
+                  </button>
+
+                  {onToggleUltraCompact && (
+                    <button
+                      type="button"
+                      className="receipts-menu-item"
+                      onClick={() => {
+                        setShowQuickMenu(false);
+                        onToggleUltraCompact();
+                      }}
+                    >
+                      {isUltraCompact ? 'Disable Compact Mode' : 'Enable Compact Mode'}
+                    </button>
+                  )}
+
+                  {user && (
+                    <button
+                      type="button"
+                      className="receipts-menu-item"
+                      onClick={async () => {
+                        setShowQuickMenu(false);
+                        if (cart.length > 0 && !window.confirm('Logout now? Current sale will be lost.')) return;
+                        await logout();
+                      }}
+                    >
+                      Logout
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    className="receipts-menu-item"
+                    onClick={() => {
+                      setShowQuickMenu(false);
+                      if (cart.length > 0 && !window.confirm('Exit POS? Current sale will be lost.')) return;
+                      window.electronAPI.quitApp();
+                    }}
+                  >
+                    Exit POS
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-
-      {showSettings && (
-        <Settings
-          onClose={async () => {
-            setShowSettings(false);
-            const token = await window.electronAPI.getAuthToken();
-            if (token) {
-              await loadProducts();
-            }
-          }}
-          onUnauthorized={() => {
-            void handleSessionExpired('Session expired. Redirecting to login...');
-          }}
-        />
-      )}
 
       {showVariationModal && selectedProductForVariation && (
         <div className="variation-modal-overlay" onClick={closeVariationModal}>

@@ -48,6 +48,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   syncProducts: () => ipcRenderer.invoke('syncProducts'),
   getCatalogSyncStatus: () => ipcRenderer.invoke('getCatalogSyncStatus'),
+  getLastStockParityReport: () => ipcRenderer.invoke('getLastStockParityReport'),
   getApiBaseUrl: () => ipcRenderer.invoke('getApiBaseUrl'),
   isOnline: () => navigator.onLine,
   quitApp: () => ipcRenderer.invoke('quitApp'),

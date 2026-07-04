@@ -24,7 +24,7 @@ interface ElectronAPI {
   setPrinterConfig: (config: any) => Promise<{ success: boolean; error?: string }>;
   listPrinters: () => Promise<{ success: boolean; printers?: any[]; error?: string }>;
   getOfflineSales: () => Promise<{ success: boolean; sales?: any[]; queueSize?: number; maxQueueSize?: number; warningThreshold?: number; isWarning?: boolean }>;
-  syncOfflineSales: () => Promise<{ success: boolean; syncedCount?: number; errors?: string[]; totalAttempted?: number; cleanedCount?: number; remainingQueueSize?: number; cancelled?: boolean; error?: string }>;
+  syncOfflineSales: () => Promise<{ success: boolean; syncedCount?: number; errors?: string[]; totalAttempted?: number; cleanedCount?: number; remainingQueueSize?: number; cancelled?: boolean; inProgress?: boolean; catalogRefreshed?: boolean; catalogRefreshError?: string; stockParityReport?: { checked: number; drifted: number; entries: Array<{ key: string; type: 'product' | 'variation'; beforeStock: number; afterStock: number; delta: number; driftDetected: boolean; name?: string }> }; error?: string }>;
   cancelSyncOfflineSales: () => Promise<{ success: boolean }>;
   getOfflineRestaurantOps: () => Promise<{ success: boolean; operations?: any[]; queueSize?: number; maxQueueSize?: number; warningThreshold?: number; isWarning?: boolean }>;
   syncOfflineRestaurantOps: () => Promise<{ success: boolean; syncedCount?: number; failedCount?: number; errors?: string[]; failedOperations?: Array<{ operationId: string; operationType: 'create-order' | 'add-items' | 'update-status' | 'checkout-order'; orderId?: string; localOrderId?: string; message: string; category: 'conflict' | 'validation' | 'authorization' | 'network' | 'server' | 'unknown'; statusCode?: number; suggestion: string }>; remainingQueueSize?: number; cancelled?: boolean; error?: string }>;
@@ -37,9 +37,10 @@ interface ElectronAPI {
   getOfflineShiftOps: () => Promise<{ success: boolean; operations?: any[]; queueSize?: number; error?: string }>;
   syncOfflineShiftOps: () => Promise<{ success: boolean; syncedCount?: number; failedCount?: number; errors?: string[]; remainingQueueSize?: number; error?: string }>;
   onSyncProgress: (callback: (progress: SyncProgress) => void) => () => void;
-  getSyncStatus: () => Promise<{ online: boolean; pendingSyncs: number; pendingSalesSyncs?: number; pendingRestaurantSyncs?: number; lastSync?: string; queueSize?: number; maxQueueSize?: number; warningThreshold?: number; isWarning?: boolean; isCritical?: boolean }>;
+  getSyncStatus: () => Promise<{ online: boolean; pendingSyncs: number; pendingSalesSyncs?: number; pendingRestaurantSyncs?: number; lastSync?: string; syncInProgress?: boolean; queueSize?: number; maxQueueSize?: number; warningThreshold?: number; isWarning?: boolean; isCritical?: boolean }>;
   syncProducts: () => Promise<{ success: boolean; products?: any[]; syncedAt?: string; error?: string; unauthorized?: boolean }>;
   getCatalogSyncStatus: () => Promise<{ success: boolean; hasCatalog: boolean; lastSynced: string | null; ageHours: number | null; productCount: number; isStale: boolean }>;
+  getLastStockParityReport: () => Promise<{ success: boolean; hasReport: boolean; report?: { generatedAt: string; syncedCount: number; checked: number; drifted: number; entries: Array<{ key: string; type: 'product' | 'variation'; beforeStock: number; afterStock: number; delta: number; driftDetected: boolean; name?: string }> } }>;
   getApiBaseUrl: () => Promise<string>;
   isOnline: () => boolean;
   quitApp: () => Promise<void>;
