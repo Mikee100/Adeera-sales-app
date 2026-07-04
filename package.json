@@ -16,9 +16,11 @@
     "package:win": "electron-builder --win",
     "package:mac": "electron-builder --mac",
     "package:linux": "electron-builder --linux",
-    "deploy:updates": "powershell -Command \"New-Item -ItemType Directory -Path ../backend/uploads/pos-updates -Force | Out-Null; Copy-Item release/latest.yml ../backend/uploads/pos-updates/ -Force; Copy-Item release/AdeeraPOS-*-Setup.exe ../backend/uploads/pos-updates/ -Force; Copy-Item release/AdeeraPOS-*-Setup.exe.blockmap ../backend/uploads/pos-updates/ -Force\"",
+    "verify:updates": "node verify-update-artifacts.js",
+    "verify:updates:remote": "node verify-remote-update-feed.js https://saas-business.duckdns.org/updates/pos",
+    "deploy:updates": "npm run verify:updates && powershell -ExecutionPolicy Bypass -File ./scripts/deploy-pos-updates.ps1 -KeepVersions 2",
     "release:win": "npm run package:win && npm run deploy:updates",
-    "generate:api-types": "openapi-typescript http://127.0.0.1:7000/api-json -o src/openapi.generated.ts"
+    "generate:api-types": "openapi-typescript http://127.0.0.1:7050/api-json -o src/openapi.generated.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",

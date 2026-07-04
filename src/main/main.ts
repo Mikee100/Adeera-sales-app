@@ -305,6 +305,144 @@ function releaseOfflineStockReservation(store: ElectronStore, items: any[], bran
   setCachedProducts(store, updated, branchId);
 }
 
+function applyOfflineSaleStockReservation(store: ElectronStore, items: any[], branchId?: string): void {
+  const products = getCachedProducts(store, branchId);
+  const qtyByProduct = new Map<string, number>();
+  const qtyByVariation = new Map<string, number>();
+
+  for (const item of Array.isArray(items) ? items : []) {
+    const variationId = String(item?.variationId || '').trim();
+    const productId = String(item?.productId || '').trim();
+    const quantity = Number(item?.quantity || 0);
+    if (!Number.isFinite(quantity) || quantity <= 0) continue;
+
+    if (variationId) {
+      qtyByVariation.set(variationId, (qtyByVariation.get(variationId) || 0) + quantity);
+    } else if (productId) {
+      qtyByProduct.set(productId, (qtyByProduct.get(productId) || 0) + quantity);
+    }
+  }
+
+  const updated = products.map((product) => {
+    let nextProduct = product;
+    const productId = String(product?.id || '');
+    const reduceBase = qtyByProduct.get(productId) || 0;
+
+    if (reduceBase > 0) {
+      const baseStock = Number(product?.stock ?? 0);
+      nextProduct = { ...nextProduct, stock: Math.max(0, baseStock - reduceBase) };
+    }
+
+    if (Array.isArray(product?.variations) && product.variations.length > 0) {
+      let variationChanged = false;
+      const nextVariations = product.variations.map((variation: any) => {
+        const variationId = String(variation?.id || '');
+        const reduceVariation = qtyByVariation.get(variationId) || 0;
+        if (reduceVariation <= 0) return variation;
+        variationChanged = true;
+        const variationStock = Number(variation?.stock ?? 0);
+        return { ...variation, stock: Math.max(0, variationStock - reduceVariation) };
+      });
+
+      if (variationChanged) {
+        nextProduct = { ...nextProduct, variations: nextVariations };
+      }
+    }
+
+    return nextProduct;
+  });
+
+  setCachedProducts(store, updated, branchId);
+}
+
+function buildStockSnapshot(products: any[]): Map<string, { stock: number; name?: string }> {
+  const snapshot = new Map<string, { stock: number; name?: string }>();
+  for (const product of Array.isArray(products) ? products : []) {
+    const productId = String(product?.id || '').trim();
+    if (!productId) continue;
+    snapshot.set(`p:${productId}`, {
+      stock: Number(product?.stock ?? 0),
+      name: product?.name,
+    });
+
+    if (Array.isArray(product?.variations)) {
+      for (const variation of product.variations) {
+        const variationId = String(variation?.id || '').trim();
+        if (!variationId) continue;
+        snapshot.set(`v:${variationId}`, {
+          stock: Number(variation?.stock ?? 0),
+          name: product?.name,
+        });
+      }
+    }
+  }
+  return snapshot;
+}
+
+function trackStockKeysFromItems(trackedKeys: Set<string>, items: any[]): void {
+  for (const item of Array.isArray(items) ? items : []) {
+    const variationId = String(item?.variationId || '').trim();
+    const productId = String(item?.productId || '').trim();
+    if (variationId) {
+      trackedKeys.add(`v:${variationId}`);
+    } else if (productId) {
+      trackedKeys.add(`p:${productId}`);
+    }
+  }
+}
+
+function buildStockParityReport(
+  trackedKeys: Set<string>,
+  beforeSnapshot: Map<string, { stock: number; name?: string }>,
+  afterSnapshot: Map<string, { stock: number; name?: string }>,
+): {
+  checked: number;
+  drifted: number;
+  entries: Array<{
+    key: string;
+    type: 'product' | 'variation';
+    beforeStock: number;
+    afterStock: number;
+    delta: number;
+    driftDetected: boolean;
+    name?: string;
+  }>;
+} {
+  const entries: Array<{
+    key: string;
+    type: 'product' | 'variation';
+    beforeStock: number;
+    afterStock: number;
+    delta: number;
+    driftDetected: boolean;
+    name?: string;
+  }> = [];
+
+  for (const key of trackedKeys) {
+    const before = beforeSnapshot.get(key);
+    const after = afterSnapshot.get(key);
+    const beforeStock = Number(before?.stock ?? 0);
+    const afterStock = Number(after?.stock ?? 0);
+    const delta = afterStock - beforeStock;
+
+    entries.push({
+      key,
+      type: key.startsWith('v:') ? 'variation' : 'product',
+      beforeStock,
+      afterStock,
+      delta,
+      driftDetected: beforeStock !== afterStock,
+      name: after?.name || before?.name,
+    });
+  }
+
+  return {
+    checked: entries.length,
+    drifted: entries.filter((entry) => entry.driftDetected).length,
+    entries,
+  };
+}
+
 function getOfflineShiftQueue(store: ElectronStore): OfflineShiftOperation[] {
   const queue = store.get(OFFLINE_SHIFT_QUEUE_KEY, []) as OfflineShiftOperation[];
   return Array.isArray(queue) ? queue : [];
@@ -487,14 +625,14 @@ const devRendererWatchers: FSWatcher[] = [];
 const globalStore = new ElectronStore();
 
 const HOSTED_BACKEND_URL = 'https://saas-business.duckdns.org';
-const LOCAL_DEV_BACKEND_URL = 'http://127.0.0.1:7000';
+const LOCAL_DEV_BACKEND_URL = 'http://127.0.0.1:7050';
 const IS_DEVELOPMENT = !app.isPackaged;
 
 function normalizeHostedBackendUrl(url: string): string {
   const trimmed = url.trim().replace(/\/$/, '');
   if (!trimmed) return IS_DEVELOPMENT ? LOCAL_DEV_BACKEND_URL : HOSTED_BACKEND_URL;
 
-  // Accept plain host values like "localhost:7000" by prepending a scheme for parsing.
+  // Accept plain host values like "localhost:7050" by prepending a scheme for parsing.
   const parseCandidate = trimmed.includes('://') ? trimmed : `http://${trimmed}`;
 
   try {
@@ -1404,7 +1542,7 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
     logger.info('Backend offline, checking cached credentials', { component: 'auth' });
     // Offline mode: check cached user data
     const cachedUser = store.get('user') as User | undefined;
-    const cachedToken = store.get('authToken') as string | undefined;
+    const cachedToken = getAuthToken(store) || undefined;
 
     if (cachedUser && cachedToken) {
       if (existingDeviceBinding && !isDeviceBindingCompatible(existingDeviceBinding, cachedUser)) {
@@ -2010,8 +2148,8 @@ ipcMain.handle('syncProducts', async () => {
   } catch (error: any) {
     const status = error.response?.status;
     if (status === 401 || status === 403) {
-      logger.warn('Authentication failed during product sync, clearing token', { component: 'products' });
-      store.delete('authToken');
+      logger.warn('Authentication failed during product sync, clearing session', { component: 'products' });
+      clearAuthSession(store);
       return { success: false, error: 'Unauthorized - Please log in again', unauthorized: true };
     }
     logger.error('Error syncing products', { component: 'products', error: error.message });
@@ -2053,6 +2191,31 @@ ipcMain.handle('getCatalogSyncStatus', async () => {
     productCount: cachedProducts.length,
     isStale,
   };
+});
+
+ipcMain.handle('getLastStockParityReport', async () => {
+  const store = new ElectronStore();
+  const report = store.get('lastStockParityReport') as {
+    generatedAt: string;
+    syncedCount: number;
+    checked: number;
+    drifted: number;
+    entries: Array<{
+      key: string;
+      type: 'product' | 'variation';
+      beforeStock: number;
+      afterStock: number;
+      delta: number;
+      driftDetected: boolean;
+      name?: string;
+    }>;
+  } | undefined;
+
+  if (!report) {
+    return { success: true, hasReport: false };
+  }
+
+  return { success: true, hasReport: true, report };
 });
 
 ipcMain.handle('getProductVariations', async (_event, productId: string) => {
@@ -2122,6 +2285,98 @@ ipcMain.handle('createSale', async (event, saleData) => {
       return { success: false, error: 'No authentication token found' };
     }
 
+    const hasDiscount = Number(saleData?.discountAmount || 0) > 0;
+    if (hasDiscount) {
+      const managerOverride = saleData?.managerOverride;
+      if (!managerOverride) {
+        return { success: false, error: 'Manager override approval is required for discounted sales.' };
+      }
+
+      const approvedByUserId = String(managerOverride.approvedByUserId || '').trim();
+      const approvalReason = String(managerOverride.approvalReason || '').trim();
+      const approvalPin = String(managerOverride.approvalPin || '').trim();
+
+      if (!approvedByUserId || !approvalReason || !approvalPin) {
+        return { success: false, error: 'Manager override must include approver, PIN, and reason.' };
+      }
+
+      if (approvalReason.length < 5) {
+        return { success: false, error: 'Manager approval reason must be at least 5 characters.' };
+      }
+
+      const verifyEndpoint = extractEndpoint(`${BACKEND_BASE_URL}/user/verify-pos-pin`);
+      await authRateLimiter.waitIfNeeded(verifyEndpoint);
+      const verifyResponse = await rateLimitedAxios(
+        () =>
+          axios.post(
+            `${BACKEND_BASE_URL}/user/verify-pos-pin`,
+            { userId: approvedByUserId, pin: approvalPin, requireManagerRole: true },
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(user?.branchId && { 'x-branch-id': user.branchId }),
+              },
+              timeout: 8000,
+            },
+          ),
+        verifyEndpoint,
+        authRateLimiter,
+      );
+
+      if (!verifyResponse?.data?.success) {
+        return { success: false, error: verifyResponse?.data?.reason || 'Manager PIN verification failed.' };
+      }
+
+      const verifiedUser = verifyResponse.data.waiter || {};
+      const roles = Array.isArray((verifiedUser as any).roles)
+        ? (verifiedUser as any).roles.map((r: any) => String(r || '').toLowerCase())
+        : [];
+      const roleAllowed = roles.includes('owner') || roles.includes('admin') || roles.includes('manager') || roles.includes('superadmin');
+      if (!roleAllowed) {
+        logger.warn('Manager override denied due to non-manager role', {
+          component: 'sales',
+          approvedByUserId,
+          verifiedRoles: roles,
+        });
+        return { success: false, error: 'Selected approver is not authorized for manager override.' };
+      }
+
+      try {
+        const auditEndpoint = extractEndpoint(`${BACKEND_BASE_URL}/audit-logs/terminal-enrollment-reset`);
+        await apiRateLimiter.waitIfNeeded(auditEndpoint);
+        await rateLimitedAxios(
+          () =>
+            axios.post(
+              `${BACKEND_BASE_URL}/audit-logs/terminal-enrollment-reset`,
+              {
+                approvedByUserId,
+                reason: `pos_discount_override:${approvalReason}`,
+                triggeredAt: new Date().toISOString(),
+              },
+              {
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                },
+                timeout: 8000,
+              },
+            ),
+          auditEndpoint,
+        );
+      } catch (auditError: any) {
+        logger.warn('Failed to emit manager override audit event', {
+          component: 'sales',
+          error: auditError?.message,
+        });
+      }
+
+      saleData.managerOverride = {
+        approvedByUserId,
+        approvedByName: managerOverride.approvedByName,
+        approvalReason,
+      };
+    }
+
     logger.info('Creating sale', { 
       component: 'sales', 
       items: saleData.items?.length,
@@ -2178,6 +2433,7 @@ ipcMain.handle('createSale', async (event, saleData) => {
           creditAmount: saleData.creditAmount,
           creditDueDate: saleData.creditDueDate,
           creditNotes: saleData.creditNotes,
+          managerOverrideApprovedBy: saleData?.managerOverride?.approvedByUserId,
         });
         
         // Log the full JSON payload for debugging backend validation issues
@@ -2331,10 +2587,117 @@ ipcMain.handle('createSale', async (event, saleData) => {
         
         // Handle 401 Unauthorized - token expired
         if (errorStatus === 401 || errorStatus === 403) {
-          logger.warn('Authentication failed, clearing token', { component: 'sales' });
-          // Clear invalid token
-          store.delete('authToken');
+          logger.warn('Authentication failed, clearing session', { component: 'sales' });
+          clearAuthSession(store);
           return { success: false, error: 'Unauthorized - Please log in again' };
+        }
+
+        const retriableStatuses = new Set([408, 425, 429, 500, 502, 503, 504]);
+        const retriableCodes = new Set([
+          'ECONNABORTED',
+          'ECONNRESET',
+          'ETIMEDOUT',
+          'ECONNREFUSED',
+          'ENOTFOUND',
+          'EHOSTUNREACH',
+          'EAI_AGAIN',
+        ]);
+        const shouldQueueOffline =
+          !errorResponse ||
+          retriableStatuses.has(Number(errorStatus)) ||
+          retriableCodes.has(String(error?.code || '').toUpperCase());
+
+        if (shouldQueueOffline) {
+          logger.warn('Online sale failed due to transient connectivity/server issue. Queueing sale offline.', {
+            component: 'sales',
+            status: errorStatus,
+            code: error?.code,
+          });
+
+          const offlineSales = store.get('offlineSales', []) as any[];
+          const MAX_QUEUE_SIZE = 1000;
+          const WARNING_THRESHOLD = 100;
+
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+          const cleanedSales = offlineSales.filter((sale: any) => {
+            if (sale.status === 'failed' && sale.finalFailureAt) {
+              const failureDate = new Date(sale.finalFailureAt);
+              if (failureDate < sevenDaysAgo) {
+                return false;
+              }
+            }
+            return true;
+          });
+
+          if (cleanedSales.length >= MAX_QUEUE_SIZE) {
+            return {
+              success: false,
+              error: `Sale submission failed and offline queue is full (${MAX_QUEUE_SIZE}). Please sync existing sales and retry.`,
+              queueSize: cleanedSales.length,
+              maxQueueSize: MAX_QUEUE_SIZE,
+            };
+          }
+
+          const offlineSale = {
+            id: `offline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            saleData,
+            timestamp: new Date().toISOString(),
+            status: 'pending',
+            queuedFromOnlineError: true,
+          };
+
+          cleanedSales.push(offlineSale);
+          store.set('offlineSales', cleanedSales);
+
+          applyOfflineSaleStockReservation(store, saleData.items, saleData.branchId);
+
+          const userData = store.get('user') as { tenantName?: string; branchName?: string; branchId?: string } | undefined;
+          const cachedBranches = store.get('cachedBranches') as { id: string; name: string; address?: string }[] | undefined;
+          const branchForReceipt = saleData.branchId && Array.isArray(cachedBranches)
+            ? cachedBranches.find((b: { id: string }) => b.id === saleData.branchId)
+            : undefined;
+
+          const offlineReceipt: any = {
+            saleId: offlineSale.id,
+            date: offlineSale.timestamp,
+            customerName: saleData.customerName,
+            customerPhone: saleData.customerPhone,
+            items: saleData.items.map((item: any) => ({
+              productId: item.productId,
+              name: 'Product',
+              price: item.price,
+              quantity: item.quantity
+            })),
+            subtotal: saleData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0),
+            vatAmount: 0,
+            total: saleData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0),
+            paymentMethod: saleData.paymentMethod,
+            amountReceived: saleData.amountReceived,
+            change: saleData.amountReceived ? saleData.amountReceived - saleData.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0) : undefined,
+            businessInfo: { name: userData?.tenantName || 'Business' },
+            branch: saleData.branchId ? {
+              id: saleData.branchId,
+              name: branchForReceipt?.name || userData?.branchName || `Branch ${saleData.branchId}`,
+              address: branchForReceipt?.address,
+            } : undefined,
+          };
+
+          if (saleData.paymentMethod === 'credit') {
+            offlineReceipt.creditDueDate = saleData.creditDueDate;
+            offlineReceipt.creditNotes = saleData.creditNotes;
+          }
+
+          return {
+            success: true,
+            sale: { id: offlineSale.id, status: 'offline' },
+            queueSize: cleanedSales.length,
+            maxQueueSize: MAX_QUEUE_SIZE,
+            warningThreshold: WARNING_THRESHOLD,
+            isWarning: cleanedSales.length >= WARNING_THRESHOLD,
+            receipt: offlineReceipt,
+            queuedFromOnlineError: true,
+          };
         }
         
         // IMPROVED: Parse error using dedicated error parser utility
@@ -2472,29 +2835,10 @@ ipcMain.handle('createSale', async (event, saleData) => {
       });
 
       // Update cached products immediately (reduce stock)
-      const cachedProducts = store.get('cachedProducts') as any[];
-      if (cachedProducts) {
-        const updatedProducts = cachedProducts.map((product: any) => {
-          const soldItem = saleData.items.find((item: any) => item.productId === product.id);
-          if (soldItem) {
-            return { ...product, stock: Math.max(0, product.stock - soldItem.quantity) };
-          }
-          return product;
-        });
-        store.set('cachedProducts', updatedProducts);
-        logger.debug('Product stock updated in cache for offline sale', { component: 'sales' });
-      }
+      applyOfflineSaleStockReservation(store, saleData.items, saleData.branchId);
+      logger.debug('Product stock updated in cache for offline sale', { component: 'sales' });
 
       // Return success with queue info for frontend warnings
-      return {
-        success: true,
-        sale: offlineSale,
-        queueSize: cleanedSales.length,
-        maxQueueSize: MAX_QUEUE_SIZE,
-        warningThreshold: WARNING_THRESHOLD,
-        isWarning: cleanedSales.length >= WARNING_THRESHOLD
-      };
-
       // Auto-open cash drawer if payment method is cash and auto-open is enabled
       if (saleData.paymentMethod === 'cash') {
         const printerConfig = printerService.getConfig();
@@ -2547,6 +2891,10 @@ ipcMain.handle('createSale', async (event, saleData) => {
       return {
         success: true,
         sale: { id: offlineSale.id, status: 'offline' },
+        queueSize: cleanedSales.length,
+        maxQueueSize: MAX_QUEUE_SIZE,
+        warningThreshold: WARNING_THRESHOLD,
+        isWarning: cleanedSales.length >= WARNING_THRESHOLD,
         receipt: offlineReceipt
       };
     }
@@ -3797,6 +4145,7 @@ ipcMain.handle('getOfflineSales', () => {
 // Track sync cancellation state
 let syncCancelled = false;
 let currentSyncEvent: IpcMainInvokeEvent | null = null;
+let salesSyncInProgress = false;
 
 ipcMain.handle('cancelSyncOfflineSales', async () => {
   syncCancelled = true;
@@ -3805,12 +4154,23 @@ ipcMain.handle('cancelSyncOfflineSales', async () => {
 });
 
 ipcMain.handle('syncOfflineSales', async (event: IpcMainInvokeEvent) => {
+  if (salesSyncInProgress) {
+    logger.info('Sync request ignored because another sync is already running', { component: 'offline' });
+    return { success: false, error: 'Offline sales sync already in progress', inProgress: true };
+  }
+
+  salesSyncInProgress = true;
   const store = new ElectronStore();
   syncCancelled = false;
   currentSyncEvent = event;
 
   try {
     let offlineSales = store.get('offlineSales', []) as any[];
+    const user = store.get('user') as User | undefined;
+    const branchIdForCatalog = user?.branchId;
+    const preSyncProducts = getCachedProducts(store, branchIdForCatalog);
+    const preSyncSnapshot = buildStockSnapshot(preSyncProducts);
+    const trackedStockKeys = new Set<string>();
     
     // Clean up old failed syncs (older than 7 days) before syncing
     const sevenDaysAgo = new Date();
@@ -3869,8 +4229,9 @@ ipcMain.handle('syncOfflineSales', async (event: IpcMainInvokeEvent) => {
       if (syncCancelled) {
         logger.info('Sync cancelled by user', { component: 'offline', processed: i, total: offlineSales.length });
         // Update store with remaining sales
-        const remainingSales = offlineSales.slice(i).concat(remainingSales);
-        store.set('offlineSales', remainingSales);
+        const pendingBatchRemainder = offlineSales.slice(i);
+        const updatedRemainingSales = pendingBatchRemainder.concat(remainingSales);
+        store.set('offlineSales', updatedRemainingSales);
         
         // Send cancellation progress
         if (mainWindow && !mainWindow.isDestroyed()) {
@@ -3892,7 +4253,7 @@ ipcMain.handle('syncOfflineSales', async (event: IpcMainInvokeEvent) => {
           errors: allErrors,
           totalAttempted: i,
           cancelled: true,
-          remainingQueueSize: remainingSales.length,
+          remainingQueueSize: updatedRemainingSales.length,
         };
       }
 
@@ -4016,6 +4377,7 @@ ipcMain.handle('syncOfflineSales', async (event: IpcMainInvokeEvent) => {
       for (const result of batchResults) {
         if (result.success) {
           totalSyncedCount++;
+          trackStockKeysFromItems(trackedStockKeys, result.sale?.saleData?.items);
         } else {
           allErrors.push(result.error ?? 'Unknown error');
           remainingSales.push(result.sale);
@@ -4050,6 +4412,112 @@ ipcMain.handle('syncOfflineSales', async (event: IpcMainInvokeEvent) => {
     // Clean up old cached data (older than 30 days)
     await cleanupOldData(store);
 
+    let catalogRefreshed = false;
+    let catalogRefreshError: string | undefined;
+    let stockParityReport:
+      | {
+          checked: number;
+          drifted: number;
+          entries: Array<{
+            key: string;
+            type: 'product' | 'variation';
+            beforeStock: number;
+            afterStock: number;
+            delta: number;
+            driftDetected: boolean;
+            name?: string;
+          }>;
+        }
+      | undefined;
+
+    // Reconcile local catalog after syncing offline sales to detect stock drift.
+    if (totalSyncedCount > 0) {
+      const token = getAuthToken(store);
+      if (token) {
+        try {
+          const endpoint = extractEndpoint(`${BACKEND_BASE_URL}/products`);
+          await apiRateLimiter.waitIfNeeded(endpoint);
+
+          const refreshResponse = await rateLimitedAxios(
+            () => axios.get(`${BACKEND_BASE_URL}/products?page=1&limit=1000&includeVariations=true`, {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                ...(branchIdForCatalog && { 'x-branch-id': branchIdForCatalog }),
+              },
+              timeout: 10000,
+            }),
+            endpoint,
+          );
+
+          const responseData = refreshResponse.data;
+          let productsArray: any[] = [];
+          if (Array.isArray(responseData)) {
+            productsArray = responseData;
+          } else if (responseData && typeof responseData === 'object' && responseData.products) {
+            productsArray = Array.isArray(responseData.products) ? responseData.products : [];
+          }
+
+          const products = productsArray.map((product: any) => {
+            const base: any = {
+              id: product.id,
+              name: product.name,
+              sku: product.sku,
+              price: parseFloat(product.price),
+              stock: parseInt(product.stock) || 0,
+              description: product.description || '',
+              cost: product.cost ? parseFloat(product.cost) : 0,
+              supplier: product.supplier ? product.supplier.name : null,
+              images: normalizeBackendImageUrls(product.images),
+              branchId: product.branchId,
+              tenantId: product.tenantId,
+              category: product.category || null,
+              customFields: product.customFields || product.custom_fields || {},
+            };
+            if (product.variations && Array.isArray(product.variations) && product.variations.length > 0) {
+              base.hasVariations = true;
+              base.variations = product.variations.map((v: any) => ({
+                id: v.id,
+                sku: v.sku,
+                price: v.price != null ? parseFloat(v.price) : null,
+                stock: parseInt(v.stock) || 0,
+                images: normalizeBackendImageUrls(v.images),
+                attributes: v.attributes || {},
+              }));
+            }
+            return base;
+          });
+
+          setCachedProducts(store, products, branchIdForCatalog);
+          store.set('catalogLastSynced', new Date().toISOString());
+
+          const postSyncSnapshot = buildStockSnapshot(products);
+          stockParityReport = buildStockParityReport(trackedStockKeys, preSyncSnapshot, postSyncSnapshot);
+          store.set('lastStockParityReport', {
+            generatedAt: new Date().toISOString(),
+            syncedCount: totalSyncedCount,
+            checked: stockParityReport.checked,
+            drifted: stockParityReport.drifted,
+            entries: stockParityReport.entries,
+          });
+
+          catalogRefreshed = true;
+          logger.info('Offline sync catalog reconciliation complete', {
+            component: 'offline',
+            checked: stockParityReport.checked,
+            drifted: stockParityReport.drifted,
+            syncedCount: totalSyncedCount,
+          });
+        } catch (refreshError: any) {
+          catalogRefreshError = refreshError?.message || 'Failed to refresh catalog after sync';
+          logger.warn('Failed to refresh catalog after offline sync', {
+            component: 'offline',
+            error: catalogRefreshError,
+          });
+        }
+      }
+    }
+
     logger.info(`Batched sync completed: ${totalSyncedCount} synced, ${allErrors.length} failed`, { component: 'offline' });
 
     // Send final progress
@@ -4072,7 +4540,10 @@ ipcMain.handle('syncOfflineSales', async (event: IpcMainInvokeEvent) => {
       errors: allErrors,
       totalAttempted: offlineSales.length,
       cleanedCount: cleanedCount || 0,
-      remainingQueueSize: remainingSales.length
+      remainingQueueSize: remainingSales.length,
+      catalogRefreshed,
+      catalogRefreshError,
+      stockParityReport,
     };
 
   } catch (error: any) {
@@ -4090,6 +4561,7 @@ ipcMain.handle('syncOfflineSales', async (event: IpcMainInvokeEvent) => {
   } finally {
     syncCancelled = false;
     currentSyncEvent = null;
+    salesSyncInProgress = false;
   }
 });
 
@@ -4808,7 +5280,10 @@ ipcMain.handle('getSyncStatus', async () => {
     store.set('offlineSales', offlineSales); // Update store with cleaned list
   }
   
-  const pendingSalesSyncs = offlineSales.filter((sale: any) => sale.status === 'pending').length;
+  const pendingSalesSyncs = offlineSales.filter((sale: any) => {
+    const status = String(sale?.status || 'pending').toLowerCase();
+    return status === 'pending' || status === 'failed';
+  }).length;
   const pendingRestaurantSyncs = offlineRestaurantOps.filter((op) => op.status === 'pending').length;
   const pendingSyncs = pendingSalesSyncs + pendingRestaurantSyncs;
   const lastSync = store.get('lastSync') as string | undefined;
@@ -4825,6 +5300,7 @@ ipcMain.handle('getSyncStatus', async () => {
     pendingSalesSyncs,
     pendingRestaurantSyncs,
     lastSync,
+    syncInProgress: salesSyncInProgress,
     queueSize,
     maxQueueSize: MAX_QUEUE_SIZE,
     warningThreshold: WARNING_THRESHOLD,
