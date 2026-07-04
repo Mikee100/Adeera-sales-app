@@ -63,3 +63,35 @@ If the current release is faulty:
 - Keep at least two previous versions available.
 - Maintain release notes for each version.
 - Validate print, sync, and login flows before stable promotion.
+- Run `npm run verify:updates` before publishing artifacts.
+- Run `npm run verify:updates:remote` after publishing to confirm the live feed serves a valid binary and matching checksum.
+
+## Checksum Mismatch Runbook
+
+If clients show `sha512 checksum mismatch`:
+
+1. Verify the public installer URL is serving a real binary and not a Git LFS pointer file.
+2. Verify that the installer checksum matches `latest.yml`.
+3. Replace hosted files with freshly built artifacts from `release/`.
+4. Re-check from the public URL before asking clients to retry.
+
+Example verification commands:
+
+```powershell
+# Verify local release artifacts before upload
+npm run verify:updates
+
+# Verify the live feed after upload
+npm run verify:updates:remote
+
+# Check live latest.yml
+Invoke-WebRequest -Uri "https://saas-business.duckdns.org/updates/pos/latest.yml" -UseBasicParsing | Select-Object -ExpandProperty Content
+
+# Download live installer and compute base64 SHA-512
+$tmp = Join-Path $env:TEMP "AdeeraPOS-live.exe"
+Invoke-WebRequest -Uri "https://saas-business.duckdns.org/updates/pos/AdeeraPOS-1.0.13-Setup.exe" -OutFile $tmp -UseBasicParsing
+$hex = (Get-FileHash $tmp -Algorithm SHA512).Hash
+$bytes = for($i=0;$i -lt $hex.Length;$i+=2){ [Convert]::ToByte($hex.Substring($i,2),16) }
+[Convert]::ToBase64String($bytes)
+Remove-Item $tmp -Force
+```

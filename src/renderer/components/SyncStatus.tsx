@@ -77,7 +77,7 @@ const SyncStatus: React.FC = () => {
   const handleSyncNow = useCallback(async (isAutoSync: boolean = false) => {
     // Get current status to check conditions
     const currentStatus = await window.electronAPI.getSyncStatus();
-    if (isSyncing || currentStatus.pendingSyncs === 0 || !currentStatus.online) {
+    if (isSyncing || currentStatus.pendingSyncs === 0 || !currentStatus.online || currentStatus.syncInProgress) {
       return;
     }
 
@@ -110,8 +110,32 @@ const SyncStatus: React.FC = () => {
         return;
       }
 
+      if (response.inProgress) {
+        if (!isAutoSync) {
+          showToast('Sync already in progress', 'info', 2500);
+        }
+        setIsSyncing(false);
+        setSyncProgress(null);
+        return;
+      }
+
       if (response.success) {
         console.log(`Synced ${response.syncedCount} sales${isAutoSync ? ' (auto-sync)' : ''}`);
+
+        if (response.stockParityReport && response.stockParityReport.checked > 0) {
+          if (response.stockParityReport.drifted > 0) {
+            showToast(
+              `Stock sync check: ${response.stockParityReport.drifted}/${response.stockParityReport.checked} items changed after reconciliation.`,
+              'warning',
+              isAutoSync ? 3500 : 6000
+            );
+          } else if (!isAutoSync) {
+            showToast('Stock sync check passed: no drift detected.', 'success', 2500);
+          }
+        } else if (!response.catalogRefreshed && response.catalogRefreshError && !isAutoSync) {
+          showToast(`Sales synced, but catalog refresh failed: ${response.catalogRefreshError}`, 'warning', 5000);
+        }
+
         if (response.errors && response.errors.length > 0) {
           console.warn('Sync errors:', response.errors);
           // Only show detailed errors for manual syncs or if there are many errors

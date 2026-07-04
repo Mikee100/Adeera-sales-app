@@ -31,6 +31,23 @@
 .settings-logout-btn svg {
   flex-shrink: 0;
 }
+
+.settings-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #f3f4f6;
+}
+
+.settings-page-modal {
+  max-width: none;
+  max-height: none;
+  min-height: 100vh;
+  width: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  animation: none;
+}
+
 /* Settings Modal - Modern Professional Design */
 .settings-modal-overlay {
   position: fixed;
@@ -259,6 +276,36 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.settings-subtabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.settings-subtab {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.settings-subtab:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.settings-subtab.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
 }
 
 /* Loading State */
@@ -649,4 +696,26 @@
 
 .settings-content::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
+}
+
+/* Full-page mode: override modal constraints with higher specificity */
+.settings-page {
+  width: 100vw;
+}
+
+.settings-page .settings-modal {
+  width: 100vw;
+  max-width: none;
+  max-height: none;
+  min-height: 100vh;
+  height: auto;
+  overflow: visible;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+}
+
+.settings-page .settings-content {
+  overflow: visible;
+  flex: 0 0 auto;
 }

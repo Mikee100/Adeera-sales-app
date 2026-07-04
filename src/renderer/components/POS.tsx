@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Clock3, LogOut, Power, ReceiptText, ShoppingCart, WalletCards, Printer } from 'lucide-react';
 import ProductSelection from './ProductSelection';
@@ -7,6 +7,7 @@ import Receipt from './Receipt';
 import PrintPreview from './PrintPreview';
 import FindReceiptModal from './FindReceiptModal';
 import SalesHistoryModal from './SalesHistoryModal';
+import OfflineSalesQueueModal from './OfflineSalesQueueModal';
 import SyncStatus from './SyncStatus';
 import { useAuth } from '../contexts/AuthContext';
 import { showToast } from './Toast';
@@ -69,6 +70,12 @@ interface PaymentData {
   discountAmount?: number;
   isSplitPayment?: boolean;
   splitPayments?: SplitPayment[];
+  managerOverride?: {
+    approvedByUserId: string;
+    approvedByName?: string;
+    approvalReason: string;
+    approvalPin: string;
+  };
 }
 
 interface ProductsResponse {
@@ -97,10 +104,13 @@ const POS: React.FC = () => {
   const [currentReceipt, setCurrentReceipt] = useState<any>(null);
   const [processingSale, setProcessingSale] = useState(false);
   const [printing, setPrinting] = useState(false);
-  const [queuedSalesCount, setQueuedSalesCount] = useState(0);
+  const [saleProcessingQueueCount, setSaleProcessingQueueCount] = useState(0);
+  const [offlineQueuedSalesCount, setOfflineQueuedSalesCount] = useState(0);
   const [showFindReceiptModal, setShowFindReceiptModal] = useState(false);
   const [showSalesHistoryModal, setShowSalesHistoryModal] = useState(false);
+  const [showOfflineQueueModal, setShowOfflineQueueModal] = useState(false);
   const [clock, setClock] = useState(new Date());
+  const liveCatalogRefreshLockRef = useRef(false);
   const [isUltraCompact, setIsUltraCompact] = useState<boolean>(() => {
     try {
       return localStorage.getItem('pos.ultraCompact') === '1';
@@ -123,11 +133,11 @@ const POS: React.FC = () => {
       String((user as any)?.role || '').toLowerCase() === 'cashier' ||
       String((user as any)?.role || '').toLowerCase() === 'staff');
 
-  // Update queue count periodically when processing or when queue exists
+  // Update in-flight sale processing queue (mutex) count.
   useEffect(() => {
     const updateQueueCount = () => {
       const status = saleMutex.getStatus();
-      setQueuedSalesCount(status.queueSize);
+      setSaleProcessingQueueCount(status.queueSize);
     };
 
     // Update immediately
@@ -137,6 +147,35 @@ const POS: React.FC = () => {
     const interval = setInterval(updateQueueCount, 500); // Update every 500ms
     return () => clearInterval(interval);
   }, [processingSale]);
+
+  // Update offline sales queue count from backend sync status.
+  useEffect(() => {
+    let mounted = true;
+
+    const refreshOfflineQueueCount = async () => {
+      try {
+        const status = await window.electronAPI.getSyncStatus();
+        if (!mounted || !status) return;
+
+        const pendingSales = typeof status.pendingSalesSyncs === 'number'
+          ? status.pendingSalesSyncs
+          : status.pendingSyncs;
+        setOfflineQueuedSalesCount(Math.max(0, pendingSales || 0));
+      } catch {
+        // Keep previous value when status fetch fails.
+      }
+    };
+
+    void refreshOfflineQueueCount();
+    const interval = setInterval(() => {
+      void refreshOfflineQueueCount();
+    }, 5000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setClock(new Date()), 1000);
@@ -390,6 +429,80 @@ const POS: React.FC = () => {
     }
   };
 
+  const runLiveCatalogRefresh = useCallback(async (source: 'manual' | 'auto' = 'auto') => {
+    const hasBlockingUiState =
+      processingSale ||
+      showFindReceiptModal ||
+      showSalesHistoryModal ||
+      currentStep !== 'products';
+
+    if (source === 'auto' && hasBlockingUiState) {
+      return;
+    }
+
+    if (liveCatalogRefreshLockRef.current) {
+      return;
+    }
+
+    liveCatalogRefreshLockRef.current = true;
+
+    try {
+      const syncStatus = await window.electronAPI.getSyncStatus();
+      if (!syncStatus?.online) {
+        return;
+      }
+
+      const syncResult = await window.electronAPI.syncProducts();
+      if (syncResult?.success && Array.isArray(syncResult.products)) {
+        setProducts(syncResult.products);
+      } else if (source === 'manual') {
+        showToast(syncResult?.error || 'Unable to refresh catalog right now.', 'warning', 3000);
+      }
+    } catch {
+      if (source === 'manual') {
+        showToast('Unable to refresh catalog right now.', 'warning', 3000);
+      }
+    } finally {
+      liveCatalogRefreshLockRef.current = false;
+    }
+  }, [processingSale, showFindReceiptModal, showSalesHistoryModal, currentStep]);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      void runLiveCatalogRefresh('auto');
+    }, 30000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [runLiveCatalogRefresh]);
+
+  useEffect(() => {
+    const handleFocusRefresh = () => {
+      void runLiveCatalogRefresh('auto');
+    };
+
+    const handleVisibilityRefresh = () => {
+      if (document.visibilityState === 'visible') {
+        void runLiveCatalogRefresh('auto');
+      }
+    };
+
+    const handleOnlineRefresh = () => {
+      void runLiveCatalogRefresh('auto');
+    };
+
+    window.addEventListener('focus', handleFocusRefresh);
+    window.addEventListener('online', handleOnlineRefresh);
+    document.addEventListener('visibilitychange', handleVisibilityRefresh);
+
+    return () => {
+      window.removeEventListener('focus', handleFocusRefresh);
+      window.removeEventListener('online', handleOnlineRefresh);
+      document.removeEventListener('visibilitychange', handleVisibilityRefresh);
+    };
+  }, [runLiveCatalogRefresh]);
+
   const addToCart = (product: Product) => {
     // Validate price first
     const priceValidation = validatePrice(product.price);
@@ -496,7 +609,7 @@ const POS: React.FC = () => {
     try {
       await saleMutex.acquire(paymentData, async (queuedPaymentData) => {
         setProcessingSale(true);
-        setQueuedSalesCount(saleMutex.getQueueSize());
+        setSaleProcessingQueueCount(saleMutex.getQueueSize());
 
         try {
           // Check if user is authenticated and has token
@@ -747,6 +860,17 @@ const POS: React.FC = () => {
           if (saleData.amountReceived != null) cleanSaleData.amountReceived = Number(saleData.amountReceived);
           if (saleData.discountAmount != null && saleData.discountAmount > 0) {
             cleanSaleData.discountAmount = Number(saleData.discountAmount);
+          }
+
+          if (paymentData.managerOverride) {
+            cleanSaleData.managerOverride = {
+              approvedByUserId: String(paymentData.managerOverride.approvedByUserId || ''),
+              approvedByName: paymentData.managerOverride.approvedByName
+                ? String(paymentData.managerOverride.approvedByName)
+                : undefined,
+              approvalReason: String(paymentData.managerOverride.approvalReason || ''),
+              approvalPin: String(paymentData.managerOverride.approvalPin || ''),
+            };
           }
           
           // Split payment fields
@@ -1049,6 +1173,7 @@ const POS: React.FC = () => {
             
             // Check for queue warnings if sale was queued offline
             if (saleResponse.queueSize !== undefined) {
+              setOfflineQueuedSalesCount(Math.max(0, saleResponse.queueSize));
               if (saleResponse.isCritical) {
                 showToast(
                   `⚠️ Offline sales queue is FULL (${saleResponse.queueSize}/${saleResponse.maxQueueSize}). Please sync immediately!`,
@@ -1281,7 +1406,7 @@ const POS: React.FC = () => {
           }
         } finally {
           setProcessingSale(false);
-          setQueuedSalesCount(saleMutex.getQueueSize());
+          setSaleProcessingQueueCount(saleMutex.getQueueSize());
         }
       });
     } catch (mutexError) {
@@ -1617,7 +1742,17 @@ const POS: React.FC = () => {
             )}
             <div className="pos-shell-stats pos-shell-stats--inline">
               <div className="stat-row"><span>Items</span><strong>{cart.length}</strong></div>
-              <div className="stat-row"><span>Queued</span><strong>{queuedSalesCount}</strong></div>
+              <div className="stat-row">
+                <button
+                  type="button"
+                  className="offline-queue-trigger"
+                  onClick={() => setShowOfflineQueueModal(true)}
+                  title="View offline sales queue"
+                >
+                  <span>Offline Q</span>
+                  <strong>{offlineQueuedSalesCount}</strong>
+                </button>
+              </div>
               <div className="stat-row"><span>Total</span><strong>KES {getGrandTotal().toFixed(2)}</strong></div>
             </div>
           </div>
@@ -1635,6 +1770,9 @@ const POS: React.FC = () => {
               onClose={() => setShowSalesHistoryModal(false)}
               onReceiptFound={handleReceiptFromLookup}
             />
+          )}
+          {showOfflineQueueModal && (
+            <OfflineSalesQueueModal onClose={() => setShowOfflineQueueModal(false)} />
           )}
 
           <AnimatePresence mode="wait">
@@ -1674,7 +1812,7 @@ const POS: React.FC = () => {
                   onCompleteSale={handleCompleteSale}
                   onBackToProducts={handleBackToProducts}
                   loading={processingSale}
-                  queuedSalesCount={queuedSalesCount}
+                  queuedSalesCount={saleProcessingQueueCount}
                 />
               </motion.div>
             )}

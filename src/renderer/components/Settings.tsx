@@ -22,6 +22,24 @@ interface CatalogSyncStatus {
   isStale: boolean;
 }
 
+interface StockParityEntry {
+  key: string;
+  type: 'product' | 'variation';
+  beforeStock: number;
+  afterStock: number;
+  delta: number;
+  driftDetected: boolean;
+  name?: string;
+}
+
+interface StockParityReport {
+  generatedAt: string;
+  syncedCount: number;
+  checked: number;
+  drifted: number;
+  entries: StockParityEntry[];
+}
+
 type UpdateChannel = 'stable' | 'beta';
 
 interface UpdateSettings {
@@ -43,9 +61,21 @@ interface UpdateEventStatus {
   checkedAt?: string;
 }
 
+interface StaffUser {
+  id: string;
+  name?: string;
+  email?: string;
+  role?: string;
+  roles?: string[];
+  userRoles?: Array<{ role?: { name?: string } }>;
+  hasPosPin?: boolean;
+}
+
 const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> = ({ onClose, onUnauthorized }) => {
+  const { logout, user } = useAuth();
   const { enterSleepMode } = useSleepMode();
   const [activeTab, setActiveTab] = useState<'printer' | 'system'>('printer');
+  const [systemTab, setSystemTab] = useState<'catalog' | 'updates' | 'security' | 'controls'>('catalog');
   const [config, setConfig] = useState<PrinterConfig>({
     type: 'usb',
     autoOpenCashDrawer: true,
@@ -55,18 +85,28 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
   const [syncing, setSyncing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [catalogStatus, setCatalogStatus] = useState<CatalogSyncStatus | null>(null);
+  const [parityReport, setParityReport] = useState<StockParityReport | null>(null);
   const [updateSettings, setUpdateSettings] = useState<UpdateSettings | null>(null);
   const [selectedUpdateChannel, setSelectedUpdateChannel] = useState<UpdateChannel>('stable');
   const [checkingUpdates, setCheckingUpdates] = useState(false);
   const [installingUpdate, setInstallingUpdate] = useState(false);
   const [updateStatus, setUpdateStatus] = useState<UpdateEventStatus | null>(null);
+  const [staffUsers, setStaffUsers] = useState<StaffUser[]>([]);
+  const [loadingStaffUsers, setLoadingStaffUsers] = useState(false);
+  const [selectedStaffUserId, setSelectedStaffUserId] = useState('');
+  const [newPosPin, setNewPosPin] = useState('');
+  const [savingPosPin, setSavingPosPin] = useState(false);
+  const [posPinError, setPosPinError] = useState('');
 
   useEffect(() => {
     loadConfig();
     loadCatalogStatus();
+    loadParityReport();
     loadUpdateSettings();
+    loadStaffUsers();
     // Refresh catalog status every 30 seconds
     const statusInterval = setInterval(loadCatalogStatus, 30000);
+    const parityInterval = setInterval(loadParityReport, 30000);
 
     const unsubscribeUpdateStatus = (window as any).electronAPI.onAppUpdateStatus((status: UpdateEventStatus) => {
       setUpdateStatus(status);
@@ -107,9 +147,116 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
 
     return () => {
       clearInterval(statusInterval);
+      clearInterval(parityInterval);
       unsubscribeUpdateStatus();
     };
   }, []);
+
+  const normalizeUserRoleNames = (entry: StaffUser): string[] => {
+    const roleNames = new Set<string>();
+
+    if (Array.isArray(entry.roles)) {
+      for (const role of entry.roles) {
+        const normalized = String(role || '').toLowerCase().trim();
+        if (normalized) roleNames.add(normalized);
+      }
+    }
+
+    if (Array.isArray(entry.userRoles)) {
+      for (const userRole of entry.userRoles) {
+        const normalized = String(userRole?.role?.name || '').toLowerCase().trim();
+        if (normalized) roleNames.add(normalized);
+      }
+    }
+
+    if (entry.role) {
+      const normalized = String(entry.role).toLowerCase().trim();
+      if (normalized) roleNames.add(normalized);
+    }
+
+    return Array.from(roleNames);
+  };
+
+  const displayUserRole = (entry: StaffUser): string => {
+    const normalized = normalizeUserRoleNames(entry);
+    if (!normalized.length) return 'staff';
+    return normalized[0];
+  };
+
+  const currentUserRoles = Array.isArray((user as any)?.roles)
+    ? (user as any).roles.map((role: string) => String(role || '').toLowerCase())
+    : [];
+  const canManagePosPins =
+    currentUserRoles.includes('owner') ||
+    currentUserRoles.includes('admin') ||
+    currentUserRoles.includes('superadmin');
+
+  const loadStaffUsers = async () => {
+    setLoadingStaffUsers(true);
+    try {
+      const response = await (window as any).electronAPI?.getUsers?.();
+      const users = Array.isArray(response?.users) ? response.users : [];
+      const normalizedUsers = users
+        .map((u: any) => ({
+          id: String(u?.id || ''),
+          name: typeof u?.name === 'string' ? u.name : '',
+          email: typeof u?.email === 'string' ? u.email : '',
+          role: typeof u?.role === 'string' ? u.role : undefined,
+          roles: Array.isArray(u?.roles) ? u.roles : [],
+          userRoles: Array.isArray(u?.userRoles) ? u.userRoles : [],
+          hasPosPin: Boolean(u?.hasPosPin),
+        }))
+        .filter((u: StaffUser) => u.id)
+        .sort((a: StaffUser, b: StaffUser) => {
+          const left = (a.name || a.email || '').toLowerCase();
+          const right = (b.name || b.email || '').toLowerCase();
+          return left.localeCompare(right);
+        });
+      setStaffUsers(normalizedUsers);
+    } catch {
+      setStaffUsers([]);
+    } finally {
+      setLoadingStaffUsers(false);
+    }
+  };
+
+  const handleSetPosPin = async () => {
+    if (!selectedStaffUserId) {
+      setPosPinError('Select a staff user first.');
+      return;
+    }
+
+    const trimmed = newPosPin.trim();
+    if (!/^\d{4,8}$/.test(trimmed)) {
+      setPosPinError('PIN must be 4 to 8 digits.');
+      return;
+    }
+
+    setSavingPosPin(true);
+    setPosPinError('');
+    setMessage(null);
+
+    try {
+      const result = await (window as any).electronAPI?.setUserPosPin?.(
+        selectedStaffUserId,
+        trimmed,
+      );
+
+      if (!result?.success) {
+        setPosPinError(result?.error || 'Failed to set POS PIN.');
+        return;
+      }
+
+      setMessage({ type: 'success', text: 'POS PIN updated successfully.' });
+      setNewPosPin('');
+      await loadStaffUsers();
+      setTimeout(() => setMessage(null), 3000);
+    } catch (error: any) {
+      setPosPinError(error?.message || 'Failed to set POS PIN.');
+    } finally {
+      setSavingPosPin(false);
+    }
+  };
 
   const loadConfig = async () => {
     setLoading(true);
@@ -211,6 +358,23 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
     }
   };
 
+  const loadParityReport = async () => {
+    try {
+      const response = await (window as any).electronAPI.getLastStockParityReport() as {
+        success: boolean;
+        hasReport: boolean;
+        report?: StockParityReport;
+      };
+      if (response?.success && response.hasReport && response.report) {
+        setParityReport(response.report);
+      } else {
+        setParityReport(null);
+      }
+    } catch (error) {
+      console.error('Failed to load stock parity report:', error);
+    }
+  };
+
   const loadUpdateSettings = async () => {
     try {
       const settings = await (window as any).electronAPI.getUpdateSettings() as UpdateSettings;
@@ -297,6 +461,7 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
         setTimeout(() => setMessage(null), 5000);
         // Refresh catalog status
         await loadCatalogStatus();
+        await loadParityReport();
       } else {
         const isUnauthorized = response.unauthorized ||
           (response.error && (response.error.includes('Unauthorized') || response.error.includes('log in again')));
@@ -332,12 +497,15 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
     }
   };
 
-  const { logout } = useAuth();
   const isPackagedBuild = !!updateSettings?.isPackaged;
+  const showCatalogTab = activeTab === 'system' && systemTab === 'catalog';
+  const showUpdatesTab = activeTab === 'system' && systemTab === 'updates';
+  const showSecurityTab = activeTab === 'system' && systemTab === 'security';
+  const showControlsTab = activeTab === 'system' && systemTab === 'controls';
 
   return (
-    <div className="settings-modal-overlay" onClick={onClose}>
-      <div className="settings-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="settings-page">
+      <div className="settings-modal settings-page-modal">
         {/* Header */}
         <div className="settings-header">
           <div className="settings-header-content">
@@ -590,7 +758,35 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
 
               {activeTab === 'system' && (
                 <div className="settings-tab-content">
+                  <div className="settings-subtabs-nav">
+                    <button
+                      className={`settings-subtab ${systemTab === 'catalog' ? 'active' : ''}`}
+                      onClick={() => setSystemTab('catalog')}
+                    >
+                      Catalog
+                    </button>
+                    <button
+                      className={`settings-subtab ${systemTab === 'updates' ? 'active' : ''}`}
+                      onClick={() => setSystemTab('updates')}
+                    >
+                      Updates
+                    </button>
+                    <button
+                      className={`settings-subtab ${systemTab === 'security' ? 'active' : ''}`}
+                      onClick={() => setSystemTab('security')}
+                    >
+                      POS Security
+                    </button>
+                    <button
+                      className={`settings-subtab ${systemTab === 'controls' ? 'active' : ''}`}
+                      onClick={() => setSystemTab('controls')}
+                    >
+                      Controls
+                    </button>
+                  </div>
+
                   {/* Product Catalog Sync */}
+                  {showCatalogTab && (
                   <div className="settings-card">
                     <div className="settings-card-header">
                       <h3 className="settings-card-title">Product Catalog</h3>
@@ -671,8 +867,79 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
                       </p>
                     </div>
                   </div>
+                  )}
+
+                  {/* Offline Stock Drift Debug */}
+                  {showCatalogTab && (
+                  <div className="settings-card">
+                    <div className="settings-card-header">
+                      <h3 className="settings-card-title">Offline Stock Drift Debug</h3>
+                      <p className="settings-card-description">Latest parity report after offline sales synchronization</p>
+                    </div>
+                    <div className="settings-card-body">
+                      {!parityReport ? (
+                        <div style={{ fontSize: '13px', color: '#6b7280' }}>
+                          No parity report yet. Complete an offline sales sync to generate one.
+                        </div>
+                      ) : (
+                        <>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '8px', marginBottom: '12px' }}>
+                            <div style={{ padding: '8px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '12px' }}>
+                              <div style={{ color: '#6b7280' }}>Synced</div>
+                              <div style={{ fontWeight: 700 }}>{parityReport.syncedCount}</div>
+                            </div>
+                            <div style={{ padding: '8px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '12px' }}>
+                              <div style={{ color: '#6b7280' }}>Checked</div>
+                              <div style={{ fontWeight: 700 }}>{parityReport.checked}</div>
+                            </div>
+                            <div style={{ padding: '8px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '12px' }}>
+                              <div style={{ color: '#6b7280' }}>Drifted</div>
+                              <div style={{ fontWeight: 700, color: parityReport.drifted > 0 ? '#b45309' : '#047857' }}>{parityReport.drifted}</div>
+                            </div>
+                            <div style={{ padding: '8px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '12px' }}>
+                              <div style={{ color: '#6b7280' }}>Generated</div>
+                              <div style={{ fontWeight: 700 }}>{new Date(parityReport.generatedAt).toLocaleTimeString()}</div>
+                            </div>
+                          </div>
+
+                          <div style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '8px' }}>
+                            {(parityReport.entries || []).slice(0, 20).map((entry) => (
+                              <div
+                                key={entry.key}
+                                style={{
+                                  display: 'grid',
+                                  gridTemplateColumns: '1.5fr 0.8fr 0.7fr 0.7fr 0.6fr',
+                                  gap: '8px',
+                                  padding: '6px 8px',
+                                  borderBottom: '1px solid #f3f4f6',
+                                  fontSize: '12px',
+                                  lineHeight: 1.3,
+                                  backgroundColor: entry.driftDetected ? '#fffbeb' : '#ffffff',
+                                }}
+                              >
+                                <span title={entry.key} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {entry.name || entry.key}
+                                </span>
+                                <span>{entry.type}</span>
+                                <span>{entry.beforeStock}</span>
+                                <span>{entry.afterStock}</span>
+                                <span style={{ color: entry.delta === 0 ? '#111827' : entry.delta > 0 ? '#047857' : '#b45309', fontWeight: 600 }}>
+                                  {entry.delta > 0 ? `+${entry.delta}` : entry.delta}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="settings-field-hint" style={{ marginTop: '8px' }}>
+                            Showing up to 20 latest entries from last parity run.
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  )}
 
                   {/* App Updates */}
+                  {showUpdatesTab && (
                   <div className="settings-card">
                     <div className="settings-card-header">
                       <h3 className="settings-card-title">App Updates</h3>
@@ -793,8 +1060,112 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
                       </div>
                     </div>
                   </div>
+                  )}
 
                   {/* System Controls */}
+                  {showSecurityTab && (
+                  <div className="settings-card">
+                    <div className="settings-card-header">
+                      <h3 className="settings-card-title">POS PIN Management</h3>
+                      <p className="settings-card-description">Set or reset staff POS PINs used for approvals and secure actions</p>
+                    </div>
+                    <div className="settings-card-body">
+                      {!canManagePosPins ? (
+                        <div style={{ fontSize: '13px', color: '#b45309' }}>
+                          You need owner/admin permissions to set POS PINs.
+                        </div>
+                      ) : (
+                        <>
+                          <div className="settings-field">
+                            <label className="settings-label">
+                              <span className="settings-label-text">Staff User</span>
+                              <select
+                                className="settings-select"
+                                value={selectedStaffUserId}
+                                onChange={(e) => {
+                                  setSelectedStaffUserId(e.target.value);
+                                  if (posPinError) setPosPinError('');
+                                }}
+                                disabled={loadingStaffUsers}
+                              >
+                                <option value="">Select user</option>
+                                {staffUsers.map((member) => (
+                                  <option key={member.id} value={member.id}>
+                                    {(member.name || member.email || member.id)} ({displayUserRole(member)})
+                                    {member.hasPosPin ? ' - PIN Set' : ' - PIN Not Set'}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                          </div>
+
+                          <div className="settings-field" style={{ marginBottom: '12px' }}>
+                            <label className="settings-label">
+                              <span className="settings-label-text">New PIN</span>
+                              <input
+                                type="password"
+                                inputMode="numeric"
+                                maxLength={8}
+                                className="settings-input"
+                                value={newPosPin}
+                                onChange={(e) => {
+                                  setNewPosPin(e.target.value.replace(/\D/g, ''));
+                                  if (posPinError) setPosPinError('');
+                                }}
+                                placeholder="Enter 4-8 digits"
+                              />
+                            </label>
+                            <p className="settings-field-hint">Only digits are allowed. This will overwrite any existing PIN for that user.</p>
+                          </div>
+
+                          {posPinError && (
+                            <div style={{
+                              padding: '10px 12px',
+                              borderRadius: '8px',
+                              border: '1px solid #fecaca',
+                              background: '#fef2f2',
+                              color: '#991b1b',
+                              fontSize: '13px',
+                              marginBottom: '12px',
+                            }}>
+                              {posPinError}
+                            </div>
+                          )}
+
+                          <div className="settings-actions-grid">
+                            <button
+                              onClick={handleSetPosPin}
+                              disabled={savingPosPin || loadingStaffUsers}
+                              className="settings-action-btn settings-action-btn-primary"
+                            >
+                              {savingPosPin ? (
+                                <>
+                                  <div className="settings-btn-spinner"></div>
+                                  <span>Saving PIN...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span>Set / Reset POS PIN</span>
+                                </>
+                              )}
+                            </button>
+
+                            <button
+                              onClick={loadStaffUsers}
+                              disabled={loadingStaffUsers}
+                              className="settings-action-btn settings-action-btn-secondary"
+                            >
+                              <span>{loadingStaffUsers ? 'Refreshing...' : 'Refresh Staff List'}</span>
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  )}
+
+                  {/* System Controls */}
+                  {showControlsTab && (
                   <div className="settings-card">
                     <div className="settings-card-header">
                       <h3 className="settings-card-title">System Controls</h3>
@@ -842,6 +1213,7 @@ const Settings: React.FC<{ onClose: () => void; onUnauthorized?: () => void }> =
                       </div>
                     </div>
                   </div>
+                  )}
                 </div>
               )}
             </>

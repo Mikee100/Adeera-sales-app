@@ -306,3 +306,73 @@
   background: #6c757d;
   cursor: not-allowed;
 }
+
+/* Offline Sales Queue modal */
+.offline-sales-queue-modal .modal-content {
+  max-width: 860px;
+}
+
+.offline-sales-loading,
+.offline-sales-error,
+.offline-sales-empty {
+  margin: 0;
+  padding: 12px 0;
+  color: #555;
+}
+
+.offline-sales-error {
+  color: #dc3545;
+}
+
+.offline-sales-table-wrap {
+  width: 100%;
+  overflow: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.offline-sales-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.offline-sales-table th,
+.offline-sales-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eef2f7;
+  text-align: left;
+  font-size: 13px;
+}
+
+.offline-sales-table th {
+  background: #f8fafc;
+  font-weight: 700;
+  color: #334155;
+}
+
+.offline-sales-table tr:last-child td {
+  border-bottom: none;
+}
+
+.offline-sales-id {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
+.offline-queue-trigger {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.offline-queue-trigger:hover {
+  text-decoration: underline;
+}
