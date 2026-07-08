@@ -695,9 +695,9 @@ body {
 
 .product-info .price, .product-price-stock-row .price {
   font-weight: 700;
-  color: #2563eb;
+  color: #8a1f2d;
   font-size: 15px;
-  background: #e0e7ff;
+  background: #fbe9ec;
   padding: 2px 8px;
   border-radius: 8px;
   margin-right: 0;
@@ -724,7 +724,7 @@ body {
   position: absolute;
   top: 6px;
   right: 6px;
-  background: #667eea;
+  background: #8a1f2d;
   color: white;
   padding: 2px 6px;
   border-radius: 8px;
@@ -861,7 +861,7 @@ body {
 .product-card-cta {
   font-size: 10px;
   font-weight: 700;
-  color: #2563eb;
+  color: #8a1f2d;
 }
 
 .variation-chips {
@@ -1169,9 +1169,9 @@ body {
 }
 
 .hold-transaction-btn-header {
-  background: #ffc107;
-  color: #333;
-  border: none;
+  background: #f6ede1;
+  color: #5a2530;
+  border: 1px solid #d9c3aa;
   padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
@@ -1184,7 +1184,7 @@ body {
 }
 
 .hold-transaction-btn-header:hover {
-  background: #ffb300;
+  background: #f0e1d0;
   transform: translateY(-1px);
 }
 

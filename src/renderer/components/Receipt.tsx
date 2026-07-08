@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Banknote, CreditCard, HandCoins, Smartphone } from 'lucide-react';
 import '../receipt.css';
 import { showToast } from './Toast';
 
@@ -78,8 +79,16 @@ const Receipt: React.FC<ReceiptProps> = ({
 
   if (!receipt) return null;
 
-  const formatCurrency = (amount: number) => {
-    return `Ksh ${amount?.toFixed(2) || '0.00'}`;
+  const formatCurrency = (amount: unknown) => {
+    return `KES ${(Number(amount) || 0).toFixed(2)}`;
+  };
+
+  const PaymentMethodIcon = ({ method }: { method?: string }) => {
+    const normalized = (method || '').toLowerCase();
+    if (normalized === 'cash') return <Banknote size={16} />;
+    if (normalized === 'mpesa') return <Smartphone size={16} />;
+    if (normalized === 'credit') return <CreditCard size={16} />;
+    return <HandCoins size={16} />;
   };
 
   const formatDate = (date: string | Date) => {
@@ -471,11 +480,7 @@ const Receipt: React.FC<ReceiptProps> = ({
                   {receipt.splitPayments.map((payment: any, index: number) => (
                     <div key={index} className="split-payment-item-receipt">
                       <div className="split-payment-method-receipt">
-                        <span className="split-payment-icon">
-                          {payment.method === 'cash' ? '💵' : 
-                           payment.method === 'mpesa' ? '📱' : 
-                           payment.method === 'credit' ? '💳' : '💰'}
-                        </span>
+                        <span className="split-payment-icon"><PaymentMethodIcon method={payment.method} /></span>
                         <span className="split-payment-method-name">{payment.method.toUpperCase()}</span>
                       </div>
                       <div className="split-payment-amount-receipt">
@@ -517,11 +522,7 @@ const Receipt: React.FC<ReceiptProps> = ({
             ) : (
               <>
                 <div className="payment-method-badge" data-method={receipt.paymentMethod?.toLowerCase()}>
-                  <span className="payment-icon">
-                    {receipt.paymentMethod === 'cash' ? '💵' : 
-                     receipt.paymentMethod === 'mpesa' ? '📱' : 
-                     receipt.paymentMethod === 'credit' ? '💳' : '💰'}
-                  </span>
+                  <span className="payment-icon"><PaymentMethodIcon method={receipt.paymentMethod} /></span>
                   <span className="payment-text">{receipt.paymentMethod?.toUpperCase() || 'PAYMENT'}</span>
                 </div>
 

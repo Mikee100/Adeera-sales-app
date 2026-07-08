@@ -143,6 +143,11 @@ class PrinterService {
     }
   }
 
+  private formatMoney(value: unknown): string {
+    const amount = Number(value);
+    return `Ksh ${(Number.isFinite(amount) ? amount : 0).toFixed(2)}`;
+  }
+
   async openCashDrawer(): Promise<{ success: boolean; error?: string }> {
     if (!this.config) {
       return { success: false, error: 'Printer not configured' };
@@ -242,14 +247,15 @@ class PrinterService {
 
     receiptData.items.forEach(item => {
       const name = this.truncateText(item.name, 20);
-      const qty = item.quantity.toString().padStart(3);
-      const price = `Ksh ${item.price.toFixed(2)}`.padStart(12);
+      const qty = String(Number(item.quantity) || 0).padStart(3);
+      const itemPrice = Number(item.price) || 0;
+      const price = this.formatMoney(itemPrice).padStart(12);
       this.addText(commands, `${name} ${qty} ${price}`);
       commands.push(0x0A);
 
       // Subtotal for this item
-      const itemTotal = item.price * item.quantity;
-      const itemTotalStr = `Ksh ${itemTotal.toFixed(2)}`.padStart(36);
+      const itemTotal = itemPrice * (Number(item.quantity) || 0);
+      const itemTotalStr = this.formatMoney(itemTotal).padStart(36);
       this.addText(commands, itemTotalStr);
       commands.push(0x0A);
     });
@@ -259,24 +265,24 @@ class PrinterService {
     commands.push(0x0A);
 
     // Totals
-    this.addText(commands, `Subtotal:${' '.repeat(22)}Ksh ${receiptData.subtotal.toFixed(2)}`);
+    this.addText(commands, `Subtotal:${' '.repeat(22)}${this.formatMoney(receiptData.subtotal)}`);
     commands.push(0x0A);
     this.addText(commands, '--------------------------------');
     commands.push(0x0A);
     commands.push(0x1D, 0x21, 0x11); // Double size
-    this.addText(commands, `TOTAL:${' '.repeat(18)}Ksh ${receiptData.total.toFixed(2)}`);
+    this.addText(commands, `TOTAL:${' '.repeat(18)}${this.formatMoney(receiptData.total)}`);
     commands.push(0x1D, 0x21, 0x00); // Reset size
     commands.push(0x0A, 0x0A);
 
     // Payment info
     this.addText(commands, `Payment: ${receiptData.paymentMethod.toUpperCase()}`);
     commands.push(0x0A);
-    if (receiptData.amountReceived) {
-      this.addText(commands, `Received: Ksh ${receiptData.amountReceived.toFixed(2)}`);
+    if (receiptData.amountReceived !== undefined && receiptData.amountReceived !== null) {
+      this.addText(commands, `Received: ${this.formatMoney(receiptData.amountReceived)}`);
       commands.push(0x0A);
     }
     if (receiptData.change !== undefined && receiptData.change > 0) {
-      this.addText(commands, `Change: Ksh ${receiptData.change.toFixed(2)}`);
+      this.addText(commands, `Change: ${this.formatMoney(receiptData.change)}`);
       commands.push(0x0A);
     }
 

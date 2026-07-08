@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Banknote, CreditCard, HandCoins, Smartphone, UserRound } from 'lucide-react';
 import '../checkout.css';
 import { validatePaymentAmount, validatePhoneNumber, validateCustomerName } from '../utils/validation';
 import { auditLogger, AuditEventType } from '../utils/audit-logger';
@@ -141,6 +142,48 @@ const Checkout: React.FC<CheckoutProps> = ({
   );
   const subtotalAfterDiscount = Math.max(0, subtotal - effectiveDiscountAmount);
   const totalAfterDiscount = subtotalAfterDiscount;
+  const formatCurrency = (amount: number) => `KES ${(Number(amount) || 0).toFixed(2)}`;
+
+  const getSkuColorLabel = (sku: string): string => {
+    const parts = String(sku || '').split('-').filter(Boolean);
+    if (parts.length < 2) return '';
+    return parts[1] || '';
+  };
+
+  const getSwatchStyleForLabel = (label: string): React.CSSProperties | undefined => {
+    const normalized = label.trim().toLowerCase();
+    if (!normalized) return undefined;
+
+    const named: Record<string, string> = {
+      black: '#111827',
+      white: '#f8fafc',
+      navy: '#1e3a8a',
+      blue: '#2563eb',
+      red: '#b91c1c',
+      green: '#166534',
+      brown: '#6b4226',
+      tan: '#d2b48c',
+      beige: '#e5d3b3',
+      grey: '#9ca3af',
+      gray: '#9ca3af',
+      burgundy: '#7f1d1d',
+      maroon: '#7f1d1d',
+      pink: '#db2777',
+      purple: '#6d28d9',
+      orange: '#ea580c',
+      yellow: '#ca8a04',
+    };
+
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(normalized)) {
+      return { backgroundColor: normalized };
+    }
+
+    if (named[normalized]) {
+      return { backgroundColor: named[normalized] };
+    }
+
+    return undefined;
+  };
 
   const isManagerLike = (user: ManagerApprover): boolean => {
     const roleNames = new Set<string>();
@@ -260,7 +303,7 @@ const Checkout: React.FC<CheckoutProps> = ({
 
     // Validate discount
     if (discountMode === 'amount' && (discountAmount < 0 || discountAmount > subtotal)) {
-      newErrors.discountAmount = `Discount must be between 0 and ${subtotal.toFixed(2)}`;
+      newErrors.discountAmount = `Discount must be between 0 and ${formatCurrency(subtotal)}`;
     }
     if (discountMode === 'percent' && (discountPercent < 0 || discountPercent > 100)) {
       newErrors.discountAmount = 'Discount percentage must be between 0 and 100';
@@ -275,7 +318,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         const difference = Math.abs(totalSplitAmount - totalAfterDiscount);
         
         if (difference > 0.01) { // Allow small rounding differences
-          newErrors.splitPayments = `Split payments total (Ksh ${totalSplitAmount.toFixed(2)}) must equal total (Ksh ${totalAfterDiscount.toFixed(2)})`;
+          newErrors.splitPayments = `Split payments total (${formatCurrency(totalSplitAmount)}) must equal total (${formatCurrency(totalAfterDiscount)})`;
         }
 
         // Validate each split payment
@@ -285,7 +328,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           }
           
           if (payment.method === 'cash' && (!payment.amountReceived || payment.amountReceived < payment.amount)) {
-            newErrors[`splitPayment_${index}_cash`] = `Cash received must be at least Ksh ${payment.amount.toFixed(2)}`;
+            newErrors[`splitPayment_${index}_cash`] = `Cash received must be at least ${formatCurrency(payment.amount)}`;
           }
           
           if (payment.method === 'credit' && !customerName?.trim()) {
@@ -303,7 +346,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         } else {
           const paymentValidation = validatePaymentAmount(received, totalAfterDiscount, paymentMethod);
           if (!paymentValidation.isValid) {
-            newErrors.amountReceived = paymentValidation.error || `Amount must be at least Ksh ${totalAfterDiscount.toFixed(2)}`;
+            newErrors.amountReceived = paymentValidation.error || `Amount must be at least ${formatCurrency(totalAfterDiscount)}`;
           }
         }
       }
@@ -378,7 +421,7 @@ const Checkout: React.FC<CheckoutProps> = ({
       if (Math.abs(totalSplit - totalAfterDiscount) > 0.01) {
         setErrors({
           ...errors,
-          splitPayments: `Total split payments (Ksh ${totalSplit.toFixed(2)}) must equal total amount (Ksh ${totalAfterDiscount.toFixed(2)})`,
+          splitPayments: `Total split payments (${formatCurrency(totalSplit)}) must equal total amount (${formatCurrency(totalAfterDiscount)})`,
         });
         return;
       }
@@ -678,39 +721,51 @@ const Checkout: React.FC<CheckoutProps> = ({
           {/* Order Summary Card */}
           <div className="checkout-card order-summary-card">
             <div className="card-header">
-              <h2>🛒 Order Summary</h2>
+              <h2>Order Summary</h2>
               <span className="item-count">{cart.length} item{cart.length !== 1 ? 's' : ''}</span>
             </div>
 
             <div className="order-items">
-              {cart.map(item => (
-                <div key={item.product.id} className="order-item">
-                  <div className="item-details">
-                    <h4 className="item-name">{item.product.name}</h4>
-                    <span className="item-sku">SKU: {item.product.sku}</span>
+              {cart.map(item => {
+                const colorLabel = getSkuColorLabel(item.product.sku || '');
+                const swatchStyle = getSwatchStyleForLabel(colorLabel);
+                return (
+                <div key={`${item.product.id}-${item.product.sku || 'base'}`} className="order-item">
+                  <div className="item-main">
+                    <span
+                      className="item-color-swatch"
+                      style={swatchStyle}
+                      aria-label={colorLabel ? `Color ${colorLabel}` : 'Variant'}
+                      title={colorLabel || 'Variant'}
+                    />
+                    <div className="item-details">
+                      <h4 className="item-name">{item.product.name}</h4>
+                      <span className="item-sku">SKU: {item.product.sku}</span>
+                    </div>
                   </div>
                   <div className="item-meta">
                     <span className="item-quantity">Qty: {item.quantity}</span>
-                    <span className="item-price">${(item.product.price * item.quantity).toFixed(2)}</span>
+                    <span className="item-price">{formatCurrency(item.product.price * item.quantity)}</span>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="order-totals">
               <div className="total-row">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{formatCurrency(subtotal)}</span>
               </div>
               {effectiveDiscountAmount > 0 && (
                 <div className="total-row discount-row">
                   <span>Discount</span>
-                  <span className="discount-amount">−${effectiveDiscountAmount.toFixed(2)}</span>
+                  <span className="discount-amount">−{formatCurrency(effectiveDiscountAmount)}</span>
                 </div>
               )}
               <div className="total-row grand-total">
                 <span>Total Amount</span>
-                <span className="total-amount">${totalAfterDiscount.toFixed(2)}</span>
+                <span className="total-amount">{formatCurrency(totalAfterDiscount)}</span>
               </div>
             </div>
 
@@ -722,28 +777,46 @@ const Checkout: React.FC<CheckoutProps> = ({
               <div className="split-preset-row" style={{ marginBottom: 8 }}>
                 <button
                   type="button"
-                  className={`split-preset-btn ${discountMode === 'amount' ? 'active' : ''}`}
+                  className={`split-preset-btn ${discountMode === 'amount' ? 'active selected-control' : ''}`}
                   onClick={() => setDiscountMode('amount')}
                 >
                   Fixed Amount
                 </button>
                 <button
                   type="button"
-                  className={`split-preset-btn ${discountMode === 'percent' ? 'active' : ''}`}
+                  className={`split-preset-btn ${discountMode === 'percent' ? 'active selected-control' : ''}`}
                   onClick={() => setDiscountMode('percent')}
                 >
                   Percentage
                 </button>
                 {discountMode === 'percent' && (
                   <>
-                    <button type="button" className="split-preset-btn" onClick={() => setDiscountPercent(5)}>5%</button>
-                    <button type="button" className="split-preset-btn" onClick={() => setDiscountPercent(10)}>10%</button>
-                    <button type="button" className="split-preset-btn" onClick={() => setDiscountPercent(15)}>15%</button>
+                    <button
+                      type="button"
+                      className={`split-preset-btn ${Math.abs(discountPercent - 5) < 0.01 ? 'active selected-control' : ''}`}
+                      onClick={() => setDiscountPercent(5)}
+                    >
+                      5%
+                    </button>
+                    <button
+                      type="button"
+                      className={`split-preset-btn ${Math.abs(discountPercent - 10) < 0.01 ? 'active selected-control' : ''}`}
+                      onClick={() => setDiscountPercent(10)}
+                    >
+                      10%
+                    </button>
+                    <button
+                      type="button"
+                      className={`split-preset-btn ${Math.abs(discountPercent - 15) < 0.01 ? 'active selected-control' : ''}`}
+                      onClick={() => setDiscountPercent(15)}
+                    >
+                      15%
+                    </button>
                   </>
                 )}
               </div>
               <div className="input-wrapper">
-                <span className="currency-symbol">{discountMode === 'percent' ? '%' : '$'}</span>
+                <span className="currency-symbol">{discountMode === 'percent' ? '%' : 'KES'}</span>
                 {discountMode === 'amount' ? (
                   <input
                     type="number"
@@ -771,7 +844,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                 )}
               </div>
               {discountMode === 'percent' && effectiveDiscountAmount > 0 && (
-                <span className="input-hint">Applies ${effectiveDiscountAmount.toFixed(2)} discount</span>
+                <span className="input-hint">Applies {formatCurrency(effectiveDiscountAmount)} discount</span>
               )}
               {errors.discountAmount && (
                 <span id="discount-error" className="error-text">{errors.discountAmount}</span>
@@ -791,7 +864,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           {/* Payment Method Card */}
           <div className="checkout-card payment-card">
             <div className="card-header">
-              <h2>💰 Payment Method</h2>
+              <h2>Payment Method</h2>
               <label className="split-payment-toggle">
                 <input
                   type="checkbox"
@@ -804,7 +877,7 @@ const Checkout: React.FC<CheckoutProps> = ({
 
             {!isSplitPayment ? (
               <div className="payment-options">
-              <label className={`payment-option ${paymentMethod === 'cash' ? 'selected' : ''}`}>
+              <label className={`payment-option ${paymentMethod === 'cash' ? 'selected selected-control' : ''}`}>
                 <input
                   type="radio"
                   value="cash"
@@ -812,7 +885,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   onChange={(e) => setPaymentMethod(e.target.value as 'cash')}
                 />
                 <div className="payment-content">
-                  <div className="payment-icon cash-icon">💵</div>
+                  <div className="payment-icon cash-icon"><Banknote size={18} /></div>
                   <div className="payment-info">
                     <span className="payment-name">Cash Payment</span>
                     <span className="payment-desc">Pay with physical cash</span>
@@ -823,7 +896,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                 </div>
               </label>
 
-              <label className={`payment-option ${paymentMethod === 'mpesa' ? 'selected' : ''}`}>
+              <label className={`payment-option ${paymentMethod === 'mpesa' ? 'selected selected-control' : ''}`}>
                 <input
                   type="radio"
                   value="mpesa"
@@ -831,7 +904,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   onChange={(e) => setPaymentMethod(e.target.value as 'mpesa')}
                 />
                 <div className="payment-content">
-                  <div className="payment-icon mpesa-icon">📱</div>
+                  <div className="payment-icon mpesa-icon"><Smartphone size={18} /></div>
                   <div className="payment-info">
                     <span className="payment-name">M-Pesa</span>
                     <span className="payment-desc">Mobile money payment</span>
@@ -842,7 +915,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                 </div>
               </label>
 
-              <label className={`payment-option ${paymentMethod === 'credit' ? 'selected' : ''}`}>
+              <label className={`payment-option ${paymentMethod === 'credit' ? 'selected selected-control' : ''}`}>
                 <input
                   type="radio"
                   value="credit"
@@ -850,7 +923,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   onChange={(e) => setPaymentMethod(e.target.value as 'credit')}
                 />
                 <div className="payment-content">
-                  <div className="payment-icon credit-icon">💳</div>
+                  <div className="payment-icon credit-icon"><CreditCard size={18} /></div>
                   <div className="payment-info">
                     <span className="payment-name">Credit</span>
                     <span className="payment-desc">Pay later / On account</span>
@@ -865,7 +938,7 @@ const Checkout: React.FC<CheckoutProps> = ({
               <div className="split-payment-section">
                 <div className="split-payment-header">
                   <p className="split-payment-info">
-                    Split the payment across multiple methods. Total must equal <strong>Ksh {totalAfterDiscount.toFixed(2)}</strong>
+                    Split the payment across multiple methods. Total must equal <strong>{formatCurrency(totalAfterDiscount)}</strong>
                   </p>
                   <div className="split-preset-row">
                     <span className="split-preset-label">Quick layouts:</span>
@@ -889,7 +962,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   )}
                   <div className="remaining-amount">
                     Remaining: <strong className={getRemainingAmount() < 0 ? 'error' : getRemainingAmount() > 0.01 ? 'warning' : 'success'}>
-                      Ksh {getRemainingAmount().toFixed(2)}
+                      {formatCurrency(getRemainingAmount())}
                     </strong>
                   </div>
                 </div>
@@ -915,7 +988,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                         <div className="split-payment-amount">
                           <label>Amount</label>
                           <div className="input-wrapper">
-                            <span className="currency-symbol">Ksh</span>
+                            <span className="currency-symbol">KES</span>
                             <input
                               type="number"
                               step="0.01"
@@ -954,7 +1027,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                         <div className="split-payment-details">
                           <label>Cash Received</label>
                           <div className="input-wrapper">
-                            <span className="currency-symbol">Ksh</span>
+                            <span className="currency-symbol">KES</span>
                             <input
                               type="number"
                               step="0.01"
@@ -972,7 +1045,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                           )}
                           {payment.amountReceived && payment.amountReceived > payment.amount && (
                             <div className="change-display-small">
-                              Change: Ksh {(payment.amountReceived - payment.amount).toFixed(2)}
+                              Change: {formatCurrency(payment.amountReceived - payment.amount)}
                             </div>
                           )}
                         </div>
@@ -1025,11 +1098,11 @@ const Checkout: React.FC<CheckoutProps> = ({
                                 className="initiate-mpesa-btn"
                                 disabled={payment.amount <= 0}
                               >
-                                <span className="btn-icon">📱</span>
+                                <span className="btn-icon"><Smartphone size={16} /></span>
                                 Pay with M-Pesa
                               </button>
                               <span className="payment-hint">
-                                Click to initiate M-Pesa payment for Ksh {payment.amount.toFixed(2)}
+                                Click to initiate M-Pesa payment for {formatCurrency(payment.amount)}
                               </span>
                             </div>
                           )}
@@ -1078,11 +1151,11 @@ const Checkout: React.FC<CheckoutProps> = ({
               <div className="cash-payment-section">
                 <div className="input-group">
                   <label className="input-label">
-                    <span className="label-icon">💰</span>
+                    <span className="label-icon"><HandCoins size={16} /></span>
                     Amount Received
                   </label>
                   <div className="input-wrapper">
-                    <span className="currency-symbol">Ksh</span>
+                    <span className="currency-symbol">KES</span>
                     <input
                       type="number"
                       step="0.01"
@@ -1095,18 +1168,18 @@ const Checkout: React.FC<CheckoutProps> = ({
                       aria-describedby="amount-error"
                     />
                   </div>
-                  <span className="input-hint">Minimum: ${total.toFixed(2)}</span>
+                  <span className="input-hint">Minimum: {formatCurrency(totalAfterDiscount)}</span>
                   {errors.amountReceived && (
                     <span id="amount-error" className="error-message">{errors.amountReceived}</span>
                   )}
                 </div>
 
-                {amountReceived && parseFloat(amountReceived) >= total && (
-                  <div className="change-display">
-                    <div className="change-icon">🔄</div>
+                {amountReceived && parseFloat(amountReceived) >= totalAfterDiscount && (
+                  <div className="change-display prominent-change">
+                    <div className="change-icon"><HandCoins size={18} /></div>
                     <div className="change-info">
                       <span className="change-label">Change to return:</span>
-                      <span className="change-amount">Ksh {change.toFixed(2)}</span>
+                      <span className="change-amount">{formatCurrency(change)}</span>
                     </div>
                   </div>
                 )}
@@ -1120,7 +1193,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <div className="info-icon">ℹ️</div>
                   <div className="info-text">
                     <strong>Credit Sale</strong>
-                    <p>Total amount: Ksh {total.toFixed(2)} will be added to customer's account</p>
+                    <p>Total amount: {formatCurrency(totalAfterDiscount)} will be added to customer's account</p>
                   </div>
                 </div>
 
@@ -1159,7 +1232,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           {/* Customer Information Card */}
           <div className="checkout-card customer-card">
             <div className="card-header">
-              <h2>👤 Customer Details</h2>
+              <h2><UserRound size={16} /> Customer Details</h2>
               <span className={`optional-badge ${paymentMethod === 'credit' ? 'required-badge' : ''}`}>
                 {paymentMethod === 'credit' ? 'Required' : 'Optional'}
               </span>
@@ -1234,14 +1307,14 @@ const Checkout: React.FC<CheckoutProps> = ({
               ) : (
                 <>
                   <span className="btn-icon">
-                    {paymentMethod === 'mpesa' && !isSplitPayment ? '📱' : '✅'}
+                    {paymentMethod === 'mpesa' && !isSplitPayment ? <Smartphone size={16} /> : '✅'}
                   </span>
                   <span>
                     {isSplitPayment && !areAllPaymentsCompleted()
-                      ? `Complete All Payments - Ksh ${totalAfterDiscount.toFixed(2)}`
+                      ? `Complete All Payments - ${formatCurrency(totalAfterDiscount)}`
                       : paymentMethod === 'mpesa' && !isSplitPayment
-                      ? `Pay with M-Pesa - Ksh ${totalAfterDiscount.toFixed(2)}`
-                      : `Complete Sale - Ksh ${totalAfterDiscount.toFixed(2)}`
+                      ? `Pay with M-Pesa - ${formatCurrency(totalAfterDiscount)}`
+                      : `Complete Sale - ${formatCurrency(totalAfterDiscount)}`
                     }
                   </span>
                 </>
