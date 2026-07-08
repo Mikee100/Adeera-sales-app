@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { AlertTriangle, CheckCircle2, CircleOff, ImageIcon, ScanLine } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
-import Settings from './Settings';
-import SyncStatus from './SyncStatus';
 import { showToast } from './Toast';
 import { PendingTransaction } from '../hooks/usePendingTransactions';
 import { validateStock, validatePrice } from '../utils/validation';
@@ -64,15 +62,7 @@ interface ProductSelectionProps {
   pendingTransactions?: PendingTransaction[];
   getTotal: () => number;
   getGrandTotal: () => number;
-  branches?: Branch[];
   selectedBranch?: string;
-  onBranchChange?: (branchId: string) => void;
-  branchSelectionLocked?: boolean;
-  lockedBranchId?: string;
-  onFindReceiptClick?: () => void;
-  onSalesHistoryClick?: () => void;
-  isUltraCompact?: boolean;
-  onToggleUltraCompact?: () => void;
 }
 
 const ProductSelection: React.FC<ProductSelectionProps> = ({
@@ -87,39 +77,13 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   pendingTransactions = [],
   getTotal,
   getGrandTotal,
-  branches = [],
-  selectedBranch: propSelectedBranch = '',
-  onBranchChange,
-  branchSelectionLocked = false,
-  lockedBranchId = '',
-  onFindReceiptClick,
-  onSalesHistoryClick,
-  isUltraCompact = false,
-  onToggleUltraCompact
+  selectedBranch: propSelectedBranch = ''
 }) => {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 400);
-  const [selectedBranch, setSelectedBranch] = useState<string>(propSelectedBranch);
-
-  // Sync with prop when it changes
-  useEffect(() => {
-    if (propSelectedBranch !== selectedBranch) {
-      setSelectedBranch(propSelectedBranch);
-    }
-  }, [propSelectedBranch]);
-
-  const handleBranchChange = (branchId: string) => {
-    if (branchSelectionLocked && lockedBranchId && branchId !== lockedBranchId) {
-      return;
-    }
-    setSelectedBranch(branchId);
-    if (onBranchChange) {
-      onBranchChange(branchId);
-    }
-  };
+  const selectedBranch = propSelectedBranch;
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(false);
   const [showVariationModal, setShowVariationModal] = useState(false);
@@ -127,31 +91,13 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
   const [modalVariations, setModalVariations] = useState<Array<{ id: string; sku: string; price?: number | null; stock: number; images?: string[]; attributes?: Record<string, string> }>>([]);
   const [loadingVariations, setLoadingVariations] = useState(false);
   const [variationSearchTerm, setVariationSearchTerm] = useState('');
-  const [showSettings, setShowSettings] = useState(false);
+  const [variationColorFilter, setVariationColorFilter] = useState<string>('all');
+  const [variationSizeFilter, setVariationSizeFilter] = useState<string>('all');
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
   const [showBarcodeHelp, setShowBarcodeHelp] = useState(false);
-  const [showReceiptsMenu, setShowReceiptsMenu] = useState(false);
-  const [showQuickMenu, setShowQuickMenu] = useState(false);
   const [apiBaseUrl, setApiBaseUrl] = useState<string>('');
-  const [posDisplayName, setPosDisplayName] = useState('');
-  const [fallbackBusinessName, setFallbackBusinessName] = useState('');
   const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const receiptsMenuRef = useRef<HTMLDivElement | null>(null);
-  const quickMenuRef = useRef<HTMLDivElement | null>(null);
   const sessionExpiryHandledRef = useRef(false);
-
-  const resolvedPosTitle = useMemo(() => {
-    const configuredName = posDisplayName.trim();
-    if (configuredName) return configuredName;
-
-    const fallbackName = fallbackBusinessName.trim();
-    if (fallbackName) return fallbackName;
-
-    const tenantName = (user?.tenantName || '').trim();
-    if (tenantName) return tenantName;
-
-    return 'Business';
-  }, [fallbackBusinessName, posDisplayName, user?.tenantName]);
 
   const resolveImageSrc = useCallback((rawImage?: string | null): string => {
     const image = typeof rawImage === 'string' ? rawImage.trim() : '';
@@ -178,6 +124,50 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     }
   }, [apiBaseUrl]);
 
+  const formatCurrency = useCallback((amount: number) => {
+    return `KES ${(Number(amount) || 0).toFixed(2)}`;
+  }, []);
+
+  const getVariationAttribute = useCallback((variation: { attributes?: Record<string, string> }, keyHint: 'color' | 'size') => {
+    const attrs = variation.attributes || {};
+    const matched = Object.entries(attrs).find(([key]) => key.toLowerCase().includes(keyHint));
+    return matched?.[1] || '';
+  }, []);
+
+  const swatchStyleForColor = useCallback((colorValue: string) => {
+    const normalized = colorValue.trim().toLowerCase();
+    if (!normalized) return undefined;
+    const named: Record<string, string> = {
+      black: '#111827',
+      white: '#f8fafc',
+      navy: '#1e3a8a',
+      blue: '#2563eb',
+      red: '#b91c1c',
+      green: '#166534',
+      brown: '#6b4226',
+      tan: '#d2b48c',
+      beige: '#e5d3b3',
+      grey: '#9ca3af',
+      gray: '#9ca3af',
+      burgundy: '#7f1d1d',
+      maroon: '#7f1d1d',
+      pink: '#db2777',
+      purple: '#6d28d9',
+      orange: '#ea580c',
+      yellow: '#ca8a04',
+    };
+
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(normalized)) {
+      return { backgroundColor: normalized };
+    }
+
+    if (named[normalized]) {
+      return { backgroundColor: named[normalized] };
+    }
+
+    return undefined;
+  }, []);
+
   const handleSessionExpired = useCallback(async (message: string) => {
     if (sessionExpiryHandledRef.current) {
       return;
@@ -186,38 +176,6 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     showToast(message, 'warning', 2500);
     await logout();
   }, [logout]);
-
-  const visibleBranches =
-    branchSelectionLocked && lockedBranchId
-      ? (() => {
-          const lockedFromList = branches.filter((branch) => branch.id === lockedBranchId);
-          if (lockedFromList.length > 0) {
-            return lockedFromList;
-          }
-          return [
-            {
-              id: lockedBranchId,
-              name: user?.branchName || 'Assigned Branch',
-            },
-          ];
-        })()
-      : branches;
-
-  // Close header dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (receiptsMenuRef.current && !receiptsMenuRef.current.contains(event.target as Node)) {
-        setShowReceiptsMenu(false);
-      }
-      if (quickMenuRef.current && !quickMenuRef.current.contains(event.target as Node)) {
-        setShowQuickMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   useEffect(() => {
     const loadApiBaseUrl = async () => {
@@ -234,27 +192,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     loadApiBaseUrl();
   }, []);
 
-  const loadPosDisplayName = useCallback(async () => {
-    if (typeof window.electronAPI.getPosDisplayName !== 'function') return;
-    try {
-      const result = await window.electronAPI.getPosDisplayName();
-      if (typeof result?.displayName === 'string') {
-        setPosDisplayName(result.displayName.trim());
-      }
-      if (typeof result?.fallbackName === 'string') {
-        setFallbackBusinessName(result.fallbackName.trim());
-      }
-    } catch {
-      // Keep current display title when settings endpoint is unavailable.
-    }
-  }, []);
-
-  useEffect(() => {
-    void loadPosDisplayName();
-  }, [loadPosDisplayName]);
-
   // Barcode scanner hook
-  const { isScanning, lastScannedCode, clearScan } = useBarcodeScanner({
+  const { isScanning, clearScan } = useBarcodeScanner({
     onScan: (barcode) => {
       handleBarcodeScan(barcode);
     },
@@ -426,6 +365,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     setShowVariationModal(false);
     setSelectedProductForVariation(null);
     setVariationSearchTerm('');
+    setVariationColorFilter('all');
+    setVariationSizeFilter('all');
   };
 
   const handleProductClick = async (product: Product) => {
@@ -441,6 +382,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     setSelectedProductForVariation(product);
     setShowVariationModal(true);
     setVariationSearchTerm('');
+    setVariationColorFilter('all');
+    setVariationSizeFilter('all');
     // Use product.variations immediately if available (from products list with includeVariations)
     const fromProduct = (product.variations || []).map(mapVariation);
     if (fromProduct.length > 0) {
@@ -519,198 +462,32 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
           ? Object.entries(variation.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')
           : variation.sku;
 
+      const colorValue = getVariationAttribute(variation, 'color');
+      const sizeValue = getVariationAttribute(variation, 'size');
+      const colorMatch = variationColorFilter === 'all' || colorValue.toLowerCase() === variationColorFilter.toLowerCase();
+      const sizeMatch = variationSizeFilter === 'all' || sizeValue.toLowerCase() === variationSizeFilter.toLowerCase();
+
       const searchableText = `${label} ${variation.sku}`.toLowerCase();
-      return searchableText.includes(variationSearchTerm.trim().toLowerCase());
+      return searchableText.includes(variationSearchTerm.trim().toLowerCase()) && colorMatch && sizeMatch;
     })
     .sort((a, b) => Number(b.stock > 0) - Number(a.stock > 0));
 
-  if (showSettings) {
-    return (
-      <Settings
-        onClose={async () => {
-          setShowSettings(false);
-          await loadPosDisplayName();
-          const token = await window.electronAPI.getAuthToken();
-          if (token) {
-            await loadProducts();
-          }
-        }}
-        onUnauthorized={() => {
-          void handleSessionExpired('Session expired. Redirecting to login...');
-        }}
-      />
-    );
-  }
+  const availableVariantColors = useMemo(() => {
+    const colors = modalVariations
+      .map((variation) => getVariationAttribute(variation, 'color'))
+      .filter((value) => value.trim().length > 0);
+    return Array.from(new Set(colors));
+  }, [getVariationAttribute, modalVariations]);
+
+  const availableVariantSizes = useMemo(() => {
+    const sizes = modalVariations
+      .map((variation) => getVariationAttribute(variation, 'size'))
+      .filter((value) => value.trim().length > 0);
+    return Array.from(new Set(sizes));
+  }, [getVariationAttribute, modalVariations]);
 
   return (
     <div className="pos-container">
-      <div className="pos-header improved-navbar">
-        <div className="header-left improved-navbar-left" style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 24, minWidth: 0}}>
-          <h1 className="navbar-title" style={{margin: 0, fontSize: 22, fontWeight: 700, letterSpacing: 0.5, whiteSpace: 'nowrap', flexShrink: 0}}>{resolvedPosTitle}</h1>
-          <SyncStatus />
-        </div>
-        <div className="header-center improved-navbar-center">
-          <div className="header-indicators">
-            {isScanning && (
-              <div className="barcode-scanning-indicator">
-                <div className="scanning-pulse"></div>
-                <span>Scanning...</span>
-              </div>
-            )}
-            {scannedBarcode && !isScanning && (
-              <div className="barcode-scanned-indicator">
-                <span>✓ {scannedBarcode}</span>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="header-right improved-navbar-right">
-          <div className="navbar-actions-group">
-            {user && (user.isSuperadmin || user.roles?.includes('owner') || user.roles?.includes('admin') || user.permissions?.includes('view_sales')) && (onFindReceiptClick || onSalesHistoryClick) && (
-              <div className="receipts-menu" ref={receiptsMenuRef}>
-                <button
-                  type="button"
-                  className="icon-btn receipts-btn"
-                  onClick={() => {
-                    setShowQuickMenu(false);
-                    setShowReceiptsMenu(prev => !prev);
-                  }}
-                  title="Receipts"
-                  aria-label="Receipts menu"
-                >
-                  🧾
-                  <span className="receipts-menu-label">Receipts</span>
-                  <span className="receipts-menu-caret">▾</span>
-                </button>
-                {showReceiptsMenu && (
-                  <div className="receipts-menu-dropdown">
-                    {onFindReceiptClick && (
-                      <button
-                        type="button"
-                        className="receipts-menu-item"
-                        onClick={() => {
-                          setShowReceiptsMenu(false);
-                          onFindReceiptClick();
-                        }}
-                      >
-                        Find by ID
-                      </button>
-                    )}
-                    {onSalesHistoryClick && (
-                    <button
-                      type="button"
-                      className="receipts-menu-item"
-                      onClick={() => {
-                        setShowReceiptsMenu(false);
-                        onSalesHistoryClick();
-                      }}
-                    >
-                      Sales History
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-            <select
-              value={selectedBranch}
-              onChange={(e) => handleBranchChange(e.target.value)}
-              className="branch-select improved-branch-select"
-              disabled={branchSelectionLocked}
-              title={branchSelectionLocked ? 'Branch is fixed for your account' : 'Select branch'}
-            >
-              {!branchSelectionLocked && <option value="">Select Branch</option>}
-              {visibleBranches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.name || user?.branchName || 'Assigned Branch'}
-                </option>
-              ))}
-            </select>
-            <div className="receipts-menu quick-menu" ref={quickMenuRef}>
-              <button
-                type="button"
-                className="icon-btn receipts-btn"
-                onClick={() => {
-                  setShowReceiptsMenu(false);
-                  setShowQuickMenu((prev) => !prev);
-                }}
-                title="Menu"
-                aria-label="Quick actions menu"
-              >
-                ⋯
-                <span className="receipts-menu-label">Menu</span>
-                <span className="receipts-menu-caret">▾</span>
-              </button>
-
-              {showQuickMenu && (
-                <div className="receipts-menu-dropdown">
-                  <button
-                    type="button"
-                    className="receipts-menu-item"
-                    onClick={() => {
-                      setShowQuickMenu(false);
-                      setShowSettings(true);
-                    }}
-                  >
-                    Open Settings
-                  </button>
-
-                  <button
-                    type="button"
-                    className="receipts-menu-item"
-                    onClick={() => {
-                      setShowQuickMenu(false);
-                      toggleTheme();
-                    }}
-                  >
-                    {theme === 'dark' ? 'Use Light Theme' : 'Use Dark Theme'}
-                  </button>
-
-                  {onToggleUltraCompact && (
-                    <button
-                      type="button"
-                      className="receipts-menu-item"
-                      onClick={() => {
-                        setShowQuickMenu(false);
-                        onToggleUltraCompact();
-                      }}
-                    >
-                      {isUltraCompact ? 'Disable Compact Mode' : 'Enable Compact Mode'}
-                    </button>
-                  )}
-
-                  {user && (
-                    <button
-                      type="button"
-                      className="receipts-menu-item"
-                      onClick={async () => {
-                        setShowQuickMenu(false);
-                        if (cart.length > 0 && !window.confirm('Logout now? Current sale will be lost.')) return;
-                        await logout();
-                      }}
-                    >
-                      Logout
-                    </button>
-                  )}
-
-                  <button
-                    type="button"
-                    className="receipts-menu-item"
-                    onClick={() => {
-                      setShowQuickMenu(false);
-                      if (cart.length > 0 && !window.confirm('Exit POS? Current sale will be lost.')) return;
-                      window.electronAPI.quitApp();
-                    }}
-                  >
-                    Exit POS
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {showVariationModal && selectedProductForVariation && (
         <div className="variation-modal-overlay" onClick={closeVariationModal}>
           <div className="variation-modal" onClick={e => e.stopPropagation()}>
@@ -738,6 +515,65 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               </button>
             </div>
             <div className="variation-modal-list">
+              {(availableVariantColors.length > 0 || availableVariantSizes.length > 0) && (
+                <div className="variation-filters">
+                  {availableVariantColors.length > 0 && (
+                    <div className="variation-filter-group">
+                      <span className="variation-filter-label">Color</span>
+                      <div className="variation-filter-row">
+                        <button
+                          type="button"
+                          className={`swatch-filter-btn ${variationColorFilter === 'all' ? 'is-active' : ''}`}
+                          onClick={() => setVariationColorFilter('all')}
+                        >
+                          All
+                        </button>
+                        {availableVariantColors.map((color) => {
+                          const swatchStyle = swatchStyleForColor(color);
+                          return (
+                            <button
+                              key={color}
+                              type="button"
+                              className={`swatch-filter-btn ${variationColorFilter === color ? 'is-active' : ''}`}
+                              onClick={() => setVariationColorFilter(color)}
+                              title={color}
+                            >
+                              {swatchStyle ? <span className="variant-swatch" style={swatchStyle} /> : null}
+                              <span>{color}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {availableVariantSizes.length > 0 && (
+                    <div className="variation-filter-group">
+                      <span className="variation-filter-label">Size</span>
+                      <div className="variation-filter-row">
+                        <button
+                          type="button"
+                          className={`size-filter-btn ${variationSizeFilter === 'all' ? 'is-active' : ''}`}
+                          onClick={() => setVariationSizeFilter('all')}
+                        >
+                          All
+                        </button>
+                        {availableVariantSizes.map((size) => (
+                          <button
+                            key={size}
+                            type="button"
+                            className={`size-filter-btn ${variationSizeFilter === size ? 'is-active' : ''}`}
+                            onClick={() => setVariationSizeFilter(size)}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {loadingVariations ? (
                 <p className="variation-modal-empty">Loading variations...</p>
               ) : modalVariations.length === 0 ? (
@@ -759,6 +595,9 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                 const attrsLabel = variation.attributes && typeof variation.attributes === 'object'
                   ? Object.entries(variation.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')
                   : variation.sku;
+                const colorValue = getVariationAttribute(variation, 'color');
+                const sizeValue = getVariationAttribute(variation, 'size');
+                const swatchStyle = swatchStyleForColor(colorValue);
                 const price = variation.price ?? selectedProductForVariation!.price;
                 const hasStock = variation.stock > 0;
                 const variationImage =
@@ -788,8 +627,14 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                     )}
                     <div className="variation-card-main">
                       <span className="variation-card-label">{attrsLabel || variation.sku}</span>
+                      {(colorValue || sizeValue) && (
+                        <span className="variation-card-attributes">
+                          {swatchStyle ? <span className="variant-swatch" style={swatchStyle} title={colorValue || 'Color'} /> : null}
+                          {sizeValue ? <span className="variant-size-tag">{sizeValue}</span> : null}
+                        </span>
+                      )}
                       <span className="variation-card-sku">SKU: {variation.sku}</span>
-                      <span className="variation-card-price">${(price ?? 0).toFixed(2)}</span>
+                      <span className="variation-card-price">{formatCurrency(price ?? 0)}</span>
                     </div>
                     <span className={`variation-card-stock ${hasStock ? 'in-stock' : 'out-of-stock'}`}>
                       {hasStock ? `${variation.stock} in stock` : 'Out of stock'}
@@ -809,7 +654,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               <input
               ref={searchInputRef}
                 type="text"
-                placeholder="🔍 Search products or scan barcode..."
+                placeholder="Search products or scan barcode"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => {
@@ -824,7 +669,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
               />
               {isScanning && (
                 <div className="barcode-scanner-icon" title="Barcode scanner active">
-                  <div className="scanner-pulse-dot"></div>
+                  <ScanLine size={16} />
                 </div>
               )}
               {!isScanning && !showBarcodeHelp && (
@@ -833,7 +678,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                   onClick={() => setShowBarcodeHelp(true)}
                   title="Show barcode scanner help"
                 >
-                  📷
+                  <ScanLine size={16} />
                 </button>
               )}
             </div>
@@ -845,7 +690,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             <div className="barcode-scanner-help">
               <div className="barcode-help-header">
                 <div className="barcode-help-title">
-                  <span className="scanner-icon">📷</span>
+                  <span className="scanner-icon"><ScanLine size={16} /></span>
                   <span>Barcode Scanner Ready</span>
                 </div>
                 <button
@@ -896,13 +741,13 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                 const productHasStock = hasAnyVariations
                   ? inStockVariationCount > 0
                   : product.stock > 0;
-                const stockLabel = hasAnyVariations
-                  ? (productHasStock
-                    ? `Variants in stock: ${inStockVariationCount} (${totalVariationStock} units)`
-                    : 'Out of stock')
-                  : (product.stock > 0
-                    ? `Stock: ${product.stock}`
-                    : 'Out of stock');
+                const availableStock = hasAnyVariations ? totalVariationStock : product.stock;
+                const stockState = !productHasStock ? 'out' : availableStock <= 5 ? 'low' : 'healthy';
+                const stockLabel = stockState === 'out'
+                  ? 'Out of stock'
+                  : stockState === 'low'
+                  ? `${availableStock} left`
+                  : `${availableStock} in stock`;
 
                 const inlineVariations = mappedVariations.slice(0, 3);
                 const showInlineVariations =
@@ -937,6 +782,12 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                         />
                       </div>
                     )}
+                    {!productImageSrc && (
+                      <div className="product-card-image product-card-image-placeholder" aria-hidden="true">
+                        <ImageIcon size={24} />
+                        <span>No Photo</span>
+                      </div>
+                    )}
 
                     <div className="product-info enhanced-product-info">
                       <h3>{product.name || 'Unnamed Product'}</h3>
@@ -947,18 +798,21 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                         )}
                       </div>
                       <div className="product-price-stock-row">
-                        <span className="price">${product.price?.toFixed(2) || '0.00'}</span>
-                        <span className={`stock ${productHasStock ? 'in-stock' : 'out-of-stock'}`}>{stockLabel}</span>
+                        <span className="price">{formatCurrency(product.price || 0)}</span>
+                        <span className={`stock stock-pill ${stockState}`}>
+                          {stockState === 'healthy' ? <CheckCircle2 size={12} /> : stockState === 'low' ? <AlertTriangle size={12} /> : <CircleOff size={12} />}
+                          {stockLabel}
+                        </span>
                       </div>
 
                       {showInlineVariations && (
                         <div className="variation-chips">
                           {inlineVariations.map(variation => {
                             const hasStock = variation.stock > 0;
-                            const label =
-                              variation.attributes && Object.keys(variation.attributes).length > 0
-                                ? Object.values(variation.attributes).join(' / ')
-                                : variation.sku;
+                            const colorValue = getVariationAttribute(variation, 'color');
+                            const sizeValue = getVariationAttribute(variation, 'size');
+                            const label = sizeValue || variation.sku;
+                            const swatchStyle = swatchStyleForColor(colorValue);
                             return (
                               <button
                                 key={variation.id}
@@ -971,7 +825,8 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                                 }}
                                 title={hasStock ? `Add ${label}` : 'Out of stock'}
                               >
-                                {label} · {hasStock ? `${variation.stock} in stock` : 'Out of stock'}
+                                {swatchStyle ? <span className="variant-swatch" style={swatchStyle} title={colorValue || 'Color'} /> : null}
+                                <span className="variant-size-tag">{label}</span>
                               </button>
                             );
                           })}
@@ -1016,12 +871,16 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
 
           <div className="cart-items">
             {cart.length === 0 ? (
-              <p className="empty-cart">No items in cart</p>
+              <div className="empty-cart empty-cart-illustrated">
+                <ImageIcon size={34} />
+                <h3>Ready for the next customer</h3>
+                <p>Scan or tap a product to begin this sale.</p>
+              </div>
             ) : (
               cart.map(item => (
                 <div key={item.product.id} className="cart-item">
-                  {resolveImageSrc(item.product.images?.[0]) && (
-                    <div className="cart-item-image">
+                  <div className="cart-item-image">
+                    {resolveImageSrc(item.product.images?.[0]) ? (
                       <img
                         src={resolveImageSrc(item.product.images?.[0])}
                         alt={item.product.name || 'Product'}
@@ -1029,8 +888,12 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                           (e.target as HTMLImageElement).style.display = 'none';
                         }}
                       />
-                    </div>
-                  )}
+                    ) : (
+                      <div className="cart-item-image-placeholder" aria-hidden="true">
+                        <ImageIcon size={14} />
+                      </div>
+                    )}
+                  </div>
                   <div className="cart-item-content">
                     <div className="cart-item-header">
                       <div className="item-info">
@@ -1053,7 +916,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                     
                     <div className="cart-item-footer">
                       <div className="price-info">
-                        <span className="unit-price">${item.product.price?.toFixed(2) || '0.00'}</span>
+                        <span className="unit-price">{formatCurrency(item.product.price || 0)}</span>
                         <span className="unit-label">each</span>
                       </div>
                       
@@ -1109,7 +972,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                       
                       <div className="item-total">
                         <span className="total-label">Total</span>
-                        <span className="total-amount">${((item.product.price || 0) * item.quantity).toFixed(2)}</span>
+                        <span className="total-amount">{formatCurrency((item.product.price || 0) * item.quantity)}</span>
                       </div>
                     </div>
                   </div>
@@ -1148,7 +1011,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                           </div>
                         )}
                         <div className="pending-total">
-                          Total: ${transactionTotal.toFixed(2)}
+                          Total: {formatCurrency(transactionTotal)}
                         </div>
                       </div>
                       <div className="pending-transaction-actions">
@@ -1181,11 +1044,11 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
           <div className="cart-summary">
             <div className="summary-row">
               <span>Subtotal:</span>
-              <span>${getTotal().toFixed(2)}</span>
+              <span>{formatCurrency(getTotal())}</span>
             </div>
             <div className="summary-row total">
               <span>Total:</span>
-              <span>${getGrandTotal().toFixed(2)}</span>
+              <span>{formatCurrency(getGrandTotal())}</span>
             </div>
           </div>
 

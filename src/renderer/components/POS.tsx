@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Clock3, LogOut, Power, ReceiptText, ShoppingCart, WalletCards, Printer } from 'lucide-react';
+import { Clock3, LogOut, Power, ReceiptText, ShoppingCart, WalletCards, Printer, History } from 'lucide-react';
 import ProductSelection from './ProductSelection';
 import Checkout from './Checkout';
 import Receipt from './Receipt';
 import PrintPreview from './PrintPreview';
+import Settings from './Settings';
 import FindReceiptModal from './FindReceiptModal';
 import SalesHistoryModal from './SalesHistoryModal';
 import OfflineSalesQueueModal from './OfflineSalesQueueModal';
@@ -92,6 +93,25 @@ interface Branch {
   [key: string]: any;
 }
 
+interface StaffUser {
+  id: string;
+  name?: string;
+  email?: string;
+  roles?: string[];
+  userRoles?: Array<{ role?: { name?: string } }>;
+}
+
+interface ActiveCashierSession {
+  id: string;
+  name?: string;
+  email?: string;
+}
+
+type InlineStatusLevel = 'neutral' | 'info' | 'success' | 'warning' | 'error';
+type ShiftPromptMode = 'open' | 'close' | null;
+
+const ACTIVE_CASHIER_STORAGE_KEY = 'retail-active-cashier-session';
+
 const POS: React.FC = () => {
   const { user, logout } = useAuth();
   const { pendingTransactions, holdTransaction, resumeTransaction, deleteTransaction } = usePendingTransactions();
@@ -109,7 +129,30 @@ const POS: React.FC = () => {
   const [showFindReceiptModal, setShowFindReceiptModal] = useState(false);
   const [showSalesHistoryModal, setShowSalesHistoryModal] = useState(false);
   const [showOfflineQueueModal, setShowOfflineQueueModal] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showBranchMenu, setShowBranchMenu] = useState(false);
+  const [showQuickMenu, setShowQuickMenu] = useState(false);
   const [clock, setClock] = useState(new Date());
+  const [inlineStatus, setInlineStatus] = useState<{ message: string; level: InlineStatusLevel }>({
+    message: 'Ready to sell',
+    level: 'neutral',
+  });
+  const [currentShift, setCurrentShift] = useState<any | null>(null);
+  const [shiftPromptMode, setShiftPromptMode] = useState<ShiftPromptMode>(null);
+  const [shiftBusy, setShiftBusy] = useState(false);
+  const [openingCashInput, setOpeningCashInput] = useState('0');
+  const [closingCashInput, setClosingCashInput] = useState('0');
+  const [shiftNotes, setShiftNotes] = useState('');
+  const [shiftError, setShiftError] = useState('');
+  const [staffUsers, setStaffUsers] = useState<StaffUser[]>([]);
+  const [activeCashier, setActiveCashier] = useState<ActiveCashierSession | null>(null);
+  const [cashierSwitchOpen, setCashierSwitchOpen] = useState(false);
+  const [cashierCandidateId, setCashierCandidateId] = useState('');
+  const [cashierPinInput, setCashierPinInput] = useState('');
+  const [cashierSwitchError, setCashierSwitchError] = useState('');
+  const [cashierSwitchBusy, setCashierSwitchBusy] = useState(false);
+  const branchMenuRef = useRef<HTMLDivElement | null>(null);
+  const quickMenuRef = useRef<HTMLDivElement | null>(null);
   const liveCatalogRefreshLockRef = useRef(false);
   const [isUltraCompact, setIsUltraCompact] = useState<boolean>(() => {
     try {
@@ -122,16 +165,278 @@ const POS: React.FC = () => {
   const normalizedRoles: string[] = Array.isArray(user?.roles)
     ? user.roles.map((role: string) => String(role).toLowerCase())
     : [];
+  const normalizedPermissionKeys = (() => {
+    const keys = new Set<string>();
+    const addKeys = (values: unknown) => {
+      if (!Array.isArray(values)) return;
+      values.forEach((value) => {
+        const normalized = String(value || '').trim().toLowerCase();
+        if (normalized) keys.add(normalized);
+      });
+    };
+
+    addKeys((user as any)?.permissions);
+    addKeys((user as any)?.effectivePermissions);
+    addKeys((user as any)?.inheritedPermissions);
+
+    return keys;
+  })();
   const assignedBranchId =
     typeof user?.branchId === 'string' && user.branchId.trim().length > 0
       ? user.branchId.trim()
       : '';
+  const isManagerUser =
+    normalizedRoles.includes('manager') ||
+    String((user as any)?.role || '').toLowerCase() === 'manager';
+  const hasPosBranchLockPermission = normalizedPermissionKeys.has('pos.branch.locked');
   const isBranchLockedUser =
     !!assignedBranchId &&
     (normalizedRoles.includes('cashier') ||
       normalizedRoles.includes('staff') ||
+      (isManagerUser && hasPosBranchLockPermission) ||
       String((user as any)?.role || '').toLowerCase() === 'cashier' ||
       String((user as any)?.role || '').toLowerCase() === 'staff');
+  const visibleBranches =
+    isBranchLockedUser && assignedBranchId
+      ? (() => {
+          const lockedFromList = branches.filter((branch) => branch.id === assignedBranchId);
+          if (lockedFromList.length > 0) {
+            return lockedFromList;
+          }
+          return [{ id: assignedBranchId, name: user?.branchName || 'Assigned Branch' }];
+        })()
+      : branches;
+  const canViewReceipts =
+    !!user &&
+    (user.isSuperadmin ||
+      user.roles?.includes('owner') ||
+      user.roles?.includes('admin') ||
+      user.permissions?.includes('view_sales'));
+  const isPrivilegedUser =
+    !!user &&
+    (user.isSuperadmin ||
+      normalizedRoles.includes('owner') ||
+      normalizedRoles.includes('admin') ||
+      String((user as any)?.role || '').toLowerCase() === 'owner' ||
+      String((user as any)?.role || '').toLowerCase() === 'admin');
+  const canControlMainSession =
+    !!user &&
+    (user.isSuperadmin ||
+      normalizedRoles.includes('owner') ||
+      normalizedRoles.includes('admin') ||
+      normalizedRoles.includes('manager') ||
+      String((user as any)?.role || '').toLowerCase() === 'owner' ||
+      String((user as any)?.role || '').toLowerCase() === 'admin' ||
+      String((user as any)?.role || '').toLowerCase() === 'manager');
+  const requiresShiftSession = !!user && !isPrivilegedUser;
+  const hasPosAccessPermission = normalizedPermissionKeys.has('pos.access');
+  const canAccessPos = isPrivilegedUser || hasPosAccessPermission;
+  const staffRoleName = useCallback((member: StaffUser) => {
+    const fromUserRoles = Array.isArray(member.userRoles)
+      ? member.userRoles[0]?.role?.name
+      : undefined;
+    if (fromUserRoles) return String(fromUserRoles).toLowerCase();
+
+    const fromRoles = Array.isArray(member.roles) && member.roles.length > 0
+      ? member.roles[0]
+      : undefined;
+    return fromRoles ? String(fromRoles).toLowerCase() : 'staff';
+  }, []);
+
+  const cashierCandidates = staffUsers.filter((member) => {
+    const role = staffRoleName(member);
+    return ['cashier', 'staff', 'owner', 'admin', 'manager'].includes(role);
+  });
+  const effectiveCashierCandidates = cashierCandidates.length > 0 ? cashierCandidates : staffUsers;
+  const requiresCashierSession = isPrivilegedUser && effectiveCashierCandidates.length > 0;
+  const hasActiveCashierSession = !!activeCashier?.id;
+  const canUseLogoutControl = canControlMainSession && !hasActiveCashierSession;
+  const canUseExitControl = canControlMainSession;
+  const canUseSettings = canControlMainSession && !hasActiveCashierSession;
+  const activeCashierLabel = activeCashier?.name || activeCashier?.email || (activeCashier?.id ? activeCashier.id.slice(0, 8) : 'None');
+
+  const updateInlineStatus = useCallback((message: string, level: InlineStatusLevel = 'info') => {
+    setInlineStatus((prev) => {
+      if (prev.message === message && prev.level === level) {
+        return prev;
+      }
+
+      return { message, level };
+    });
+  }, []);
+
+  const lockCashierSession = useCallback((message?: string) => {
+    setActiveCashier(null);
+    setCashierCandidateId('');
+    setCashierPinInput('');
+    setCashierSwitchError('');
+    setCashierSwitchOpen(true);
+    if (message) {
+      updateInlineStatus(message, 'warning');
+    }
+  }, [updateInlineStatus]);
+
+  const requireCashierSession = useCallback((actionLabel: string) => {
+    if (!requiresCashierSession) return true;
+    if (activeCashier?.id) return true;
+
+    setCashierSwitchError(`Switch to a cashier PIN session before ${actionLabel}.`);
+    setCashierSwitchOpen(true);
+    updateInlineStatus('Cashier session required', 'warning');
+    return false;
+  }, [activeCashier?.id, requiresCashierSession, updateInlineStatus]);
+
+  const verifyAndActivateCashier = useCallback(async () => {
+    const targetUserId = cashierCandidateId.trim();
+    const pin = cashierPinInput.trim();
+
+    if (!targetUserId || !pin) {
+      setCashierSwitchError('Select cashier and enter PIN.');
+      return;
+    }
+
+    if (typeof window.electronAPI.verifyUserPosPin !== 'function') {
+      setCashierSwitchError('POS PIN verification is unavailable in this build.');
+      return;
+    }
+
+    setCashierSwitchBusy(true);
+    setCashierSwitchError('');
+    try {
+      const result = await window.electronAPI.verifyUserPosPin(targetUserId, pin);
+      if (!result?.success || !result?.waiter) {
+        setCashierSwitchError(result?.reason || result?.error || 'Invalid cashier PIN.');
+        return;
+      }
+
+      setActiveCashier({
+        id: result.waiter.id,
+        name: result.waiter.name,
+        email: result.waiter.email,
+      });
+      setCashierSwitchOpen(false);
+      setCashierCandidateId('');
+      setCashierPinInput('');
+      updateInlineStatus(`Cashier active: ${result.waiter.name || result.waiter.email || result.waiter.id}`, 'success');
+      showToast('Cashier session activated.', 'success', 1800);
+    } catch (error: any) {
+      setCashierSwitchError(error?.message || 'Failed to verify cashier PIN.');
+    } finally {
+      setCashierSwitchBusy(false);
+    }
+  }, [cashierCandidateId, cashierPinInput, updateInlineStatus]);
+
+  const refreshShiftStatus = useCallback(async () => {
+    if (!user || typeof window.electronAPI?.getShiftStatus !== 'function') {
+      return;
+    }
+
+    try {
+      const result = await window.electronAPI.getShiftStatus();
+      if (!result?.success) {
+        return;
+      }
+
+      const openShift = result.currentShift || null;
+      setCurrentShift(openShift);
+
+      if (openShift) {
+        updateInlineStatus(
+          `Shift open${typeof openShift.openingCash === 'number' ? ` (float KES ${openShift.openingCash.toFixed(2)})` : ''}`,
+          'success'
+        );
+      } else if (requiresShiftSession) {
+        updateInlineStatus('Shift closed. Start shift before selling.', 'warning');
+        setShiftPromptMode('open');
+      }
+    } catch {
+      // Non-blocking: keep existing state if shift status fetch fails.
+    }
+  }, [user, requiresShiftSession, updateInlineStatus]);
+
+  const handleOpenShift = useCallback(async () => {
+    if (!requireCashierSession('starting shift')) {
+      return;
+    }
+
+    const openingCash = Number(openingCashInput);
+    if (!Number.isFinite(openingCash) || openingCash < 0) {
+      setShiftError('Opening cash must be a valid non-negative number.');
+      return;
+    }
+
+    setShiftBusy(true);
+    setShiftError('');
+    try {
+      const openedByUserId = activeCashier?.id || user?.id;
+      const result = await window.electronAPI.openShift({ openingCash, openedBy: openedByUserId });
+      if (!result?.success) {
+        setShiftError(result?.error || 'Failed to start shift.');
+        return;
+      }
+
+      setCurrentShift(result.shift || { status: 'open', openingCash, openedBy: openedByUserId, openedAt: new Date().toISOString() });
+      setShiftPromptMode(null);
+      updateInlineStatus(`Shift started with float KES ${openingCash.toFixed(2)}`, 'success');
+      showToast('Shift started successfully.', 'success', 1800);
+    } catch (error: any) {
+      setShiftError(error?.message || 'Failed to start shift.');
+    } finally {
+      setShiftBusy(false);
+    }
+  }, [openingCashInput, updateInlineStatus, user?.id, activeCashier?.id, requireCashierSession]);
+
+  const handleCloseShift = useCallback(async () => {
+    if (!requireCashierSession('closing shift')) {
+      return;
+    }
+
+    const closingCash = Number(closingCashInput);
+    if (!Number.isFinite(closingCash) || closingCash < 0) {
+      setShiftError('Closing cash must be a valid non-negative number.');
+      return;
+    }
+
+    setShiftBusy(true);
+    setShiftError('');
+    try {
+      const result = await window.electronAPI.closeShift({
+        closingCash,
+        notes: shiftNotes.trim() || undefined,
+      });
+
+      if (!result?.success) {
+        setShiftError(result?.error || 'Failed to close shift.');
+        return;
+      }
+
+      setCurrentShift(null);
+      setShiftPromptMode(requiresShiftSession ? 'open' : null);
+      setClosingCashInput('0');
+      setShiftNotes('');
+
+      if (result.summary) {
+        const variance = Number(result.summary.variance || 0);
+        showToast(
+          `Shift closed. Sales: ${result.summary.salesCount}, Variance: KES ${variance.toFixed(2)}`,
+          variance === 0 ? 'success' : 'warning',
+          5000
+        );
+      } else {
+        showToast('Shift closed successfully.', 'success', 2000);
+      }
+
+      updateInlineStatus('Shift closed. Start next shift to continue selling.', 'warning');
+
+      if (activeCashier?.id) {
+        lockCashierSession('Shift closed. Cashier session locked for handover.');
+      }
+    } catch (error: any) {
+      setShiftError(error?.message || 'Failed to close shift.');
+    } finally {
+      setShiftBusy(false);
+    }
+  }, [closingCashInput, shiftNotes, requiresShiftSession, updateInlineStatus, requireCashierSession, activeCashier?.id, lockCashierSession]);
 
   // Update in-flight sale processing queue (mutex) count.
   useEffect(() => {
@@ -161,6 +466,12 @@ const POS: React.FC = () => {
           ? status.pendingSalesSyncs
           : status.pendingSyncs;
         setOfflineQueuedSalesCount(Math.max(0, pendingSales || 0));
+
+        if (!status.online) {
+          updateInlineStatus('Offline mode: sales are queued locally', 'warning');
+        } else if ((pendingSales || 0) > 0) {
+          updateInlineStatus(`${Math.max(0, pendingSales || 0)} sales waiting to sync`, 'info');
+        }
       } catch {
         // Keep previous value when status fetch fails.
       }
@@ -175,11 +486,81 @@ const POS: React.FC = () => {
       mounted = false;
       clearInterval(interval);
     };
-  }, []);
+  }, [updateInlineStatus]);
 
   useEffect(() => {
     const timer = setInterval(() => setClock(new Date()), 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const loadStaffUsers = async () => {
+      if (typeof window.electronAPI.getUsers !== 'function') {
+        return;
+      }
+
+      try {
+        const res = await window.electronAPI.getUsers();
+        if (res?.success && Array.isArray(res.users)) {
+          setStaffUsers(res.users);
+        }
+      } catch {
+        // Non-blocking: keep existing user list.
+      }
+    };
+
+    void loadStaffUsers();
+    const interval = window.setInterval(() => {
+      void loadStaffUsers();
+    }, 15000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(ACTIVE_CASHIER_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed?.id && typeof parsed.id === 'string') {
+        setActiveCashier({ id: parsed.id, name: parsed.name, email: parsed.email });
+      }
+    } catch {
+      // Ignore malformed cache.
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeCashier) {
+      window.localStorage.setItem(ACTIVE_CASHIER_STORAGE_KEY, JSON.stringify(activeCashier));
+    } else {
+      window.localStorage.removeItem(ACTIVE_CASHIER_STORAGE_KEY);
+    }
+  }, [activeCashier]);
+
+  useEffect(() => {
+    if (requiresCashierSession && !activeCashier?.id) {
+      setCashierSwitchOpen(true);
+      updateInlineStatus('Cashier PIN check-in required', 'warning');
+    }
+  }, [requiresCashierSession, activeCashier?.id, updateInlineStatus]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (branchMenuRef.current && !branchMenuRef.current.contains(event.target as Node)) {
+        setShowBranchMenu(false);
+      }
+      if (quickMenuRef.current && !quickMenuRef.current.contains(event.target as Node)) {
+        setShowQuickMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   useEffect(() => {
@@ -260,6 +641,16 @@ const POS: React.FC = () => {
   }, [isBranchLockedUser, assignedBranchId, selectedBranch]);
 
   useEffect(() => {
+    if (isBranchLockedUser && showBranchMenu) {
+      setShowBranchMenu(false);
+    }
+  }, [isBranchLockedUser, showBranchMenu]);
+
+  useEffect(() => {
+    void refreshShiftStatus();
+  }, [refreshShiftStatus]);
+
+  useEffect(() => {
     loadProducts(0);
   }, [selectedBranch]);
 
@@ -269,11 +660,7 @@ const POS: React.FC = () => {
       try {
         const status = await (window as any).electronAPI.getCatalogSyncStatus();
         if (status.success && status.isStale && status.hasCatalog) {
-          showToast(
-            `Product catalog is outdated (${status.ageHours?.toFixed(1)} hours old). Please sync products from Settings.`,
-            'warning',
-            8000
-          );
+          updateInlineStatus(`Catalog is ${status.ageHours?.toFixed(1)}h old. Sync recommended.`, 'warning');
         }
       } catch (error) {
         // Silently fail - not critical
@@ -284,7 +671,7 @@ const POS: React.FC = () => {
     checkCatalogStatus();
     const interval = setInterval(checkCatalogStatus, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [updateInlineStatus]);
 
   // Keyboard shortcuts (only when not typing in an input)
   useEffect(() => {
@@ -350,7 +737,7 @@ const POS: React.FC = () => {
 
       if (response.success) {
         setProducts(response.products || []);
-        showToast('Products loaded successfully', 'success', 2000);
+        updateInlineStatus(`Catalog ready: ${(response.products || []).length} products loaded`, 'success');
       } else {
         // Handle specific error cases
         if (response.error === 'Unauthorized' || response.error?.includes('token') || response.error?.includes('auth')) {
@@ -374,7 +761,7 @@ const POS: React.FC = () => {
           const cachedProducts = ErrorRecovery.useCache('cachedProducts', []);
           if (cachedProducts.length > 0) {
             setProducts(cachedProducts);
-            showToast('Using cached products. Some data may be outdated.', 'warning', 4000);
+            updateInlineStatus('Using cached catalog. Data may be outdated.', 'warning');
           } else {
             handleError(
               new AppError(response.error || 'Failed to load products', 'PRODUCTS_LOAD_FAILED', {
@@ -406,7 +793,7 @@ const POS: React.FC = () => {
       const cachedProducts = ErrorRecovery.useCache('cachedProducts', []);
       if (cachedProducts.length > 0) {
         setProducts(cachedProducts);
-        showToast('Connection error. Using cached products.', 'warning', 4000);
+        updateInlineStatus('Connection issue: using cached catalog.', 'warning');
       } else {
         handleError(error, {
           operation: 'loadProducts',
@@ -455,17 +842,28 @@ const POS: React.FC = () => {
       const syncResult = await window.electronAPI.syncProducts();
       if (syncResult?.success && Array.isArray(syncResult.products)) {
         setProducts(syncResult.products);
+        updateInlineStatus(`Catalog synced: ${syncResult.products.length} products`, 'success');
       } else if (source === 'manual') {
-        showToast(syncResult?.error || 'Unable to refresh catalog right now.', 'warning', 3000);
+        showToast(syncResult?.error || 'Unable to refresh catalog right now.', 'error', 0, {
+          label: 'Retry',
+          onClick: () => {
+            void loadProducts(0);
+          },
+        });
       }
     } catch {
       if (source === 'manual') {
-        showToast('Unable to refresh catalog right now.', 'warning', 3000);
+        showToast('Unable to refresh catalog right now.', 'error', 0, {
+          label: 'Retry',
+          onClick: () => {
+            void loadProducts(0);
+          },
+        });
       }
     } finally {
       liveCatalogRefreshLockRef.current = false;
     }
-  }, [processingSale, showFindReceiptModal, showSalesHistoryModal, currentStep]);
+  }, [processingSale, showFindReceiptModal, showSalesHistoryModal, currentStep, updateInlineStatus]);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -597,6 +995,17 @@ const POS: React.FC = () => {
   };
 
   const handleProceedToCheckout = () => {
+    if (!requireCashierSession('proceeding to checkout')) {
+      return;
+    }
+
+    if (requiresShiftSession && !currentShift) {
+      setShiftPromptMode('open');
+      updateInlineStatus('Start shift before checkout.', 'warning');
+      showToast('Start shift before proceeding to checkout.', 'warning', 3000);
+      return;
+    }
+
     setCurrentStep('checkout');
   };
 
@@ -605,6 +1014,17 @@ const POS: React.FC = () => {
   };
 
   const handleCompleteSale = async (paymentData: PaymentData) => {
+    if (!requireCashierSession('completing sale')) {
+      return;
+    }
+
+    if (requiresShiftSession && !currentShift) {
+      setShiftPromptMode('open');
+      updateInlineStatus('Shift required before sale completion.', 'warning');
+      showToast('Shift is not open. Start shift to continue.', 'warning', 3500);
+      return;
+    }
+
     // Use mutex to prevent concurrent sale processing
     try {
       await saleMutex.acquire(paymentData, async (queuedPaymentData) => {
@@ -860,6 +1280,9 @@ const POS: React.FC = () => {
           if (saleData.amountReceived != null) cleanSaleData.amountReceived = Number(saleData.amountReceived);
           if (saleData.discountAmount != null && saleData.discountAmount > 0) {
             cleanSaleData.discountAmount = Number(saleData.discountAmount);
+          }
+          if (activeCashier?.id) {
+            cleanSaleData.cashierId = String(activeCashier.id);
           }
 
           if (paymentData.managerOverride) {
@@ -1176,16 +1599,19 @@ const POS: React.FC = () => {
               setOfflineQueuedSalesCount(Math.max(0, saleResponse.queueSize));
               if (saleResponse.isCritical) {
                 showToast(
-                  `⚠️ Offline sales queue is FULL (${saleResponse.queueSize}/${saleResponse.maxQueueSize}). Please sync immediately!`,
+                  `Offline queue is full (${saleResponse.queueSize}/${saleResponse.maxQueueSize}).`,
                   'error',
-                  10000
+                  0,
+                  {
+                    label: 'View queue',
+                    onClick: () => {
+                      setShowOfflineQueueModal(true);
+                    },
+                  }
                 );
+                updateInlineStatus(`Offline queue full (${saleResponse.queueSize}/${saleResponse.maxQueueSize})`, 'error');
               } else if (saleResponse.isWarning) {
-                showToast(
-                  `⚠️ Large offline sales queue: ${saleResponse.queueSize} sales. Consider syncing soon.`,
-                  'warning',
-                  6000
-                );
+                updateInlineStatus(`Large offline queue: ${saleResponse.queueSize} sales pending`, 'warning');
               }
             }
             
@@ -1194,7 +1620,7 @@ const POS: React.FC = () => {
             try {
               console.log('Refreshing products after successful sale');
               await loadProducts(0);
-              showToast('Products refreshed with latest stock levels', 'success', 3000);
+              updateInlineStatus('Stock refreshed after sale', 'success');
             } catch (error) {
               console.warn('Failed to refresh products after sale (non-critical)', error);
               // Don't fail the sale if refresh fails - will sync on next periodic sync
@@ -1319,14 +1745,15 @@ const POS: React.FC = () => {
               // Refresh products and retry if user wants
               try {
                 await loadProducts(0);
-                showToast(
-                  'Products refreshed. Please review stock levels and try the sale again.',
-                  'info',
-                  6000
-                );
+                updateInlineStatus('Stock refreshed. Review quantities and retry sale.', 'warning');
               } catch (refreshError) {
                 console.error('Failed to refresh products after stock conflict:', refreshError);
-                showToast('Failed to refresh products. Please try manually.', 'error', 5000);
+                showToast('Failed to refresh products.', 'error', 0, {
+                  label: 'Retry',
+                  onClick: () => {
+                    void loadProducts(0);
+                  },
+                });
               }
 
               // Don't proceed with error handling - let user retry manually
@@ -1338,17 +1765,22 @@ const POS: React.FC = () => {
             if (errorLower.includes('invalid product') || 
                 errorLower.includes('product') && errorLower.includes('not found') ||
                 errorLower.includes('product') && errorLower.includes('deleted')) {
-              showToast('Product catalog may be outdated. Syncing products...', 'warning', 4000);
+              updateInlineStatus('Catalog mismatch detected. Syncing products...', 'warning');
               // Trigger product sync in background
               setTimeout(async () => {
                 try {
                   const syncResult = await (window as any).electronAPI.syncProducts();
                   if (syncResult.success) {
-                    showToast(`Products synced! ${syncResult.products?.length || 0} products loaded.`, 'success', 5000);
+                    updateInlineStatus(`Catalog synced: ${syncResult.products?.length || 0} products loaded`, 'success');
                     // Reload products in UI
                     loadProducts(0);
                   } else {
-                    showToast('Failed to sync products. Please try manually from Settings.', 'error', 5000);
+                    showToast('Failed to sync products.', 'error', 0, {
+                      label: 'Sync now',
+                      onClick: () => {
+                        void runLiveCatalogRefresh('manual');
+                      },
+                    });
                   }
                 } catch (syncError) {
                   console.error('Auto-sync failed:', syncError);
@@ -1398,7 +1830,7 @@ const POS: React.FC = () => {
                   fallbackAction: () => {
                     // Hold transaction for later retry
                     handleHoldTransaction();
-                    showToast('Sale held. You can retry later.', 'info', 4000);
+                    updateInlineStatus('Sale held. Retry when ready.', 'warning');
                   },
                 }
               );
@@ -1412,7 +1844,13 @@ const POS: React.FC = () => {
     } catch (mutexError) {
       // Handle mutex-specific errors (e.g., queue full)
       if (mutexError instanceof Error && mutexError.message.includes('queue is full')) {
-        showToast(mutexError.message, 'error', 6000);
+        showToast(mutexError.message, 'error', 0, {
+          label: 'View queue',
+          onClick: () => {
+            setShowOfflineQueueModal(true);
+          },
+        });
+        updateInlineStatus('Sale queue full. Review offline queue.', 'error');
       } else {
         console.error('Mutex error:', mutexError);
         
@@ -1433,11 +1871,7 @@ const POS: React.FC = () => {
           // Refresh products
           try {
             await loadProducts(0);
-            showToast(
-              'Products refreshed. Please review stock levels and try the sale again.',
-              'info',
-              6000
-            );
+            updateInlineStatus('Stock refreshed. Review quantities and retry sale.', 'warning');
           } catch (refreshError) {
             console.error('Failed to refresh products after stock conflict:', refreshError);
           }
@@ -1476,7 +1910,7 @@ const POS: React.FC = () => {
             fallbackAction: () => {
               // Hold transaction for later retry
               handleHoldTransaction();
-              showToast('Sale held due to error. You can retry later.', 'info', 4000);
+              updateInlineStatus('Sale held due to error. Retry when ready.', 'warning');
             },
           });
         }
@@ -1576,6 +2010,10 @@ const POS: React.FC = () => {
   };
 
   const handleHoldTransaction = () => {
+    if (!requireCashierSession('holding a transaction')) {
+      return;
+    }
+
     if (cart.length === 0) {
       showToast('Cart is empty. Nothing to hold.', 'warning');
       return;
@@ -1601,6 +2039,10 @@ const POS: React.FC = () => {
   };
 
   const handleResumeTransaction = (transactionId: string) => {
+    if (!requireCashierSession('resuming a transaction')) {
+      return;
+    }
+
     const transaction = resumeTransaction(transactionId);
     if (transaction) {
       if (cart.length > 0) {
@@ -1659,6 +2101,11 @@ const POS: React.FC = () => {
   };
 
   const handleLogout = async () => {
+    if (!canControlMainSession) {
+      showToast('Only manager/owner/admin can sign out the main account.', 'warning', 3500);
+      return;
+    }
+
     if (cart.length > 0 && !window.confirm('Logout now? Current cart will be lost.')) {
       return;
     }
@@ -1666,6 +2113,11 @@ const POS: React.FC = () => {
   };
 
   const handleExit = async () => {
+    if (!canControlMainSession) {
+      showToast('Only manager/owner/admin can exit the POS app.', 'warning', 3500);
+      return;
+    }
+
     const message = cart.length > 0
       ? 'Exit POS now? Current cart will be lost.'
       : 'Exit POS application now?';
@@ -1681,35 +2133,58 @@ const POS: React.FC = () => {
     { id: 'receipt', label: 'Receipt', icon: <ReceiptText size={15} /> },
     { id: 'print-preview', label: 'Print', icon: <Printer size={15} /> },
   ];
+  const selectedBranchName =
+    visibleBranches.find((branch) => branch.id === selectedBranch)?.name ||
+    branches.find((branch) => branch.id === selectedBranch)?.name ||
+    user?.branchName ||
+    'Branch';
+
+  if (!canAccessPos) {
+    return (
+      <div className={`pos-app ${isUltraCompact ? 'pos-density-ultra' : ''}`}>
+        <section className="pos-shell-main pos-shell-main--full">
+          <header className="pos-shell-header pos-shell-header--shared">
+            <div className="pos-shell-header-left">
+              <div>
+                <h2>{user?.tenantName || 'Sales Desk'}</h2>
+                <p>{user?.name || 'User'}</p>
+              </div>
+            </div>
+          </header>
+
+          <div className="pos-shell-body" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ maxWidth: 520, border: '1px solid #e2e8f0', borderRadius: 12, padding: 18, background: '#fff' }}>
+              <h3 style={{ margin: 0, fontSize: 18, color: '#0f172a' }}>POS Access Required</h3>
+              <p style={{ marginTop: 8, marginBottom: 14, color: '#475569' }}>
+                This account does not have POS access. Ask an admin to grant the pos.access permission.
+              </p>
+              <button
+                type="button"
+                className="shell-action-btn"
+                onClick={() => {
+                  void logout();
+                }}
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className={`pos-app ${isUltraCompact ? 'pos-density-ultra' : ''}`}>
       <section className="pos-shell-main pos-shell-main--full">
-        {currentStep !== 'products' && (
-          <header className="pos-shell-header">
+        <header className="pos-shell-header pos-shell-header--shared">
+          <div className="pos-shell-header-left">
             <div>
-              <h2>Main POS</h2>
-              <p>{user?.name || 'Cashier'} · {user?.branchName || 'Branch'}</p>
+              <h2>{user?.tenantName || 'Sales Desk'}</h2>
+              <p>{user?.name || 'Cashier'}</p>
             </div>
+          </div>
 
-            <div className="pos-shell-header-right">
-              <div className="clock-pill">
-                <Clock3 size={14} />
-                <span>{clock.toLocaleDateString()} · {clock.toLocaleTimeString()}</span>
-              </div>
-              <button type="button" className="shell-action-btn" onClick={handleLogout}>
-                <LogOut size={14} />
-                Logout
-              </button>
-              <button type="button" className="shell-action-btn danger" onClick={handleExit}>
-                <Power size={14} />
-                Exit
-              </button>
-            </div>
-          </header>
-        )}
-
-        <div className="pos-top-strip">
           <nav className="pos-shell-step-nav pos-shell-step-nav--inline">
             {steps.map((step) => {
               const active = currentStep === step.id;
@@ -1727,38 +2202,424 @@ const POS: React.FC = () => {
             })}
           </nav>
 
-          <div className="pos-top-strip-right">
-            {currentStep !== 'products' && (
-              <button
-                type="button"
-                className={`shell-action-btn pos-density-toggle ${isUltraCompact ? 'is-active' : ''}`}
-                onClick={() => setIsUltraCompact((prev) => !prev)}
-                title="Toggle ultra compact density"
-                aria-pressed={isUltraCompact}
-              >
-                <span className="pos-density-dot" aria-hidden="true" />
-                <span>Compact</span>
-              </button>
-            )}
-            <div className="pos-shell-stats pos-shell-stats--inline">
-              <div className="stat-row"><span>Items</span><strong>{cart.length}</strong></div>
-              <div className="stat-row">
+          <div className="pos-shell-header-right pos-shell-header-right--minimal">
+            {isBranchLockedUser ? (
+              <div className="receipts-menu">
+                <span className="shell-action-btn" title="Managed branch is fixed for your account" aria-label="Managed branch">
+                  {selectedBranchName}
+                </span>
+              </div>
+            ) : (
+              <div className="receipts-menu" ref={branchMenuRef}>
                 <button
                   type="button"
-                  className="offline-queue-trigger"
-                  onClick={() => setShowOfflineQueueModal(true)}
-                  title="View offline sales queue"
+                  className="shell-action-btn"
+                  onClick={() => {
+                    setShowQuickMenu(false);
+                    setShowBranchMenu((prev) => !prev);
+                  }}
+                  aria-label="Branch menu"
                 >
-                  <span>Offline Q</span>
-                  <strong>{offlineQueuedSalesCount}</strong>
+                  {selectedBranchName}
+                  <span className="receipts-menu-caret">▾</span>
                 </button>
+                {showBranchMenu && (
+                  <div className="receipts-menu-dropdown pos-menu-panel">
+                    <div className="pos-menu-label">Select Branch</div>
+                    <select
+                      value={selectedBranch}
+                      onChange={(e) => {
+                        setSelectedBranch(e.target.value);
+                        setShowBranchMenu(false);
+                      }}
+                      className="branch-select improved-branch-select pos-shell-branch-select"
+                      title="Select branch"
+                    >
+                      <option value="">Select Branch</option>
+                      {visibleBranches.map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                          {branch.name || user?.branchName || 'Assigned Branch'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
+            )}
+
+            <div className="receipts-menu" ref={quickMenuRef}>
+              <button
+                type="button"
+                className="shell-action-btn"
+                onClick={() => {
+                  setShowBranchMenu(false);
+                  setShowQuickMenu((prev) => !prev);
+                }}
+                aria-label="Quick actions menu"
+              >
+                Menu
+                <span className="receipts-menu-caret">▾</span>
+              </button>
+              {showQuickMenu && (
+                <div className="receipts-menu-dropdown pos-menu-panel">
+                  {canViewReceipts && (
+                    <>
+                      <button
+                        type="button"
+                        className="receipts-menu-item"
+                        onClick={() => {
+                          setShowQuickMenu(false);
+                          setShowFindReceiptModal(true);
+                        }}
+                      >
+                        Find Receipt
+                      </button>
+                      <button
+                        type="button"
+                        className="receipts-menu-item"
+                        onClick={() => {
+                          setShowQuickMenu(false);
+                          setShowSalesHistoryModal(true);
+                        }}
+                      >
+                        History
+                      </button>
+                    </>
+                  )}
+
+                  {canUseSettings && (
+                    <button
+                      type="button"
+                      className="receipts-menu-item"
+                      onClick={() => {
+                        setShowQuickMenu(false);
+                        setShowSettings(true);
+                      }}
+                    >
+                      Settings
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    className="receipts-menu-item"
+                    onClick={() => {
+                      setShowQuickMenu(false);
+                      setIsUltraCompact((prev) => !prev);
+                    }}
+                  >
+                    {isUltraCompact ? 'Disable Compact' : 'Compact'}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="receipts-menu-item"
+                    onClick={() => {
+                      setShowQuickMenu(false);
+                      setShiftError('');
+                      if (currentShift) {
+                        setShiftPromptMode('close');
+                        setClosingCashInput('0');
+                      } else {
+                        setShiftPromptMode('open');
+                        setOpeningCashInput('0');
+                      }
+                    }}
+                  >
+                    {currentShift ? 'End Shift' : 'Start Shift'}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="receipts-menu-item"
+                    onClick={() => {
+                      setShowQuickMenu(false);
+                      setShowOfflineQueueModal(true);
+                    }}
+                  >
+                    Offline Queue ({offlineQueuedSalesCount})
+                  </button>
+
+                  <button
+                    type="button"
+                    className="receipts-menu-item"
+                    onClick={() => {
+                      setShowQuickMenu(false);
+                      if (activeCashier?.id) {
+                        lockCashierSession('Cashier session locked. Enter PIN to continue.');
+                      } else {
+                        setCashierSwitchError('');
+                        setCashierSwitchOpen(true);
+                      }
+                    }}
+                  >
+                    {activeCashier?.id ? 'Lock Cashier' : 'Cashier PIN Login'}
+                  </button>
+
+                  <div className="pos-menu-status">
+                    <SyncStatus
+                      onStatusMessage={updateInlineStatus}
+                      onCriticalToast={(message, action) => {
+                        if (action === 'retry') {
+                          showToast(message, 'error', 0, {
+                            label: 'Retry',
+                            onClick: () => {
+                              void loadProducts(0);
+                            },
+                          });
+                          return;
+                        }
+
+                        if (action === 'sync') {
+                          showToast(message, 'error', 0, {
+                            label: 'Sync now',
+                            onClick: () => {
+                              void runLiveCatalogRefresh('manual');
+                            },
+                          });
+                          return;
+                        }
+
+                        showToast(message, 'error', 0, {
+                          label: 'View queue',
+                          onClick: () => {
+                            setShowOfflineQueueModal(true);
+                          },
+                        });
+                      }}
+                    />
+                    <div className="pos-menu-meta">
+                      <span>{clock.toLocaleDateString()} · {clock.toLocaleTimeString()}</span>
+                      <span>Items {cart.length} · Total KES {getGrandTotal().toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  {(canUseLogoutControl || canUseExitControl) ? (
+                    <>
+                      {canUseLogoutControl && (
+                      <button
+                        type="button"
+                        className="receipts-menu-item"
+                        onClick={() => {
+                          setShowQuickMenu(false);
+                          void handleLogout();
+                        }}
+                      >
+                        Logout
+                      </button>
+                      )}
+                      {canUseExitControl && (
+                      <button
+                        type="button"
+                        className="receipts-menu-item danger"
+                        onClick={() => {
+                          setShowQuickMenu(false);
+                          void handleExit();
+                        }}
+                      >
+                        Exit
+                      </button>
+                      )}
+                    </>
+                  ) : null}
+                </div>
+              )}
+            </div>
+
+            <div className="pos-shell-stats pos-shell-stats--inline">
+              <div className="stat-row"><span>Cashier</span><strong>{activeCashierLabel}</strong></div>
               <div className="stat-row"><span>Total</span><strong>KES {getGrandTotal().toFixed(2)}</strong></div>
+
+              <details className="pos-header-more">
+                <summary>More</summary>
+                <div className="pos-header-more-panel">
+                  <div className="stat-row"><span>Shift</span><strong>{currentShift ? 'Open' : 'Closed'}</strong></div>
+                  <div className="stat-row"><span>Items</span><strong>{cart.length}</strong></div>
+                  <div className="stat-row">
+                    <button
+                      type="button"
+                      className="offline-queue-trigger"
+                      onClick={() => setShowOfflineQueueModal(true)}
+                      title="View offline sales queue"
+                    >
+                      <span>Offline Q</span>
+                      <strong>{offlineQueuedSalesCount}</strong>
+                    </button>
+                  </div>
+                  <div className={`pos-operational-status pos-operational-status--${inlineStatus.level}`} title={inlineStatus.message}>
+                    <span className="pos-operational-dot" aria-hidden="true"></span>
+                    <span className="pos-operational-text">{inlineStatus.message}</span>
+                  </div>
+                </div>
+              </details>
             </div>
           </div>
-        </div>
+        </header>
 
         <div className="pos-shell-body">
+          {cashierSwitchOpen && (
+            <div className="shift-modal-overlay" role="dialog" aria-modal="true">
+              <div className="shift-modal-card cashier-switch-card">
+                <h3>Cashier PIN Check-In</h3>
+                <p className="shift-modal-copy">
+                  Switch cashier instantly without signing out of admin email login.
+                </p>
+
+                <label className="shift-modal-label" htmlFor="cashier-candidate">Cashier</label>
+                <select
+                  id="cashier-candidate"
+                  className="shift-modal-input"
+                  value={cashierCandidateId}
+                  onChange={(e) => setCashierCandidateId(e.target.value)}
+                  disabled={cashierSwitchBusy}
+                >
+                  <option value="">Select cashier</option>
+                  {effectiveCashierCandidates.map((candidate) => (
+                    <option key={candidate.id} value={candidate.id}>
+                      {candidate.name || candidate.email || candidate.id}
+                    </option>
+                  ))}
+                </select>
+
+                <label className="shift-modal-label" htmlFor="cashier-pin">PIN</label>
+                <input
+                  id="cashier-pin"
+                  type="password"
+                  className="shift-modal-input"
+                  value={cashierPinInput}
+                  onChange={(e) => setCashierPinInput(e.target.value)}
+                  disabled={cashierSwitchBusy}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      void verifyAndActivateCashier();
+                    }
+                  }}
+                />
+
+                {cashierSwitchError && <div className="shift-modal-error">{cashierSwitchError}</div>}
+
+                <div className="shift-modal-actions">
+                  <button
+                    type="button"
+                    className="secondary-btn"
+                    onClick={() => {
+                      if (requiresCashierSession && !activeCashier?.id) {
+                        return;
+                      }
+
+                      setCashierSwitchOpen(false);
+                      setCashierSwitchError('');
+                    }}
+                    disabled={cashierSwitchBusy || (requiresCashierSession && !activeCashier?.id)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="primary-btn"
+                    onClick={() => {
+                      void verifyAndActivateCashier();
+                    }}
+                    disabled={cashierSwitchBusy}
+                  >
+                    {cashierSwitchBusy ? 'Checking...' : 'Unlock POS'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {shiftPromptMode && (
+            <div className="shift-modal-overlay" role="dialog" aria-modal="true">
+              <div className="shift-modal-card">
+                <h3>{shiftPromptMode === 'open' ? 'Start Shift' : 'Close Shift'}</h3>
+                <p className="shift-modal-copy">
+                  {shiftPromptMode === 'open'
+                    ? 'Enter opening cash float before sales begin.'
+                    : 'Enter closing cash to complete handover.'}
+                </p>
+
+                {shiftPromptMode === 'open' ? (
+                  <>
+                    <label className="shift-modal-label" htmlFor="opening-cash-input">Opening cash (KES)</label>
+                    <input
+                      id="opening-cash-input"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      className="shift-modal-input"
+                      value={openingCashInput}
+                      onChange={(e) => setOpeningCashInput(e.target.value)}
+                      disabled={shiftBusy}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <label className="shift-modal-label" htmlFor="closing-cash-input">Closing cash (KES)</label>
+                    <input
+                      id="closing-cash-input"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      className="shift-modal-input"
+                      value={closingCashInput}
+                      onChange={(e) => setClosingCashInput(e.target.value)}
+                      disabled={shiftBusy}
+                    />
+
+                    <label className="shift-modal-label" htmlFor="shift-notes-input">Notes (optional)</label>
+                    <textarea
+                      id="shift-notes-input"
+                      className="shift-modal-textarea"
+                      rows={3}
+                      value={shiftNotes}
+                      onChange={(e) => setShiftNotes(e.target.value)}
+                      disabled={shiftBusy}
+                    />
+                  </>
+                )}
+
+                {shiftError && <div className="shift-modal-error">{shiftError}</div>}
+
+                <div className="shift-modal-actions">
+                  <button
+                    type="button"
+                    className="secondary-btn"
+                    onClick={() => {
+                      if (requiresShiftSession && !currentShift && shiftPromptMode === 'open') {
+                        return;
+                      }
+
+                      setShiftPromptMode(null);
+                      setShiftError('');
+                    }}
+                    disabled={shiftBusy || (requiresShiftSession && !currentShift && shiftPromptMode === 'open')}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="primary-btn"
+                    onClick={() => {
+                      if (shiftPromptMode === 'open') {
+                        void handleOpenShift();
+                        return;
+                      }
+
+                      void handleCloseShift();
+                    }}
+                    disabled={shiftBusy}
+                  >
+                    {shiftBusy
+                      ? (shiftPromptMode === 'open' ? 'Starting...' : 'Closing...')
+                      : (shiftPromptMode === 'open' ? 'Start Shift' : 'Close Shift')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {showFindReceiptModal && (
             <FindReceiptModal
               onClose={() => setShowFindReceiptModal(false)}
@@ -1776,7 +2637,18 @@ const POS: React.FC = () => {
           )}
 
           <AnimatePresence mode="wait">
-            {currentStep === 'products' && (
+            {showSettings && (
+              <motion.div key="settings" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
+                <Settings
+                  onClose={() => setShowSettings(false)}
+                  onUnauthorized={() => {
+                    void logout();
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {!showSettings && currentStep === 'products' && (
               <motion.div key="products" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
                 <ProductSelection
                   cart={cart}
@@ -1790,20 +2662,12 @@ const POS: React.FC = () => {
                   pendingTransactions={pendingTransactions}
                   getTotal={getTotal}
                   getGrandTotal={getGrandTotal}
-                  branches={branches}
                   selectedBranch={selectedBranch}
-                  onBranchChange={setSelectedBranch}
-                  branchSelectionLocked={isBranchLockedUser}
-                  lockedBranchId={assignedBranchId}
-                  onFindReceiptClick={() => setShowFindReceiptModal(true)}
-                  onSalesHistoryClick={() => setShowSalesHistoryModal(true)}
-                  isUltraCompact={isUltraCompact}
-                  onToggleUltraCompact={() => setIsUltraCompact((prev) => !prev)}
                 />
               </motion.div>
             )}
 
-            {currentStep === 'checkout' && (
+            {!showSettings && currentStep === 'checkout' && (
               <motion.div key="checkout" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
                 <Checkout
                   cart={cart}
@@ -1817,7 +2681,7 @@ const POS: React.FC = () => {
               </motion.div>
             )}
 
-            {currentStep === 'receipt' && (
+            {!showSettings && currentStep === 'receipt' && (
               <motion.div key="receipt" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
                 <Receipt
                   receipt={currentReceipt}
@@ -1828,7 +2692,7 @@ const POS: React.FC = () => {
               </motion.div>
             )}
 
-            {currentStep === 'print-preview' && (
+            {!showSettings && currentStep === 'print-preview' && (
               <motion.div key="print-preview" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
                 <PrintPreview
                   receipt={currentReceipt}

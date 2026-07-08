@@ -596,8 +596,62 @@ function isCashierOrStaffUser(user: Partial<User> | undefined): boolean {
   );
 }
 
+function hasUserPermission(user: Partial<User> | undefined, permissionKey: string): boolean {
+  if (!user || !permissionKey) return false;
+
+  const keys = new Set<string>();
+  const addKeys = (values: unknown) => {
+    if (!Array.isArray(values)) return;
+    values.forEach((value) => {
+      const normalized = String(value || '').trim().toLowerCase();
+      if (normalized) keys.add(normalized);
+    });
+  };
+
+  addKeys((user as any).permissions);
+  addKeys((user as any).effectivePermissions);
+  addKeys((user as any).inheritedPermissions);
+
+  return keys.has(permissionKey.toLowerCase());
+}
+
+function isOwnerOrAdminUser(user: Partial<User> | undefined): boolean {
+  if (!user) return false;
+  const roleNames = Array.isArray(user.roles)
+    ? user.roles.map((role) => String(role).toLowerCase())
+    : [];
+  const primaryRole = String((user as any).role || '').toLowerCase();
+
+  return (
+    roleNames.includes('owner') ||
+    roleNames.includes('admin') ||
+    roleNames.includes('superadmin') ||
+    primaryRole === 'owner' ||
+    primaryRole === 'admin' ||
+    primaryRole === 'superadmin' ||
+    Boolean((user as any).isSuperadmin)
+  );
+}
+
+function isManagerUser(user: Partial<User> | undefined): boolean {
+  if (!user) return false;
+  const roleNames = Array.isArray(user.roles)
+    ? user.roles.map((role) => String(role).toLowerCase())
+    : [];
+  const primaryRole = String((user as any).role || '').toLowerCase();
+
+  return roleNames.includes('manager') || primaryRole === 'manager';
+}
+
 function shouldLockUserToAssignedBranch(user: Partial<User> | undefined): boolean {
-  return !!(user?.branchId && isCashierOrStaffUser(user));
+  if (!user?.branchId) return false;
+  if (isOwnerOrAdminUser(user)) return false;
+
+  if (isCashierOrStaffUser(user)) {
+    return true;
+  }
+
+  return isManagerUser(user) && hasUserPermission(user, 'pos.branch.locked');
 }
 
 function normalizeBackendImageUrl(imagePath: string | null | undefined): string {
@@ -1458,6 +1512,22 @@ ipcMain.handle('authenticate', async (event: IpcMainInvokeEvent, credentials: Cr
 
       if (response.data.access_token && response.data.user) {
         const incomingUser = response.data.user as User;
+        const hasPosAccess =
+          isOwnerOrAdminUser(incomingUser) ||
+          hasUserPermission(incomingUser, 'pos.access');
+
+        if (!hasPosAccess) {
+          logger.warn('Blocked POS login due to missing pos.access permission', {
+            component: 'auth',
+            userId: incomingUser?.id,
+            roles: incomingUser?.roles || [],
+          });
+          return {
+            success: false,
+            error: 'Your account is not authorized to access POS. Contact your administrator.',
+          };
+        }
+
         if (existingDeviceBinding && !isDeviceBindingCompatible(existingDeviceBinding, incomingUser)) {
           logger.warn('Blocked provisioning login due to tenant/branch binding mismatch', {
             component: 'auth',
@@ -3280,6 +3350,8 @@ ipcMain.handle('getUsers', async () => {
   const store = new ElectronStore();
   const token = getAuthToken(store);
   const user = store.get('user') as User | undefined;
+  const lockToAssignedBranch = shouldLockUserToAssignedBranch(user);
+  const assignedBranchId = user?.branchId;
   if (!token) return { success: false, users: [], error: 'No token' };
 
   try {
@@ -3290,14 +3362,19 @@ ipcMain.handle('getUsers', async () => {
         axios.get(`${BACKEND_BASE_URL}/user`, {
           headers: {
             'Authorization': `Bearer ${token}`,
-            ...(user?.branchId && { 'x-branch-id': user.branchId }),
+            ...(lockToAssignedBranch && assignedBranchId && { 'x-branch-id': assignedBranchId }),
           },
           timeout: 7000,
         }),
       endpoint,
     );
 
-    return { success: true, users: Array.isArray(response.data) ? response.data : [] };
+    const users = Array.isArray(response.data) ? response.data : [];
+    const scopedUsers = lockToAssignedBranch && assignedBranchId
+      ? users.filter((candidate: any) => candidate?.branchId === assignedBranchId)
+      : users;
+
+    return { success: true, users: scopedUsers };
   } catch (error: any) {
     logger.error('Failed to get users', { error: error.message });
     return { success: false, users: [], error: error.message };

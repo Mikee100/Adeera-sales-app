@@ -15,7 +15,12 @@ interface SyncStatusData {
   isCritical?: boolean;
 }
 
-const SyncStatus: React.FC = () => {
+interface SyncStatusProps {
+  onStatusMessage?: (message: string, level?: 'neutral' | 'info' | 'success' | 'warning' | 'error') => void;
+  onCriticalToast?: (message: string, action: 'retry' | 'sync' | 'queue') => void;
+}
+
+const SyncStatus: React.FC<SyncStatusProps> = ({ onStatusMessage, onCriticalToast }) => {
   const [syncStatus, setSyncStatus] = useState<SyncStatusData>({ online: true, pendingSyncs: 0 });
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState<{
@@ -68,11 +73,11 @@ const SyncStatus: React.FC = () => {
       await window.electronAPI.cancelSyncOfflineSales();
       setIsSyncing(false);
       setSyncProgress(null);
-      showToast('Sync cancelled', 'info', 3000);
+      onStatusMessage?.('Sync cancelled', 'info');
     } catch (error) {
       console.error('Failed to cancel sync:', error);
     }
-  }, []);
+  }, [onStatusMessage]);
 
   const handleSyncNow = useCallback(async (isAutoSync: boolean = false) => {
     // Get current status to check conditions
@@ -104,7 +109,7 @@ const SyncStatus: React.FC = () => {
 
       // Handle cancellation
       if (response.cancelled) {
-        showToast('Sync cancelled by user', 'info', 3000);
+        onStatusMessage?.('Sync cancelled by user', 'info');
         setIsSyncing(false);
         setSyncProgress(null);
         return;
@@ -112,7 +117,7 @@ const SyncStatus: React.FC = () => {
 
       if (response.inProgress) {
         if (!isAutoSync) {
-          showToast('Sync already in progress', 'info', 2500);
+          onStatusMessage?.('Sync already in progress', 'info');
         }
         setIsSyncing(false);
         setSyncProgress(null);
@@ -124,16 +129,15 @@ const SyncStatus: React.FC = () => {
 
         if (response.stockParityReport && response.stockParityReport.checked > 0) {
           if (response.stockParityReport.drifted > 0) {
-            showToast(
-              `Stock sync check: ${response.stockParityReport.drifted}/${response.stockParityReport.checked} items changed after reconciliation.`,
-              'warning',
-              isAutoSync ? 3500 : 6000
+            onStatusMessage?.(
+              `Stock sync drift: ${response.stockParityReport.drifted}/${response.stockParityReport.checked} items changed`,
+              'warning'
             );
           } else if (!isAutoSync) {
-            showToast('Stock sync check passed: no drift detected.', 'success', 2500);
+            onStatusMessage?.('Stock sync check passed', 'success');
           }
         } else if (!response.catalogRefreshed && response.catalogRefreshError && !isAutoSync) {
-          showToast(`Sales synced, but catalog refresh failed: ${response.catalogRefreshError}`, 'warning', 5000);
+          onCriticalToast?.(`Sales synced, but catalog refresh failed: ${response.catalogRefreshError}`, 'sync');
         }
 
         if (response.errors && response.errors.length > 0) {
@@ -174,14 +178,14 @@ const SyncStatus: React.FC = () => {
             );
           } else {
             // For auto-sync with few errors, just show a brief message
-            showToast(`Auto-sync: ${response.syncedCount} synced, ${response.errors.length} failed`, 'warning', 3000);
+            onStatusMessage?.(`Auto-sync: ${response.syncedCount} synced, ${response.errors.length} failed`, 'warning');
           }
         } else {
           // Show success message (shorter for auto-sync)
           if (isAutoSync) {
-            showToast(`Auto-synced ${response.syncedCount} sales`, 'success', 2000);
+            onStatusMessage?.(`Auto-synced ${response.syncedCount} sales`, 'success');
           } else {
-            showToast(`Successfully synced ${response.syncedCount} sales!`, 'success');
+            onStatusMessage?.(`Successfully synced ${response.syncedCount} sales`, 'success');
           }
         }
         // Refresh status after sync
@@ -208,6 +212,7 @@ const SyncStatus: React.FC = () => {
               maxRetries: 2,
             }
           );
+          onCriticalToast?.(response.error || 'Sync failed', 'sync');
         } else {
           console.warn('Auto-sync failed:', response.error);
         }
@@ -221,13 +226,14 @@ const SyncStatus: React.FC = () => {
           retryable: true,
           maxRetries: 2,
         });
+        onCriticalToast?.('Sync failed. Please retry now.', 'retry');
       } else {
         console.error('Auto-sync error:', error);
       }
     } finally {
       setIsSyncing(false);
     }
-  }, [isSyncing]);
+  }, [isSyncing, onStatusMessage, onCriticalToast, startSync]);
 
   const updateSyncStatus = useCallback(async () => {
     try {
@@ -242,6 +248,7 @@ const SyncStatus: React.FC = () => {
           if (!response.online) {
             wasOfflineRef.current = true;
             hasAutoSyncedRef.current = false; // Reset when going offline
+            onStatusMessage?.('Offline mode: sales are queued locally', 'warning');
           }
           
           // Auto-sync conditions:
@@ -294,7 +301,7 @@ const SyncStatus: React.FC = () => {
     } catch (error) {
       console.error('Failed to get sync status:', error);
     }
-  }, [isSyncing, handleSyncNow]);
+  }, [isSyncing, handleSyncNow, onStatusMessage]);
 
   const runSalesQueueAutoSyncCycle = useCallback(async () => {
     if (autoSyncCycleRunningRef.current) {
@@ -312,10 +319,14 @@ const SyncStatus: React.FC = () => {
       lastPendingCountRef.current = status.pendingSyncs;
 
       if (!status.online || isSyncing) {
+        if (!status.online) {
+          onStatusMessage?.('Offline mode: sales are queued locally', 'warning');
+        }
         return;
       }
 
       if (status.pendingSyncs > 0) {
+        onStatusMessage?.(`${status.pendingSyncs} sales queued for sync`, 'info');
         hasAutoSyncedRef.current = true;
         await handleSyncNow(true);
       }
@@ -324,7 +335,7 @@ const SyncStatus: React.FC = () => {
     } finally {
       autoSyncCycleRunningRef.current = false;
     }
-  }, [handleSyncNow, isSyncing]);
+  }, [handleSyncNow, isSyncing, onStatusMessage]);
 
   useEffect(() => {
     let mounted = true;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ArrowLeft, MonitorSmartphone, Printer, ReceiptText } from 'lucide-react';
 import '../receipt.css';
 import './PrintPreview.css';
 
@@ -63,19 +64,22 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
 
   if (!receipt) return null;
 
-  const formatCurrency = (amount: number) => {
-    return `Ksh ${amount?.toFixed(2) || '0.00'}`;
+  const formatCurrency = (amount: unknown) => {
+    return `KES ${(Number(amount) || 0).toFixed(2)}`;
   };
 
   const formatDate = (date: string | Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleDateString('en-KE', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     });
   };
+
+  const receiptItems = Array.isArray(receipt.items) ? receipt.items : [];
+  const totalItems = receiptItems.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0);
 
   const isCreditSale = receipt.paymentMethod === 'credit';
 
@@ -85,9 +89,13 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
       <div className="print-controls-bar">
         <div className="print-controls-left">
           <button onClick={onBack} className="control-btn back-btn">
-            <span className="btn-icon">←</span>
+            <ArrowLeft size={15} />
             <span>Back</span>
           </button>
+          <div className="preview-title-wrap">
+            <h1>Print Preview</h1>
+            <p>Receipt #{receipt.saleId || 'N/A'}</p>
+          </div>
         </div>
         <div className="print-controls-right">
           <button 
@@ -95,7 +103,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
             className="control-btn browser-print-btn"
             disabled={printing}
           >
-            <span className="btn-icon">🖨️</span>
+            <MonitorSmartphone size={15} />
             <span>Print via Browser</span>
           </button>
           <button 
@@ -110,7 +118,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
               </>
             ) : (
               <>
-                <span className="btn-icon">🖨️</span>
+                <Printer size={15} />
                 <span>Print Receipt</span>
               </>
             )}
@@ -120,7 +128,22 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
 
       {/* Print Preview Content */}
       <div className="print-preview-content">
-        <div className="print-receipt">
+        <div className="preview-summary-row">
+          <div className="preview-summary-pill">
+            <ReceiptText size={14} />
+            <span>{totalItems} item{totalItems !== 1 ? 's' : ''}</span>
+          </div>
+          <div className="preview-summary-pill">
+            <span>Total {formatCurrency(receipt.total || 0)}</span>
+          </div>
+          <div className="preview-summary-pill">
+            <span>{receipt.paymentMethod?.toUpperCase() || 'CASH'}</span>
+          </div>
+        </div>
+
+        <div className="print-paper-shell">
+          <div className="print-paper-label">Thermal Receipt Preview · 80mm</div>
+          <div className="print-receipt">
           {/* Business Header */}
           <div className="print-header">
             {receipt.businessInfo?.receiptLogo && (
@@ -205,10 +228,11 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
               <div className="print-col-total">Total</div>
             </div>
             <div className="print-items-body">
-              {receipt.items?.map((item: any, index: number) => (
+              {receiptItems.map((item: any, index: number) => (
                 <div key={index} className="print-item-row">
                   <div className="print-col-item">
                     <span className="print-item-name">{item.name}</span>
+                    {item.sku && <span className="print-item-meta">{item.sku}</span>}
                   </div>
                   <div className="print-col-qty">{item.quantity}</div>
                   <div className="print-col-price">{formatCurrency(item.price || 0)}</div>
@@ -282,6 +306,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
             <div className="print-thank-you">Thank you for your business!</div>
             <div className="print-footer-note">Please keep this receipt for your records</div>
           </div>
+        </div>
         </div>
       </div>
     </div>
