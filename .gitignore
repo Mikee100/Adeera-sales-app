@@ -6,3 +6,7 @@ logs/
 .DS_Store
 # Ignore backup files
 backups/
+
+*.sql.gz
+*.bak
+*.backup
