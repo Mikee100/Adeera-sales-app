@@ -105,6 +105,7 @@ interface ActiveCashierSession {
   id: string;
   name?: string;
   email?: string;
+  roles?: string[];
 }
 
 type InlineStatusLevel = 'neutral' | 'info' | 'success' | 'warning' | 'error';
@@ -250,9 +251,19 @@ const POS: React.FC = () => {
   const effectiveCashierCandidates = cashierCandidates.length > 0 ? cashierCandidates : staffUsers;
   const requiresCashierSession = isPrivilegedUser && effectiveCashierCandidates.length > 0;
   const hasActiveCashierSession = !!activeCashier?.id;
-  const canUseLogoutControl = canControlMainSession && !hasActiveCashierSession;
+  const normalizedActiveCashierRoles = Array.isArray(activeCashier?.roles)
+    ? activeCashier.roles.map((role) => String(role || '').toLowerCase())
+    : [];
+  const activeCashierIsManagerLike =
+    normalizedActiveCashierRoles.includes('owner') ||
+    normalizedActiveCashierRoles.includes('admin') ||
+    normalizedActiveCashierRoles.includes('manager') ||
+    normalizedActiveCashierRoles.includes('superadmin');
+  const canUseLogoutControl =
+    canControlMainSession && (!hasActiveCashierSession || activeCashierIsManagerLike);
   const canUseExitControl = canControlMainSession;
-  const canUseSettings = canControlMainSession && !hasActiveCashierSession;
+  const canUseSettings =
+    canControlMainSession && (!hasActiveCashierSession || activeCashierIsManagerLike);
   const activeCashierLabel = activeCashier?.name || activeCashier?.email || (activeCashier?.id ? activeCashier.id.slice(0, 8) : 'None');
 
   const updateInlineStatus = useCallback((message: string, level: InlineStatusLevel = 'info') => {
@@ -313,6 +324,9 @@ const POS: React.FC = () => {
         id: result.waiter.id,
         name: result.waiter.name,
         email: result.waiter.email,
+        roles: Array.isArray(result.waiter.roles)
+          ? result.waiter.roles.map((role: string) => String(role || '').toLowerCase())
+          : [],
       });
       setCashierSwitchOpen(false);
       setCashierCandidateId('');
@@ -525,7 +539,14 @@ const POS: React.FC = () => {
       if (!raw) return;
       const parsed = JSON.parse(raw);
       if (parsed?.id && typeof parsed.id === 'string') {
-        setActiveCashier({ id: parsed.id, name: parsed.name, email: parsed.email });
+        setActiveCashier({
+          id: parsed.id,
+          name: parsed.name,
+          email: parsed.email,
+          roles: Array.isArray(parsed.roles)
+            ? parsed.roles.map((role: string) => String(role || '').toLowerCase())
+            : [],
+        });
       }
     } catch {
       // Ignore malformed cache.

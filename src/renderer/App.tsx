@@ -36,7 +36,7 @@ const AppContent: React.FC = () => {
   const downloadedNotifiedRef = useRef(false);
   const installingNotifiedRef = useRef(false);
   const lastUpdateErrorRef = useRef<string | null>(null);
-  const [restaurantEnabled, setRestaurantEnabled] = useState(true);
+  const [restaurantEnabled, setRestaurantEnabled] = useState<boolean | null>(null);
 
   // Debug: Log sleep mode state changes
   useEffect(() => {
@@ -82,21 +82,31 @@ const AppContent: React.FC = () => {
   }, [initialSyncComplete, performInitialSync, onInitialSyncComplete]);
 
   useEffect(() => {
+    let active = true;
+
     const loadRestaurantConfig = async () => {
       if (!isAuthenticated) {
-        setRestaurantEnabled(true);
+        setRestaurantEnabled(null);
         return;
       }
 
+      setRestaurantEnabled(null);
+
       try {
         const config = await window.electronAPI.getRestaurantConfig();
+        if (!active) return;
         setRestaurantEnabled(!!(config.success && config.enabled));
       } catch {
+        if (!active) return;
         setRestaurantEnabled(true);
       }
     };
 
     loadRestaurantConfig();
+
+    return () => {
+      active = false;
+    };
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -193,6 +203,23 @@ const AppContent: React.FC = () => {
       >
         <div className="loading-spinner"></div>
         <p>Loading SaaS POS...</p>
+      </div>
+    );
+  }
+
+  if (isAuthenticated && restaurantEnabled === null) {
+    return (
+      <div
+        className="loading-screen"
+        style={{
+          backgroundImage: `linear-gradient(rgba(2, 6, 23, 0.48), rgba(2, 6, 23, 0.62)), url(${loadingBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        <div className="loading-spinner"></div>
+        <p>Preparing Adeera POS workspace...</p>
       </div>
     );
   }
