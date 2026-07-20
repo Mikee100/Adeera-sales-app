@@ -892,3 +892,85 @@
 {"component":"offline","error":"Request failed with status code 500","level":"error","message":"Failed to sync offline sale offline-1782599102265-pg5528v95 after 3 attempts","saleId":"offline-1782599102265-pg5528v95","service":"saas-pos","timestamp":"2026-06-27T22:28:32.271Z"}
 {"component":"offline","error":"connect ECONNREFUSED 127.0.0.1:7000","level":"error","message":"Failed to sync offline sale offline-1782599102265-pg5528v95 after 3 attempts","saleId":"offline-1782599102265-pg5528v95","service":"saas-pos","timestamp":"2026-06-27T22:28:50.182Z"}
 {"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-06-27T22:33:13.741Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-05T15:13:10.850Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-05T15:13:30.791Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-05T15:14:35.360Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T15:19:15.770Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T15:39:30.993Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T16:38:08.239Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T16:43:13.944Z"}
+{"component":"printer","error":"Cannot read properties of undefined (reading 'toFixed')","level":"error","message":"Error printing receipt","service":"saas-pos","timestamp":"2026-07-08T16:43:30.490Z"}
+{"component":"receipts","errorMessage":"Cannot read properties of undefined (reading 'toFixed')","level":"error","message":"Receipt print failed","saleId":"9e98a054-a90e-4168-968a-91597db84606","service":"saas-pos","timestamp":"2026-07-08T16:43:30.492Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T16:45:45.773Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port","service":"saas-pos","timestamp":"2026-07-08T16:45:50.395Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T16:45:57.940Z"}
+{"component":"cashdrawer","errorMessage":"Failed to open port: Opening COM1: File not found","level":"error","message":"Cash drawer open failed","service":"saas-pos","timestamp":"2026-07-08T16:45:57.942Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T17:41:45.983Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T18:09:22.981Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T19:40:21.231Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T19:40:52.386Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port","service":"saas-pos","timestamp":"2026-07-08T19:40:57.774Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T19:46:46.918Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T19:58:16.249Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T19:58:16.426Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T19:58:16.445Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:37:37.742Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:37:37.888Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:37:37.906Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:37:52.851Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:38:07.871Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:38:22.857Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:38:37.858Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:38:52.860Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:39:07.849Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:39:22.861Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:39:37.867Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:39:52.862Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:40:07.863Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:40:22.847Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:40:37.837Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:40:41.179Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:40:41.181Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T20:40:48.322Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:40:52.851Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:50:12.463Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:50:12.481Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T20:50:27.509Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:05:06.213Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:05:06.228Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:05:21.162Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:05:36.153Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:05:51.160Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:06:06.155Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:06:21.167Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:06:36.139Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:06:46.983Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:06:46.986Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:06:51.163Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-08T21:06:51.818Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:26:06.430Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:26:06.463Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:26:21.209Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:26:35.945Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:26:35.974Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:26:51.477Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:27:06.465Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:27:21.468Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:27:36.466Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:28:37.480Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-08T21:29:37.501Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-09T00:40:37.963Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-09T00:40:38.055Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to verify user POS PIN","service":"saas-pos","timestamp":"2026-07-09T12:09:30.397Z","userId":"b5c7c252-fdc8-48d3-a4ea-4704a85faf18"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-09T12:10:03.432Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-09T12:35:01.592Z"}
+{"component":"printer","devicePath":"COM1","error":"Opening COM1: File not found","level":"error","message":"Failed to open serial port for cash drawer","service":"saas-pos","timestamp":"2026-07-09T12:35:53.487Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-09T13:36:43.959Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-09T15:18:27.920Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-09T15:18:28.114Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-10T07:30:51.829Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-10T07:30:51.850Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-16T09:04:30.313Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-16T09:04:30.337Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-16T09:04:45.187Z"}
+{"error":"connect ECONNREFUSED 127.0.0.1:7050","level":"error","message":"Failed to get users","service":"saas-pos","timestamp":"2026-07-16T09:05:00.198Z"}

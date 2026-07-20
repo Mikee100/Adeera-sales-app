@@ -148,6 +148,15 @@ interface DraftItem extends OrderItem {
   productName: string;
 }
 
+interface HeldOrder {
+  id: string;
+  kind: 'hold' | 'draft';
+  tableId: string;
+  tableLabel: string;
+  items: DraftItem[];
+  heldAt: string;
+}
+
 interface StaffUser {
   id: string;
   name?: string;
@@ -225,6 +234,7 @@ interface OfflineShiftSession {
 
 const ALL_CATEGORY = 'All';
 const RESERVATION_STORAGE_KEY = 'restaurant-pos-reservations';
+const HELD_ORDERS_STORAGE_KEY = 'restaurant-pos-held-orders';
 const ACTIVE_WAITER_STORAGE_KEY = 'restaurant-active-waiter-session';
 
 const SIDEBAR_ITEMS: Array<{ id: RestaurantScreen; label: string; icon: React.ReactNode }> = [
@@ -257,6 +267,29 @@ const screenVariants = {
   exit: { opacity: 0, y: -6 },
 };
 
+function playKitchenAlertBeep() {
+  try {
+    const AudioContextClass =
+      window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 880;
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.4);
+    oscillator.onended = () => ctx.close();
+  } catch {
+    // Non-blocking: audio alert is a courtesy, not a functional requirement.
+  }
+}
+
 const PremiumRestaurantPOS: React.FC = () => {
   const queryClient = useQueryClient();
   const { logout, refreshSession, user } = useAuth();
@@ -281,6 +314,7 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [historyFrom, setHistoryFrom] = useState('');
   const [historyTo, setHistoryTo] = useState('');
   const [orderWaiterFilter, setOrderWaiterFilter] = useState('');
+  const [newTicketAlert, setNewTicketAlert] = useState<{ orderId: string; message: string } | null>(null);
   const [activityFrom, setActivityFrom] = useState('');
   const [activityTo, setActivityTo] = useState('');
   const [activityActorFilter, setActivityActorFilter] = useState('');
@@ -343,6 +377,15 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [reservations, setReservations] = useState<Reservation[]>(() => {
     try {
       const raw = window.localStorage.getItem(RESERVATION_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
+  const [heldOrders, setHeldOrders] = useState<HeldOrder[]>(() => {
+    try {
+      const raw = window.localStorage.getItem(HELD_ORDERS_STORAGE_KEY);
       const parsed = raw ? JSON.parse(raw) : [];
       return Array.isArray(parsed) ? parsed : [];
     } catch {
@@ -718,6 +761,10 @@ const PremiumRestaurantPOS: React.FC = () => {
     window.localStorage.setItem(RESERVATION_STORAGE_KEY, JSON.stringify(reservations));
   }, [reservations]);
 
+  useEffect(() => {
+    window.localStorage.setItem(HELD_ORDERS_STORAGE_KEY, JSON.stringify(heldOrders));
+  }, [heldOrders]);
+
   const fetchTables = useCallback(async (): Promise<DiningTable[]> => {
     const res = await window.electronAPI.getDiningTables();
     return res.success ? res.tables || [] : [];
@@ -751,6 +798,46 @@ const PremiumRestaurantPOS: React.FC = () => {
     queryFn: fetchOrders,
     refetchInterval: 5000,
   });
+
+  useEffect(() => {
+    if (typeof window.electronAPI.connectRealtime !== 'function') return undefined;
+
+    let cancelled = false;
+    window.electronAPI.connectRealtime().then((result) => {
+      if (!cancelled && !result.success) {
+        console.warn('Realtime connect failed', result.error);
+      }
+    });
+
+    const unsubscribe = window.electronAPI.onRestaurantOrderEvent((event) => {
+      queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders'] });
+      queryClient.invalidateQueries({ queryKey: ['restaurant', 'orders', 'history'] });
+
+      const isNewKitchenTicket =
+        event.type === 'created' ||
+        (event.type === 'statusChanged' && event.status === 'SentToKitchen');
+
+      if (isNewKitchenTicket) {
+        playKitchenAlertBeep();
+        setNewTicketAlert({
+          orderId: event.orderId,
+          message: `New order #${event.orderId.slice(0, 8)} sent to kitchen`,
+        });
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+      window.electronAPI.disconnectRealtime?.();
+    };
+  }, [queryClient]);
+
+  useEffect(() => {
+    if (!newTicketAlert) return undefined;
+    const timer = window.setTimeout(() => setNewTicketAlert(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [newTicketAlert]);
 
   const { data: orderHistory = [] } = useQuery({
     queryKey: ['restaurant', 'orders', 'history', historyFrom, historyTo, orderWaiterFilter],
@@ -1359,12 +1446,56 @@ const PremiumRestaurantPOS: React.FC = () => {
     setDraftItems((prev) => prev.filter((item) => item.localId !== localId));
   };
 
+  const tableLabelFor = (tableId: string) =>
+    tables.find((table) => table.id === tableId)?.number || (tableId ? `Table ${tableId.slice(0, 6)}` : 'Takeaway');
+
   const holdOrder = () => {
-    setDraftItems((prev) => prev.map((item) => ({ ...item, notes: item.notes || 'Held order' })));
+    if (draftItems.length === 0) return;
+    setHeldOrders((prev) => [
+      {
+        id: `held-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        kind: 'hold',
+        tableId: selectedTableId,
+        tableLabel: tableLabelFor(selectedTableId),
+        items: draftItems,
+        heldAt: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+    setDraftItems([]);
   };
 
   const saveDraft = () => {
-    window.localStorage.setItem('restaurant-pos-draft', JSON.stringify(draftItems));
+    if (draftItems.length === 0) return;
+    setHeldOrders((prev) => [
+      {
+        id: `draft-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        kind: 'draft',
+        tableId: selectedTableId,
+        tableLabel: tableLabelFor(selectedTableId),
+        items: draftItems,
+        heldAt: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+  };
+
+  const recallHeldOrder = (id: string) => {
+    const entry = heldOrders.find((held) => held.id === id);
+    if (!entry) return;
+    if (draftItems.length > 0) {
+      const confirmed = window.confirm(
+        'Recalling this order will replace the items currently in your cart. Continue?',
+      );
+      if (!confirmed) return;
+    }
+    setDraftItems(entry.items);
+    if (entry.tableId) setSelectedTableId(entry.tableId);
+    setHeldOrders((prev) => prev.filter((held) => held.id !== id));
+  };
+
+  const discardHeldOrder = (id: string) => {
+    setHeldOrders((prev) => prev.filter((held) => held.id !== id));
   };
 
   const createOrder = async () => {
@@ -2588,6 +2719,39 @@ const PremiumRestaurantPOS: React.FC = () => {
                     </Button>
                   </div>
                 </details>
+
+                {heldOrders.length > 0 && (
+                  <details className="mt-2 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5" open>
+                    <summary className="cursor-pointer text-xs font-medium text-slate-700">
+                      Held &amp; draft orders ({heldOrders.length})
+                    </summary>
+                    <div className="mt-2 space-y-2">
+                      {heldOrders.map((held) => (
+                        <div key={held.id} className="rounded-md border border-slate-200 bg-white p-2 text-xs">
+                          <div className="flex items-center justify-between gap-2">
+                            <div>
+                              <p className="font-semibold text-slate-800">
+                                {held.kind === 'hold' ? 'Held' : 'Draft'} · {held.tableLabel}
+                              </p>
+                              <p className="text-slate-500">
+                                {held.items.length} item{held.items.length === 1 ? '' : 's'} ·{' '}
+                                {new Date(held.heldAt).toLocaleTimeString()}
+                              </p>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button size="sm" variant="secondary" onClick={() => recallHeldOrder(held.id)}>
+                                Recall
+                              </Button>
+                              <Button size="sm" variant="danger" onClick={() => discardHeldOrder(held.id)}>
+                                Discard
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                )}
               </CardContent>
             </Card>
           </section>
@@ -3366,6 +3530,20 @@ const PremiumRestaurantPOS: React.FC = () => {
         : ['Open', 'SentToKitchen', 'Served', 'Closed'];
       return (
         <motion.div key="kitchen" variants={screenVariants} initial="initial" animate="animate" exit="exit">
+          <AnimatePresence>
+            {newTicketAlert && (
+              <motion.div
+                key={newTicketAlert.orderId}
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                className="mb-4 flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-800 shadow-sm"
+              >
+                <span className="h-2 w-2 animate-pulse rounded-full bg-amber-500" />
+                {newTicketAlert.message}
+              </motion.div>
+            )}
+          </AnimatePresence>
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-4">
             {lanes.map((lane) => (
               <Card key={lane}>
