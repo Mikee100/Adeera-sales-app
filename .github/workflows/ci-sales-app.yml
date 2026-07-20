@@ -1,0 +1,33 @@
+name: Sales App CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # No lint step: eslint isn't installed as a devDependency here.
+      # No `tsc --noEmit` gate: ts-loader runs with transpileOnly: true, so
+      # webpack build (above) is the real compile signal that matches how
+      # this app actually ships today. tsc currently reports ~20 pre-existing
+      # type errors unrelated to CI setup - worth fixing separately, but they
+      # don't block the real build.
