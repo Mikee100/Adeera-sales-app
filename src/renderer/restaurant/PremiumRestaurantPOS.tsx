@@ -37,6 +37,73 @@ type PaymentMethod = 'cash' | 'card' | 'mpesa' | 'split';
 type ReservationStatus = 'Booked' | 'Arrived' | 'Seated' | 'NoShow' | 'Cancelled';
 type UpdateChannel = 'stable' | 'beta';
 
+// Grams-per-unit / millilitres-per-unit, so a recipe line's unit only needs
+// to share a family with the ingredient's own inventory unit, not match it
+// exactly. Mirrors the conversion table used server-side for BOM deduction
+// (backend/src/restaurant/services/restaurant-order/restaurant-order.service.ts)
+// so the cost preview shown here matches what actually gets deducted.
+const WEIGHT_TO_GRAMS: Record<string, number> = {
+  mg: 0.001,
+  g: 1,
+  gram: 1,
+  grams: 1,
+  kg: 1000,
+  kilogram: 1000,
+  kilograms: 1000,
+  oz: 28.3495,
+  ounce: 28.3495,
+  ounces: 28.3495,
+  lb: 453.592,
+  lbs: 453.592,
+  pound: 453.592,
+  pounds: 453.592,
+};
+
+const VOLUME_TO_ML: Record<string, number> = {
+  ml: 1,
+  milliliter: 1,
+  milliliters: 1,
+  millilitre: 1,
+  millilitres: 1,
+  cl: 10,
+  l: 1000,
+  liter: 1000,
+  liters: 1000,
+  litre: 1000,
+  litres: 1000,
+  tsp: 4.92892,
+  teaspoon: 4.92892,
+  tbsp: 14.7868,
+  tablespoon: 14.7868,
+  cup: 236.588,
+};
+
+function normalizeUnit(unit?: string | null): string {
+  return String(unit || '').trim().toLowerCase();
+}
+
+// Returns null when both units are specified but not known to be
+// convertible - callers should treat that as "cost unknown", not silently
+// apply a wrong factor.
+function convertQuantity(value: number, fromUnitRaw?: string | null, toUnitRaw?: string | null): number | null {
+  const from = normalizeUnit(fromUnitRaw);
+  const to = normalizeUnit(toUnitRaw);
+
+  if (!from || !to || from === to) {
+    return value;
+  }
+
+  if (from in WEIGHT_TO_GRAMS && to in WEIGHT_TO_GRAMS) {
+    return (value * WEIGHT_TO_GRAMS[from]) / WEIGHT_TO_GRAMS[to];
+  }
+
+  if (from in VOLUME_TO_ML && to in VOLUME_TO_ML) {
+    return (value * VOLUME_TO_ML[from]) / VOLUME_TO_ML[to];
+  }
+
+  return null;
+}
+
 interface UpdateSettings {
   success: boolean;
   channel: UpdateChannel;
@@ -116,6 +183,8 @@ interface Product {
   name: string;
   price: number;
   stock: number;
+  cost?: number;
+  unitAbbreviation?: string;
   images?: string[];
   customFields?: Record<string, unknown>;
   category?: { name?: string } | string;
@@ -320,7 +389,7 @@ const PremiumRestaurantPOS: React.FC = () => {
   const [activityActorFilter, setActivityActorFilter] = useState('');
   const [activityOrderFilter, setActivityOrderFilter] = useState('');
   const [activityActionFilter, setActivityActionFilter] = useState('');
-  const [useHistoryView, setUseHistoryView] = useState(true);
+  const [useHistoryView, setUseHistoryView] = useState(false);
   const [staffForm, setStaffForm] = useState({
     name: '',
     email: '',
@@ -849,7 +918,7 @@ const PremiumRestaurantPOS: React.FC = () => {
       });
       return res.success ? res.orders || [] : [];
     },
-    enabled: activeScreen === 'orders',
+    enabled: activeScreen === 'orders' && useHistoryView,
     refetchInterval: 5000,
   });
 
@@ -1071,6 +1140,16 @@ const PremiumRestaurantPOS: React.FC = () => {
     return map;
   }, [products]);
 
+  const productUnitById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const product of products) {
+      if (product.unitAbbreviation) {
+        map.set(product.id, product.unitAbbreviation);
+      }
+    }
+    return map;
+  }, [products]);
+
   const isIngredientProduct = useCallback((product: Product) => {
     const custom = (product.customFields || {}) as Record<string, unknown>;
     const category = resolvedCategory(product).toLowerCase();
@@ -1091,15 +1170,29 @@ const PremiumRestaurantPOS: React.FC = () => {
     [products, isIngredientProduct],
   );
 
+  // Converts each line's quantity into the ingredient's own inventory unit
+  // before pricing it, since productCostById is KES-per-inventory-unit.
+  // Lines whose unit can't be resolved against the ingredient's unit are
+  // excluded from the total and reported via hasUnitMismatch, rather than
+  // silently applying a wrong factor.
   const recipeCost = useCallback(
-    (recipeLines: Array<{ ingredientProductId: string; quantity: number; wastePercent?: number }>) => {
-      return recipeLines.reduce((sum, line) => {
-        const cost = Number(productCostById.get(line.ingredientProductId) || 0);
+    (recipeLines: Array<{ ingredientProductId: string; quantity: number; unit?: string; wastePercent?: number }>) => {
+      let total = 0;
+      let hasUnitMismatch = false;
+      for (const line of recipeLines) {
+        const unitCost = Number(productCostById.get(line.ingredientProductId) || 0);
+        const ingredientUnit = productUnitById.get(line.ingredientProductId);
+        const converted = convertQuantity(Number(line.quantity || 0), line.unit, ingredientUnit);
+        if (converted === null) {
+          hasUnitMismatch = true;
+          continue;
+        }
         const wasteMultiplier = 1 + Math.max(0, Number(line.wastePercent || 0)) / 100;
-        return sum + cost * Number(line.quantity || 0) * wasteMultiplier;
-      }, 0);
+        total += unitCost * converted * wasteMultiplier;
+      }
+      return { total, hasUnitMismatch };
     },
-    [productCostById],
+    [productCostById, productUnitById],
   );
 
   const currentBomIngredientOptions = useMemo(
@@ -1174,6 +1267,7 @@ const PremiumRestaurantPOS: React.FC = () => {
         bomLines.map((line) => ({
           ingredientProductId: line.ingredientProductId,
           quantity: Number(line.quantity || 0),
+          unit: line.unit,
           wastePercent: Number(line.wastePercent || 0),
         })),
       ),
@@ -2432,7 +2526,7 @@ const PremiumRestaurantPOS: React.FC = () => {
   };
 
   const openOrderInOrdersView = (order: RestaurantOrder) => {
-    setUseHistoryView(true);
+    setUseHistoryView(false);
     setOrderStatusFilter(order.status);
     setOrderSearch(order.id.slice(0, 8));
     setActiveScreen('orders');
@@ -2865,106 +2959,38 @@ const PremiumRestaurantPOS: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between gap-2">
-                <span>Orders Board</span>
-                <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">{counts.all} total</span>
+                <span>Orders</span>
               </CardTitle>
 
-              <div className="mt-2 rounded-lg border border-slate-200 bg-slate-50/70 p-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Status</span>
-                  {(['all', 'Open', 'SentToKitchen', 'Served', 'Closed', 'Voided'] as const).map((item) => {
-                    const label = item === 'all' ? 'All' : item === 'SentToKitchen' ? 'Sent to Kitchen' : item;
-                    const count = item === 'all' ? counts.all : counts[item];
-                    const isActive = orderStatusFilter === item;
-
-                    return (
-                      <button
-                        key={item}
-                        className={`touch-btn inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs ${isActive ? 'bg-brand-indigo text-white' : 'bg-white text-slate-700 border border-slate-200'}`}
-                        onClick={() => setOrderStatusFilter(item)}
-                      >
-                        <span>{label}</span>
-                        <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}`}>{count}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">View</span>
-                  <button
-                    className={`touch-btn px-3 py-1.5 text-xs ${useHistoryView ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border border-slate-200'}`}
-                    onClick={() => setUseHistoryView((prev) => !prev)}
-                  >
-                    History {useHistoryView ? 'ON' : 'OFF'}
-                  </button>
-                  {(['all', 'table', 'takeaway'] as const).map((item) => (
-                    <button
-                      key={item}
-                      className={`touch-btn px-3 py-1.5 text-xs ${orderTypeFilter === item ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border border-slate-200'}`}
-                      onClick={() => setOrderTypeFilter(item)}
-                    >
-                      {item === 'all' ? 'All Types' : item === 'table' ? 'Table' : 'Takeaway'}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Waiter</span>
+              <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-[220px_1fr]">
+                <div>
+                  <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-slate-500">Status</label>
                   <select
-                    className="min-w-[180px] flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
-                    value={orderWaiterFilter}
-                    onChange={(e) => setOrderWaiterFilter(e.target.value)}
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
+                    value={orderStatusFilter}
+                    onChange={(e) => setOrderStatusFilter(e.target.value as 'all' | OrderStatus)}
                   >
-                    <option value="">All waiters</option>
-                    {selectableWaiters.map((member) => (
-                      <option key={member.id} value={member.id}>
-                        {member.name || member.email || member.id.slice(0, 8)}
-                      </option>
-                    ))}
+                    <option value="all">All</option>
+                    <option value="Open">Open</option>
+                    <option value="SentToKitchen">Sent to Kitchen</option>
+                    <option value="Served">Served</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Voided">Voided</option>
                   </select>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => setOrderWaiterFilter(String(activeWaiter?.id || user?.id || user?.userId || ''))}
-                    disabled={!activeWaiter?.id && !user?.id && !user?.userId}
-                  >
-                    My Orders
-                  </Button>
                 </div>
-              </div>
 
-              <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
-                <input
-                  type="datetime-local"
-                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
-                  value={historyFrom}
-                  onChange={(e) => setHistoryFrom(e.target.value)}
-                  placeholder="From"
-                />
-                <input
-                  type="datetime-local"
-                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs"
-                  value={historyTo}
-                  onChange={(e) => setHistoryTo(e.target.value)}
-                  placeholder="To"
-                />
-              </div>
-              <div className="relative mt-2">
-                <Search size={15} className="absolute left-3 top-2.5 text-slate-400" />
-                <input
-                  className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm"
-                  placeholder="Search by order id, table, customer, or item"
-                  value={orderSearch}
-                  onChange={(e) => setOrderSearch(e.target.value)}
-                />
+                <div className="relative md:self-end">
+                  <Search size={15} className="absolute left-3 top-2.5 text-slate-400" />
+                  <input
+                    className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-xs"
+                    placeholder="Search order, table, customer, or item"
+                    value={orderSearch}
+                    onChange={(e) => setOrderSearch(e.target.value)}
+                  />
+                </div>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="mb-2 text-xs text-slate-500">
-                Live active tickets only. Oldest appears first to reduce missed orders.
-              </p>
-
               <div className="rounded-lg border border-slate-200">
                 <div className="hidden grid-cols-12 gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-600 md:grid">
                   <span className="col-span-2">Order</span>
@@ -3905,8 +3931,13 @@ const PremiumRestaurantPOS: React.FC = () => {
                   <Button size="sm" onClick={saveBomRecipe} disabled={bomSaving}>{bomSaving ? 'Saving...' : 'Save BOM'}</Button>
                   </div>
                   <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-700">
-                    Estimated recipe cost: {currency(bomDraftCost)}
+                    Estimated recipe cost: {currency(bomDraftCost.total)}
                   </span>
+                  {bomDraftCost.hasUnitMismatch && (
+                    <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">
+                      ⚠ Unit mismatch on one or more lines — cost excludes them
+                    </span>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -3923,22 +3954,28 @@ const PremiumRestaurantPOS: React.FC = () => {
                 {filteredBomRecipes.length === 0 && (
                   <p className="text-sm text-slate-500">No BOM recipes yet.</p>
                 )}
-                {filteredBomRecipes.slice(0, 30).map((recipe) => (
-                  <button
-                    key={recipe.id}
-                    className="w-full rounded-lg border border-slate-100 p-3 text-left hover:bg-slate-50"
-                    onClick={() => setBomForm((prev) => ({ ...prev, productId: recipe.productId }))}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-semibold">{recipe.product?.name || productNameById.get(recipe.productId) || 'Unknown product'}</p>
-                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] text-indigo-700">v{recipe.version}</span>
-                    </div>
-                    <p className="mt-1 text-xs text-slate-500">
-                      {recipe.lines.length} ingredients · Yield {recipe.yieldQty} {recipe.yieldUnit}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-600">Estimated cost: {currency(recipeCost(recipe.lines || []))}</p>
-                  </button>
-                ))}
+                {filteredBomRecipes.slice(0, 30).map((recipe) => {
+                  const cost = recipeCost(recipe.lines || []);
+                  return (
+                    <button
+                      key={recipe.id}
+                      className="w-full rounded-lg border border-slate-100 p-3 text-left hover:bg-slate-50"
+                      onClick={() => setBomForm((prev) => ({ ...prev, productId: recipe.productId }))}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-semibold">{recipe.product?.name || productNameById.get(recipe.productId) || 'Unknown product'}</p>
+                        <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] text-indigo-700">v{recipe.version}</span>
+                      </div>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {recipe.lines.length} ingredients · Yield {recipe.yieldQty} {recipe.yieldUnit}
+                      </p>
+                      <p className="mt-1 text-xs text-slate-600">Estimated cost: {currency(cost.total)}</p>
+                      {cost.hasUnitMismatch && (
+                        <p className="mt-1 text-xs font-medium text-amber-700">⚠ Unit mismatch on one or more lines — cost excludes them</p>
+                      )}
+                    </button>
+                  );
+                })}
               </CardContent>
             </Card>
           </div>
