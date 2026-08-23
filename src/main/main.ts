@@ -6,6 +6,7 @@ import axios from 'axios';
 import { logger } from '../shared/logger';
 import { cacheService } from '../shared/cache-service';
 import { printerService, kitchenQueueService } from './printer-service';
+import { connectRealtimeSocket, disconnectRealtimeSocket } from './realtime-client';
 import { API_BASE_URL } from '../shared/config';
 import { SecureTokenStorage } from './secure-token-storage';
 import { rateLimitedAxios, extractEndpoint, apiRateLimiter, authRateLimiter, syncRateLimiter } from '../shared/rate-limiter';
@@ -1872,8 +1873,39 @@ ipcMain.handle('getBranches', async () => {
 ipcMain.handle('logout', () => {
   const store = new ElectronStore();
   clearAuthSession(store);
-  
+  disconnectRealtimeSocket();
+
   logger.info('User logged out, cleared all cached data', { component: 'auth' });
+  return { success: true };
+});
+
+ipcMain.handle('connectRealtime', () => {
+  const store = new ElectronStore();
+  const token = getAuthToken(store);
+  const binding = getProvisionedDeviceBinding(store);
+
+  if (!token || !binding?.tenantId) {
+    logger.warn('Skipping realtime connect: missing token or tenant binding', {
+      component: 'realtime',
+    });
+    return { success: false, error: 'No authenticated session available.' };
+  }
+
+  connectRealtimeSocket({
+    baseUrl: BACKEND_BASE_URL,
+    token,
+    tenantId: binding.tenantId,
+    branchId: binding.branchId,
+    onOrderEvent: (event) => {
+      mainWindow?.webContents.send('restaurant-order-event', event);
+    },
+  });
+
+  return { success: true };
+});
+
+ipcMain.handle('disconnectRealtime', () => {
+  disconnectRealtimeSocket();
   return { success: true };
 });
 

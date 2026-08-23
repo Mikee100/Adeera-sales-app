@@ -39,6 +39,11 @@ interface ElectronAPI {
   onSyncProgress: (callback: (progress: SyncProgress) => void) => () => void;
   getSyncStatus: () => Promise<{ online: boolean; pendingSyncs: number; pendingSalesSyncs?: number; pendingRestaurantSyncs?: number; lastSync?: string; syncInProgress?: boolean; queueSize?: number; maxQueueSize?: number; warningThreshold?: number; isWarning?: boolean; isCritical?: boolean }>;
   syncProducts: () => Promise<{ success: boolean; products?: any[]; syncedAt?: string; error?: string; unauthorized?: boolean }>;
+  connectRealtime: () => Promise<{ success: boolean; error?: string }>;
+  disconnectRealtime: () => Promise<{ success: boolean }>;
+  onRestaurantOrderEvent: (
+    callback: (event: { type: 'created' | 'statusChanged' | 'itemsAdded'; orderId: string; status?: string; order?: any }) => void,
+  ) => () => void;
   getCatalogSyncStatus: () => Promise<{ success: boolean; hasCatalog: boolean; lastSynced: string | null; ageHours: number | null; productCount: number; isStale: boolean }>;
   getLastStockParityReport: () => Promise<{ success: boolean; hasReport: boolean; report?: { generatedAt: string; syncedCount: number; checked: number; drifted: number; entries: Array<{ key: string; type: 'product' | 'variation'; beforeStock: number; afterStock: number; delta: number; driftDetected: boolean; name?: string }> } }>;
   getApiBaseUrl: () => Promise<string>;

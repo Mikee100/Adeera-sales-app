@@ -47,6 +47,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
     return () => ipcRenderer.removeAllListeners('sync-progress');
   },
   syncProducts: () => ipcRenderer.invoke('syncProducts'),
+  connectRealtime: () => ipcRenderer.invoke('connectRealtime'),
+  disconnectRealtime: () => ipcRenderer.invoke('disconnectRealtime'),
+  onRestaurantOrderEvent: (callback: (event: any) => void) => {
+    const handler = (_event: unknown, payload: any) => callback(payload);
+    ipcRenderer.on('restaurant-order-event', handler);
+    return () => ipcRenderer.removeListener('restaurant-order-event', handler);
+  },
   getCatalogSyncStatus: () => ipcRenderer.invoke('getCatalogSyncStatus'),
   getLastStockParityReport: () => ipcRenderer.invoke('getLastStockParityReport'),
   getApiBaseUrl: () => ipcRenderer.invoke('getApiBaseUrl'),
